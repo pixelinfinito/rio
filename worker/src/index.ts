@@ -50,6 +50,7 @@ import {
   failJob,
   finishJob,
   stopRunners,
+  withdraw,
   withdrawIdle,
 } from "./jobs";
 import { parseWall } from "./budget";
@@ -86,16 +87,22 @@ export { MigrationWorkflow } from "./migrate";
 export { Sandbox } from "./sandbox";
 export { QaSandboxGateway } from "./qa-sandbox-gateway";
 const app = new Hono<{ Bindings: Env }>();
-app.onError((error, c) =>
-  c.json(
-    {
-      error: /unauthorized|capability/.test(error.message)
-        ? "unauthorized"
-        : error.message,
-    },
-    /unauthorized|capability/.test(error.message) ? 401 : 400,
-  ),
-);
+/**
+ * Storage faults that pass (D1 overloaded, reset or unreachable): the same
+ * request may succeed a moment later, so the answer is 503, which clients
+ * retry, and never 400, which tells them the request itself was wrong.
+ */
+export const transient = (message: string) =>
+  /D1 DB is overloaded|D1 DB reset|D1 DB storage operation exceeded timeout|Cannot resolve D1 DB due to transient issue|D1_ERROR: (Network connection lost|Internal error)/i.test(
+    message,
+  );
+app.onError((error, c) => {
+  if (/unauthorized|capability/.test(error.message))
+    return c.json({ error: "unauthorized" }, 401);
+  if (transient(error.message))
+    return c.json({ error: error.message }, 503, { "retry-after": "5" });
+  return c.json({ error: error.message }, 400);
+});
 app.get("/health", (c) => c.json({ version: c.env.RIO_VERSION, protocol: 1 }));
 app.use("/v1/*", async (c, next) => {
   const protocol = c.req.header("rio-protocol");
@@ -1068,6 +1075,8 @@ export default {
         const { review_id, job_id, attempt } = message.body as JobMessage,
           store = new Store(env);
         if (await store.cancelled(review_id)) {
+          // Not started, or redelivered after its container was stopped.
+          await withdraw(env, job_id, attempt);
           message.ack();
           continue;
         }

@@ -7,6 +7,7 @@ import { jobToken } from "../src/auth";
 import { createJob, validateResult } from "../src/jobs";
 import { Store } from "../src/storage";
 import { jobInput } from "../src/archive";
+import { SandboxRunner, stopped } from "../src/sandbox";
 import { Tools } from "../src/tools";
 import {
   BATCH_BYTES,
@@ -916,6 +917,44 @@ describe("runner archives", () => {
       timed({}, "elsewhere"),
     ])
       expect(() => validateResult(bad, run)).toThrow("invalid runner result");
+  });
+  it("answers a stop at once, whatever the stopped container's streams do", async () => {
+    const { id, snapshot: snapshotId } = await review();
+    const hung = new Promise<never>(() => {});
+    // Two containers that never answer again once destroyed: one whose
+    // command never starts, one whose output never ends.
+    for (const [name, exec] of [
+      ["starting", () => hung],
+      [
+        "running",
+        async () => ({ stdin: new WritableStream(), output: () => hung }),
+      ],
+    ] as const) {
+      await createJob(runtime, id, name, "run", ["true"], "head", snapshotId);
+      const job = await payload(id, name);
+      const container = {
+        running: false,
+        destroyed: 0,
+        start: () => {
+          container.running = true;
+        },
+        destroy: async () => {
+          container.destroyed++;
+          container.running = false;
+        },
+        exec,
+      };
+      const runner = new SandboxRunner({ container } as any, runtime);
+      const execution = runner.run(job);
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      expect(container.running).toBe(true);
+      expect(await runner.stop()).toEqual({ stopped: true });
+      expect(await execution).toEqual(stopped(job));
+      expect(container.running).toBe(false);
+      // A job that arrives after the stop does not start a container.
+      expect(await runner.run(job)).toEqual(stopped(job));
+      expect(container.running).toBe(false);
+    }
   });
   it("serves the archive only with that job's capability", async () => {
     const { id, snapshot: snapshotId } = await review();

@@ -785,6 +785,43 @@ function counted() {
   } as unknown as Env;
   return { env: counting, requests };
 }
+/** The environment with the rows its database statements read summed. */
+function metered() {
+  const read = { rows: 0 };
+  const database = runtime.DB;
+  const inners = new WeakMap<object, D1PreparedStatement>();
+  const statement = (inner: D1PreparedStatement): D1PreparedStatement => {
+    const wrapped = {
+      bind: (...values: unknown[]) => statement(inner.bind(...values)),
+      all: async () => {
+        const result = await inner.all();
+        read.rows += result.meta.rows_read;
+        return result;
+      },
+      run: async () => {
+        const result = await inner.run();
+        read.rows += result.meta.rows_read;
+        return result;
+      },
+    } as unknown as D1PreparedStatement;
+    inners.set(wrapped, inner);
+    return wrapped;
+  };
+  const env = {
+    ...runtime,
+    DB: {
+      prepare: (sql: string) => statement(database.prepare(sql)),
+      batch: async (statements: D1PreparedStatement[]) => {
+        const results = await database.batch(
+          statements.map((s) => inners.get(s)!),
+        );
+        for (const result of results) read.rows += result.meta.rows_read;
+        return results;
+      },
+    },
+  } as unknown as Env;
+  return { env, read };
+}
 const packs = async (tenant: string) =>
   (await runtime.ARTIFACTS.list({ prefix: `cache/${tenant}/packs/` })).objects
     .map((o) => o.key)
@@ -827,6 +864,40 @@ describe("cache packs", () => {
     });
     expect(reading.requests.get).toBe(2);
     expect(reading.requests.put + reading.requests.delete).toBe(0);
+  });
+
+  it("stores and looks up by key, however many entries the tenant has", async () => {
+    const tenant = "packs-scale";
+    // The live table held 22,208 entries when one store step read 5.6 million
+    // rows for a pack of 256, and two such steps overloaded the database for
+    // every review. The tenant's other entries here: one pack and one object each.
+    const others = 4000;
+    await runtime.DB.prepare(
+      "WITH RECURSIVE n(i) AS (SELECT 0 UNION ALL SELECT i+1 FROM n WHERE i<?) INSERT INTO agent_cache(tenant,hunk_hash,context_hash,object_key,created_at) SELECT ?,'other-h'||i,'other-c'||i,'cache/packs-scale/other-'||i||'.json',? FROM n",
+    )
+      .bind(others - 1, tenant, Date.now())
+      .run();
+    const count = 2 * PACK_ENTRIES;
+    const keys = Array.from({ length: count }, (_, n) => keyedHunk("scale", n));
+    const all = keys.map((_, n): [number, never[]] => [n, []]);
+    // An entry of the change stored before, under an object of its own.
+    const earlier = `cache/${tenant}/scale-h3/scale-c3.json`;
+    await runtime.ARTIFACTS.put(earlier, "{}");
+    await runtime.DB.prepare(
+      "INSERT INTO agent_cache(tenant,hunk_hash,context_hash,object_key,created_at) VALUES(?,?,?,?,?)",
+    )
+      .bind(tenant, "scale-h3", "scale-c3", earlier, Date.now())
+      .run();
+    const writing = metered();
+    await storeEntries(writing.env, tenant, "correctness", keys, all, 7);
+    expect(await entries(tenant)).toBe(others + count);
+    expect(await runtime.ARTIFACTS.get(earlier)).toBeNull();
+    // A few rows per entry stored, not the tenant's entries per pack.
+    expect(writing.read.rows).toBeLessThan(8 * count);
+    const reading = metered();
+    const hits = await lookup(reading.env, tenant, keys);
+    expect(Object.keys(hits)).toHaveLength(count);
+    expect(reading.read.rows).toBeLessThan(8 * count);
   });
 
   it("keeps a pack while an entry of it remains and replaces an entry's old object", async () => {

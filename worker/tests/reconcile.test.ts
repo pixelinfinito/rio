@@ -266,6 +266,22 @@ describe("runner deadlines", () => {
       // The job the helper adds: a leased graph job, attempt 1.
       "POST https://sandbox/stop stopping-stopping-job-1",
     ]);
+    // A job whose container answered the stop is withdrawn, so it does not
+    // read as running until its lease ends; the one that did not answer
+    // keeps its lease, and jobs that are not containers are left alone.
+    const jobs = await runtime.DB.prepare(
+      "SELECT id,status FROM jobs WHERE review_id='stopping' ORDER BY id",
+    ).all<{ id: string; status: string }>();
+    expect(
+      Object.fromEntries(jobs.results.map((j) => [j.id, j.status])),
+    ).toEqual({
+      "s-checks": "leased",
+      "s-done": "completed",
+      "s-model": "leased",
+      "s-pending": "pending",
+      "s-run": "failed",
+      "stopping-job": "failed",
+    });
     // A self-hosted runner's containers are its own.
     calls.length = 0;
     await stopRunners({ ...sandboxed, RUNNER_BACKEND: "self-hosted" } as Env, "stopping");

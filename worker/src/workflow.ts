@@ -2632,7 +2632,12 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         const ended = await this.env.DB.prepare(
           `UPDATE reviews SET status='partial',report_key=?,error=? WHERE id=? AND ${OPEN} RETURNING id`,
         )
-          .bind(key, "runtime did not complete", id, key)
+          .bind(
+            key,
+            reason === "cancelled" ? "cancelled" : "runtime did not complete",
+            id,
+            key,
+          )
           .first();
         if (!ended) return;
         await stopRunners(this.env, id);
@@ -2642,7 +2647,9 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           this.env,
           id,
           "Review did not complete",
-          "Rio's runtime stopped before the review finished, so nothing was published for this head. Push again or comment `/rio review` to retry.",
+          reason === "cancelled"
+            ? "The review was cancelled before it finished, so nothing was published for this head. Push again or comment `/rio review` to retry."
+            : "Rio's runtime stopped before the review finished, so nothing was published for this head. Push again or comment `/rio review` to retry.",
         );
       });
       return { report_key: key };

@@ -158,6 +158,9 @@ INFRA_PATTERNS = [
     ("memory_limit", ("Worker exceeded memory limit", "exceeded CPU or memory limits")),
     ("subrequest_limit", ("Too many API requests by single Worker invocation",
                           "Too many subrequests")),
+    # The endpoint's database refusing or losing a query: before the causes
+    # below, so "D1_ERROR: Network connection lost" is not a runner's failure.
+    ("storage", ("D1_ERROR", "D1 DB is overloaded", "D1 DB reset")),
     ("deadline", ("Rio ended this review", "exceeded its wall budget",
                   "review wall budget exhausted", "endpoint review cancelled",
                   "Review cancelled before it finished", "exceeded the adapter's")),

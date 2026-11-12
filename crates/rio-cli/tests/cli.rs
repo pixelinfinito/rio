@@ -885,7 +885,13 @@ fn no_color_environment_overrides_renderer_color_request() {
 #[test]
 fn interrupts_preserve_one_partial_document_and_second_interrupt_emits_none() {
     use std::time::{Duration, Instant};
-    for twice in [false, true] {
+    // A request to terminate (a service manager's stop) is an interrupt too.
+    for (signal, twice) in [
+        (libc::SIGINT, false),
+        (libc::SIGINT, true),
+        (libc::SIGTERM, false),
+        (libc::SIGTERM, true),
+    ] {
         let temp = repository();
         let root = temp.path();
         // Ignore TERM so the second interrupt is tested during the cleanup grace period.
@@ -933,12 +939,12 @@ fn interrupts_preserve_one_partial_document_and_second_interrupt_emits_none() {
         let worker = read_pid().unwrap();
         // SAFETY: signaling only the child CLI started by this test.
         unsafe {
-            libc::kill(child.id() as i32, libc::SIGINT);
+            libc::kill(child.id() as i32, signal);
         }
         if twice {
             std::thread::sleep(Duration::from_millis(200));
             unsafe {
-                libc::kill(child.id() as i32, libc::SIGINT);
+                libc::kill(child.id() as i32, signal);
             }
         }
         let deadline = Instant::now() + Duration::from_secs(20);

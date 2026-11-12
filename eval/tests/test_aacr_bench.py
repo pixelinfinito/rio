@@ -396,6 +396,9 @@ class AACRAdapterTests(unittest.TestCase):
                    "cancelled"), "deadline"),
             (notes("WorkflowInternalError: Attempt failed due to internal workflows error"), "workflow_internal"),
             (notes("Too many API requests by single Worker invocation."), "subrequest_limit"),
+            (notes("Agent result cache not updated for correctness: D1_ERROR: D1 DB is overloaded. Too many "
+                   "resources consumed within a 10 second window."), "storage"),
+            (notes("D1_ERROR: Network connection lost."), "storage"),
             (notes("Hypothesis board coordination is deferred; agents and verifier voters run independently."), None),
             # Skipped and failed checks are the review's outcome, and a finding may quote anything.
             (notes("dependencies skipped offline", "tests: skipped (no test command is configured)",
@@ -406,6 +409,11 @@ class AACRAdapterTests(unittest.TestCase):
             self.assertEqual(aacr.infra_failure(report), cause)
         self.assertEqual(aacr.infra_failure(None, "contacting Rio endpoint: error sending request: "
                                                   "Connection reset by peer (os error 104)"), "transport")
+        # The fix2 canary: a status poll answered with the database's overload ended two cases.
+        self.assertEqual(aacr.infra_failure(
+            None, "Rio reported an error (internal_error): endpoint error: D1_ERROR: D1 DB is overloaded. "
+                  "Too many resources consumed within a 10 second window.: Rio endpoint returned HTTP 400"),
+            "storage")
         self.assertIsNone(aacr.infra_failure(None, "Report commit pins differ from dataset"))
         # Every cause is kept, in a stable order.
         self.assertEqual(aacr.infra_failures(notes(

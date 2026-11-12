@@ -713,6 +713,22 @@ async fn run_review(args: ReviewArgs) -> u8 {
     }
     stream_review(args, started).await
 }
+/// Waits for an interrupt (Ctrl-C) or, on Unix, a request to terminate: a
+/// service manager that stops the CLI ends its review as an interrupt does,
+/// so the endpoint's review is cancelled and not left to run.
+pub(crate) async fn interrupted() -> std::io::Result<()> {
+    #[cfg(unix)]
+    {
+        let mut terminate =
+            tokio::signal::unix::signal(tokio::signal::unix::SignalKind::terminate())?;
+        tokio::select! {
+            result = tokio::signal::ctrl_c() => result,
+            _ = terminate.recv() => Ok(()),
+        }
+    }
+    #[cfg(not(unix))]
+    tokio::signal::ctrl_c().await
+}
 /// `rio review` with streaming output (pipes, CI, `--format`, `--no-tui`).
 async fn stream_review(args: ReviewArgs, started: String) -> u8 {
     let supervisor = ProcessSupervisor::default();
@@ -720,10 +736,10 @@ async fn stream_review(args: ReviewArgs, started: String) -> u8 {
     let signal_cancel = cancellation.clone();
     let signal_supervisor = supervisor.clone();
     let signals = tokio::spawn(async move {
-        if tokio::signal::ctrl_c().await.is_ok() {
+        if interrupted().await.is_ok() {
             signal_cancel.cancel();
             eprintln!("Interrupted; stopping checks and preserving partial results…");
-            if tokio::signal::ctrl_c().await.is_ok() {
+            if interrupted().await.is_ok() {
                 signal_supervisor.kill_all();
                 std::process::exit(130);
             }

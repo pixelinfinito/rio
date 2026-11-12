@@ -1,6 +1,6 @@
 import { env, applyD1Migrations } from "cloudflare:test";
 import { beforeAll, beforeEach, describe, it, expect } from "vitest";
-import worker, { app } from "../src/index";
+import worker, { app, transient } from "../src/index";
 import { D1Ledger, Store } from "../src/storage";
 import { hash, canonical } from "../src/validation";
 import { jobToken, sign } from "../src/auth";
@@ -537,6 +537,122 @@ describe("Worker API and storage", () => {
       id,
       type: "job-job-fail-1",
     });
+  });
+
+  it("withdraws a cancelled review's job on delivery without starting it", async () => {
+    const id = await createReview();
+    await createJob(runtime, id, "idle", "run", ["true"], "head", snapshotId);
+    await createJob(runtime, id, "begun", "run", ["true"], "head", snapshotId);
+    await createJob(
+      runtime,
+      id,
+      "next",
+      "run",
+      ["true"],
+      "head",
+      snapshotId,
+      2,
+    );
+    // Redelivered after its container was stopped: still leased.
+    await runtime.DB.prepare(
+      "UPDATE jobs SET status='leased',lease_until=? WHERE id='begun' AND review_id=?",
+    )
+      .bind(Date.now() + 600000, id)
+      .run();
+    await runtime.DB.prepare("UPDATE reviews SET cancelled=1 WHERE id=?")
+      .bind(id)
+      .run();
+    const started: string[] = [],
+      outcomes: string[] = [];
+    const sandboxEnv = {
+      ...runtime,
+      RUNNER_BACKEND: "sandbox",
+      SANDBOX: {
+        idFromName: (name: string) => name,
+        get: (name: string) => ({
+          fetch: async () => {
+            started.push(name);
+            throw new Error("must not start");
+          },
+        }),
+      },
+    } as unknown as Env;
+    await worker.queue(
+      {
+        messages: ["idle", "begun", "next"].map((job_id) => ({
+          body: { review_id: id, job_id, attempt: 1 },
+          attempts: 1,
+          ack: () => outcomes.push(`ack:${job_id}`),
+          retry: () => outcomes.push(`retry:${job_id}`),
+        })),
+      } as any,
+      sandboxEnv,
+    );
+    expect(outcomes).toEqual(["ack:idle", "ack:begun", "ack:next"]);
+    expect(started).toEqual([]);
+    const rows = await runtime.DB.prepare(
+      "SELECT id,status FROM jobs WHERE review_id=? ORDER BY id",
+    )
+      .bind(id)
+      .all<{ id: string; status: string }>();
+    // Only the delivered attempt: a stale delivery leaves a newer one alone.
+    expect(rows.results).toEqual([
+      { id: "begun", status: "failed" },
+      { id: "idle", status: "failed" },
+      { id: "next", status: "pending" },
+    ]);
+    // A result that still arrives for a withdrawn job is not kept.
+    await finishJob(runtime, id, "begun", 1, {
+      job_id: "begun",
+      attempt: 1,
+      version: "head",
+      exit_code: 0,
+      stdout: "late",
+      stderr: "",
+      timed_out: false,
+      truncated: false,
+    }).catch(() => {});
+    expect(
+      await runtime.DB.prepare(
+        "SELECT status,result_key FROM jobs WHERE id='begun' AND review_id=?",
+      )
+        .bind(id)
+        .first(),
+    ).toEqual({ status: "failed", result_key: null });
+  });
+  it("answers a passing storage fault as unavailable, not as a bad request", async () => {
+    const id = await createReview();
+    const failing = (message: string) =>
+      app.request(`https://rio.test/v1/reviews/${id}`, { headers: owner }, {
+        ...runtime,
+        DB: {
+          prepare: () => {
+            throw new Error(message);
+          },
+        },
+      } as unknown as Env);
+    for (const message of [
+      "D1_ERROR: D1 DB is overloaded. Too many resources consumed within a 10 second window.",
+      "D1_ERROR: D1 DB reset because its code was updated.",
+      "D1_ERROR: Network connection lost.",
+      "D1_ERROR: D1 DB storage operation exceeded timeout which caused object to be reset.",
+    ]) {
+      expect(transient(message)).toBe(true);
+      const response = await failing(message);
+      expect(response.status).toBe(503);
+      expect(response.headers.get("retry-after")).toBe("5");
+      // The fault itself is named, so a client that gives up can report it.
+      expect(await response.json()).toEqual({ error: message });
+    }
+    // A request the database refuses for what it says stays the caller's error.
+    for (const message of [
+      "D1_ERROR: UNIQUE constraint failed: reviews.id: SQLITE_CONSTRAINT",
+      "D1_ERROR: no such column: missing: SQLITE_ERROR",
+      "review not found",
+    ]) {
+      expect(transient(message)).toBe(false);
+      expect((await failing(message)).status).toBe(400);
+    }
   });
 
   it("publishes one immutable winner for racing completions and retains cancelled job evidence", async () => {

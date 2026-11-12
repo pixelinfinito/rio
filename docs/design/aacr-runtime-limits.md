@@ -386,3 +386,41 @@ What stays as it was, on purpose:
   once, so the second canary runs every agent and writes every entry itself.
 - Worker limits (`cpu_ms`, subrequests) are unchanged. The work is bounded
   instead: a step reads and writes a bounded number of objects.
+
+## 9. Third round: what the second canary broke
+
+The canary of the section 8 build (`aacr-bench-fix2-20261111T230153Z`, commit
+`d2b6b9c`) was stopped after its first two cases failed (FreeCAD@82fef4a and
+lvgl@4a57db3, both after about 290 s). Both ended on the same answer to a
+status poll: HTTP 400, `D1_ERROR: D1 DB is overloaded. Too many resources
+consumed within a 10 second window.` The analysis jobs of all four reviews that
+had started were complete by then, with no CPU, memory or subrequest error.
+
+| Cause | Found | Change | Where |
+|---|---|---|---|
+| Cache store query | The store's lookup of objects its entries replace joined `agent_cache` to the pack's members. With the index migration `0016` added, the planner led with the table (`SEARCH a USING INDEX agent_cache_object (tenant=?)`) and read the tenant's whole index once per pack: 11.3 million rows in two calls, 5.3 s each, on a table of 22,208 rows. That is what overloaded the database for every other request | The members lead the join (`json_each(?) j CROSS JOIN agent_cache a`), so each member is one search of the primary key. A test stores and looks up two packs for a tenant with 4,000 other entries and bounds the rows the database reads; it fails on the old query (2,122,563 rows) and passes on the new (1,027) | `worker/src/cache.ts`, `worker/tests/cache.test.ts` |
+| Storage faults as bad requests | The endpoint answered every uncaught error with 400, so the CLI took a passing database fault for a refusal and ended the case | Passing D1 faults (overloaded, reset, storage timeout, connection lost) are answered with 503 and `retry-after`, which the CLI's polls and uploads already retry until their deadline. Anything else stays 400 | `worker/src/index.ts` |
+| Cancel under load | The CLI cancels a review it stops waiting for with one request; under the overload that request failed too, and two reviews ran on (one to completion) | `cancel` retries transient failures with backoff for up to 25 s (inside the 30 s the adapter gives an interrupted CLI) | `crates/rio-client/src/lib.rs` |
+| Stopped CLI | `systemctl stop` sends SIGTERM, which the CLI did not handle: two more reviews ran on until they were cancelled by hand | `rio review` treats SIGTERM as an interrupt: checks stop, the endpoint's review is cancelled, a second signal exits at once | `crates/rio-cli/src/main.rs`, `crates/rio-cli/src/pull.rs` |
+| Stopped job's row | The job of a container stopped by a cancel stayed `leased` until its lease ended, although its container was gone | A job whose container answered the stop is withdrawn at once, as is a cancelled review's job when the queue delivers it; the stop itself ends the execution's wait, whatever the destroyed container's streams do. A late result of a withdrawn job is dropped, as before | `worker/src/jobs.ts`, `worker/src/index.ts`, `worker/src/sandbox.ts` |
+| Labels | The cases had no cause (`infra_failures: []`), and a cancelled review's error read `runtime did not complete` | The adapter has a `storage` cause for D1 errors. A review ended by a cancel says `cancelled`, in its error and its announcement | `eval/aacr_bench.py`, `worker/src/workflow.ts` |
+
+Measured in that canary, on the section 8 build: transfer time is storage
+time. FreeCAD's 426 MB archive took 42 s for checks (36 s reading R2) and 35 s
+for the graph (34 s); lvgl's 167 MB took 16 s and 25 s; Elasticsearch's 374 MB
+took 48 s (43 s). The 4-minute cap is therefore five times the largest
+transfer seen, and compressing the stream would not help: the container side is
+a few seconds. The one 138 s transfer of the earlier probe followed a new image
+rollout directly (a cold container). Local preparation took 12 s for FreeCAD
+and 52 s for lvgl.
+
+`CONTEXT_KEY_VERSION` is 4: the 175 entries the stopped canary wrote (and the
+probe's before it) miss once, so the third canary runs every agent itself.
+
+Seen in the database's query statistics and left as it is: queries by
+`review_id` on `usage` and `jobs`, and the sweep's on `reviews`, scan their
+tables (11,000, 2,600 and 660 rows a call, 4 to 20 ms). They grow with history,
+not with a review, and an index for each is the obvious change; it was not made
+in this round because the last index added is what moved the planner off the
+primary key above, and these scans are three orders of magnitude below what
+overloaded the database.

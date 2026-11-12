@@ -163,7 +163,7 @@ pub async fn review(args: ReviewArgs, started: String) -> u8 {
     let cancellation = CancellationToken::new();
     let signal = cancellation.clone();
     let signals = tokio::spawn(async move {
-        if tokio::signal::ctrl_c().await.is_ok() {
+        if crate::interrupted().await.is_ok() {
             signal.cancel();
             eprintln!("Interrupted; cancelling the endpoint review…");
         }

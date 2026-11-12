@@ -11,6 +11,10 @@ pub use snapshot::{
 };
 /// Pause between status polls of a running endpoint review.
 const POLL_INTERVAL: Duration = Duration::from_secs(2);
+/// How long a cancellation keeps trying past transient failures: longer than
+/// a storage overload's window, shorter than the grace a supervisor gives an
+/// interrupted CLI.
+const CANCEL_WINDOW: Duration = Duration::from_secs(25);
 
 /// A non-success HTTP status from the endpoint. Bodies are never echoed: they
 /// may contain raw provider or tool output.
@@ -151,14 +155,32 @@ impl Client {
         );
         Ok(id.into())
     }
+    /// Cancels a review. Cancelling twice is harmless, so transient failures
+    /// (connection errors, 429, 5xx) are retried with backoff for up to
+    /// `CANCEL_WINDOW`: a review must not run on because the one request that
+    /// ends it met a busy endpoint.
     pub async fn cancel(&self, id: &str) -> Result<()> {
-        self.request(
-            reqwest::Method::POST,
-            &format!("v1/reviews/{id}/cancel"),
-            Some(&json!({})),
-        )
-        .await?;
-        Ok(())
+        let path = format!("v1/reviews/{id}/cancel");
+        let deadline = tokio::time::Instant::now() + CANCEL_WINDOW;
+        let body = json!({});
+        let mut delay = Duration::from_millis(500);
+        loop {
+            let request = self.request(reqwest::Method::POST, &path, Some(&body));
+            let result = match tokio::time::timeout_at(deadline, request).await {
+                Ok(result) => result,
+                Err(_) => anyhow::bail!("cancelling the endpoint review timed out"),
+            };
+            match result {
+                Err(error)
+                    if snapshot::retryable(&error)
+                        && tokio::time::Instant::now() + delay < deadline =>
+                {
+                    tokio::time::sleep(delay).await;
+                    delay = (delay * 2).min(Duration::from_secs(8));
+                }
+                result => return result.map(|_| ()),
+            }
+        }
     }
     pub async fn wait(
         &self,
@@ -637,6 +659,59 @@ mod tests {
             assert_eq!(
                 server.join().unwrap(),
                 "POST /v1/reviews/r1/cancel HTTP/1.1"
+            );
+        }
+    }
+    #[tokio::test]
+    async fn a_cancellation_rides_out_a_busy_endpoint_but_not_a_refusal() {
+        use std::{
+            io::{Read, Write},
+            net::TcpListener,
+        };
+        // A dropped connection and the endpoint's 503 for an overloaded
+        // database are retried; a refusal (400) is final at once.
+        for (replies, cancelled) in [
+            (
+                vec![None, Some("503 Service Unavailable"), Some("200 OK")],
+                true,
+            ),
+            (vec![Some("400 Bad Request"), Some("200 OK")], false),
+        ] {
+            let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+            let address = listener.local_addr().unwrap();
+            let expected = if cancelled { replies.len() } else { 1 };
+            let server = std::thread::spawn(move || {
+                let mut lines = Vec::new();
+                for reply in replies.into_iter().take(expected) {
+                    let (mut socket, _) = listener.accept().unwrap();
+                    let mut bytes = Vec::new();
+                    let mut chunk = [0; 4096];
+                    while !bytes.windows(4).any(|w| w == b"\r\n\r\n") {
+                        let n = socket.read(&mut chunk).unwrap();
+                        bytes.extend_from_slice(&chunk[..n]);
+                    }
+                    lines.push(
+                        String::from_utf8_lossy(&bytes)
+                            .lines()
+                            .next()
+                            .unwrap()
+                            .to_owned(),
+                    );
+                    if let Some(status) = reply {
+                        write!(socket, "HTTP/1.1 {status}\r\nContent-Type: application/json\r\nContent-Length: 2\r\nConnection: close\r\n\r\n{{}}").unwrap();
+                    }
+                }
+                lines
+            });
+            let client = Client::new(
+                &format!("http://{address}"),
+                "long-enough-api-token-32-characters".into(),
+            )
+            .unwrap();
+            assert_eq!(client.cancel("r1").await.is_ok(), cancelled);
+            assert_eq!(
+                server.join().unwrap(),
+                vec!["POST /v1/reviews/r1/cancel HTTP/1.1"; expected]
             );
         }
     }

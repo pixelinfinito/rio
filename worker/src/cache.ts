@@ -129,10 +129,11 @@ export interface ContextInputs {
 }
 /**
  * The context key's own version: 2 keys the true one-hop neighbourhood with
- * SHA-256 digests; 3 leaves behind the entries of the builds whose reviews
- * ended at platform limits. Entries of another version are never replayed.
+ * SHA-256 digests; 3 and 4 each leave behind the entries of a build whose
+ * reviews ended at platform limits. Entries of another version are never
+ * replayed.
  */
-export const CONTEXT_KEY_VERSION = 3;
+export const CONTEXT_KEY_VERSION = 4;
 const encoder = new TextEncoder();
 /** Hex SHA-256 through the runtime's native digest. */
 async function digest(text: string): Promise<string> {
@@ -580,9 +581,11 @@ export async function storeEntries(
       members.map((k) => ({ h: k.hunk_hash, c: k.context_hash })),
     );
     // Objects these entries had before: an expired entry, or a concurrent
-    // review of the same change.
+    // review of the same change. The members lead the join (CROSS JOIN fixes
+    // the order), so each is one search of the primary key; led by the table,
+    // the query read the tenant's whole index once per pack.
     const before = await env.DB.prepare(
-      "SELECT DISTINCT a.object_key FROM agent_cache a JOIN json_each(?) j ON a.hunk_hash=json_extract(j.value,'$.h') AND a.context_hash=json_extract(j.value,'$.c') WHERE a.tenant=? AND a.object_key<>?",
+      "SELECT DISTINCT a.object_key FROM json_each(?) j CROSS JOIN agent_cache a WHERE a.tenant=? AND a.hunk_hash=json_extract(j.value,'$.h') AND a.context_hash=json_extract(j.value,'$.c') AND a.object_key<>?",
     )
       .bind(rows, tenant, key)
       .all<{ object_key: string }>();

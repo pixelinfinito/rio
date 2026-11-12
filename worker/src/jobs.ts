@@ -259,11 +259,19 @@ export const withdrawIdle = (env: Env, review: string, now = Date.now()) =>
   )
     .bind(review, now)
     .run();
+/** Withdraws one job attempt nobody is waiting for; a late result is not kept. */
+export const withdraw = (env: Env, job: string, attempt: number) =>
+  env.DB.prepare(
+    "UPDATE jobs SET status='failed' WHERE id=? AND attempt=? AND status IN ('pending','leased')",
+  )
+    .bind(job, attempt)
+    .run();
 /**
  * Stops the Sandbox containers still running jobs of a review that ended or
  * was cancelled: containers are few, and one would otherwise run until its
- * command's wall for a result nobody waits for. A stopped job completes with
- * that as its result.
+ * command's wall for a result nobody waits for. A job whose container
+ * answered the stop is withdrawn here, so it does not read as running until
+ * its lease ends; one that did not keeps its lease and its own deadline.
  */
 export async function stopRunners(env: Env, review: string) {
   if (env.RUNNER_BACKEND !== "sandbox") return;
@@ -274,9 +282,10 @@ export async function stopRunners(env: Env, review: string) {
     .all<{ id: string; attempt: number }>();
   for (const job of rows.results)
     try {
-      await env.SANDBOX.get(
+      const response = await env.SANDBOX.get(
         env.SANDBOX.idFromName(`${review}-${job.id}-${job.attempt}`),
       ).fetch("https://sandbox/stop", { method: "POST" });
+      if (response.ok) await withdraw(env, job.id, job.attempt);
     } catch {
       // Best effort: the container's own deadline still ends it.
     }

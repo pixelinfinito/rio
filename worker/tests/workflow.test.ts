@@ -887,7 +887,8 @@ it.each([
         .bind(id)
         .first<any>();
       expect(row.status).toBe("partial");
-      expect(row.error).toBe(later ? "runtime did not complete" : null);
+      // Named for what ended it: nothing in the runtime failed.
+      expect(row.error).toBe(later ? "cancelled" : null);
       const report = await store.get<any>(row.report_key);
       expect(report.status).toBe("partial");
       expect(() => validateReport(report)).not.toThrow();
