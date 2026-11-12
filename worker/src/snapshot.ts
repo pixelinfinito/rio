@@ -41,6 +41,11 @@ const SWEEP_ENTRIES = 16384;
 const SWEEP_FIRST = 2048;
 // A sweep reads everything it passes, so it joins contents further apart.
 const SWEEP_GAP = 1024 * 1024;
+// Streamed reads of a `pour` in flight. A storage read takes about 200 ms
+// before its first byte, however short it is, so what a pour costs is its
+// reads divided by this; six is what one invocation may have open, and the
+// request that pours waits for nothing else meanwhile.
+const POURS = 6;
 // From this many paths on, entries are found in one pass over the manifest (a
 // request per located chunk) instead of a page read per neighbourhood.
 const LISTED_PATHS = 32;
@@ -574,8 +579,16 @@ export class StoredSnapshot implements SnapshotReader {
         offset: pages[i][3],
         length: pages[j][4] - pages[i][3],
       });
-      for await (const line of splitLines(object.body))
-        if (line) yield entryOf(JSON.parse(line) as Located);
+      let ended = false;
+      try {
+        for await (const line of splitLines(object.body))
+          if (line) yield entryOf(JSON.parse(line) as Located);
+        ended = true;
+      } finally {
+        // A consumer that has what it wanted leaves the rest unread; an open
+        // body would keep one of the invocation's few connections.
+        if (!ended) await object.body.cancel().catch(() => {});
+      }
       i = j + 1;
     }
   }
@@ -728,10 +741,12 @@ export class StoredSnapshot implements SnapshotReader {
   private packed(batch: Entry[]): Promise<Map<Entry, Uint8Array>> {
     return this.load(this.runs(batch, GAP));
   }
-  private runs(batch: Entry[], gap: number): Run[] {
+  // Runs that are held are bounded and leave large contents out; streamed
+  // runs are neither.
+  private runs(batch: Entry[], gap: number, length = RUN): Run[] {
     const groups = new Map<string, Entry[]>();
     for (const entry of batch)
-      if (entry.size > 0 && entry.size <= LARGE) {
+      if (entry.size > 0 && entry.size <= Math.max(LARGE, length)) {
         const group = groups.get(entry.pack);
         if (group) group.push(entry);
         else groups.set(entry.pack, [entry]);
@@ -745,7 +760,7 @@ export class StoredSnapshot implements SnapshotReader {
         if (
           run &&
           entry.offset - run.end <= gap &&
-          Math.max(run.end, end) - run.start <= RUN
+          Math.max(run.end, end) - run.start <= length
         ) {
           run.end = Math.max(run.end, end);
           run.entries.push(entry);
@@ -793,6 +808,82 @@ export class StoredSnapshot implements SnapshotReader {
       Array.from({ length: Math.min(READS, runs.length) }, read),
     );
     return result;
+  }
+  /**
+   * Feeds the contents of entries of both versions to `visit` in pieces and
+   * keeps none of them, for a consumer that wants a fact about many files
+   * (their line counts) and not the files. Each pack is read in a few
+   * streamed runs, several at a time, and a content the versions share is
+   * read once. Pieces of one entry come in order; entries come in storage's
+   * order, and an empty content gets no piece.
+   */
+  async pour(
+    entries: Record<Version, Entry[]>,
+    visit: (version: Version, entry: Entry, piece: Uint8Array) => void,
+  ): Promise<void> {
+    // Both versions lie in the same packs; an unchanged file is the same
+    // bytes of the same pack in both.
+    const versions = new Map<Entry, Version>();
+    for (const version of ["base", "head"] as const)
+      for (const entry of entries[version]) versions.set(entry, version);
+    const runs = this.runs([...versions.keys()], SWEEP_GAP, Infinity);
+    let next = 0;
+    const read = async () => {
+      while (next < runs.length) {
+        const run = runs[next++];
+        this.reads.push(run.pack);
+        this.fetched.bytes += run.end - run.start;
+        const reader = (
+          await this.object(run.pack, {
+            offset: run.start,
+            length: run.end - run.start,
+          })
+        ).body.getReader();
+        try {
+          // `at` is the pack offset of the piece; entries before `first`
+          // have ended.
+          let at = run.start,
+            first = 0;
+          while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            const end = at + value.length;
+            for (
+              let i = first;
+              i < run.entries.length && run.entries[i].offset < end;
+              i++
+            ) {
+              const entry = run.entries[i],
+                last = entry.offset + entry.size;
+              if (last > at)
+                visit(
+                  versions.get(entry)!,
+                  entry,
+                  value.subarray(
+                    Math.max(entry.offset, at) - at,
+                    Math.min(last, end) - at,
+                  ),
+                );
+            }
+            while (
+              first < run.entries.length &&
+              run.entries[first].offset + run.entries[first].size <= end
+            )
+              first++;
+            at = end;
+          }
+          invariant(at === run.end, "snapshot content missing");
+        } catch (error) {
+          // The other reads end with their current run.
+          next = runs.length;
+          await reader.cancel().catch(() => {});
+          throw error;
+        }
+      }
+    };
+    await Promise.all(
+      Array.from({ length: Math.min(POURS, runs.length) }, read),
+    );
   }
   private tree(version: Version): TreeReader {
     return {
@@ -883,31 +974,48 @@ export function readerOf(source: Snapshot | SnapshotReader): SnapshotReader {
     ? (source as SnapshotReader)
     : new MemorySnapshot(source as Snapshot);
 }
-/** Line counts of the regular files among `paths`, as `split("\n").length` counts them. */
+/**
+ * Line counts of the regular files among each version's `paths`, as
+ * `split("\n").length` counts them. Both versions are counted in one pass:
+ * what a submission waits for is the number of storage reads, and a change
+ * leaves most of the files its graphs name the same in both.
+ */
 export async function lineCounts(
-  tree: TreeReader,
-  paths: Set<string>,
-): Promise<Map<string, number>> {
-  const counts = new Map<string, number>();
-  const count = (bytes: Uint8Array, n = 0) => {
-    for (const byte of bytes) if (byte === 10) n++;
-    return n;
+  snapshot: StoredSnapshot,
+  paths: Record<Version, Set<string>>,
+): Promise<Record<Version, Map<string, number>>> {
+  const counts = {
+    base: new Map<string, number>(),
+    head: new Map<string, number>(),
   };
-  for await (const batch of tree.sweep(
-    (e) => paths.has(e.path) && e.mode !== SYMLINK,
-  ))
-    for (const [entry, bytes] of batch) {
-      let n = 0;
-      if (bytes) n = count(bytes);
-      else {
-        const reader = (await tree.stream(entry)).getReader();
-        while (true) {
-          const { value, done } = await reader.read();
-          if (done) break;
-          n = count(value, n);
+  const entries: Record<Version, Entry[]> = { base: [], head: [] };
+  // A manifest names an entry's pack in full on every line; one string per
+  // pack is kept.
+  const packs = new Map<string, string>();
+  await Promise.all(
+    (["base", "head"] as const).map(async (version) => {
+      const wanted = paths[version];
+      let left = wanted.size;
+      if (!left) return;
+      // One pass over the manifest, ended at the last path wanted.
+      for await (const entry of snapshot[version].list()) {
+        if (!wanted.has(entry.path)) continue;
+        if (entry.mode !== SYMLINK) {
+          const pack = packs.get(entry.pack);
+          if (pack === undefined) packs.set(entry.pack, entry.pack);
+          else entry.pack = pack;
+          entries[version].push(entry);
+          counts[version].set(entry.path, 1);
         }
+        if (!--left) break;
       }
-      counts.set(entry.path, n + 1);
-    }
+    }),
+  );
+  await snapshot.pour(entries, (version, entry, piece) => {
+    let n = counts[version].get(entry.path)!;
+    for (let at = piece.indexOf(10); at !== -1; at = piece.indexOf(10, at + 1))
+      n++;
+    counts[version].set(entry.path, n);
+  });
   return counts;
 }

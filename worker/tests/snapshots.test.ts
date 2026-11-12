@@ -15,12 +15,14 @@ import {
   entriesOf,
   fileOf,
   indexKey,
+  lineCounts,
   scan,
   textOf,
   textsOf,
   type Entry,
   type Scanned,
 } from "../src/snapshot";
+import { MemorySnapshot } from "../src/snapshot";
 import { Requests, SEARCH_REFUSED, metered } from "../src/requests";
 import { seal, storeChunk, storePack } from "../src/upload";
 import { allMigrations, graphs, snapshot } from "./fixtures";
@@ -369,6 +371,35 @@ for (let i = 0; i < 9000; i++) {
   spread[path] = `// ${path}\nexport const v${i} = ${i};\n`;
 }
 const SPREAD_PACKS = 12;
+/** The environment with storage bodies arriving `size` bytes at a time. */
+function trickled(source: Env, size: number): Env {
+  const get = async (key: string, options?: R2GetOptions) => {
+    const object = await source.ARTIFACTS.get(key, options);
+    if (!object) return null;
+    const bytes = new Uint8Array(await object.arrayBuffer());
+    const text = () => new TextDecoder().decode(bytes);
+    return {
+      body: new ReadableStream<Uint8Array>({
+        start(controller) {
+          for (let at = 0; at < bytes.length; at += size)
+            controller.enqueue(bytes.subarray(at, at + size));
+          controller.close();
+        },
+      }),
+      arrayBuffer: async () => bytes.buffer,
+      text: async () => text(),
+      json: async () => JSON.parse(text()),
+    };
+  };
+  const bucket = new Proxy(source.ARTIFACTS, {
+    get: (target, key) =>
+      key === "get" ? get : Reflect.get(target, key, target).bind(target),
+  });
+  return new Proxy(source, {
+    get: (target, key) =>
+      key === "ARTIFACTS" ? bucket : Reflect.get(target, key, target),
+  });
+}
 describe("snapshot reader", () => {
   const many: Snapshot = { base: {}, head: {} };
   for (let i = 0; i < 700; i++)
@@ -666,6 +697,115 @@ describe("snapshot reader", () => {
     expect(texts.get("bin/blob")).toBeNull();
     expect(texts.get("link")).toBeNull();
     expect(texts.get("missing.txt")).toBeNull();
+  });
+  // The full run's submission of a tree of 120,008 files timed out at the
+  // client: counting the lines of the 1,200 files its graphs named took
+  // hundreds of storage reads of about 200 ms each, once for each version.
+  const expected = (tree: Record<string, File>, paths: Iterable<string>) =>
+    new Map(
+      [...paths]
+        .filter((path) => tree[path] && tree[path].mode !== 0o120000)
+        .map((path) => [
+          path,
+          MemorySnapshot.bytes(tree[path]).filter((byte) => byte === 10)
+            .length + 1,
+        ]),
+    );
+  const sorted = (counts: Map<string, number>) => [...counts].sort();
+  it("counts the lines of both versions' files in one pass, each pack read once", async () => {
+    const change: Snapshot = { base: {}, head: {} };
+    for (let i = 0; i < 600; i++) {
+      const path = `pkg${i % 20}/f${String(i).padStart(3, "0")}.go`;
+      const content =
+        Array.from({ length: i % 37 }, (_, n) => `line ${n} of ${i}`).join(
+          "\n",
+        ) + (i % 3 ? "\n" : "");
+      change.base[path] = { mode: 0o100644, content };
+      // A change touches a few files; the rest is the same content twice.
+      change.head[path] =
+        i % 10 === 0
+          ? { mode: 0o100644, content: `${content}changed ${i}\nand more` }
+          : change.base[path];
+    }
+    change.base["only-base.go"] = { mode: 0o100644, content: "package base\n" };
+    change.head["empty.go"] = { mode: 0o100644, content: "" };
+    change.head["link"] = { mode: 0o120000, content: "pkg0" };
+    change.head["bin/blob"] = {
+      mode: 0o100644,
+      content: btoa("\u00ff\n\u0000\n\u00fe"),
+      encoding: "base64",
+    };
+    const stored = await storeSnapshot(testEnv, change, "owner", {
+      pack: 4096,
+      chunk: 16 * 1024,
+    });
+    expect(stored.packs).toBeGreaterThan(20);
+    const wanted = {
+      base: new Set([
+        ...Object.keys(change.base).filter((_, i) => i % 2 === 0),
+        "only-base.go",
+      ]),
+      head: new Set([
+        ...Object.keys(change.head).filter((_, i) => i % 2 === 0),
+        ...["empty.go", "link", "bin/blob", "missing.go"],
+      ]),
+    };
+    // Bodies arrive a few bytes at a time: a piece ends anywhere in a file.
+    for (const size of [7, 1 << 20]) {
+      const requests = new Requests();
+      const reader = await StoredSnapshot.open(
+        metered(trickled(testEnv, size), requests),
+        stored.key,
+      );
+      const opened = requests.used;
+      const counts = await lineCounts(reader, wanted);
+      for (const version of ["base", "head"] as const)
+        expect(sorted(counts[version])).toEqual(
+          sorted(expected(change[version], wanted[version])),
+        );
+      expect(counts.head.get("empty.go")).toBe(1);
+      expect(counts.head.get("bin/blob")).toBe(3);
+      expect(counts.head.has("link")).toBe(false);
+      // No pack is read twice, whichever versions name its files, and the
+      // manifest is passed once for each version.
+      expect(new Set(reader.reads).size).toBe(reader.reads.length);
+      expect(reader.reads.length).toBeLessThanOrEqual(stored.packs);
+      expect(requests.used - opened).toBeLessThanOrEqual(
+        2 * stored.chunks + stored.packs,
+      );
+    }
+  });
+  it("counts lines over a tree spread over many packs with one read of each", async () => {
+    const stored = await storeInterleaved(testEnv, spread, SPREAD_PACKS, "counted");
+    const requests = new Requests();
+    const reader = await StoredSnapshot.open(
+      metered(testEnv, requests),
+      stored.key,
+    );
+    const opened = requests.used;
+    const paths = Object.keys(spread).filter((_, i) => i % 7 === 0);
+    const counts = await lineCounts(reader, {
+      base: new Set(),
+      head: new Set(paths),
+    });
+    expect(counts.base.size).toBe(0);
+    expect(sorted(counts.head)).toEqual(paths.map((path) => [path, 3]).sort());
+    // A sweep of the same files reads each pack once per window of paths.
+    expect(reader.reads.length).toBeLessThanOrEqual(SPREAD_PACKS);
+    expect(requests.used - opened).toBeLessThanOrEqual(1 + SPREAD_PACKS);
+  });
+  it("refuses a content that storage returns short", async () => {
+    const stored = await storeSnapshot(testEnv, many, "owner", { pack: 2048 });
+    const reader = await StoredSnapshot.open(testEnv, stored.key);
+    const entry = (await reader.head.stat("dir/f000.txt"))!;
+    const seen: number[] = [];
+    await expect(
+      reader.pour(
+        { base: [], head: [{ ...entry, size: 1 << 20 }] },
+        (_, __, piece) => void seen.push(piece.length),
+      ),
+    ).rejects.toThrow("snapshot content missing");
+    expect(seen.reduce((n, length) => n + length, 0)).toBeLessThan(1 << 20);
   });
 });
 

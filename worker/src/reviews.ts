@@ -35,20 +35,22 @@ export async function createReview(
   invariant(snapshotRow, "snapshot not found");
   const store = new Store(env),
     snapshot = await StoredSnapshot.open(env, snapshotRow.object_key);
-  for (const version of ["base", "head"] as const) {
+  const versions = ["base", "head"] as const;
+  for (const version of versions) {
     const graph = value.graphs[version];
     invariant(
       graph && Array.isArray(graph.nodes) && graph.nodes.length <= 100000,
       "invalid graph",
     );
-    validateGraph(
-      graph,
-      await lineCounts(
-        snapshot[version],
-        new Set(graph.nodes.map((n: any) => n?.path)),
-      ),
-    );
   }
+  const named = (version: (typeof versions)[number]) =>
+    new Set<string>(value.graphs[version].nodes.map((n: any) => n?.path));
+  const lines = await lineCounts(snapshot, {
+    base: named("base"),
+    head: named("head"),
+  });
+  for (const version of versions)
+    validateGraph(value.graphs[version], lines[version]);
   // Guidance is reproduced from immutable head, never accepted from mutable working state.
   const guidance = await materialize(
     snapshot.head,

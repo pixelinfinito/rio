@@ -497,3 +497,42 @@ to the CLI directly and could not see this.
 The next canary's cancellation probe stops a real service unit that runs a
 review, and passes only if the endpoint review ends cancelled with its workflow
 ended and no job open.
+
+## 12. A submission that outlasted the client's wait
+
+One case of the stopped full run (typescript-go@892b4a3) never became a
+review: the CLI's `POST /v1/reviews` had no answer within the client's 60 s, and
+the endpoint created nothing. The same submission, replayed, took 23 to 38 s
+on that build.
+
+The request validates the submitted graphs against the snapshot before it
+answers, which needs the line count of every file a graph node names: here
+1,211 base and 1,216 head files (6 MiB each) of a tree of 120,008 files in 55
+packs. Measured from a scratch Worker reading the same snapshot:
+
+- A ranged read of a pack takes about 200 ms before its first byte, whatever
+  its length; the bytes then arrive at 40 MiB/s or more. What such a pass costs
+  is its number of reads, not their size.
+- In path order with a 256 KiB gap (section 9's scan) one version took 209
+  reads and 13.7 s, three reads in flight. Section 10's sweep (1 MiB gap) takes
+  87 reads and 6 s, and the request did it once for each version.
+- 692 of the 1,216 head files are the base's bytes at the same place in the
+  same pack. Both versions' files together are the same 87 reads: 7.4 s with
+  three in flight, 3.4 s with six.
+
+| Cause | Change | Where |
+|---|---|---|
+| A pass per version | The line counts of both versions are one pass: each manifest is listed once (the two at the same time, each ended at the last path wanted) and the contents are read together, so a file the change left alone is read once | `worker/src/snapshot.ts`, `worker/src/reviews.ts` |
+| Reads held in memory, three at a time | The pass streams (`pour`): a run of a pack is counted as it arrives and nothing of it is kept, so six runs may be in flight (what one invocation may have open) and a run needs no length limit, where a held read was limited to 8 MiB and three in flight for the isolate's memory. Large contents are part of the same runs | `worker/src/snapshot.ts` |
+| A manifest body left open | A listing that its consumer ends early cancels the rest of its body, so it does not keep one of the invocation's connections while the contents are read | `worker/src/snapshot.ts` |
+
+A stream that ends before the bytes the manifest promises is an error
+(`snapshot content missing`), not a shorter count. What the pass holds is the
+manifest entries of the files the graphs name. The request's body bounds
+those: 8 MiB of submission names at most some 120,000 nodes, a few tens of MiB
+of entries, and the CLI's graphs have 2,000 nodes each.
+
+The client's 60 s stays: a submission is not repeated on a timeout (it is not
+idempotent), and the wait was not what was wrong. What remains outside this
+bound is the request's own body (3 MiB for this case) and the store's writes,
+3 to 9 s in the replays whatever the tree.
