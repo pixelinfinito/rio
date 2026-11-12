@@ -34,6 +34,47 @@ pub struct EndpointOutcome {
     /// The endpoint's id of the review (for its audit); `None` when nothing was submitted.
     pub remote_id: Option<String>,
 }
+/// Whether this process has an endpoint review: one being submitted, or
+/// submitted and waited for. The first interrupt cancels it; until the
+/// endpoint has the cancellation the process must not leave, or the review
+/// would run to its deadline with no one left to read it.
+static OWNED: std::sync::LazyLock<tokio::sync::watch::Sender<bool>> =
+    std::sync::LazyLock::new(|| tokio::sync::watch::channel(false).0);
+/// How long a second interrupt waits for the first one's cancellation: longer
+/// than the client keeps trying to cancel.
+const SETTLE_WINDOW: Duration = Duration::from_secs(30);
+const INTERRUPTED_EARLY: &str = "interrupted before the endpoint review was submitted";
+/// Marks the endpoint review as this process's until dropped.
+struct Owned;
+impl Owned {
+    fn begin() -> Self {
+        OWNED.send_replace(true);
+        Self
+    }
+}
+impl Drop for Owned {
+    fn drop(&mut self) {
+        OWNED.send_replace(false);
+    }
+}
+/// For an exit that does not wait for the review (the second interrupt):
+/// waits until the first interrupt has ended this process's endpoint review,
+/// if it has one, for at most `SETTLE_WINDOW`.
+pub async fn settled() {
+    let mut owned = OWNED.subscribe();
+    if !*owned.borrow() {
+        return;
+    }
+    eprintln!("Waiting for the endpoint to cancel the review…");
+    if tokio::time::timeout(SETTLE_WINDOW, owned.wait_for(|owned| !owned))
+        .await
+        .is_err()
+    {
+        eprintln!(
+            "The endpoint did not confirm the cancellation; its review may run until its deadline"
+        );
+    }
+}
 /// Saved tokens are bound to the configured URL; never send them elsewhere.
 pub fn client(url: &str, config_dir: &Path) -> Result<rio_client::Client> {
     let token = match std::env::var("RIO_API_TOKEN").ok() {
@@ -141,7 +182,11 @@ pub async fn review(
         "prepared locally: diff {diff_seconds:.1}s, graph and plan {graph_seconds:.1}s, run records {:.1}s",
         lap()
     );
-    let upload = client.upload_snapshot(&changes.base, &changes.head).await?;
+    // Nothing runs on the endpoint yet: an interrupt ends the review here.
+    let upload = tokio::select! {
+        _ = cancellation.cancelled() => anyhow::bail!("{INTERRUPTED_EARLY}"),
+        upload = client.upload_snapshot(&changes.base, &changes.head) => upload?,
+    };
     let upload_seconds = lap();
     eprintln!(
         "snapshot: uploaded {} in {} new contents ({} in {} distinct contents, {} files total)",
@@ -161,6 +206,10 @@ pub async fn review(
     if let Some(lineage) = &lineage {
         submission["lineage"] = lineage.submission();
     }
+    // Owned before the last look at the interrupt: a second interrupt then
+    // finds either no submission or this mark.
+    let _owned = Owned::begin();
+    ensure!(!cancellation.is_cancelled(), "{INTERRUPTED_EARLY}");
     let remote_id = client.submit(&submission).await?;
     eprintln!("Endpoint review: {remote_id}");
     eprintln!(

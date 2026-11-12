@@ -45,6 +45,26 @@ class AACRAdapterTests(unittest.TestCase):
             self.assertEqual([call.args[1] for call in killpg.call_args_list],
                              [signal.SIGINT, signal.SIGKILL])
 
+    def test_a_request_to_terminate_is_an_interrupt(self):
+        """A service stop unwinds like Ctrl-C, so running reviews are stopped and not orphaned."""
+        previous = {number: signal.getsignal(number) for number in (signal.SIGTERM, signal.SIGINT)}
+        try:
+            aacr.interrupt_once()
+            with self.assertRaises(KeyboardInterrupt):
+                os.kill(os.getpid(), signal.SIGTERM)
+                # The handler runs between bytecodes of the main thread.
+                for _ in range(1000):
+                    threading.Event().wait(0.001)
+            # The same stop delivered again, and the interrupt a supervisor
+            # relays, do not interrupt the cleanup.
+            for number in (signal.SIGTERM, signal.SIGINT):
+                os.kill(os.getpid(), number)
+                for _ in range(50):
+                    threading.Event().wait(0.001)
+        finally:
+            for number, handler in previous.items():
+                signal.signal(number, handler)
+
     def test_interrupted_review_does_not_persist_terminal_status(self):
         """Resume must retry a case interrupted before it produces a usable report."""
         with tempfile.TemporaryDirectory() as tmp:

@@ -2667,6 +2667,140 @@ fn submission_endpoint() -> MockEndpoint {
         }
     })
 }
+/// A service manager's stop reaches a process twice within milliseconds
+/// (measured: systemd signals each process of a stopped unit twice). The
+/// second signal ends the CLI without a document, but not before the endpoint
+/// has the cancellation of its review, also of one whose submission is still
+/// in flight.
+#[cfg(unix)]
+#[test]
+fn a_stop_signalled_twice_cancels_the_endpoint_review_before_leaving() {
+    use std::sync::{
+        Arc,
+        atomic::{AtomicBool, Ordering},
+    };
+    use std::time::{Duration, Instant};
+    for (during_submission, second) in [
+        (false, libc::SIGTERM),
+        (false, libc::SIGINT),
+        (true, libc::SIGTERM),
+    ] {
+        let temp = repository();
+        let root = temp.path();
+        fs::write(root.join("a.txt"), "two\n").unwrap();
+        // Set when the CLI is where the stop should meet it.
+        let reached = Arc::new(AtomicBool::new(false));
+        let flag = reached.clone();
+        let endpoint = MockEndpoint::start(move |method, path, _| {
+            let route = path.split('?').next().unwrap_or(path);
+            match (method, route) {
+                ("POST", "/v1/contents/missing") => (200, serde_json::json!({"missing": []})),
+                ("PUT", p) if p.starts_with("/v1/manifests/") => {
+                    (201, serde_json::json!({"chunk": 0}))
+                }
+                ("POST", p) if p.starts_with("/v1/manifests/") && p.ends_with("/seal") => (
+                    201,
+                    serde_json::json!({"id": p.trim_start_matches("/v1/manifests/").trim_end_matches("/seal")}),
+                ),
+                ("POST", "/v1/reviews") => {
+                    if during_submission {
+                        flag.store(true, Ordering::SeqCst);
+                        std::thread::sleep(Duration::from_millis(700));
+                    }
+                    (
+                        202,
+                        serde_json::json!({"id": "open-review", "status": "queued"}),
+                    )
+                }
+                ("GET", "/v1/reviews/open-review") => {
+                    flag.store(true, Ordering::SeqCst);
+                    (
+                        200,
+                        serde_json::json!({"id": "open-review", "status": "running"}),
+                    )
+                }
+                // Slower than the gap between the two signals.
+                ("POST", "/v1/reviews/open-review/cancel") => {
+                    std::thread::sleep(Duration::from_millis(300));
+                    (
+                        200,
+                        serde_json::json!({"id": "open-review", "status": "cancelled"}),
+                    )
+                }
+                _ => (404, serde_json::json!({"error": "not found"})),
+            }
+        });
+        let setup = rio(root);
+        let mut command = Process::new(setup.get_program());
+        command.current_dir(root);
+        for (key, value) in setup.get_envs() {
+            if let Some(value) = value {
+                command.env(key, value);
+            } else {
+                command.env_remove(key);
+            }
+        }
+        let mut child = command
+            .env("RIO_ENDPOINT_URL", &endpoint.url)
+            .env("RIO_API_TOKEN", TOKEN)
+            .args(["review", "--format", "json"])
+            .stdout(std::process::Stdio::piped())
+            .stderr(std::process::Stdio::piped())
+            .spawn()
+            .unwrap();
+        let deadline = Instant::now() + Duration::from_secs(60);
+        while !reached.load(Ordering::SeqCst) {
+            if Instant::now() >= deadline || child.try_wait().unwrap().is_some() {
+                let _ = child.kill();
+                let output = child.wait_with_output().unwrap();
+                panic!(
+                    "review did not reach the endpoint: {}",
+                    String::from_utf8_lossy(&output.stderr)
+                );
+            }
+            std::thread::sleep(Duration::from_millis(5));
+        }
+        // SAFETY: signaling only the child CLI started by this test.
+        unsafe {
+            libc::kill(child.id() as i32, libc::SIGTERM);
+        }
+        std::thread::sleep(Duration::from_millis(2));
+        unsafe {
+            libc::kill(child.id() as i32, second);
+        }
+        let deadline = Instant::now() + Duration::from_secs(20);
+        while child.try_wait().unwrap().is_none() {
+            if Instant::now() >= deadline {
+                let _ = child.kill();
+                let output = child.wait_with_output().unwrap();
+                panic!(
+                    "the stop did not finish: {}",
+                    String::from_utf8_lossy(&output.stderr)
+                );
+            }
+            std::thread::sleep(Duration::from_millis(5));
+        }
+        // The endpoint records a request once it has answered it: the CLI
+        // was still there for the answer to its cancellation.
+        let answered = endpoint.take();
+        let output = child.wait_with_output().unwrap();
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        assert!(
+            answered
+                .iter()
+                .any(|(method, path, _)| method == "POST"
+                    && path == "/v1/reviews/open-review/cancel"),
+            "left without cancelling (submission in flight: {during_submission}): {stderr}"
+        );
+        assert_eq!(output.status.code(), Some(130), "{stderr}");
+        assert!(output.stdout.is_empty());
+        assert!(
+            stderr.contains("Waiting for the endpoint to cancel the review…"),
+            "{stderr}"
+        );
+        assert!(!stderr.contains("did not confirm"), "{stderr}");
+    }
+}
 #[test]
 fn hosted_prepare_submits_what_rio_review_submits_under_the_base_profile() {
     let temp = repository();

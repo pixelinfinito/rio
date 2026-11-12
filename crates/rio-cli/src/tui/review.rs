@@ -829,6 +829,13 @@ impl ReviewHost {
         }));
     }
 
+    /// Leaves after the second Ctrl-C. Tools are killed already; an endpoint
+    /// review has its cancellation first, and is not left running unread.
+    pub fn exit_killed(&self) -> ! {
+        self.runtime.block_on(crate::endpoint::settled());
+        std::process::exit(130)
+    }
+
     /// Cancel a running review and wait until it has stopped.
     pub fn stop(&mut self) {
         if let Some((cancellation, _)) = &self.running {

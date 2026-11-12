@@ -63,7 +63,7 @@ pub async fn review(args: crate::ReviewArgs, started: String) -> u8 {
         drop(guard);
         if host.killed {
             // The second Ctrl-C: tools are killed; leave at once.
-            std::process::exit(130);
+            host.exit_killed();
         }
         // Quitting during a run stops it (an endpoint review is cancelled)
         // before the process exits.
@@ -118,7 +118,7 @@ pub async fn qa(args: crate::ReviewArgs) -> u8 {
         drop(capture);
         drop(guard);
         if host.killed {
-            std::process::exit(130);
+            host.exit_killed();
         }
         host.stop();
         result.map(|()| host.killed)
@@ -259,7 +259,7 @@ pub async fn pull_request(
         drop(capture);
         drop(guard);
         if host.killed {
-            std::process::exit(130);
+            host.exit_killed();
         }
         host.stop();
         result

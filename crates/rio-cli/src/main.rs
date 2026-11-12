@@ -735,12 +735,20 @@ async fn stream_review(args: ReviewArgs, started: String) -> u8 {
     let cancellation = CancellationToken::new();
     let signal_cancel = cancellation.clone();
     let signal_supervisor = supervisor.clone();
+    // Set by a second interrupt: the review ends without a document.
+    let forced = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
+    let signal_forced = forced.clone();
     let signals = tokio::spawn(async move {
         if interrupted().await.is_ok() {
             signal_cancel.cancel();
             eprintln!("Interrupted; stopping checks and preserving partial results…");
             if interrupted().await.is_ok() {
+                signal_forced.store(true, std::sync::atomic::Ordering::SeqCst);
                 signal_supervisor.kill_all();
+                // Leaving must not leave the endpoint's review running: a
+                // service manager's stop can signal a process twice within
+                // milliseconds, before the first signal's cancellation is sent.
+                endpoint::settled().await;
                 std::process::exit(130);
             }
         }
@@ -771,6 +779,9 @@ async fn stream_review(args: ReviewArgs, started: String) -> u8 {
         },
     )
     .await;
+    if forced.load(std::sync::atomic::Ordering::SeqCst) {
+        std::process::exit(130);
+    }
     let _ = progress.await;
     let executed = match outcome {
         Ok(executed) => executed,

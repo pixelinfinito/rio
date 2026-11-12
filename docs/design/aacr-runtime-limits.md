@@ -474,3 +474,26 @@ What stays as it was: the pass over a change's text (triage, plans, contract
 inventory, cache hunks) still reads in path order. It is bounded by the change
 (32 MiB, section 8), runs a fixed number of times, and is counted like
 everything else.
+
+## 11. Stopping the full run: a stop that signals twice
+
+Stopping the full stage (`systemctl --user stop`) left its two reviews in
+flight `running` on the endpoint, not cancelled; they were cancelled by hand.
+Both CLIs had printed that they were interrupted and then left with status 130.
+
+Measured with a scratch unit: systemd signals every process of a stopped unit
+twice within about 2 ms (the unit's processes when the stop begins, and what is
+left when its main process has gone). The CLI took the second signal for a
+second Ctrl-C, which leaves at once, before the cancellation begun by the first
+had reached the endpoint. The cancellation probe of section 9 sent one signal
+to the CLI directly and could not see this.
+
+| Cause | Change | Where |
+|---|---|---|
+| A second interrupt left while the endpoint review ran | The CLI marks the endpoint review as its own from before the submission until the wait for it has ended (which cancels on an interrupt). A second interrupt still ends the CLI with 130 and no document, but first waits, at most 30 s, until that mark is gone. The interactive UI's second Ctrl-C does the same | `crates/rio-cli/src/endpoint.rs`, `crates/rio-cli/src/main.rs`, `crates/rio-cli/src/tui/` |
+| An interrupt before the submission still submitted | The snapshot upload ends at the interrupt, and nothing is submitted after one | `crates/rio-cli/src/endpoint.rs` |
+| A terminated adapter left its CLIs to the service manager | The adapter treats a request to terminate as an interrupt: it stops its reviews (each CLI cancels its endpoint review) and leaves the cases resumable. It acts on the first signal only, so a repeated one, or the interrupt a supervisor relays, does not cut that short | `eval/aacr_bench.py` |
+
+The next canary's cancellation probe stops a real service unit that runs a
+review, and passes only if the endpoint review ends cancelled with its workflow
+ended and no job open.

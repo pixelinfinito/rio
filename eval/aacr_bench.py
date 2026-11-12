@@ -59,6 +59,21 @@ def stop_process(proc):
         proc.wait()
 
 
+def interrupt_once():
+    """Treat a service manager's stop as an interrupt: children are stopped, attempts stay resumable."""
+    seen = []
+
+    def interrupt(*_):
+        # A stop can deliver several signals (systemd signals a unit's processes
+        # twice, a supervisor relays its own); the repeats must not interrupt
+        # the cleanup the first one began.
+        if not seen:
+            seen.append(True)
+            raise KeyboardInterrupt
+    for number in (signal.SIGTERM, signal.SIGINT):
+        signal.signal(number, interrupt)
+
+
 def execute(argv, cwd, evidence, name, timeout=600, env=None, stop_event=None):
     """Capture commands and streams; propagate cancellation after child cleanup."""
     out, err = evidence / f"{name}.stdout", evidence / f"{name}.stderr"
@@ -569,6 +584,7 @@ def main():
         setattr(args, key, getattr(args, key).resolve())
     if args.concurrency < 1 or args.timeout < 1 or (args.limit is not None and args.limit < 1):
         parser.error("concurrency, timeout and limit must be positive")
+    interrupt_once()
     (run if args.stage == "run" else evaluate)(args)
 
 
