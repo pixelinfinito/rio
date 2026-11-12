@@ -214,13 +214,16 @@ def audit_failures(audit):
     """Platform errors a review's audit records under a report that only counts them.
 
     Votes that did not complete carry the error that stopped them. An execution
-    counts when its last attempt never ran the command (the runner failed), or
-    when one of Rio's own analysis jobs timed out; the stderr of a repository
-    command an agent asked for is that command's output, never a cause.
+    counts when its call never ran the command (the runner failed and no retry
+    followed), or when one of Rio's own analysis jobs timed out; the stderr of
+    a repository command an agent asked for is that command's output, never a
+    cause.
 
-    The audit lists jobs in no order and a retry has a job id of its own, so
-    the last attempt of a command is the one numbered highest; separate calls
-    of one command share that number and all count.
+    Only a runner's failure is tried again, so a timeout ends its call
+    whatever its number. The audit lists jobs in no order, a retry has a job
+    id of its own and nothing names the call an execution belongs to: the
+    runner failures of a command at one attempt were recovered when as many of
+    its executions are numbered one higher, and all count when fewer are.
     """
     audit = audit if isinstance(audit, dict) else {}
     texts = [str(vote.get("error", "")) for vote in audit.get("votes", [])
@@ -231,10 +234,13 @@ def audit_failures(audit):
                           json.dumps(execution.get("command"))), []).append(execution)
     attempt = lambda execution: execution.get("attempt") or 1
     for executions in calls.values():
-        last = max(map(attempt, executions))
+        tried = Counter(map(attempt, executions))
+        failed = Counter(attempt(execution) for execution in executions
+                                     if execution.get("outcome") != "exited")
         for execution in executions:
-            if attempt(execution) == last and (execution.get("outcome") != "exited" or (
-                    execution.get("timed_out") and execution.get("kind") != "run")):
+            number = attempt(execution)
+            if (failed[number] > tried[number + 1] if execution.get("outcome") != "exited"
+                    else execution.get("timed_out") and execution.get("kind") != "run"):
                 texts.append(str(execution.get("stderr", "")))
     return texts
 

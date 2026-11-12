@@ -2633,9 +2633,16 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         // Cancelled after the report was written: the report says what the
         // review's status does.
         if (ended.status === "partial" && report.status !== "partial") {
+          // Stored before the report held here says so: an attempt of this
+          // step that follows a failed write must find it still to write.
+          const notes = [...report.footer.notes, CANCELLED_NOTE];
+          await store.put(key, {
+            ...report,
+            status: "partial",
+            footer: { ...report.footer, notes },
+          });
           report.status = "partial";
-          report.footer.notes.push(CANCELLED_NOTE);
-          await store.put(key, report);
+          report.footer.notes = notes;
         }
         await stopRunners(this.env, id);
         await withdrawIdle(this.env, id);

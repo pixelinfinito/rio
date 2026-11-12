@@ -561,7 +561,38 @@ bound or an end the sections above state and the code did not keep:
 | The adapter counted a stopped workflow's note as a deadline whatever the platform's reason, took the last listed execution for the last attempt, joined its error texts into one (one cause for all), and failed on a report that was not an object | The platform's reason is the cause where it names one; the highest attempt is the last; each text has its cause; only an object is a report | `eval/aacr_bench.py` |
 | The object store failed one write inside the platform while a snapshot was uploaded (`put: We encountered an internal connectivity issue. Please try again. (10001)`), and the endpoint answered 400: the CLI retries an upload's requests on 503, not on a bad request, so the case failed (`FreeCAD__FreeCAD@a050e42` in the run of section 12's build), and the adapter gave it no cause | The object store's passing faults (internal error, unavailable, too many requests) are answered 503 with `retry-after`, as the database's are; the adapter counts them as `storage` | `worker/src/index.ts`, `eval/aacr_bench.py` |
 
+A second reading of the change, after those, found what they had left:
+
+| Cause | Change | Where |
+|---|---|---|
+| A job delivery read its review uncancelled, the cancel committed and looked for containers to stop, and the delivery then leased the job: the cancel's withdrawal leaves a leased job alone, so a container started after the cancel | The lease itself refuses a job of a cancelled review, in the statement that takes it | `worker/src/index.ts` |
+| A completion read its review open, the cancel committed (and no longer found the job open), and the completion then read the review cancelled and sent nothing: the wait had neither event | The completion reads the review once. What it read decides: a result for an open review, the cancellation for one cancelled before the read, nothing for one past its deadline (it is not told it was cancelled) | `worker/src/jobs.ts` |
+| A cancel that arrived while a publication was under way did not stop it: only the read before the first write asked | Every write to the host renews the publication's lease, and the same statement refuses once the review is cancelled. What was written stays, as with a lost lease, and the check run says the publication stopped | `worker/src/publish.ts` |
+| A cancelled preparation whose event could not be written ended the cancel before its container was stopped, and no later cancel found the review to end | The pull request record, the container, the job and the event are each tried whatever became of the one before; a repeated cancel finds the review it ended and finishes the rest, writing the event once | `worker/src/pulls.ts` |
+| A cancel that arrived while the check run of a prepared review was being created found none to complete, and the one then created stayed in progress | The preparation reads the review again after announcing it, and completes the check run of one that ended meanwhile; it prepares nothing for it | `worker/src/pulls.ts` |
+| The finish step marked the report it holds `partial` before the write that stores it: an attempt after a failed write found nothing to write, and the stored report stayed `complete` | The report is stored first, and the one held says so after | `worker/src/workflow.ts` |
+| The submission that creates a review is the one request no client repeats, so the object store's passing fault still ended it, now with a 503 | A request's handler tries a read, a listing, or a write whose body can be sent again twice more (0.2 s, 0.8 s) when the store failed it in passing. A streamed body is not sent again: the client repeats that request on the 503 | `worker/src/storage.ts`, `worker/src/index.ts` |
+| A stop that was answered withdraws its job, and a runner object that forgot the stop reads that record. When the withdrawal could not be written the job still read as leased, and a delivery already holding its lease started a container for a cancelled review | The runner object reads the review with the job, and starts nothing for one that ended or was cancelled: what the queue's lease refuses | `worker/src/sandbox.ts` |
+| The adapter took a command's highest attempt for its last, over all calls of that command: the retry of one call hid the timeout that had ended another | A timeout ends its call whatever its number (only a runner's failure is tried again) and counts; a runner's failure was recovered when as many executions of the command are numbered one higher. The audit names no call, so fewer retries than failures count them all | `eval/aacr_bench.py` |
+
+Found by that reading and not changed:
+
+- **A submission interrupted before it answers.** The endpoint names a review
+  in its answer to the request that creates it. A CLI told to stop while that
+  request is pending has no name to cancel by, and a service manager that
+  ends it before the answer leaves a review that runs to its own deadline.
+  Closing this needs the client to name the review (a protocol change and a
+  migration), which is not part of this change.
+- **Request counts of failed attempts across a restart.** A step records its
+  counts with its result. The counter in memory keeps a failed attempt's
+  requests through the retries that follow in the same run of the instance;
+  one that restarts between a failed attempt and its retry counts that
+  attempt's requests as not made. The loss is bounded by one step's attempts
+  and falls into the fifth of the platform's limit the budget leaves unused
+  (section 10). Recording on the failure path needs a write that fails for
+  the reasons the attempt did.
+
 None of this was deployed while the benchmark of section 12's build ran: that
-run measures the build it started with. The last row
-was found by that run and is not validated by it: a submission that meets the
-fault in its one creating request is still not retried, and ends with the 503.
+run measures the build it started with. The object store's fault was found by
+that run and its handling is not validated by it, nor is any row of the
+second table.

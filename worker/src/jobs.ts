@@ -389,11 +389,17 @@ export async function finishJob(
     return finishPrepare(env, review, result, payload.snapshot_id);
   // Keep completed artifacts for audit after cancellation or the review's
   // end, without resuming model work: only an open review waits for a job.
-  const state = await env.DB.prepare("SELECT status FROM reviews WHERE id=?")
+  // One read: a cancel that lands after it finds this job completed and
+  // sends nothing, and the result sent below ends the wait all the same.
+  const state = await env.DB.prepare(
+    "SELECT status,cancelled,deadline FROM reviews WHERE id=?",
+  )
     .bind(review)
-    .first<{ status: string }>();
+    .first<{ status: string; cancelled: number; deadline: number }>();
+  if (!state) return;
   const type = `job-${job}-${attempt}`;
-  if (state?.status === "cancelled") {
+  const open = state.status === "queued" || state.status === "running";
+  if (state.status === "cancelled" || (open && state.cancelled)) {
     // The cancel route ends the waits of the jobs open when it runs. One
     // that completed just before it was no longer open, so its wait is
     // ended here, with no result either.
@@ -406,8 +412,7 @@ export async function finishJob(
     }
     return;
   }
-  if (await store.cancelled(review)) return;
-  if (state?.status !== "queued" && state?.status !== "running") return;
+  if (!open || Date.now() > state.deadline) return;
   // Re-sending after a transport failure is safe; event type includes the immutable attempt.
   const instance = await env.REVIEWS.get(review);
   await instance.sendEvent({ type, payload: { key } });

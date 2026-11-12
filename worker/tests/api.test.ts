@@ -1,7 +1,7 @@
 import { env, applyD1Migrations } from "cloudflare:test";
 import { beforeAll, beforeEach, describe, it, expect } from "vitest";
 import worker, { app, transient } from "../src/index";
-import { D1Ledger, Store } from "../src/storage";
+import { D1Ledger, Store, steady } from "../src/storage";
 import { hash, canonical } from "../src/validation";
 import { jobToken, sign } from "../src/auth";
 import { createJob, createModelJob, finishJob } from "../src/jobs";
@@ -652,6 +652,168 @@ describe("Worker API and storage", () => {
         .first(),
     ).toEqual({ status: "failed", result_key: null });
   });
+  it("does not lease a job of a review cancelled since the delivery read it", async () => {
+    const id = await createReview();
+    await createJob(runtime, id, "late", "run", ["true"], "head", snapshotId);
+    // The cancel commits between the delivery's read of the review and its
+    // lease, before the cancel has withdrawn the job.
+    let cancels = 0;
+    const racing = new Proxy(runtime.DB, {
+      get(target, key) {
+        const value = Reflect.get(target, key);
+        if (key !== "prepare")
+          return typeof value === "function" ? value.bind(target) : value;
+        return (sql: string) => {
+          const statement = target.prepare(sql);
+          if (sql !== "SELECT cancelled,deadline FROM reviews WHERE id=?")
+            return statement;
+          return {
+            bind: (...args: unknown[]) => ({
+              first: async () => {
+                const row = await statement.bind(...args).first();
+                cancels++;
+                await target
+                  .prepare(
+                    "UPDATE reviews SET cancelled=1,status='cancelled' WHERE id=?",
+                  )
+                  .bind(id)
+                  .run();
+                return row;
+              },
+            }),
+          };
+        };
+      },
+    });
+    const started: string[] = [],
+      outcomes: string[] = [];
+    await worker.queue(
+      {
+        messages: [
+          {
+            body: { review_id: id, job_id: "late", attempt: 1 },
+            attempts: 1,
+            ack: () => outcomes.push("ack"),
+            retry: () => outcomes.push("retry"),
+          },
+        ],
+      } as any,
+      {
+        ...runtime,
+        DB: racing,
+        RUNNER_BACKEND: "sandbox",
+        SANDBOX: {
+          idFromName: (name: string) => name,
+          get: (name: string) => ({
+            fetch: async () => {
+              started.push(name);
+              throw new Error("must not start");
+            },
+          }),
+        },
+      } as unknown as Env,
+    );
+    expect(cancels).toBe(1);
+    expect(outcomes).toEqual(["ack"]);
+    expect(started).toEqual([]);
+    // Left for the cancel to withdraw: no lease keeps it from that.
+    expect(
+      await runtime.DB.prepare(
+        "SELECT status,lease_until FROM jobs WHERE id='late' AND review_id=?",
+      )
+        .bind(id)
+        .first(),
+    ).toEqual({ status: "pending", lease_until: 0 });
+  });
+  it("tries an object operation again when the store fails it in passing", async () => {
+    const fault = (message: string) => () => {
+      throw new Error(message);
+    };
+    const internal =
+      "put: We encountered an internal connectivity issue. Please try again. (10001)";
+    // What each call of an operation does, in order; the real bucket after.
+    const failing = (plan: Record<string, (() => never)[]>) => {
+      const calls: string[] = [];
+      const bucket = new Proxy(runtime.ARTIFACTS, {
+        get(target, key) {
+          const value = Reflect.get(target, key);
+          if (typeof value !== "function") return value;
+          return (...args: unknown[]) => {
+            calls.push(String(key));
+            const next = plan[String(key)]?.shift();
+            return next ? next() : value.apply(target, args);
+          };
+        },
+      });
+      return { calls, env: steady({ ...runtime, ARTIFACTS: bucket }, [0, 0]) };
+    };
+    // A write whose body can be sent again, and a read, ride out the fault.
+    const twice = failing({
+      put: [fault(internal), fault(internal)],
+      get: [fault("get: We encountered an internal error. Please try again. (10001)")],
+    });
+    await twice.env.ARTIFACTS.put("steady/a", "kept");
+    expect(await (await twice.env.ARTIFACTS.get("steady/a"))!.text()).toBe(
+      "kept",
+    );
+    expect(twice.calls).toEqual(["put", "put", "put", "get", "get"]);
+    // Not past the waits it has, and not a fault that says the request is wrong.
+    const thrice = failing({
+      put: [fault(internal), fault(internal), fault(internal)],
+    });
+    await expect(thrice.env.ARTIFACTS.put("steady/b", "lost")).rejects.toThrow(
+      internal,
+    );
+    expect(thrice.calls).toHaveLength(3);
+    const refused = failing({
+      put: [fault("put: The specified key does not exist. (10007)")],
+    });
+    await expect(refused.env.ARTIFACTS.put("steady/c", "x")).rejects.toThrow(
+      "(10007)",
+    );
+    expect(refused.calls).toHaveLength(1);
+    // A stream was read by the attempt that failed: it is not sent again.
+    const streamed = failing({ put: [fault(internal)] });
+    await expect(
+      streamed.env.ARTIFACTS.put(
+        "steady/d",
+        new Blob(["x"]).stream() as ReadableStream,
+      ),
+    ).rejects.toThrow(internal);
+    expect(streamed.calls).toHaveLength(1);
+    // The request that creates a review is the one no client repeats: the
+    // fault that ended a benchmark case as a bad request no longer ends it.
+    const uploaded = await upload();
+    const s = submission();
+    s.snapshot_id = ((await uploaded.json()) as any).id;
+    let submissions = 0;
+    const bucket = new Proxy(runtime.ARTIFACTS, {
+      get(target, key) {
+        const value = Reflect.get(target, key);
+        if (typeof value !== "function") return value;
+        return (...args: unknown[]) => {
+          if (
+            key === "put" &&
+            String(args[0]).endsWith("/submission.json") &&
+            !submissions++
+          )
+            throw new Error(internal);
+          return value.apply(target, args);
+        };
+      },
+    });
+    const response = await worker.fetch(
+      new Request("https://rio.test/v1/reviews", {
+        method: "POST",
+        headers: owner,
+        body: JSON.stringify(s),
+      }),
+      { ...runtime, ARTIFACTS: bucket } as Env,
+      { waitUntil() {}, passThroughOnException() {} } as any,
+    );
+    expect(response.status).toBe(202);
+    expect(submissions).toBe(2);
+  });
   it("answers a passing storage fault as unavailable, not as a bad request", async () => {
     const id = await createReview();
     const failing = (message: string) =>
@@ -832,6 +994,85 @@ describe("Worker API and storage", () => {
         ).first<any>()
       ).status,
     ).toBe("completed");
+  });
+  it("sends the result of a job whose review is cancelled just after the completion read it", async () => {
+    const id = await createReview();
+    await createJob(runtime, id, "read", "run", ["true"], "head", snapshotId);
+    // The cancel commits after the completion has read the review open: its
+    // route no longer finds the job open and sends nothing for it.
+    let cancelled = 0;
+    const racing = {
+      ...runtime,
+      DB: new Proxy(runtime.DB, {
+        get(target, key) {
+          const value = Reflect.get(target, key);
+          if (key !== "prepare")
+            return typeof value === "function" ? value.bind(target) : value;
+          return (sql: string) => {
+            const statement = target.prepare(sql);
+            if (sql !== "SELECT status,cancelled,deadline FROM reviews WHERE id=?")
+              return statement;
+            return {
+              bind: (...args: unknown[]) => ({
+                first: async () => {
+                  const row = await statement.bind(...args).first();
+                  cancelled++;
+                  await request(`/v1/reviews/${id}/cancel`, "POST", {});
+                  return row;
+                },
+              }),
+            };
+          };
+        },
+      }),
+    } as Env;
+    await finishJob(racing, id, "read", 1, {
+      job_id: "read",
+      attempt: 1,
+      version: "head",
+      exit_code: 0,
+      stdout: "",
+      stderr: "",
+      timed_out: false,
+      truncated: false,
+    });
+    expect(cancelled).toBe(1);
+    expect(
+      (
+        await runtime.DB.prepare("SELECT cancelled FROM reviews WHERE id=?")
+          .bind(id)
+          .first<any>()
+      ).cancelled,
+    ).toBe(1);
+    // One event ends the wait; none would have left it to its timeout.
+    const row = await runtime.DB.prepare(
+      "SELECT result_key FROM jobs WHERE id='read'",
+    ).first<any>();
+    expect(fakeWorkflow.events.map((e) => [e.type, e.payload])).toEqual([
+      ["job-read-1", { key: row.result_key }],
+    ]);
+    // A review past its deadline, not cancelled, is not told it was.
+    const overdue = crypto.randomUUID();
+    await runtime.DB.prepare(
+      "INSERT INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES(?,'owner','unused','running',?,?,?)",
+    )
+      .bind(overdue, Date.now(), 100000, Date.now() + 600000)
+      .run();
+    await createJob(runtime, overdue, "slow", "run", ["true"], "head", snapshotId);
+    await runtime.DB.prepare("UPDATE reviews SET deadline=1 WHERE id=?")
+      .bind(overdue)
+      .run();
+    await finishJob(runtime, overdue, "slow", 1, {
+      job_id: "slow",
+      attempt: 1,
+      version: "head",
+      exit_code: 0,
+      stdout: "",
+      stderr: "",
+      timed_out: false,
+      truncated: false,
+    });
+    expect(fakeWorkflow.events).toHaveLength(1);
   });
   it("ends every open wait of a cancelled review when one event cannot be sent", async () => {
     const id = await createReview();

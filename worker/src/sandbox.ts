@@ -93,17 +93,23 @@ export class SandboxRunner {
     }));
   }
   /**
-   * Whether the job was withdrawn, as a stop that was answered leaves it:
-   * the record that outlives this object, which remembers a stop only while
-   * it stays in memory.
+   * Whether the job was withdrawn, as a stop that was answered leaves it, or
+   * its review ended or was cancelled, which is what the queue's lease
+   * refuses and stays true when the withdrawal after a stop could not be
+   * written: the records that outlive this object, which remembers a stop
+   * only while it stays in memory.
    */
   private async withdrawn(job: Execution): Promise<boolean> {
     const row = await this.env.DB.prepare(
-      "SELECT status FROM jobs WHERE id=? AND review_id=? AND attempt=?",
+      "SELECT j.status,r.cancelled,r.status AS review FROM jobs j LEFT JOIN reviews r ON r.id=j.review_id WHERE j.id=? AND j.review_id=? AND j.attempt=?",
     )
       .bind(job.job_id, job.review_id, job.attempt)
-      .first<{ status: string }>();
-    return row?.status === "failed";
+      .first<{ status: string; cancelled: number | null; review: string | null }>();
+    return (
+      row?.status === "failed" ||
+      row?.cancelled === 1 ||
+      ["complete", "partial", "error"].includes(row?.review ?? "")
+    );
   }
   private async execute(job: Execution): Promise<ExecutionResult> {
     invariant(

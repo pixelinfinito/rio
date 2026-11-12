@@ -1654,6 +1654,26 @@ describe("runner archives", () => {
     runner = new SandboxRunner({ container: one } as any, runtime);
     expect(await runner.run(job)).toEqual(stopped(job));
     expect(container.started).toBe(1);
+    // Nor when that withdrawal could not be written and the job still reads
+    // as leased: the review's cancellation is on record.
+    await runtime.DB.batch([
+      runtime.DB.prepare(
+        "UPDATE jobs SET status='leased' WHERE id='slow' AND review_id=?",
+      ).bind(id),
+      runtime.DB.prepare("UPDATE reviews SET cancelled=1 WHERE id=?").bind(id),
+    ]);
+    runner = new SandboxRunner({ container: one } as any, runtime);
+    expect(await runner.run(job)).toEqual(stopped(job));
+    expect(container.started).toBe(1);
+    // The same for a review that ended.
+    await runtime.DB.prepare(
+      "UPDATE reviews SET cancelled=0,status='partial' WHERE id=?",
+    )
+      .bind(id)
+      .run();
+    runner = new SandboxRunner({ container: one } as any, runtime);
+    expect(await runner.run(job)).toEqual(stopped(job));
+    expect(container.started).toBe(1);
   });
   it("serves the archive only with that job's capability", async () => {
     const { id, snapshot: snapshotId } = await review();

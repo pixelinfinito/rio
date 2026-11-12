@@ -798,11 +798,22 @@ it("gives a cancellation that arrives after the report was written the same end 
     },
   );
   // The request to cancel lands just after the report is stored, complete.
+  // The store then fails the write that says so once: the step's next
+  // attempt must still find the report to write.
   const put = Store.prototype.put;
   const written: string[] = [];
+  let refused = 0;
   const puts = vi
     .spyOn(Store.prototype, "put")
     .mockImplementation(async function (this: Store, key, value) {
+      if (
+        key === `reviews/${id}/report.json` &&
+        (value as any).status === "partial" &&
+        !refused++
+      )
+        throw new Error(
+          "put: We encountered an internal error. Please try again. (10001)",
+        );
       const stored = await put.call(this, key, value);
       if (key === `reviews/${id}/report.json`) {
         written.push((value as any).status);
@@ -828,6 +839,9 @@ it("gives a cancellation that arrives after the report was written the same end 
       runtime.REVIEWS,
       id,
     );
+    await instance.modify(async (m) => {
+      await m.disableRetryDelays();
+    });
     await runtime.REVIEWS.create({
       id,
       params: { review_id: id, snapshot_key: stored.key },
@@ -839,6 +853,7 @@ it("gives a cancellation that arrives after the report was written the same end 
       .bind(id)
       .first<any>();
     expect(row).toMatchObject({ status: "partial", cancelled: 1 });
+    expect(refused).toBe(2);
     // Written once as it stood, and once more to say what the review's row does.
     expect(written[0]).not.toBe("partial");
     expect(written.at(-1)).toBe("partial");

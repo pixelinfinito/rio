@@ -501,6 +501,15 @@ class AACRAdapterTests(unittest.TestCase):
         self.assertEqual(aacr.infra_failures(None, audit={"executions": [
             execution(outcome="runner_failed", exit_code=1, stderr="sandbox executor failed"),
             execution()]}), ["executor"])
+        # Nor does the retry of one call hide the timeout that ended another.
+        checks = lambda **fields: execution(kind="checks", command=["rio-internal", "rio/checks"], **fields)
+        slow = checks(exit_code=124, timed_out=True, stderr="runner wall deadline exceeded during command")
+        gone = checks(outcome="runner_failed", exit_code=1, stderr="runner backend: Network connection lost.")
+        self.assertEqual(aacr.infra_failures(None, audit={"executions": [slow, gone, checks(attempt=2)]}),
+                         ["job_timeout"])
+        # One retry does not recover two failures, and nothing says which it followed.
+        self.assertEqual(aacr.infra_failures(None, audit={"executions": [gone, gone, checks(attempt=2)]}),
+                         ["executor"])
         self.assertEqual(aacr.infra_failures(None, audit={}), [])
         # Neither a list where a report or an audit belongs nor an expired job is a cause or an error.
         self.assertEqual(aacr.infra_failures([{"status": "error"}], audit=[]), [])

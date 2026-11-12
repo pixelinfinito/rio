@@ -43,7 +43,7 @@ import {
 import { TRANSFER_CAP_MS, jobInput } from "./archive";
 import { reconcile, sweepReviews } from "./reconcile";
 import { attachStatements, lineageId } from "./lineage";
-import { Store } from "./storage";
+import { passing, steady, Store } from "./storage";
 import {
   ANALYSIS_WALL_MS,
   PREPARE_WALL_MS,
@@ -98,10 +98,7 @@ const app = new Hono<{ Bindings: Env }>();
 export const transient = (message: string) =>
   /D1 DB is overloaded|D1 DB reset|D1 DB storage operation exceeded timeout|Cannot resolve D1 DB due to transient issue|D1_ERROR: (Network connection lost|Internal error)/i.test(
     message,
-  ) ||
-  /^(put|get|head|delete|list|createMultipartUpload|uploadPart|completeMultipartUpload|abortMultipartUpload): .*\((10001|10043|10058)\)$/.test(
-    message,
-  );
+  ) || passing(message);
 app.onError((error, c) => {
   if (/unauthorized|capability/.test(error.message))
     return c.json({ error: "unauthorized" }, 401);
@@ -545,11 +542,8 @@ app.post("/v1/reviews/:id/cancel", async (c) => {
   );
   // A review still being prepared has no workflow to end it: it ends here,
   // and its prepare job with it.
-  if (await cancelPreparing(c.env, row.id)) {
-    await stopRunners(c.env, row.id);
-    await withdrawIdle(c.env, row.id);
+  if (await cancelPreparing(c.env, row.id))
     return c.json({ id: row.id, status: "cancelled" });
-  }
   // The workflow sees the flag between steps and ends the review as partial
   // with what it had; the sweep stops one that has not within the grace.
   // The jobs open at that moment are read with it: one that completes later
@@ -1038,7 +1032,9 @@ export { app };
 /** Deliveries per queue message: one plus `max_retries` in wrangler.jsonc. */
 const JOB_DELIVERIES = 3;
 export default {
-  fetch: app.fetch,
+  // A request's object operations ride out a passing fault of the store.
+  fetch: (request: Request, env: Env, context: ExecutionContext) =>
+    app.fetch(request, steady(env), context),
   async scheduled(_controller: ScheduledController, env: Env) {
     // Independent tasks: a failing QA cleanup must not delay ending overdue reviews.
     const results = await Promise.allSettled([
@@ -1097,8 +1093,9 @@ export default {
           continue;
         }
         const row = await env.DB.prepare(
-          // Not for a review that ended: its jobs are withdrawn, never begun.
-          "UPDATE jobs SET status='leased',lease_until=? WHERE id=? AND attempt=? AND status IN ('pending','leased') AND NOT EXISTS (SELECT 1 FROM reviews r WHERE r.id=jobs.review_id AND r.status IN ('complete','partial','error')) RETURNING payload_key",
+          // Not for a review that ended, or was cancelled since the read
+          // above: its jobs are withdrawn, never begun.
+          "UPDATE jobs SET status='leased',lease_until=? WHERE id=? AND attempt=? AND status IN ('pending','leased') AND NOT EXISTS (SELECT 1 FROM reviews r WHERE r.id=jobs.review_id AND (r.cancelled=1 OR r.status IN ('complete','partial','error'))) RETURNING payload_key",
         )
           // Held for the longest Sandbox job: transfer, command wall and teardown.
           .bind(

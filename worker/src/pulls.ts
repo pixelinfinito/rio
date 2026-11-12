@@ -13,7 +13,7 @@ import {
 import { installation, covers } from "./webhooks";
 import { hash, invariant } from "./validation";
 import { createReview } from "./reviews";
-import { createPrepareJob } from "./jobs";
+import { createPrepareJob, stopRunners, withdrawIdle } from "./jobs";
 import { ingestTarballs } from "./tarball";
 import { Store } from "./storage";
 import { announceReview, knownPolicy, settleAnnouncement } from "./announce";
@@ -186,33 +186,59 @@ async function fail(env: Env, review: string, state: string, reason: string) {
   await new Store(env).event(review, "review:error", { error: reason });
   await settleAnnouncement(env, review, "Review did not run", reason);
 }
+/** What the check run of a review cancelled while it was prepared says. */
+const CANCELLED_UNPREPARED =
+  "The review was cancelled before it started. Push again or comment `/rio review` to retry.";
 /**
- * Ends a review cancelled while it was being prepared: no workflow exists yet
- * to end it, and the sweep ends only reviews that were handed over. False
- * when the review is not being prepared (any more).
+ * Ends a review cancelled while it was being prepared, and its prepare job:
+ * no workflow exists yet to end it, and the sweep ends only reviews that were
+ * handed over. False when the review is not being prepared (any more), unless
+ * it ended here before: a cancel repeated after one that failed half way
+ * finishes what that one left.
  */
 export async function cancelPreparing(
   env: Env,
   review: string,
 ): Promise<boolean> {
   const ended = await env.DB.prepare(
-    "UPDATE reviews SET cancelled=1,cancelled_at=COALESCE(cancelled_at,?),status='error',error='cancelled' WHERE id=? AND status='preparing' AND submission_key='' RETURNING id",
+    "UPDATE reviews SET cancelled=1,cancelled_at=COALESCE(cancelled_at,?),status='error',error='cancelled' WHERE id=? AND submission_key='' AND (status='preparing' OR (status='error' AND error='cancelled' AND cancelled=1)) RETURNING id",
   )
     .bind(Date.now(), review)
     .first();
   if (!ended) return false;
-  await env.DB.prepare(
-    "UPDATE pull_requests SET state='failed',reason='cancelled' WHERE review_id=? AND state IN ('requested','preparing')",
-  )
-    .bind(review)
-    .run();
-  await new Store(env).event(review, "review:error", { error: "cancelled" });
+  // Each of what follows is tried whatever became of the one before: an
+  // event that cannot be written must not leave the prepare job's container
+  // running.
+  const faults: unknown[] = [];
+  for (const work of [
+    () =>
+      env.DB.prepare(
+        "UPDATE pull_requests SET state='failed',reason='cancelled' WHERE review_id=? AND state IN ('requested','preparing')",
+      )
+        .bind(review)
+        .run(),
+    () => stopRunners(env, review),
+    () => withdrawIdle(env, review),
+    async () => {
+      const told = await env.DB.prepare(
+        "SELECT 1 FROM events WHERE review_id=? AND event='review:error' LIMIT 1",
+      )
+        .bind(review)
+        .first();
+      if (!told)
+        await new Store(env).event(review, "review:error", {
+          error: "cancelled",
+        });
+    },
+  ])
+    await work().catch((error) => faults.push(error));
   await settleAnnouncement(
     env,
     review,
     "Review did not run",
-    "The review was cancelled before it started. Push again or comment `/rio review` to retry.",
+    CANCELLED_UNPREPARED,
   );
+  if (faults.length) throw faults[0];
   return true;
 }
 
@@ -396,7 +422,27 @@ export async function handleReviewRequest(
       // Announced now when this repository's policy is already known;
       // otherwise the review announces itself once it resolves its profile.
       const known = await knownPolicy(env, message.tenant, message.repository);
-      if (known) await announceReview(env, review, known);
+      if (known) {
+        await announceReview(env, review, known);
+        // Ended while it was being announced (cancelled, say): what ended it
+        // found no check run yet, and nothing later would complete this one.
+        const state = await env.DB.prepare(
+          "SELECT status,error FROM reviews WHERE id=?",
+        )
+          .bind(review)
+          .first<{ status: string; error: string | null }>();
+        if (state && state.status !== "preparing") {
+          await settleAnnouncement(
+            env,
+            review,
+            "Review did not run",
+            state.error === "cancelled"
+              ? CANCELLED_UNPREPARED
+              : (state.error ?? "The review ended before it started."),
+          );
+          return;
+        }
+      }
       const spec = {
         repository: message.repository,
         clone_url: String(
