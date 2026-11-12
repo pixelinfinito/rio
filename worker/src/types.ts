@@ -454,6 +454,8 @@ export interface Env {
   RUNNER_SECRET: string;
   RIO_VERSION: string;
   RUNNER_BACKEND: "sandbox" | "self-hosted";
+  // The deployment's `limits.subrequests`, when it declares one.
+  SUBREQUEST_LIMIT?: string;
   PUBLIC_URL?: string;
   ANTHROPIC_API_KEY?: string;
   OPENAI_API_KEY?: string;

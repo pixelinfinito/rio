@@ -364,7 +364,7 @@ row is what was found and what bounds it now.
 | Transfer (P2.4) | FreeCAD's two trees (790 MiB, 2 × 395 MiB) hit the 4-minute transfer cap; the graph job then died with no phase | A job that needs both trees gets head whole and, of base, only the files that differ: files equal in path, content and mode are named in `same/base` members and copied inside the container. The stream is coalesced into 1 MiB chunks. A result carries `phase` and `timing` (`transfer_ms`, `archive_bytes`, `storage_ms`, `extract_ms`, `command_ms`), and the footer note of a missing analysis says which phase ran out and how long each took | `worker/src/archive.ts`, `worker/src/sandbox.ts`, `worker/runner/execute.py`, `worker/src/workflow.ts` |
 | Worker memory (P3.2/P3.3) | Three verifier steps of FreeCAD ended at 128 MiB. A voter's `search` decoded and split every file of the tree, each voter held its own scan, and every replay ran the conversation's searches again | Scans read a few MiB at a time (`BATCH_BYTES`), one batch per snapshot at once, and match on bytes before decoding. A turn's snapshot tool calls are one recorded step, so a replay reads their results instead of scanning again. Triage and the contract inventory read a change within 32 MiB, smallest files first, one change per isolate at a time, and report what was left out | `worker/src/snapshot.ts`, `worker/src/tools.ts`, `worker/src/gateway.ts`, `worker/src/verifier.ts`, `worker/src/contracts.ts`, `worker/src/workflow.ts` |
 | Cache store | `cache-store-agents-correctness` made one R2 write per finding context plus reads, passed the per-invocation request limit and was retried with the same error until the review was cancelled | Entries are written as packs of at most 256 entries and 2 MiB (`cache/<tenant>/packs/<digest>.json`), in steps of at most 1,024 entries; a store step that fails is retried once and then leaves a footer note, because the cache is optional | `worker/src/cache.ts`, `worker/src/workflow.ts`, migration `0016` |
-| Cancellation | A cancelled review kept its workflow: the store step above retried for as long as the instance lived, and leased jobs kept their containers | Cancel stops the containers of the review's running jobs, withdraws its idle ones and wakes the workflow's waits. The workflow ends the review as `partial` with what it found (`Review cancelled before it finished.`). A workflow that has not done so 3 minutes after the cancel is terminated by the minute sweep, which writes the partial report. Every terminal write is conditional on the review being open, so a late result or a late workflow revives nothing; a late result of a withdrawn job is dropped, one of a running job is kept for the audit only | `worker/src/index.ts`, `worker/src/jobs.ts`, `worker/src/reconcile.ts`, `worker/src/workflow.ts`, migration `0017` |
+| Cancellation | A cancelled review kept its workflow: the store step above retried for as long as the instance lived, and leased jobs kept their containers | Cancel stops the containers of the review's running jobs, withdraws its idle ones and wakes the workflow's waits. The workflow ends the review as `partial` with what it found (`Review cancelled before it finished.`). A workflow that has not done so 5 minutes after the cancel (3 until section 10) is terminated by the minute sweep, which writes the partial report. Every terminal write is conditional on the review being open, so a late result or a late workflow revives nothing; a late result of a withdrawn job is dropped, one of a running job is kept for the audit only | `worker/src/index.ts`, `worker/src/jobs.ts`, `worker/src/reconcile.ts`, `worker/src/workflow.ts`, migration `0017` |
 | Client deadline | The CLI left a minute after the review's deadline, before the endpoint's own two-minute grace and sweep, cancelled the review and printed an error with no report | The CLI waits 4 minutes past the longest deadline, so it receives the endpoint's partial report. If it still has to leave, the error says whether the user interrupted or the wait ran out, and for how long it waited | `crates/rio-cli/src/endpoint.rs`, `crates/rio-client/src/lib.rs` |
 | Adapter labels | An error envelope (no review identity) was reported as `Report commit pins differ from dataset` with no cause | The adapter reports Rio's own error first and checks the identity of usable reports only, exactly as before. Causes gain `subrequest_limit` and `workflow_internal`, cancellations and client deadlines count as `deadline`, and failures that only the audit records (votes that did not complete, analysis jobs that never ran) count too. A status keeps every cause (`infra_failures`) and the first (`infra_failure`); saved evidence is classified under the current rules | `eval/aacr_bench.py` |
 
@@ -385,7 +385,8 @@ What stays as it was, on purpose:
 - `CONTEXT_KEY_VERSION` is 3: entries written by the first canary's build miss
   once, so the second canary runs every agent and writes every entry itself.
 - Worker limits (`cpu_ms`, subrequests) are unchanged. The work is bounded
-  instead: a step reads and writes a bounded number of objects.
+  instead: a step reads and writes a bounded number of objects. (Section 10
+  declares a subrequest limit: a step was bounded, a review was not.)
 
 ## 9. Third round: what the second canary broke
 
@@ -424,3 +425,52 @@ not with a review, and an index for each is the obvious change; it was not made
 in this round because the last index added is what moved the planner off the
 primary key above, and these scans are three orders of magnitude below what
 overloaded the database.
+
+## 10. Fourth round: what the full run broke
+
+The canary of the section 9 build (`aacr-bench-fix3-20261112T004450Z`, commit
+`cdc2788`) passed and the full run started on the same deployment. Of its
+first 37 cases, five large-tree reviews (FreeCAD@290bdc7 and @699b45c,
+elasticsearch@4d9b96f, @5e318eb and @a9973f6) ended `partial` with no comment
+and the reason `runtime stopped: Error`, and one (elasticsearch@e38d20c) lost
+an agent to a model call cut off at 90 s. The workflow histories of all five
+say what `Error` was: `Too many API requests by single Worker invocation`,
+after 10 to 24 whole-tree searches each.
+
+What the limit is, measured with a scratch Workflow
+(`diagnostics/subrequest-limit-probe.py` in the evidence directory):
+
+- It counts the storage and network requests of one Workflow **instance**,
+  across its steps. A `step.sleep` between steps does not start a new count.
+  Step limits and retries therefore bound nothing here: section 8 bounded each
+  step, and a review of many steps still reached it.
+- At the limit the instance ends `errored`, where it stands, and no step sees
+  an error it could report. The default is 10,000.
+- A declared `limits.subrequests` is the one enforced for Workflows: with
+  20,000 declared, an instance made 15,030 requests and completed.
+
+What spent it, measured on the manifest of elasticsearch@a9973f6 (32,155 head
+paths, 318 MiB, 54 packs): one unscoped `search` cost 390 pack reads, because
+the scan went in path order and neighbours in path order lie in different
+packs; the models asked for 20 such searches; four passes over the change's
+text cost about 500 each. A turn may ask for 8 searches and a conversation has
+16 turns, so nothing but the platform bounded the cost.
+
+| Cause | Change | Where |
+|---|---|---|
+| Reads per scan | A search reads the tree in storage order (`sweep`): within a window of kept entries (2,048, then 16,384), contents are read pack by pack, neighbours within 1 MiB joined into reads of at most 8 MiB. The same tree costs about 75 reads instead of 390. A filter is asked again before each read, so a search that has its answer stops the reading. Looking up many paths is one pass over the manifest instead of a lookup each | `worker/src/snapshot.ts` |
+| Scans per review | One pass over a version of a snapshot runs at a time and answers every search asked before it began, so the searches of a turn (started together inside the turn's recorded step) and of the three voters share it. An answer is remembered for the snapshot (128 answers) and an identical search costs nothing. The output is what the search in path order gave, byte for byte, which a test checks against that search | `worker/src/tools.ts`, `worker/src/gateway.ts` |
+| No bound per review | The workflow counts its own D1 and R2 requests and model calls (`Requests`; the environment it passes on is metered). Counts are recorded with each step's result, so a run of the workflow code after an interruption continues from them. Past 60% of the limit a search is not run and its answer says so (`read_file` and `graph_query` still work); past 80% no model turn starts, and its agent or vote ends with `review request budget exhausted`. The last fifth is for consolidation, the report and what is not counted. Both refusals are step results, so a replay meets the same ones | `worker/src/requests.ts`, `worker/src/workflow.ts` |
+| Silent loss | A review that refused anything is `incomplete` (or `partial`), with a footer note that counts the searches not run and the model turns not started, and the audit carries the counts (`agent_audit.requests`: limit, used, scans, searches, remembered, refused, stopped) | `worker/src/workflow.ts` |
+| The limit itself | `rio deploy` declares `limits.subrequests` 50,000 and tells the Worker in `SUBREQUEST_LIMIT`; a Worker told nothing budgets against 10,000. The number is headroom for large trees; the count is what bounds a review | `crates/rio-cli/src/deployment.rs`, `worker/src/types.ts` |
+| `runtime stopped: Error` | The sweep reports the platform's message (`runtime stopped: Too many API requests by single Worker invocation`, `… Worker exceeded memory limit`), redacted and cut to 200 characters: every platform limit is an `Error` by name | `worker/src/reconcile.ts` |
+| Model call cut off | One call may take 180 s (`MODEL_CALL_MS`; a reply of the full output allowance takes about that at 90 tokens a second), still never longer than the review has left. Its step may take 4 minutes, and a cancelled workflow has 5 minutes before the sweep terminates it, so the step under way can end | `worker/src/gateway.ts`, `worker/src/workflow.ts`, `worker/src/reconcile.ts` |
+| Labels | The adapter reads the budget's notes and errors as `subrequest_limit` and a cut-off model call as `model_timeout`. The five cases above could only be read as `deadline`: the limit's text was not in their reports | `eval/aacr_bench.py` |
+
+`CONTEXT_KEY_VERSION` is 5: the entries the stopped full run wrote miss once,
+so the next canary runs every agent, and with it every search, itself.
+
+What stays as it was: the pass over a change's text (triage, plans, contract
+inventory, cache hunks) still reads in path order. It is bounded by the change
+(32 MiB, section 8), runs a fixed number of times, and is counted like
+everything else.

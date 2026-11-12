@@ -74,6 +74,65 @@ export async function storeSnapshot(
   await seal(env, tenant, id, { chunks: chunks.length });
   return { id, key: indexKey(tenant, id), packs, chunks: chunks.length };
 }
+/**
+ * Stores a head tree whose files are dealt over `packs` packs in turn, so that
+ * neighbours in path order lie in different packs, as they do in the tree of
+ * a repository uploaded over many reviews. Packs are written directly, without
+ * the upload's verification; the contents must differ from each other.
+ */
+export async function storeInterleaved(
+  env: Env,
+  files: Record<string, string>,
+  packs: number,
+  name: string,
+  tenant = "owner",
+): Promise<{ id: string; key: string }> {
+  const paths = Object.keys(files).sort(compareUtf8);
+  const lines: string[] = [];
+  const dealt: [string, Uint8Array][][] = Array.from(
+    { length: packs },
+    () => [],
+  );
+  for (const [i, path] of paths.entries()) {
+    const bytes = new TextEncoder().encode(files[path]);
+    const hash = hex(bytes);
+    dealt[i % packs].push([hash, bytes]);
+    lines.push(
+      JSON.stringify({
+        version: "head",
+        path,
+        hash,
+        mode: 0o100644,
+        size: bytes.length,
+      }) + "\n",
+    );
+  }
+  for (const [n, members] of dealt.entries()) {
+    const pack = `packs/${name}-${n}`;
+    const body = new Uint8Array(
+      members.reduce((sum, [, b]) => sum + b.length, 0),
+    );
+    const rows: { h: string; o: number; s: number }[] = [];
+    let offset = 0;
+    for (const [hash, bytes] of members) {
+      body.set(bytes, offset);
+      rows.push({ h: hash, o: offset, s: bytes.length });
+      offset += bytes.length;
+    }
+    await env.ARTIFACTS.put(`snapshots/${tenant}/${pack}`, body);
+    for (let at = 0; at < rows.length; at += 500)
+      await env.DB.prepare(
+        "INSERT INTO contents(tenant,hash,pack,offset,size,created_at) SELECT ?,json_extract(value,'$.h'),?,json_extract(value,'$.o'),json_extract(value,'$.s'),0 FROM json_each(?)",
+      )
+        .bind(tenant, pack, JSON.stringify(rows.slice(at, at + 500)))
+        .run();
+  }
+  const manifest = new TextEncoder().encode(lines.join(""));
+  const id = hex(manifest);
+  await storeChunk(env, tenant, id, 0, manifest);
+  await seal(env, tenant, id, { chunks: 1 });
+  return { id, key: indexKey(tenant, id) };
+}
 /** Manifest lines grouped into chunks of whole lines below the byte limit. */
 export function chunked(lines: string[], limit: number): Uint8Array[] {
   const chunks: string[] = [""];

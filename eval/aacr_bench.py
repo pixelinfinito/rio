@@ -156,14 +156,18 @@ def comments_from_report(report):
 INFRA_PATTERNS = [
     ("cpu_limit", ("Worker exceeded CPU time limit",)),
     ("memory_limit", ("Worker exceeded memory limit", "exceeded CPU or memory limits")),
+    # The platform's limit, and the review's own budget kept below it.
     ("subrequest_limit", ("Too many API requests by single Worker invocation",
-                          "Too many subrequests")),
+                          "Too many subrequests", "review request budget exhausted",
+                          "Request budget:")),
     # The endpoint's database refusing or losing a query: before the causes
     # below, so "D1_ERROR: Network connection lost" is not a runner's failure.
     ("storage", ("D1_ERROR", "D1 DB is overloaded", "D1 DB reset")),
     ("deadline", ("Rio ended this review", "exceeded its wall budget",
                   "review wall budget exhausted", "endpoint review cancelled",
                   "Review cancelled before it finished", "exceeded the adapter's")),
+    # A model call the endpoint cut off at its own bound.
+    ("model_timeout", ("The operation was aborted due to timeout",)),
     ("job_timeout", ("WorkflowTimeoutError", "runner wall deadline exceeded",
                      "no runner result within", "runner analysis failed (timed out")),
     ("executor", ("sandbox executor failed", "Network connection lost",

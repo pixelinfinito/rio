@@ -121,6 +121,56 @@ describe("review reconciliation", () => {
     );
   });
 
+  it("names what stopped the runtime of a review whose workflow ended in error", async () => {
+    // Every platform limit ends a workflow with an error named `Error`; the
+    // reports of the reviews that passed the request limit said only that.
+    const stopped = (error: unknown) =>
+      ({
+        ...runtime,
+        REVIEWS: {
+          get: async () => ({ status: async () => ({ status: "errored", error }) }),
+        },
+      }) as unknown as Env;
+    const note = async (id: string, error: unknown) => {
+      const r = await review(id, Date.now() + 600000);
+      expect(await reconcile(stopped(error), r)).toBe("partial");
+      const after = await row(id);
+      const report = await new Store(runtime).get<any>(after!.report_key);
+      expect(report.footer.notes.at(-1)).toBe(
+        `Rio ended this review: ${after!.error}.`,
+      );
+      return after!.error;
+    };
+    expect(
+      await note("stopped-requests", {
+        name: "Error",
+        message:
+          "Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits",
+      }),
+    ).toBe(
+      "runtime stopped: Too many API requests by single Worker invocation",
+    );
+    expect(
+      await note("stopped-memory", {
+        name: "Error",
+        message: "Worker exceeded memory limit.",
+      }),
+    ).toBe("runtime stopped: Worker exceeded memory limit");
+    // A long or secret-bearing message is cut and redacted; none falls back
+    // to the error's name, then to the status.
+    const long = await note("stopped-long", {
+      name: "Error",
+      message: `failed with\n  AKIAIOSFODNN7EXAMPLE ${"x".repeat(400)}`,
+    });
+    expect(long).not.toContain("AKIAIOSFODNN7EXAMPLE");
+    expect(long).not.toContain("\n");
+    expect(long.length).toBeLessThanOrEqual("runtime stopped: ".length + 200);
+    expect(await note("stopped-named", { name: "RangeError" })).toBe(
+      "runtime stopped: RangeError",
+    );
+    expect(await note("stopped-bare", null)).toBe("runtime stopped: errored");
+  });
+
   it("withdraws the idle jobs of finished reviews and leaves held and open ones", async () => {
     const now = Date.now();
     await review("finished", now + 600000, "partial");

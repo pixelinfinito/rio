@@ -10,6 +10,7 @@ import { Progress } from "../src/progress";
 import { finishJob } from "../src/jobs";
 import { CANCEL_GRACE_MS, reconcile, sweepReviews } from "../src/reconcile";
 import { CANCELLED_NOTE } from "../src/workflow";
+import { Requests, SEARCH_REFUSED } from "../src/requests";
 import { hash, validateHypotheses, validateReport } from "../src/validation";
 import { allMigrations, hypothesis, snapshot, submission } from "./fixtures";
 import { storeSnapshot, uploadSnapshot } from "./snapshots";
@@ -136,6 +137,16 @@ it.each([false, true])(
         "none",
       ]);
       expect(report.agent_audit.verification_usage.input_tokens).toBe(480);
+      // What the review asked of storage and the models, against the limit
+      // the platform sets one workflow instance.
+      expect(report.agent_audit.requests).toMatchObject({
+        limit: 10000,
+        scans: 0,
+        refused: 0,
+        stopped: 0,
+      });
+      expect(report.agent_audit.requests.used).toBeGreaterThan(requests.length);
+      expect(report.agent_audit.requests.used).toBeLessThan(300);
       // The prompt-cache audit: every phase counted; no provider reported cache
       // fields, so the totals and the ratio stay null rather than zero.
       const cache = report.agent_audit.prompt_cache;
@@ -290,6 +301,189 @@ it("marks failed remote votes incomplete and keeps the configured quorum", async
     ]);
   } finally {
     transport.mockRestore();
+  }
+}, 60000);
+
+// The full benchmark run lost three reviews to the platform's limit of storage
+// requests: the instance ended where it stood, with no report. A review now
+// counts its requests and gives up searches, then model turns, before that.
+const budgeted = async (
+  // Its own model: the earlier tests' cached agent results are not its.
+  model: string,
+  reply: (body: any) => unknown,
+  steps: any[],
+) => {
+  const bodies: any[] = [];
+  const transport = vi
+    .spyOn(globalThis, "fetch")
+    .mockImplementation(async (_, init) => {
+      const body = JSON.parse(init!.body as string);
+      bodies.push(body);
+      const content = JSON.stringify(reply(body));
+      return Response.json({
+        content: [{ type: "text", text: content }],
+        choices: [{ message: { content } }],
+        usage: {
+          input_tokens: 80,
+          output_tokens: 50,
+          prompt_tokens: 80,
+          completion_tokens: 50,
+        },
+      });
+    });
+  try {
+    const uploaded = await uploadSnapshot(
+      (path, method, body) =>
+        app.request(`https://rio${path}`, { method, headers, body }, runtime),
+      snapshot,
+    );
+    const s = submission();
+    s.snapshot_id = ((await uploaded.json()) as any).id;
+    s.profile.models.default = `openai/${model}`;
+    s.profile.steps = steps;
+    const response = await app.request(
+      "https://rio/v1/reviews",
+      { method: "POST", headers, body: JSON.stringify(s) },
+      runtime,
+    );
+    expect(response.status).toBe(202);
+    const { id } = (await response.json()) as any;
+    await using instance = await introspectWorkflowInstance(
+      runtime.REVIEWS,
+      id,
+    );
+    // The workflow ends the review itself; the platform does not end it.
+    await instance.waitForStatus("complete");
+    const row = await runtime.DB.prepare(
+      "SELECT status,report_key FROM reviews WHERE id=?",
+    )
+      .bind(id)
+      .first<any>();
+    const report = await new Store(runtime).get<any>(row.report_key);
+    expect(() => validateReport(report)).not.toThrow();
+    const votes = await runtime.DB.prepare(
+      "SELECT status FROM votes WHERE review_id=?",
+    )
+      .bind(id)
+      .all<{ status: string }>();
+    return {
+      row,
+      report,
+      bodies,
+      votes: votes.results.map((v) => v.status),
+    };
+  } finally {
+    transport.mockRestore();
+  }
+};
+const generation = (body: any) =>
+  body.messages.some((m: any) =>
+    m.content.includes("Review the change independently"),
+  );
+const spentNote = (turns: string) =>
+  `Request budget: ${turns} not started, because the review had used its share of the 10000 requests the platform allows one review; the agents and verifier votes they belonged to did not complete.`;
+const AGENTS_AND_VERIFY = [
+  { id: "agents", uses: "rio/agents@0.1.0", needs: [], with: {} },
+  { id: "verify", uses: "rio/verify@0.1.0", needs: ["agents"], with: {} },
+];
+it("ends an agent with a disclosed failure when the review's request budget is spent, without calling its model", async () => {
+  const spent = vi
+    .spyOn(Requests.prototype, "exhausted", "get")
+    .mockReturnValue(true);
+  try {
+    const { row, report, bodies } = await budgeted(
+      "budget-spent",
+      () => ({ result: [hypothesis] }),
+      AGENTS_AND_VERIFY,
+    );
+    expect(bodies).toEqual([]);
+    expect([row.status, report.status]).toEqual(["partial", "partial"]);
+    expect(report.findings).toEqual([]);
+    expect(report.footer.notes).toContain(
+      "correctness agent failed: review request budget exhausted; its findings are missing from this review.",
+    );
+    expect(report.footer.notes).toContain(spentNote("1 model turn was"));
+    expect(report.agent_audit.requests).toMatchObject({
+      limit: 10000,
+      stopped: 1,
+    });
+  } finally {
+    spent.mockRestore();
+  }
+}, 60000);
+it("leaves the votes a spent request budget did not cover incomplete, and keeps what the agents raised", async () => {
+  let generated = false;
+  const spent = vi
+    .spyOn(Requests.prototype, "exhausted", "get")
+    .mockImplementation(() => generated);
+  try {
+    const { row, report, bodies, votes } = await budgeted(
+      "budget-votes",
+      (body) => {
+        generated ||= generation(body);
+        return { result: [hypothesis] };
+      },
+      AGENTS_AND_VERIFY,
+    );
+    // The generation call, and no voter's.
+    expect(bodies.filter(generation)).toHaveLength(1);
+    expect(bodies).toHaveLength(1);
+    expect([row.status, report.status]).toEqual(["complete", "incomplete"]);
+    expect(votes).toEqual(["exhausted", "exhausted", "exhausted"]);
+    expect(report.agent_audit.incomplete_votes).toBe(3);
+    expect(report.findings).toEqual([]);
+    expect(report.footer.notes).toEqual(
+      expect.arrayContaining([
+        "3 verifier votes did not complete; inspect the vote audit. Missing votes do not reduce quorum.",
+        spentNote("3 model turns were"),
+      ]),
+    );
+    expect(report.agent_audit.requests.stopped).toBe(3);
+  } finally {
+    spent.mockRestore();
+  }
+}, 60000);
+it("answers a search the request budget no longer covers with a refusal, and reports the review incomplete", async () => {
+  const full = vi
+    .spyOn(Requests.prototype, "searchable", "get")
+    .mockReturnValue(false);
+  try {
+    let asked = false;
+    const { row, report, bodies } = await budgeted(
+      "budget-search",
+      (body) => {
+        if (asked || !generation(body)) return { result: [] };
+        asked = true;
+        return {
+          tools: [
+            { name: "search", args: { pattern: "refresh" } },
+            { name: "read_file", args: { path: "src/a.ts", version: "head" } },
+          ],
+        };
+      },
+      AGENTS_AND_VERIFY,
+    );
+    // The model is told why, and what it can still do; the other tools work.
+    const answered = bodies
+      .map((b) => b.messages.at(-1).content as string)
+      .filter((content) => content.includes("tool_results"));
+    expect(answered).toHaveLength(1);
+    const results = JSON.parse(answered[0]).tool_results;
+    expect(results[0]).toEqual({ name: "search", error: SEARCH_REFUSED });
+    expect(results[1].result).toContain("1: function a()");
+    expect([row.status, report.status]).toEqual(["complete", "incomplete"]);
+    expect(report.agent_audit.requests).toMatchObject({
+      limit: 10000,
+      scans: 0,
+      searches: 0,
+      refused: 1,
+    });
+    expect(report.footer.notes).toContain(
+      "Request budget: 1 tree search was not run, because the review had used its share of the 10000 requests the platform allows one review on searching; what a search would have found is missing from this review.",
+    );
+    expect(report.agent_audit.requests.stopped).toBe(0);
+  } finally {
+    full.mockRestore();
   }
 }, 60000);
 

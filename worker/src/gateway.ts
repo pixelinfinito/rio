@@ -26,6 +26,12 @@ import voteSchema from "../../schemas/vote-answer-v1.json";
  * JSON document cut mid-way. The reservation still bounds the actual spend.
  */
 const MAX_OUTPUT_TOKENS = 16384;
+/**
+ * Time one model call may take, a retry included. A reply of the full output
+ * allowance takes about this long at 90 tokens a second; at 90 seconds, one
+ * call in a thousand of a benchmark run was cut off and cost its agent.
+ */
+export const MODEL_CALL_MS = 180000;
 /** Pause before the single retry of a transient provider failure. */
 const RETRY_DELAY_MS = 2000;
 const BUILT_IN = ["anthropic", "openai", "openrouter"];
@@ -439,7 +445,7 @@ export class ProviderGateway implements Gateway {
         method: "POST",
         headers,
         body: JSON.stringify(body),
-        signal: request.signal ?? AbortSignal.timeout(90000),
+        signal: request.signal ?? AbortSignal.timeout(MODEL_CALL_MS),
       });
       // Never persist provider response bodies on failure: they can contain credentials or raw prompts.
       invariant(response.ok, `provider failed (${response.status})`);
@@ -645,6 +651,8 @@ const MAX_TOOLS_PER_TURN = 8;
 const MAX_REPAIRS = 6;
 /** Tools that start runner jobs, which are durable steps of their own. */
 const JOB_TOOLS = new Set(["run"]);
+/** Tools that read a whole tree, and share the reading when asked together. */
+const SCAN_TOOLS = new Set(["search"]);
 /** Characters of one recorded tool result. */
 const RECORD_LIMIT = 100000;
 const REPAIR =
@@ -711,14 +719,14 @@ export async function converse(options: {
         o.phase,
         inputBound + output,
       );
-      const remainingMs = (await o.ledger.remainingMs?.()) ?? 90000;
+      const remainingMs = (await o.ledger.remainingMs?.()) ?? MODEL_CALL_MS;
       invariant(remainingMs > 0, "review wall budget exhausted");
       const response: ModelResponse = await o.gateway.complete({
         model: o.model,
         messages: o.messages,
         system,
         max_tokens: output,
-        signal: AbortSignal.timeout(Math.min(90000, remainingMs)),
+        signal: AbortSignal.timeout(Math.min(MODEL_CALL_MS, remainingMs)),
         ...(o.cache ? { cache: { ...o.cache, tail: true } } : {}),
         ...(o.redact?.length ? { redact: o.redact } : {}),
       });
@@ -833,8 +841,15 @@ export async function converse(options: {
       ? JSON.parse(
           await o.record!(`${o.actor}-${o.phase}-${turn}`, async () => {
             const done: Record<number, unknown> = {};
+            // Asked together, the searches of a turn are answered by one pass
+            // over the tree; the other calls run one at a time.
+            const scans = new Map(
+              reads
+                .filter((index) => SCAN_TOOLS.has(tools[index].name))
+                .map((index) => [index, run(tools[index])]),
+            );
             for (const index of reads) {
-              const result = await run(tools[index]);
+              const result = await (scans.get(index) ?? run(tools[index]));
               // A recorded step holds 1 MiB; no tool result is that long, and
               // the model reads 64,000 characters of a turn at most.
               done[index] =

@@ -1,5 +1,6 @@
 import type { Env, File, Snapshot, Version } from "./types";
 import { invariant } from "./validation";
+import { requestsOf, type Requests } from "./requests";
 // Shared snapshot limits; the CLI checks the same values before uploading.
 export const LIMITS = {
   paths: 300000,
@@ -30,6 +31,19 @@ const RUN = 2 * BATCH_BYTES;
 const READS = 3;
 // A scan waits this long for another scan's batch before reading its own.
 const SCAN_WAIT_MS = 60000;
+// A sweep plans its reads over this many entries at a time and holds their
+// metadata meanwhile. In path order a tree changes pack with nearly every
+// directory, so reads planned over 1,024 entries cost a 320 MiB tree 390
+// requests; planned over 16,384 they cost 75.
+const SWEEP_ENTRIES = 16384;
+// Its first window is short: a consumer that has enough after the first paths
+// (a search for a common word) then stops after a few reads.
+const SWEEP_FIRST = 2048;
+// A sweep reads everything it passes, so it joins contents further apart.
+const SWEEP_GAP = 1024 * 1024;
+// From this many paths on, entries are found in one pass over the manifest (a
+// request per located chunk) instead of a page read per neighbourhood.
+const LISTED_PATHS = 32;
 export interface Entry {
   path: string;
   hash: string;
@@ -117,12 +131,29 @@ export interface TreeReader {
    */
   batches(keep: (entry: Entry) => boolean): AsyncIterable<Scanned[]>;
   /**
+   * Kept entries with their bytes, for a consumer that reads most of the tree
+   * and needs no order: each pack is read in a few long runs, so a whole tree
+   * costs tens of storage requests where `batches` costs hundreds. The tree is
+   * taken a window of entries at a time; windows follow path order, the
+   * entries inside one follow storage order. `keep` is asked again just before
+   * an entry is read, so a consumer that has enough can narrow it and the
+   * reads it no longer needs are not made.
+   */
+  sweep(keep: (entry: Entry) => boolean): AsyncIterable<Scanned[]>;
+  /**
    * The contents of the entries, in their order, with a few reads per pack;
    * null for a large content. The caller bounds the entries it asks for.
    */
   many(entries: Entry[]): Promise<(Uint8Array | null)[]>;
 }
 export type Scanned = [Entry, Uint8Array | null];
+// One ranged read of a pack and the entries it covers, in offset order.
+interface Run {
+  pack: string;
+  start: number;
+  end: number;
+  entries: Entry[];
+}
 /** Visits kept entries in path order until `visit` returns false. */
 export async function scan(
   tree: TreeReader,
@@ -136,6 +167,31 @@ export async function scan(
 export interface SnapshotReader {
   base: TreeReader;
   head: TreeReader;
+  /** The request budget its reads count against, when it has one. */
+  requests?: Requests;
+}
+/** The entries of the paths that exist, by path. */
+export async function entriesOf(
+  tree: TreeReader,
+  paths: Iterable<string>,
+): Promise<Map<string, Entry>> {
+  const wanted = [...new Set(paths)].sort(compareUtf8);
+  const found = new Map<string, Entry>();
+  if (wanted.length < LISTED_PATHS) {
+    // In path order a manifest page is read once.
+    for (const path of wanted) {
+      const entry = await tree.stat(path);
+      if (entry) found.set(path, entry);
+    }
+    return found;
+  }
+  const set = new Set(wanted),
+    last = wanted[wanted.length - 1];
+  for await (const entry of tree.list()) {
+    if (set.has(entry.path)) found.set(entry.path, entry);
+    if (found.size === set.size || compareUtf8(entry.path, last) >= 0) break;
+  }
+  return found;
 }
 /** Files for the given paths only (missing paths are omitted). */
 export async function materialize(
@@ -164,8 +220,9 @@ export async function textOf(
 }
 /**
  * `textOf` for many paths, a few reads per pack instead of one per file: a
- * change of thousands of files costs tens of storage requests. Paths that are
- * missing, binary or links map to null. The caller bounds what it asks for.
+ * change of thousands of files costs tens of storage requests, the manifest
+ * included. Paths that are missing, binary or links map to null. The caller
+ * bounds what it asks for.
  */
 export async function textsOf(
   tree: TreeReader,
@@ -173,12 +230,13 @@ export async function textsOf(
 ): Promise<Map<string, string | null>> {
   const texts = new Map<string, string | null>();
   for (const path of paths) texts.set(path, null);
-  const entries: Entry[] = [];
-  // In path order a manifest page is read once.
-  for (const path of [...texts.keys()].sort(compareUtf8)) {
-    const entry = await tree.stat(path);
-    if (entry && entry.mode !== SYMLINK) entries.push(entry);
-  }
+  // In storage order a group's files are neighbours in their packs, so a
+  // group is a few long reads; in path order every group touched every pack.
+  const entries = [...(await entriesOf(tree, texts.keys())).values()]
+    .filter((entry) => entry.mode !== SYMLINK)
+    .sort((a, b) =>
+      a.pack === b.pack ? a.offset - b.offset : a.pack < b.pack ? -1 : 1,
+    );
   for (let start = 0; start < entries.length;) {
     let end = start,
       size = 0;
@@ -226,10 +284,10 @@ export async function changeTexts(
   };
   const sized = async (version: Version, paths: string[]) => {
     const sizes = new Map<string, number>();
-    // In path order a manifest page is read once.
+    const entries = await entriesOf(snapshot[version], paths);
     for (const path of [...new Set(paths)].sort(compareUtf8)) {
       result[version][path] = null;
-      const entry = await snapshot[version].stat(path);
+      const entry = entries.get(path);
       if (entry && entry.mode !== SYMLINK) sizes.set(path, entry.size);
     }
     return sizes;
@@ -395,6 +453,10 @@ export class StoredSnapshot implements SnapshotReader {
   private contents = new Lru<Uint8Array>(16 * 1024 * 1024);
   // The scan holding a batch; see `hold`.
   private turn: Promise<void> = Promise.resolve();
+  /** The budget of the environment this snapshot reads through, if it has one. */
+  get requests(): Requests | undefined {
+    return requestsOf(this.env);
+  }
   private constructor(
     readonly env: Env,
     readonly prefix: string,
@@ -574,6 +636,88 @@ export class StoredSnapshot implements SnapshotReader {
       done();
     }
   }
+  private async *sweep(
+    version: Version,
+    keep: (entry: Entry) => boolean,
+  ): AsyncGenerator<Scanned[]> {
+    let release: (() => void) | undefined;
+    // The consumer is done with a batch when it asks for the next one.
+    const done = () => {
+      release?.();
+      release = undefined;
+    };
+    // A manifest names an entry's pack in full on every line; a window keeps
+    // one string per pack.
+    const packs = new Map<string, string>();
+    const read = async (part: { runs: Run[]; rest: Entry[] }) => {
+      const runs: Run[] = [];
+      for (const run of part.runs) {
+        const entries = run.entries.filter(keep);
+        if (entries.length)
+          runs.push({
+            pack: run.pack,
+            start: entries[0].offset,
+            end: entries.reduce((n, e) => Math.max(n, e.offset + e.size), 0),
+            entries,
+          });
+      }
+      const out: Scanned[] = part.rest
+        .filter(keep)
+        .map((entry) => [entry, entry.size > LARGE ? null : new Uint8Array()]);
+      if (runs.length) {
+        release = await this.hold();
+        const bytes = await this.load(runs);
+        for (const run of runs)
+          for (const entry of run.entries) out.push([entry, bytes.get(entry)!]);
+      }
+      return out;
+    };
+    // A window's runs in batches of a few MiB, then what needs no pack read.
+    const parts = (window: Entry[]) => {
+      const out: { runs: Run[]; rest: Entry[] }[] = [];
+      let part: Run[] = [],
+        size = 0;
+      for (const run of this.runs(window, SWEEP_GAP)) {
+        // A part is held at once: at most one run's length.
+        if (part.length && size + run.end - run.start > RUN) {
+          out.push({ runs: part, rest: [] });
+          part = [];
+          size = 0;
+        }
+        part.push(run);
+        size += run.end - run.start;
+      }
+      const rest = window.filter((e) => e.size === 0 || e.size > LARGE);
+      if (part.length || rest.length) out.push({ runs: part, rest });
+      return out;
+    };
+    let window: Entry[] = [],
+      length = SWEEP_FIRST;
+    try {
+      for await (const entry of this.list(version)) {
+        if (!keep(entry)) continue;
+        const pack = packs.get(entry.pack);
+        if (pack === undefined) packs.set(entry.pack, entry.pack);
+        else entry.pack = pack;
+        window.push(entry);
+        if (window.length < length) continue;
+        for (const part of parts(window)) {
+          const batch = await read(part);
+          if (batch.length) yield batch;
+          done();
+        }
+        window = [];
+        length = SWEEP_ENTRIES;
+      }
+      for (const part of parts(window)) {
+        const batch = await read(part);
+        if (batch.length) yield batch;
+        done();
+      }
+    } finally {
+      done();
+    }
+  }
   /**
    * The batch's contents by entry. Each pack is read in runs of entries at most
    * `GAP` apart and `RUN` long, a few at a time, so a filter that keeps the
@@ -581,7 +725,10 @@ export class StoredSnapshot implements SnapshotReader {
    * is mostly gaps is copied out of its buffer: a view would retain the gaps
    * for as long as the batch lives.
    */
-  private async packed(batch: Entry[]): Promise<Map<Entry, Uint8Array>> {
+  private packed(batch: Entry[]): Promise<Map<Entry, Uint8Array>> {
+    return this.load(this.runs(batch, GAP));
+  }
+  private runs(batch: Entry[], gap: number): Run[] {
     const groups = new Map<string, Entry[]>();
     for (const entry of batch)
       if (entry.size > 0 && entry.size <= LARGE) {
@@ -589,16 +736,15 @@ export class StoredSnapshot implements SnapshotReader {
         if (group) group.push(entry);
         else groups.set(entry.pack, [entry]);
       }
-    const runs: { pack: string; start: number; end: number; entries: Entry[] }[] =
-      [];
+    const runs: Run[] = [];
     for (const [pack, entries] of groups) {
       entries.sort((a, b) => a.offset - b.offset);
-      let run: (typeof runs)[number] | undefined;
+      let run: Run | undefined;
       for (const entry of entries) {
         const end = entry.offset + entry.size;
         if (
           run &&
-          entry.offset - run.end <= GAP &&
+          entry.offset - run.end <= gap &&
           Math.max(run.end, end) - run.start <= RUN
         ) {
           run.end = Math.max(run.end, end);
@@ -607,6 +753,9 @@ export class StoredSnapshot implements SnapshotReader {
           runs.push((run = { pack, start: entry.offset, end, entries: [entry] }));
       }
     }
+    return runs;
+  }
+  private async load(runs: Run[]): Promise<Map<Entry, Uint8Array>> {
     const result = new Map<Entry, Uint8Array>();
     let next = 0;
     const read = async () => {
@@ -655,6 +804,7 @@ export class StoredSnapshot implements SnapshotReader {
       stream: (entry) => this.stream(entry),
       list: () => this.list(version),
       batches: (keep) => this.batches(version, keep),
+      sweep: (keep) => this.sweep(version, keep),
       many: async (entries) => {
         const bytes = await this.packed(entries);
         return entries.map((entry) =>
@@ -704,6 +854,13 @@ export class MemorySnapshot implements SnapshotReader {
       Object.keys(files)
         .sort(compareUtf8)
         .map((path) => entry(path)!);
+    const batches = async function* (keep: (entry: Entry) => boolean) {
+      for (const e of sorted())
+        if (keep(e))
+          yield [
+            [e, e.size > LARGE ? null : MemorySnapshot.bytes(files[e.path])],
+          ] as Scanned[];
+    };
     return {
       stat: async (path) => entry(path),
       read: async (e) => MemorySnapshot.bytes(files[e.path]),
@@ -712,13 +869,8 @@ export class MemorySnapshot implements SnapshotReader {
       list: async function* () {
         yield* sorted();
       },
-      batches: async function* (keep) {
-        for (const e of sorted())
-          if (keep(e))
-            yield [
-              [e, e.size > LARGE ? null : MemorySnapshot.bytes(files[e.path])],
-            ] as Scanned[];
-      },
+      batches,
+      sweep: batches,
       many: async (entries) =>
         entries.map((e) =>
           e.size > LARGE ? null : MemorySnapshot.bytes(files[e.path]),
@@ -741,7 +893,7 @@ export async function lineCounts(
     for (const byte of bytes) if (byte === 10) n++;
     return n;
   };
-  for await (const batch of tree.batches(
+  for await (const batch of tree.sweep(
     (e) => paths.has(e.path) && e.mode !== SYMLINK,
   ))
     for (const [entry, bytes] of batch) {

@@ -1,5 +1,5 @@
 import { env, applyD1Migrations } from "cloudflare:test";
-import { beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { app } from "../src/index";
 import type { Env, File, Snapshot } from "../src/types";
 import { hash } from "../src/validation";
@@ -8,16 +8,20 @@ import { createJob, validateResult } from "../src/jobs";
 import { Store } from "../src/storage";
 import { jobInput } from "../src/archive";
 import { SandboxRunner, stopped } from "../src/sandbox";
-import { Tools } from "../src/tools";
+import { OUTPUT_LIMIT, Tools } from "../src/tools";
 import {
   BATCH_BYTES,
   StoredSnapshot,
+  entriesOf,
   fileOf,
   indexKey,
   scan,
   textOf,
   textsOf,
+  type Entry,
+  type Scanned,
 } from "../src/snapshot";
+import { Requests, SEARCH_REFUSED, metered } from "../src/requests";
 import { seal, storeChunk, storePack } from "../src/upload";
 import { allMigrations, graphs, snapshot } from "./fixtures";
 import {
@@ -26,6 +30,7 @@ import {
   manifestOf,
   packBody,
   readJobInput,
+  storeInterleaved,
   storeSnapshot,
   treeOf,
   uploadSnapshot,
@@ -354,6 +359,16 @@ describe("manifests", () => {
   });
 });
 
+// The full benchmark run ended three reviews at the platform's limit of
+// storage requests: elasticsearch's 32,155 paths lie in 54 packs, a batch of
+// neighbours in path order touched most of them, and one search of the tree
+// cost 390 pack reads.
+const spread: Record<string, string> = {};
+for (let i = 0; i < 9000; i++) {
+  const path = `mod${String(i % 60).padStart(2, "0")}/f${String(i).padStart(4, "0")}.ts`;
+  spread[path] = `// ${path}\nexport const v${i} = ${i};\n`;
+}
+const SPREAD_PACKS = 12;
 describe("snapshot reader", () => {
   const many: Snapshot = { base: {}, head: {} };
   for (let i = 0; i < 700; i++)
@@ -495,6 +510,143 @@ describe("snapshot reader", () => {
     expect(seen).toEqual(["a/first.ts", "z/last.ts"]);
     expect(Date.now() - started).toBeLessThan(10000);
   });
+  const walked = async (batches: AsyncIterable<Scanned[]>) => {
+    const seen = new Map<string, string>();
+    for await (const batch of batches)
+      for (const [entry, bytes] of batch)
+        seen.set(entry.path, new TextDecoder().decode(bytes!));
+    return seen;
+  };
+  it("sweeps a tree spread over many packs with a few reads of each pack", async () => {
+    const stored = await storeInterleaved(testEnv, spread, SPREAD_PACKS, "spread");
+    const inOrder = await StoredSnapshot.open(testEnv, stored.key);
+    const ordered = await walked(inOrder.head.batches(() => true));
+    const requests = new Requests();
+    const reader = await StoredSnapshot.open(
+      metered(testEnv, requests),
+      stored.key,
+    );
+    const opened = requests.used;
+    const swept = await walked(reader.head.sweep(() => true));
+    // The same files with the same bytes, whatever the order.
+    expect(swept.size).toBe(9000);
+    expect([...swept].sort()).toEqual([...ordered].sort());
+    expect(Object.fromEntries(swept)).toEqual(spread);
+    // Two windows, each reading a pack once; path order reads every pack for
+    // every batch of 1,024 neighbours.
+    expect(reader.reads.length).toBeLessThanOrEqual(2 * SPREAD_PACKS);
+    expect(inOrder.reads.length).toBeGreaterThanOrEqual(9 * SPREAD_PACKS);
+    // All of it, the manifest included, is counted against the review.
+    expect(requests.used - opened).toBeGreaterThanOrEqual(reader.reads.length);
+    expect(requests.used - opened).toBeLessThan(3 * SPREAD_PACKS);
+  });
+  it("sweeps only what is kept and asks again before each read", async () => {
+    const stored = await storeSnapshot(testEnv, wide, "owner");
+    expect(stored.packs).toBe(2);
+    const sparse = await StoredSnapshot.open(testEnv, stored.key);
+    expect(
+      [...(await walked(sparse.head.sweep((e) => e.path.endsWith(".ts")))).keys()],
+    ).toEqual(["a/first.ts", "z/last.ts"]);
+    expect(sparse.fetched.bytes).toBeLessThan(1024);
+    // A consumer that has enough narrows what it keeps: the pack it no longer
+    // needs is not read.
+    const reader = await StoredSnapshot.open(testEnv, stored.key);
+    let enough = false;
+    const seen: string[] = [];
+    for await (const batch of reader.head.sweep(() => !enough)) {
+      for (const [entry] of batch) seen.push(entry.path);
+      enough = true;
+    }
+    expect(seen.length).toBeGreaterThan(0);
+    expect(seen.length).toBeLessThan(Object.keys(wide.head).length);
+    expect(reader.reads.length).toBe(1);
+    expect(reader.fetched.bytes).toBeLessThan(8 * MiB);
+  });
+  it("holds one sweep batch at a time and releases it when a sweep stops early", async () => {
+    const stored = await storeSnapshot(testEnv, wide, "owner");
+    const reader = await StoredSnapshot.open(testEnv, stored.key);
+    let live = 0,
+      most = 0,
+      largest = 0;
+    const walk = async () => {
+      const seen: string[] = [];
+      for await (const batch of reader.head.sweep(() => true)) {
+        most = Math.max(most, ++live);
+        largest = Math.max(
+          largest,
+          batch.reduce((n, [, bytes]) => n + (bytes?.length ?? 0), 0),
+        );
+        for (const [entry] of batch) seen.push(entry.path);
+        await new Promise((resolve) => setTimeout(resolve, 5));
+        live--;
+      }
+      return seen.sort();
+    };
+    for (const seen of await Promise.all([walk(), walk(), walk()]))
+      expect(seen).toEqual(Object.keys(wide.head).sort());
+    expect(most).toBe(1);
+    expect(largest).toBeLessThanOrEqual(2 * BATCH_BYTES);
+    for await (const batch of reader.head.sweep(() => true)) {
+      expect(batch.length).toBeGreaterThan(0);
+      break;
+    }
+    const started = Date.now();
+    expect((await walk()).length).toBe(Object.keys(wide.head).length);
+    expect(Date.now() - started).toBeLessThan(10000);
+  });
+  it("finds the entries of many paths with one pass over the manifest", async () => {
+    const stored = await storeSnapshot(testEnv, many, "owner", {
+      pack: 2048,
+      chunk: 16 * 1024,
+    });
+    const paths = [
+      ...Object.keys(many.head).filter((p, i) => i % 3 === 0 && p !== "link"),
+      "link",
+      "missing.txt",
+      "zzz/after-the-last.txt",
+    ];
+    const one = await StoredSnapshot.open(testEnv, stored.key);
+    const expected = new Map<string, Entry>();
+    for (const path of paths) {
+      const entry = await one.head.stat(path);
+      if (entry) expected.set(path, entry);
+    }
+    // Requests each costs: the manifest's chunks once, or a page per path.
+    for (const [asked, cost] of [
+      [paths, stored.chunks],
+      [paths.slice(0, 20), 1],
+      [[], 0],
+      [["missing.txt"], 1],
+    ] as [string[], number][]) {
+      const requests = new Requests();
+      const reader = await StoredSnapshot.open(
+        metered(testEnv, requests),
+        stored.key,
+      );
+      const opened = requests.used;
+      const found = await entriesOf(reader.head, asked);
+      expect([...found.keys()].sort()).toEqual(
+        asked.filter((p) => expected.has(p)).sort(),
+      );
+      for (const [path, entry] of found) expect(entry).toEqual(expected.get(path));
+      expect(requests.used - opened, `${asked.length} paths`).toBeLessThanOrEqual(
+        cost,
+      );
+    }
+    // And their texts: a few reads per pack, every request counted.
+    const requests = new Requests();
+    const reader = await StoredSnapshot.open(
+      metered(testEnv, requests),
+      stored.key,
+    );
+    const texts = await textsOf(reader.head, paths);
+    for (const path of paths)
+      expect(texts.get(path)).toBe(await textOf(one.head, path));
+    expect(requests.used).toBeLessThanOrEqual(
+      1 + stored.chunks + reader.reads.length,
+    );
+    expect(reader.reads.length).toBeLessThanOrEqual(stored.packs);
+  });
   it("reads many texts in batches with the results of one read per path", async () => {
     const stored = await storeSnapshot(testEnv, many, "owner", { pack: 2048 });
     const reader = await StoredSnapshot.open(testEnv, stored.key);
@@ -514,6 +666,191 @@ describe("snapshot reader", () => {
     expect(texts.get("bin/blob")).toBeNull();
     expect(texts.get("link")).toBeNull();
     expect(texts.get("missing.txt")).toBeNull();
+  });
+});
+
+describe("searches of a stored snapshot", () => {
+  // What search returned when it read the tree in path order and stopped at
+  // the output limit: the first matching lines by path, then by line.
+  const reference = (
+    files: Record<string, string>,
+    pattern: string,
+    within = "",
+  ) => {
+    const results: { path: string; line: number; text: string }[] = [];
+    let size = 0;
+    for (const path of Object.keys(files).sort())
+      if (path.startsWith(within))
+        for (const [i, text] of files[path].split("\n").entries())
+          if (text.includes(pattern)) {
+            const item = { path, line: i + 1, text };
+            size += JSON.stringify(item).length;
+            if (size > OUTPUT_LIMIT) return { results, truncated: true };
+            results.push(item);
+          }
+    return { results, truncated: false };
+  };
+  const files: Record<string, string> = {
+    ...spread,
+    "aaa/first.ts": "const marker = 'first';\n",
+    // Alone it fills an answer.
+    "big/long.ts": Array.from(
+      { length: 3000 },
+      (_, i) => `const marker${i} = ${i};\n`,
+    ).join(""),
+    "zzz/last.ts": "const marker = 'last';\n",
+  };
+  const open = async (requests?: Requests) => {
+    const stored = await storeInterleaved(testEnv, files, SPREAD_PACKS, "found");
+    const reader = await StoredSnapshot.open(
+      requests ? metered(testEnv, requests) : testEnv,
+      stored.key,
+    );
+    return { reader, tools: new Tools(reader, graphs, undefined) };
+  };
+  const CASES: [string, { pattern: string; scope?: string }, string?][] = [
+    ["one line of one file", { pattern: "v4321 " }],
+    // More matching files than an answer holds, in every pack and window.
+    ["a line of every file", { pattern: "export const" }],
+    ["a scope", { pattern: "export", scope: "mod07/**" }, "mod07/"],
+    ["a file that fills the answer", { pattern: "marker" }],
+    ["the last paths", { pattern: "'last'" }],
+    ["nothing", { pattern: "absent-from-every-file" }],
+  ];
+  it("answers as a search in path order did, from a tree read in storage order", async () => {
+    const { tools } = await open();
+    for (const [name, args, within] of CASES) {
+      const found = await tools.dispatch("search", args);
+      const expected = reference(files, args.pattern, within);
+      expect(found.results, name).toEqual(expected.results);
+      expect(found.truncated, name).toBe(expected.truncated);
+      expect(found.version).toBe("head");
+      expect(found.scope).toBe(args.scope);
+    }
+    expect(reference(files, "export const").truncated).toBe(true);
+    expect(reference(files, "marker").results[0].path).toBe("aaa/first.ts");
+    expect(reference(files, "marker").truncated).toBe(true);
+    // The notes and refusals of a search stay as they were.
+    expect(
+      (await tools.dispatch("search", { pattern: "v\\d+ =" })).note,
+    ).toContain("literal text");
+    await expect(
+      tools.dispatch("search", { pattern: "export", scope: "nowhere/**" }),
+    ).rejects.toThrow("matches no file in the head snapshot");
+    expect(
+      (await tools.dispatch("search", { pattern: "export", version: "base" }))
+        .results,
+    ).toEqual([]);
+  });
+  it("answers the searches asked together with one pass, and a repeated search from memory", async () => {
+    const requests = new Requests();
+    const { reader, tools } = await open(requests);
+    const opened = requests.used;
+    const together = await Promise.allSettled([
+      ...CASES.map(([, args]) => tools.dispatch("search", args)),
+      tools.dispatch("search", { pattern: "export", scope: "nowhere/**" }),
+    ]);
+    for (const [i, [name, args, within]] of CASES.entries()) {
+      const found = together[i];
+      expect(found.status, name).toBe("fulfilled");
+      const expected = reference(files, args.pattern, within);
+      expect((found as any).value.results, name).toEqual(expected.results);
+      expect((found as any).value.truncated, name).toBe(expected.truncated);
+    }
+    // A search that fails does so alone.
+    expect(together.at(-1)).toMatchObject({ status: "rejected" });
+    expect(requests.counts).toMatchObject({
+      scans: 1,
+      searches: CASES.length + 1,
+      remembered: 0,
+      refused: 0,
+    });
+    // One pass: a few reads of each pack, where every search alone read each
+    // pack for every batch of neighbours.
+    const pass = requests.used - opened;
+    expect(reader.reads.length).toBeLessThanOrEqual(2 * SPREAD_PACKS + 2);
+    expect(pass).toBeLessThan(3 * SPREAD_PACKS);
+    // Asked again, by any agent of the review: no storage request.
+    const again = await new Tools(reader, graphs, undefined).dispatch(
+      "search",
+      CASES[1][1],
+    );
+    expect(again).toEqual((together[1] as any).value);
+    expect(requests.used - opened).toBe(pass);
+    expect(requests.counts).toMatchObject({ scans: 1, remembered: 1 });
+    // An answer is the asker's own: changing it changes no one else's.
+    again.results.length = 0;
+    expect(
+      (await tools.dispatch("search", CASES[1][1])).results.length,
+    ).toBeGreaterThan(100);
+    // A failure is not remembered, and neither is another version's answer.
+    await expect(
+      tools.dispatch("search", { pattern: "export", scope: "nowhere/**" }),
+    ).rejects.toThrow("matches no file");
+    await tools.dispatch("search", { ...CASES[0][1], version: "base" });
+    expect(requests.counts).toMatchObject({ scans: 3, remembered: 2 });
+  });
+  it("answers a search asked during a pass with the next pass", async () => {
+    const requests = new Requests();
+    const { tools } = await open(requests);
+    const first = tools.dispatch("search", CASES[0][1]);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    const later = [CASES[2], CASES[4]].map(([, args]) =>
+      tools.dispatch("search", args),
+    );
+    expect((await first).results).toEqual(
+      reference(files, CASES[0][1].pattern).results,
+    );
+    expect((await later[0]).results).toEqual(
+      reference(files, "export", "mod07/").results,
+    );
+    expect((await later[1]).results).toEqual(
+      reference(files, "'last'").results,
+    );
+    expect(requests.counts).toMatchObject({ scans: 2, searches: 3 });
+  });
+  it("refuses to read the tree once the review has spent its share of requests on searching", async () => {
+    const requests = new Requests(1000);
+    const { reader, tools } = await open(requests);
+    const known = await tools.dispatch("search", CASES[0][1]);
+    requests.count(600 - requests.used);
+    expect(requests.searchable).toBe(false);
+    const used = requests.used,
+      reads = reader.reads.length;
+    const refused = await Promise.allSettled([
+      tools.dispatch("search", CASES[1][1]),
+      tools.dispatch("search", CASES[2][1]),
+    ]);
+    for (const r of refused)
+      expect(r).toMatchObject({
+        status: "rejected",
+        reason: { message: SEARCH_REFUSED },
+      });
+    // Told so, counted, and no storage request made.
+    expect(requests.counts).toMatchObject({ scans: 1, refused: 2 });
+    expect(requests.used).toBe(used);
+    expect(reader.reads.length).toBe(reads);
+    // What is known is still answered, and known paths are still read.
+    expect(await tools.dispatch("search", CASES[0][1])).toEqual(known);
+    expect(
+      await tools.dispatch("read_file", {
+        path: "aaa/first.ts",
+        version: "head",
+      }),
+    ).toBe("1: const marker = 'first';\n2: ");
+  });
+  it("does not remember a refusal", async () => {
+    const requests = new Requests();
+    const { tools } = await open(requests);
+    const full = vi.spyOn(requests, "searchable", "get").mockReturnValue(false);
+    await expect(tools.dispatch("search", CASES[4][1])).rejects.toThrow(
+      SEARCH_REFUSED,
+    );
+    full.mockRestore();
+    expect((await tools.dispatch("search", CASES[4][1])).results).toEqual(
+      reference(files, "'last'").results,
+    );
+    expect(requests.counts).toMatchObject({ scans: 1, refused: 1 });
   });
 });
 
@@ -626,6 +963,21 @@ describe("tools on a large snapshot", () => {
         0,
       ),
     ).toBeLessThanOrEqual(24000);
+    // Searches asked together share the pass, and the one stream of the huge
+    // file that two of them want.
+    const shared = await StoredSnapshot.open(testEnv, indexKey("owner", id));
+    const together = await Promise.all(
+      ["haystack-needle", "in a huge file", "lorem"].map((pattern) =>
+        new Tools(shared, graphs, undefined).dispatch("search", {
+          version: "head",
+          pattern,
+        }),
+      ),
+    );
+    expect(together[0]).toEqual(everywhere);
+    expect(together[1].results).toEqual([everywhere.results[1]]);
+    expect(together[2]).toEqual(common);
+    expect(shared.reads.length).toBeLessThanOrEqual(reader.reads.length);
   }, 300000);
 });
 

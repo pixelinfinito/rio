@@ -67,8 +67,8 @@ identities do not create evaluator result files. Valid empty reports do.
 An error envelope fails the case with Rio's own error; only a usable report is
 checked against the dataset's identities. `status.json` lists the platform
 causes of a case in `infra_failures` (`cpu_limit`, `memory_limit`,
-`subrequest_limit`, `deadline`, `job_timeout`, `executor`, `workflow_internal`,
-`transport`), read from the report's notes, the audit's unfinished votes and
+`subrequest_limit`, `storage`, `deadline`, `model_timeout`, `job_timeout`,
+`executor`, `workflow_internal`, `transport`), read from the report's notes, the audit's unfinished votes and
 analysis jobs, and a failed case's error. Skipped checks are not causes.
 Incomplete and partial reports retain those labels and their emitted comments.
 `results/` is a format adapter, not another review run. It includes findings

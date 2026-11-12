@@ -2,15 +2,34 @@ import type { Env, Submission } from "./types";
 import { Store } from "./storage";
 import { settleAnnouncement } from "./announce";
 import { IDLE, stopRunners, withdrawIdle } from "./jobs";
+import { redact } from "./redaction";
 
 /** Time past a review's deadline before the endpoint ends it itself. */
 export const DEADLINE_GRACE_MS = 120000;
 /**
  * Time a cancelled review's workflow has to end the review itself, with what
  * it had found, before the endpoint stops it: longer than the one model step
- * (two minutes) that may be under way when the review is cancelled.
+ * (four minutes) that may be under way when the review is cancelled.
  */
-export const CANCEL_GRACE_MS = 180000;
+export const CANCEL_GRACE_MS = 300000;
+
+/**
+ * Why an instance stopped, in the platform's words when it gave any: its
+ * limits (memory, CPU time, requests) are told apart by the message alone,
+ * every one of them an `Error` by name.
+ */
+function stopOf(state: {
+  status: string;
+  error?: { name?: string; message?: string } | null;
+}): string {
+  const message = state.error?.message?.replace(/\s+/g, " ").trim();
+  if (!message) return state.error?.name ?? state.status;
+  // A limit's message ends with a pointer to its documentation; the note
+  // that carries the reason ends the sentence itself.
+  return redact(message.replace(/\.? To configure this limit.*$/, ""))
+    .slice(0, 200)
+    .replace(/\.$/, "");
+}
 
 interface ReviewRow {
   id: string;
@@ -47,9 +66,7 @@ export async function reconcile(
     const instance = await env.REVIEWS.get(row.id);
     const state = await instance.status();
     if (state.status === "errored" || state.status === "terminated")
-      reason = cancelled
-        ? late
-        : `runtime stopped: ${state.error?.name ?? state.status}`;
+      reason = cancelled ? late : `runtime stopped: ${stopOf(state)}`;
     else if (overdue) {
       reason = late;
       await instance.terminate().catch(() => {});

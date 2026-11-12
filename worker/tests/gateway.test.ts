@@ -160,6 +160,84 @@ it("records a turn's snapshot tool calls so a replay does not run them again", a
   // Only the runner job is asked for again; its own steps answer it.
   expect(replay.ran).toEqual(["run"]);
 });
+it("starts a turn's searches together inside its recorded step and answers in the order asked", async () => {
+  // One pass over the tree answers the searches asked together; one after the
+  // other, each of them read the whole tree.
+  const replies = [
+    {
+      tools: [
+        { name: "search", args: { pattern: "a" } },
+        { name: "read_file", args: { path: "a.ts", version: "head" } },
+        { name: "search", args: { pattern: "b" } },
+        { name: "search", args: { pattern: "refused" } },
+      ],
+    },
+    { result: [] },
+  ];
+  const conversation = async (recorded: boolean) => {
+    const events: string[] = [];
+    let turn = 0;
+    const messages = [{ role: "user" as const, content: "review" }];
+    await converse({
+      gateway: {
+        complete: async () => ({
+          content: JSON.stringify(replies[turn++]),
+          input_tokens: 80,
+          output_tokens: 50,
+          cost_usd: null,
+        }),
+      },
+      ledger: {
+        remaining: async () => 100000,
+        reserve: async () => "id",
+        settle: async () => {},
+      },
+      actor: "agent",
+      phase: "generation",
+      model: "openrouter/openai/gpt-6.1-sol",
+      allowance: { remaining: 16000 },
+      messages,
+      dispatch: async (name, args) => {
+        const call = args.pattern ?? args.path;
+        events.push(`start ${call}`);
+        await new Promise((resolve) => setTimeout(resolve, 5));
+        events.push(`end ${call}`);
+        if (call === "refused") throw new Error("search was not run");
+        return { found: call };
+      },
+      ...(recorded
+        ? { call: (_, action) => action(), record: (_, action) => action() }
+        : {}),
+    });
+    return { events, messages };
+  };
+  const recorded = await conversation(true);
+  expect(recorded.events.slice(0, 3)).toEqual([
+    "start a",
+    "start b",
+    "start refused",
+  ]);
+  // The other calls still run one at a time.
+  expect(recorded.events.indexOf("start a.ts")).toBeGreaterThan(
+    recorded.events.indexOf("end a"),
+  );
+  const results = JSON.parse(recorded.messages[2].content).tool_results;
+  expect(results).toEqual([
+    { name: "search", result: { found: "a" } },
+    { name: "read_file", result: { found: "a.ts" } },
+    { name: "search", result: { found: "b" } },
+    { name: "search", error: "search was not run" },
+  ]);
+  // Without a step to record them, calls run in the order asked, as before.
+  const plain = await conversation(false);
+  expect(plain.messages).toEqual(recorded.messages);
+  expect(plain.events.slice(0, 4)).toEqual([
+    "start a",
+    "end a",
+    "start a.ts",
+    "end a.ts",
+  ]);
+});
 it("asks once more for the protocol after native tool syntax and gives up after the repair limit", async () => {
   const xml =
     '<invoke name="read_file">\n<parameter name="args">{"path":"a.ts","version":"head"}</parameter>\n</invoke>';

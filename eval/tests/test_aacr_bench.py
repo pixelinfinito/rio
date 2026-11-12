@@ -396,6 +396,22 @@ class AACRAdapterTests(unittest.TestCase):
                    "cancelled"), "deadline"),
             (notes("WorkflowInternalError: Attempt failed due to internal workflows error"), "workflow_internal"),
             (notes("Too many API requests by single Worker invocation."), "subrequest_limit"),
+            # The sweep names the limit that ended a workflow (aacr-bench-fix3-20261112T004450Z:
+            # three such reviews carried only "runtime stopped: Error", read as a deadline).
+            (notes("Rio ended this review: runtime stopped: Too many API requests by single Worker "
+                   "invocation."), "subrequest_limit"),
+            (notes("Rio ended this review: runtime stopped: Worker exceeded memory limit."), "memory_limit"),
+            # The review's own request budget, kept below the platform's limit.
+            (notes("correctness agent failed: review request budget exhausted; its findings are missing "
+                   "from this review."), "subrequest_limit"),
+            (notes("Request budget: 3 tree searches were not run, because the review had used its share of "
+                   "the 50000 requests the platform allows one review on searching; what a search would "
+                   "have found is missing from this review."), "subrequest_limit"),
+            (notes("Request budget: 1 model turn was not started, because the review had used its share "
+                   "of the 50000 requests the platform allows one review; the agents and verifier votes "
+                   "they belonged to did not complete."), "subrequest_limit"),
+            (notes("correctness agent failed: The operation was aborted due to timeout; its findings are "
+                   "missing from this review."), "model_timeout"),
             (notes("Agent result cache not updated for correctness: D1_ERROR: D1 DB is overloaded. Too many "
                    "resources consumed within a 10 second window."), "storage"),
             (notes("D1_ERROR: Network connection lost."), "storage"),

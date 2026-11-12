@@ -4,6 +4,13 @@ import {
   WorkflowStep,
 } from "cloudflare:workers";
 import { NonRetryableError } from "cloudflare:workflows";
+import {
+  REQUESTS_EXHAUSTED,
+  Requests,
+  counted,
+  metered,
+  requestLimit,
+} from "./requests";
 import type {
   Env,
   ExecutionResult,
@@ -315,9 +322,18 @@ export const CANCELLED_NOTE = "Review cancelled before it finished.";
 /** Cache entries written per store step: four packs. */
 const CACHE_STORE_CHUNK = 4 * PACK_ENTRIES;
 export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
+  // What this run asks of the database and the bucket is counted: `this.env`
+  // is the metered environment.
+  private readonly requests: Requests;
+  constructor(ctx: ExecutionContext, env: Env) {
+    const requests = new Requests(requestLimit(env));
+    super(ctx, metered(env, requests));
+    this.requests = requests;
+  }
   async run(event: WorkflowEvent<WorkflowParams>, step: WorkflowStep) {
     const id = event.payload.review_id,
-      store = new Store(this.env);
+      store = new Store(this.env),
+      requests = this.requests;
     const load = await step.do("load", async () => {
       const row = await this.env.DB.prepare(
         "SELECT submission_key,deadline,tenant,created_at FROM reviews WHERE id=?",
@@ -460,26 +476,59 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
     let promptConfig: PromptSettings = { cache: [], layout: [] };
     let partitions!: Partitions;
     const call = async (name: string, action: () => Promise<ModelResponse>) => {
-      const key = await step.do(
+      const key = await counted(
+        step,
+        requests,
         `model-${name}`,
-        { retries: { limit: 0, delay: "1 second" }, timeout: "2 minutes" },
+        // Longer than the call itself (`MODEL_CALL_MS`) and its bookkeeping.
+        { retries: { limit: 0, delay: "1 second" }, timeout: "4 minutes" },
         async () => {
+          // Refused while the review can still report what it has. The
+          // refusal is the step's result, so it is counted once and a later
+          // run of this code meets it again.
+          if (requests.exhausted) {
+            requests.count(1, "stopped");
+            return "";
+          }
+          requests.count();
           const result = await action();
           const key = `reviews/${id}/models/${name}.json`;
           await store.put(key, result);
           return key;
         },
       );
+      invariant(key, REQUESTS_EXHAUSTED);
       return store.get<ModelResponse>(key);
     };
     // The snapshot tool calls of one model turn (see `converse`). The action
     // answers tool errors itself, so a failed attempt is the platform's.
     const record = (name: string, action: () => Promise<string>) =>
-      step.do(
+      counted(
+        step,
+        requests,
         `tools-${name}`,
         { retries: { limit: 1, delay: "2 seconds" }, timeout: "5 minutes" },
         action,
       );
+    // What the request budget cost the review, for its report.
+    const account = () => {
+      const counts = requests.counts;
+      if (report.agent_audit)
+        report.agent_audit.requests = { limit: requests.limit, ...counts };
+      const allowed = `its share of the ${requests.limit} requests the platform allows one review`;
+      const notes: string[] = [];
+      if (counts.refused)
+        notes.push(
+          `Request budget: ${counts.refused} tree search${counts.refused === 1 ? " was" : "es were"} not run, because the review had used ${allowed} on searching; what a search would have found is missing from this review.`,
+        );
+      if (counts.stopped)
+        notes.push(
+          `Request budget: ${counts.stopped} model turn${counts.stopped === 1 ? " was" : "s were"} not started, because the review had used ${allowed}; the agents and verifier votes they belonged to did not complete.`,
+        );
+      if (!notes.length) return;
+      if (report.status !== "partial") report.status = "incomplete";
+      report.footer.notes.push(...notes);
+    };
     // A verifier conversation's prompt settings: the partition of its model,
     // its cache key root, and the layout features it follows.
     const verifierPrompt = (hypothesis: string) => {
@@ -1738,7 +1787,13 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                 })),
               };
             }
-            if (agent !== "security" || !budget) {
+            // The request budget is the platform's, not the profile's: its
+            // end is told as a failure for the security agent too.
+            if (
+              agent !== "security" ||
+              !budget ||
+              message.includes(REQUESTS_EXHAUSTED)
+            ) {
               // One agent's failure ends only that agent; the others' work and
               // the deterministic results stay in a partial report.
               report.status = "partial";
@@ -2337,6 +2392,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         (entry: any) => entry.reason === "no_runtime",
       );
       report.review.rio_version = this.env.RIO_VERSION;
+      account();
       if (await store.cancelled(id)) report.status = "partial";
       if (diffOnlyAudit) report.agent_audit.diff_only = diffOnlyAudit;
       if (cacheStats)
@@ -2627,6 +2683,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         } catch {
           // Keep the partial report without lineage keys.
         }
+      account();
       const key = await store.put(`reviews/${id}/report.json`, report);
       await step.do("failed", async () => {
         const ended = await this.env.DB.prepare(
