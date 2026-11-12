@@ -430,7 +430,11 @@ line, the job plus `links` (`{"base": {path: base64 target}, "head": {…}}` for
 needed versions), followed by a POSIX tar archive of the needed trees: regular files
 only, named `base/<path>` or `head/<path>`, with mode 0644 or 0755 and PAX headers
 for long or non-ASCII names. Symbolic links are never materialized. The Cloudflare
-Sandbox streams this input into the container. A self-hosted runner downloads the
+Sandbox streams this input into the container. When a job needs both trees, the
+Sandbox sends head whole and of base only the files that differ; files equal in
+path, content and mode are listed in `same/base` members (a JSON array of paths
+each) and the executor copies them from the head tree. A result carries the
+phase a deadline ended (`transfer` or `command`) and the time each phase took. A self-hosted runner downloads the
 same bytes from `GET /v1/runner/:review/:job/:attempt/archive` with its job
 capability as the bearer token and pipes them into Docker.
 
@@ -447,7 +451,11 @@ with an expiry in Unix milliseconds. Never share the runner secret with clients.
 - `/events` returns replayable SSE records. Reconnect with `Last-Event-ID`.
 - `/audit` returns hypotheses, blind answers, voter outcomes, artifact references
   and separate generation/verification usage. All routes enforce tenant ownership.
-- `POST /v1/reviews/:id/cancel` prevents further budget reservations and execution.
+- `POST /v1/reviews/:id/cancel` prevents further budget reservations and execution:
+  it stops the review's running Sandbox jobs, withdraws its idle ones and ends
+  the workflow's waits. The review then becomes `partial` with the findings made
+  so far; a workflow that has not ended it within three minutes is terminated and
+  the endpoint writes the partial report. Nothing that completes later changes it.
 - Runner claims receive a short-lived, review/job/attempt-bound capability.
   Completions require HMAC-SHA256 over the exact request body bytes, keyed by that capability.
   Old attempts, expired capabilities and cross-review use are rejected.

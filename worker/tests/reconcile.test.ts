@@ -1,10 +1,20 @@
 import { env, applyD1Migrations } from "cloudflare:test";
 import { beforeAll, describe, expect, it } from "vitest";
 import { Store } from "../src/storage";
-import { DEADLINE_GRACE_MS, reconcile, sweepReviews } from "../src/reconcile";
+import {
+  CANCEL_GRACE_MS,
+  DEADLINE_GRACE_MS,
+  reconcile,
+  sweepReviews,
+} from "../src/reconcile";
 import { transferMs } from "../src/archive";
-import { ANALYSIS_WALL_MS, RUN_WALL_MS, wallLimit } from "../src/jobs";
-import { timedOut } from "../src/sandbox";
+import {
+  ANALYSIS_WALL_MS,
+  RUN_WALL_MS,
+  stopRunners,
+  wallLimit,
+} from "../src/jobs";
+import { stopped, timedOut } from "../src/sandbox";
 import { allMigrations, submission } from "./fixtures";
 import type { Env, Execution } from "../src/types";
 
@@ -80,6 +90,156 @@ describe("review reconciliation", () => {
     await sweepReviews(runtime);
     expect((await row("swept"))?.status).toBe("partial");
   });
+
+  it("leaves a cancelled review to its workflow for the grace, then ends it", async () => {
+    const now = Date.now();
+    const r = await review("cancelled-late", now + 600000, "cancelled");
+    await runtime.DB.prepare(
+      "UPDATE reviews SET cancelled=1,cancelled_at=? WHERE id='cancelled-late'",
+    )
+      .bind(now)
+      .run();
+    const cancelled = { ...r, cancelled_at: now };
+    expect(await reconcile(runtime, cancelled, now + 1000)).toBeNull();
+    await sweepReviews(runtime, now + 1000);
+    expect(await row("cancelled-late")).toMatchObject({
+      status: "cancelled",
+      job: "leased",
+    });
+    // The cron ends it once the grace is over, well before its deadline.
+    // Five minutes: longer than the one model step that may be under way.
+    expect(CANCEL_GRACE_MS).toBe(5 * 60 * 1000);
+    await sweepReviews(runtime, now + CANCEL_GRACE_MS - 1000);
+    expect((await row("cancelled-late"))?.status).toBe("cancelled");
+    await sweepReviews(runtime, now + CANCEL_GRACE_MS + 1000);
+    const after = await row("cancelled-late");
+    expect(after).toMatchObject({
+      status: "partial",
+      error: "cancelled",
+      job: "failed",
+    });
+    const report = await new Store(runtime).get<any>(after!.report_key);
+    expect(report.status).toBe("partial");
+    expect(report.footer.notes.at(-1)).toBe(
+      "Rio ended this review: cancelled.",
+    );
+  });
+
+  it("ends an overdue cancellation behind a full batch of open reviews", async () => {
+    const now = Date.now();
+    // More open reviews than one sweep takes, each due before the cancelled
+    // one and none of them late.
+    for (let i = 0; i < 26; i++)
+      await review(`crowd-${i}`, now + 60000 + i);
+    await review("cancelled-behind", now + 600000, "cancelled");
+    await runtime.DB.prepare(
+      "UPDATE reviews SET cancelled=1,cancelled_at=? WHERE id='cancelled-behind'",
+    )
+      .bind(now - CANCEL_GRACE_MS - 1000)
+      .run();
+    await sweepReviews(runtime, now);
+    expect(await row("cancelled-behind")).toMatchObject({
+      status: "partial",
+      error: "cancelled",
+    });
+    expect((await row("crowd-0"))?.status).toBe("running");
+    await runtime.DB.prepare(
+      "UPDATE reviews SET status='complete' WHERE id LIKE 'crowd-%'",
+    ).run();
+  });
+
+  it("names what stopped the runtime of a review whose workflow ended in error", async () => {
+    // Every platform limit ends a workflow with an error named `Error`; the
+    // reports of the reviews that passed the request limit said only that.
+    const stopped = (error: unknown) =>
+      ({
+        ...runtime,
+        REVIEWS: {
+          get: async () => ({ status: async () => ({ status: "errored", error }) }),
+        },
+      }) as unknown as Env;
+    const note = async (id: string, error: unknown) => {
+      const r = await review(id, Date.now() + 600000);
+      expect(await reconcile(stopped(error), r)).toBe("partial");
+      const after = await row(id);
+      const report = await new Store(runtime).get<any>(after!.report_key);
+      expect(report.footer.notes.at(-1)).toBe(
+        `Rio ended this review: ${after!.error}.`,
+      );
+      return after!.error;
+    };
+    expect(
+      await note("stopped-requests", {
+        name: "Error",
+        message:
+          "Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits",
+      }),
+    ).toBe(
+      "runtime stopped: Too many API requests by single Worker invocation",
+    );
+    expect(
+      await note("stopped-memory", {
+        name: "Error",
+        message: "Worker exceeded memory limit.",
+      }),
+    ).toBe("runtime stopped: Worker exceeded memory limit");
+    // A long or secret-bearing message is cut and redacted; none falls back
+    // to the error's name, then to the status.
+    const long = await note("stopped-long", {
+      name: "Error",
+      message: `failed with\n  AKIAIOSFODNN7EXAMPLE ${"x".repeat(400)}`,
+    });
+    expect(long).not.toContain("AKIAIOSFODNN7EXAMPLE");
+    expect(long).not.toContain("\n");
+    expect(long.length).toBeLessThanOrEqual("runtime stopped: ".length + 200);
+    expect(await note("stopped-named", { name: "RangeError" })).toBe(
+      "runtime stopped: RangeError",
+    );
+    expect(await note("stopped-bare", null)).toBe("runtime stopped: errored");
+  });
+
+  it("withdraws the idle jobs of finished reviews and leaves held and open ones", async () => {
+    const now = Date.now();
+    await review("finished", now + 600000, "partial");
+    await review("working", now + 600000, "running");
+    const job = (id: string, review: string, status: string, lease: number) =>
+      runtime.DB.prepare(
+        "INSERT INTO jobs(id,review_id,attempt,status,payload_key,created_at,kind,lease_until) VALUES(?,?,1,?,'unused',?,'graph',?)",
+      )
+        .bind(id, review, status, now, lease)
+        .run();
+    await job("f-pending", "finished", "pending", 0);
+    await job("f-held", "finished", "leased", now + 60000);
+    await job("f-lost", "finished", "leased", now - 60000);
+    await job("f-done", "finished", "completed", 0);
+    await job("w-pending", "working", "pending", 0);
+    await job("w-lost", "working", "leased", now - 60000);
+    await sweepReviews(runtime, now);
+    const jobs = await runtime.DB.prepare(
+      "SELECT id,status FROM jobs WHERE review_id IN ('finished','working') ORDER BY id",
+    ).all<{ id: string; status: string }>();
+    expect(Object.fromEntries(jobs.results.map((j) => [j.id, j.status]))).toEqual({
+      "f-done": "completed",
+      "f-held": "leased",
+      "f-lost": "failed",
+      "f-pending": "failed",
+      // The job the helper adds: leased, with no lease time.
+      "finished-job": "failed",
+      // An open review's jobs are its workflow's to wait for or withdraw.
+      "w-lost": "leased",
+      "w-pending": "pending",
+      "working-job": "leased",
+    });
+    // The runner still holding a job reports later; its lease then runs out.
+    await sweepReviews(runtime, now + 120000);
+    expect(
+      (
+        await runtime.DB.prepare(
+          "SELECT status FROM jobs WHERE id='f-held'",
+        ).first<any>()
+      ).status,
+    ).toBe("failed");
+  });
 });
 
 describe("runner deadlines", () => {
@@ -119,6 +279,95 @@ describe("runner deadlines", () => {
       stderr: "runner wall deadline exceeded during transfer",
       timed_out: true,
       truncated: false,
+      phase: "transfer",
     });
+    // With what the transfer had done by then, so a slow archive is told
+    // from a slow command and slow storage from a slow container.
+    const timing = { transfer_ms: 240000, archive_bytes: 1 << 28, storage_ms: 900 };
+    expect(timedOut(job, "command", timing)).toMatchObject({
+      stderr: "runner wall deadline exceeded during command",
+      phase: "command",
+      timing,
+    });
+  });
+
+  it("ends a stopped runner's job with a result and stops only containers at work", async () => {
+    const job = { job_id: "j", attempt: 1, version: "head" } as Execution;
+    expect(stopped(job)).toEqual({
+      outcome: "exited",
+      job_id: "j",
+      attempt: 1,
+      version: "head",
+      exit_code: 124,
+      stdout: "",
+      stderr: "runner stopped: the review ended or was cancelled",
+      timed_out: true,
+      truncated: false,
+    });
+    const now = Date.now();
+    await review("stopping", now + 600000);
+    for (const [id, status, kind] of [
+      ["s-checks", "leased", "checks"],
+      ["s-run", "leased", "run"],
+      ["s-static", "leased", "static"],
+      ["s-prepare", "leased", "prepare"],
+      ["s-model", "leased", "model"],
+      ["s-pending", "pending", "graph"],
+      ["s-done", "completed", "graph"],
+    ])
+      await runtime.DB.prepare(
+        "INSERT INTO jobs(id,review_id,attempt,status,payload_key,created_at,kind,lease_until) VALUES(?,'stopping',2,?,'unused',?,?,?)",
+      )
+        .bind(id, status, now, kind, now + 60000)
+        .run();
+    const calls: string[] = [];
+    const sandbox = {
+      idFromName: (name: string) => name,
+      get: (name: string) => ({
+        fetch: async (url: string, init: RequestInit) => {
+          calls.push(`${init.method} ${url} ${name}`);
+          // One container is already gone; the others are still stopped.
+          if (name.includes("s-checks")) throw new Error("no such object");
+          return Response.json({ stopped: true });
+        },
+      }),
+    };
+    const sandboxed = {
+      ...runtime,
+      DB: runtime.DB,
+      RUNNER_BACKEND: "sandbox",
+      SANDBOX: sandbox,
+    } as unknown as Env;
+    await stopRunners(sandboxed, "stopping");
+    expect(calls.sort()).toEqual([
+      "POST https://sandbox/stop stopping-s-checks-2",
+      "POST https://sandbox/stop stopping-s-prepare-2",
+      "POST https://sandbox/stop stopping-s-run-2",
+      "POST https://sandbox/stop stopping-s-static-2",
+      // The job the helper adds: a leased graph job, attempt 1.
+      "POST https://sandbox/stop stopping-stopping-job-1",
+    ]);
+    // A job whose container answered the stop is withdrawn, so it does not
+    // read as running until its lease ends; the one that did not answer
+    // keeps its lease, and jobs that are not containers are left alone.
+    const jobs = await runtime.DB.prepare(
+      "SELECT id,status FROM jobs WHERE review_id='stopping' ORDER BY id",
+    ).all<{ id: string; status: string }>();
+    expect(
+      Object.fromEntries(jobs.results.map((j) => [j.id, j.status])),
+    ).toEqual({
+      "s-checks": "leased",
+      "s-done": "completed",
+      "s-model": "leased",
+      "s-pending": "pending",
+      "s-prepare": "failed",
+      "s-run": "failed",
+      "s-static": "failed",
+      "stopping-job": "failed",
+    });
+    // A self-hosted runner's containers are its own.
+    calls.length = 0;
+    await stopRunners({ ...sandboxed, RUNNER_BACKEND: "self-hosted" } as Env, "stopping");
+    expect(calls).toEqual([]);
   });
 });

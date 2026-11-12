@@ -599,3 +599,46 @@ fn a_deadline_during_indexing_truncates_instead_of_expanding() {
     assert!(slices.base.nodes.iter().all(|n| n.seed));
     assert!(slices.base.edges.is_empty());
 }
+#[test]
+fn a_deadline_inside_one_file_truncates_instead_of_overrunning() {
+    use std::sync::atomic::{AtomicUsize, Ordering};
+    let wide = |body: u32| {
+        entry(
+            &(0..4000)
+                .map(|i| {
+                    let argument = if i == 0 { body } else { 0 };
+                    format!("export function value{i}() {{ return other{i}({argument}); }}\n")
+                })
+                .collect::<String>(),
+        )
+    };
+    let base: Tree = [("src/wide.ts".to_owned(), wide(1))].into();
+    let head: Tree = [("src/wide.ts".to_owned(), wide(2))].into();
+    let changes = changes(base, head);
+    let options = GraphOptions::default();
+    let delta = diff(&changes, &options.exclude).unwrap();
+    let complete = build_graph(&changes, &delta, &options);
+    assert!(!complete.head.truncated && !complete.head.nodes.is_empty());
+    // How often an unhurried build asks: far more than once per file, so the
+    // deadline is seen inside the one file rather than only after it.
+    let calls = AtomicUsize::new(0);
+    let count = || {
+        calls.fetch_add(1, Ordering::Relaxed);
+        false
+    };
+    GraphBuilder::default()
+        .build_until(&changes, &delta, &options, &count)
+        .unwrap();
+    assert!(calls.load(Ordering::Relaxed) > 16);
+    // True from the second check on: the first lets the changed file start, the
+    // rest arrive while it is being parsed.
+    let calls = AtomicUsize::new(0);
+    let stop = || calls.fetch_add(1, Ordering::Relaxed) >= 1;
+    let slices = GraphBuilder::default()
+        .build_until(&changes, &delta, &options, &stop)
+        .unwrap();
+    assert!(slices.base.truncated && slices.head.truncated);
+    assert!(slices.base.nodes.is_empty() && slices.head.nodes.is_empty());
+    // The builder stopped asking almost at once instead of finishing the file.
+    assert!(calls.load(Ordering::Relaxed) < 16);
+}

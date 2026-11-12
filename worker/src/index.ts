@@ -43,8 +43,16 @@ import {
 import { TRANSFER_CAP_MS, jobInput } from "./archive";
 import { reconcile, sweepReviews } from "./reconcile";
 import { attachStatements, lineageId } from "./lineage";
-import { Store } from "./storage";
-import { ANALYSIS_WALL_MS, PREPARE_WALL_MS, failJob, finishJob } from "./jobs";
+import { passing, steady, Store } from "./storage";
+import {
+  ANALYSIS_WALL_MS,
+  PREPARE_WALL_MS,
+  failJob,
+  finishJob,
+  stopRunners,
+  withdraw,
+  withdrawIdle,
+} from "./jobs";
 import { parseWall } from "./budget";
 import { checkProfileModels } from "./gateway";
 import { renderSarif, utc } from "./sarif";
@@ -56,6 +64,7 @@ import { dismissRecommendation } from "./qa-recommendation-history";
 import { APP_TENANT, handleGitHubWebhook, installationFor } from "./webhooks";
 import {
   handleReviewRequest,
+  cancelPreparing,
   failPrepare,
   failUnscheduled,
   prepareCredential,
@@ -79,16 +88,24 @@ export { MigrationWorkflow } from "./migrate";
 export { Sandbox } from "./sandbox";
 export { QaSandboxGateway } from "./qa-sandbox-gateway";
 const app = new Hono<{ Bindings: Env }>();
-app.onError((error, c) =>
-  c.json(
-    {
-      error: /unauthorized|capability/.test(error.message)
-        ? "unauthorized"
-        : error.message,
-    },
-    /unauthorized|capability/.test(error.message) ? 401 : 400,
-  ),
-);
+/**
+ * Storage faults that pass (D1 overloaded, reset or unreachable; an object
+ * store operation that failed inside the platform, was unavailable or was
+ * asked too often): the same request may succeed a moment later, so the
+ * answer is 503, which clients retry, and never 400, which tells them the
+ * request itself was wrong.
+ */
+export const transient = (message: string) =>
+  /D1 DB is overloaded|D1 DB reset|D1 DB storage operation exceeded timeout|Cannot resolve D1 DB due to transient issue|D1_ERROR: (Network connection lost|Internal error)/i.test(
+    message,
+  ) || passing(message);
+app.onError((error, c) => {
+  if (/unauthorized|capability/.test(error.message))
+    return c.json({ error: "unauthorized" }, 401);
+  if (transient(error.message))
+    return c.json({ error: error.message }, 503, { "retry-after": "5" });
+  return c.json({ error: error.message }, 400);
+});
 app.get("/health", (c) => c.json({ version: c.env.RIO_VERSION, protocol: 1 }));
 app.use("/v1/*", async (c, next) => {
   const protocol = c.req.header("rio-protocol");
@@ -523,11 +540,43 @@ app.post("/v1/reviews/:id/cancel", async (c) => {
     c.req.param("id"),
     "reviews:write",
   );
-  await c.env.DB.prepare(
-    "UPDATE reviews SET cancelled=1,status='cancelled' WHERE id=? AND status NOT IN ('complete','partial','error')",
-  )
-    .bind(row.id)
-    .run();
+  // A review still being prepared has no workflow to end it: it ends here,
+  // and its prepare job with it.
+  if (await cancelPreparing(c.env, row.id))
+    return c.json({ id: row.id, status: "cancelled" });
+  // The workflow sees the flag between steps and ends the review as partial
+  // with what it had; the sweep stops one that has not within the grace.
+  // The jobs open at that moment are read with it: one that completes later
+  // finds the review cancelled, one that completed earlier ends its own wait
+  // (`finishJob`).
+  const [stopped, open] = (await c.env.DB.batch([
+    c.env.DB.prepare(
+      "UPDATE reviews SET cancelled=1,status='cancelled',cancelled_at=COALESCE(cancelled_at,?) WHERE id=? AND status NOT IN ('complete','partial','error') RETURNING id",
+    ).bind(Date.now(), row.id),
+    c.env.DB.prepare(
+      "SELECT id,attempt FROM jobs WHERE review_id=? AND status IN ('pending','leased')",
+    ).bind(row.id),
+  ])) as [D1Result<{ id: string }>, D1Result<{ id: string; attempt: number }>];
+  if (stopped.results.length) {
+    // A job no runner has taken never runs. One a runner has is stopped
+    // (Sandbox) or keeps its result for the audit, and the workflow stops
+    // waiting for it now.
+    await stopRunners(c.env, row.id);
+    await withdrawIdle(c.env, row.id);
+    if (open.results.length) {
+      // No instance, or one that ended, has no wait to end. Each job on its
+      // own: an event that fails leaves the other waits their end.
+      const instance = await c.env.REVIEWS.get(row.id).catch(() => null);
+      if (instance)
+        for (const job of open.results)
+          await instance
+            .sendEvent({
+              type: `job-${job.id}-${job.attempt}`,
+              payload: { cancelled: true },
+            })
+            .catch(() => {});
+    }
+  }
   const qa = await c.env.DB.prepare(
     "SELECT q.id FROM qa_runs q JOIN reviews r ON r.id=q.review_id WHERE q.review_id=? AND r.cancelled=1",
   )
@@ -983,7 +1032,9 @@ export { app };
 /** Deliveries per queue message: one plus `max_retries` in wrangler.jsonc. */
 const JOB_DELIVERIES = 3;
 export default {
-  fetch: app.fetch,
+  // A request's object operations ride out a passing fault of the store.
+  fetch: (request: Request, env: Env, context: ExecutionContext) =>
+    app.fetch(request, steady(env), context),
   async scheduled(_controller: ScheduledController, env: Env) {
     // Independent tasks: a failing QA cleanup must not delay ending overdue reviews.
     const results = await Promise.allSettled([
@@ -1036,11 +1087,15 @@ export default {
         const { review_id, job_id, attempt } = message.body as JobMessage,
           store = new Store(env);
         if (await store.cancelled(review_id)) {
+          // Not started, or redelivered after its container was stopped.
+          await withdraw(env, job_id, attempt);
           message.ack();
           continue;
         }
         const row = await env.DB.prepare(
-          "UPDATE jobs SET status='leased',lease_until=? WHERE id=? AND attempt=? AND status IN ('pending','leased') RETURNING payload_key",
+          // Not for a review that ended, or was cancelled since the read
+          // above: its jobs are withdrawn, never begun.
+          "UPDATE jobs SET status='leased',lease_until=? WHERE id=? AND attempt=? AND status IN ('pending','leased') AND NOT EXISTS (SELECT 1 FROM reviews r WHERE r.id=jobs.review_id AND (r.cancelled=1 OR r.status IN ('complete','partial','error'))) RETURNING payload_key",
         )
           // Held for the longest Sandbox job: transfer, command wall and teardown.
           .bind(

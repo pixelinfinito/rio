@@ -706,10 +706,27 @@ pub struct ReviewHost {
     redraw: bool,
     /// The second Ctrl-C ended the session (exit 130).
     pub killed: bool,
+    /// A request to terminate (SIGTERM) arrived: the session ends as when
+    /// the user quits, so a running review is stopped (an endpoint review
+    /// cancelled) before the process exits.
+    terminated: std::sync::Arc<std::sync::atomic::AtomicBool>,
 }
 
 impl ReviewHost {
     pub fn new(shared: Shared, runtime: tokio::runtime::Handle, reply: Sender<Msg>) -> Self {
+        let terminated = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
+        #[cfg(unix)]
+        {
+            let flag = terminated.clone();
+            runtime.spawn(async move {
+                use tokio::signal::unix::{SignalKind, signal};
+                if let Ok(mut terminate) = signal(SignalKind::terminate())
+                    && terminate.recv().await.is_some()
+                {
+                    flag.store(true, std::sync::atomic::Ordering::SeqCst);
+                }
+            });
+        }
         Self {
             shared,
             runtime,
@@ -719,6 +736,7 @@ impl ReviewHost {
             thread: None,
             redraw: false,
             killed: false,
+            terminated,
         }
     }
 
@@ -827,6 +845,13 @@ impl ReviewHost {
                 }
             })
         }));
+    }
+
+    /// Leaves after the second Ctrl-C. Tools are killed already; an endpoint
+    /// review has its cancellation first, and is not left running unread.
+    pub fn exit_killed(&self) -> ! {
+        self.runtime.block_on(crate::endpoint::settled());
+        std::process::exit(130)
     }
 
     /// Cancel a running review and wait until it has stopped.
@@ -1145,6 +1170,10 @@ impl rio_tui::terminal::Host for ReviewHost {
 
     fn take_redraw(&mut self) -> bool {
         std::mem::take(&mut self.redraw)
+    }
+
+    fn finished(&mut self) -> bool {
+        self.terminated.load(std::sync::atomic::Ordering::SeqCst)
     }
 }
 

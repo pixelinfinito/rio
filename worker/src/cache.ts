@@ -1,10 +1,11 @@
 import type { ChangedFile, Env, Graph, Guidance, Hypothesis } from "./types";
 import { canonical, hash } from "./validation";
 
-// Agent result cache (openspec rio-v0-3-core, agent-result-cache). Entries
-// hold one agent's hypotheses for one changed hunk under
-// `cache/<tenant>/<hunk_hash>/<context_hash>.json`; the `agent_cache` index
-// row carries the creation time for retention. Verification never reads it.
+// Agent result cache (openspec rio-v0-3-core, agent-result-cache). An entry
+// holds one agent's hypotheses for one changed hunk; entries are stored in
+// packs under `cache/<tenant>/packs/`, and the `agent_cache` index row of an
+// entry names its object and carries the creation time for retention.
+// Verification never reads it.
 
 /** The repository's evidence retention (TRD default; not yet configurable). */
 export const EVIDENCE_RETENTION_MS = 90 * 24 * 60 * 60 * 1000;
@@ -128,9 +129,11 @@ export interface ContextInputs {
 }
 /**
  * The context key's own version: 2 keys the true one-hop neighbourhood with
- * SHA-256 digests. Entries of another version are never replayed.
+ * SHA-256 digests; 3, 4 and 5 each leave behind the entries of a build whose
+ * reviews ended at platform limits. Entries of another version are never
+ * replayed.
  */
-export const CONTEXT_KEY_VERSION = 2;
+export const CONTEXT_KEY_VERSION = 5;
 const encoder = new TextEncoder();
 /** Hex SHA-256 through the runtime's native digest. */
 async function digest(text: string): Promise<string> {
@@ -320,6 +323,33 @@ export interface CacheEntry {
 }
 export const objectKey = (tenant: string, k: Keyed) =>
   `cache/${tenant}/${k.hunk_hash}/${k.context_hash}.json`;
+/**
+ * Entries are stored in packs: one object for up to `PACK_ENTRIES` entries of
+ * a run, so a change of thousands of hunks costs tens of writes and reads. (An
+ * object per entry ended a store step at the platform's request limit.) Index
+ * rows of a pack's entries name the pack. An object written before packs holds
+ * one entry and is still read.
+ */
+export const PACK_ENTRIES = 256;
+/** Bytes of a pack's object; one entry larger than this is a pack of its own. */
+export const PACK_BYTES = 2 * 1024 * 1024;
+interface CachePack {
+  pack: 1;
+  // By `member`.
+  entries: Record<string, CacheEntry>;
+}
+/** Bytes of a pack without entries, and those one entry adds to its object. */
+const PACK_ENVELOPE = JSON.stringify({ pack: 1, entries: {} }).length;
+const entryBytes = (name: string, entry: CacheEntry) =>
+  encoder.encode(`${JSON.stringify(name)}:${JSON.stringify(entry)},`).length;
+const member = (k: { hunk_hash: string; context_hash: string }) =>
+  `${k.hunk_hash}/${k.context_hash}`;
+/**
+ * A pack is named for its members, not its content or the time: a retried
+ * store rewrites the same object instead of leaving the first attempt's.
+ */
+const packKey = async (tenant: string, members: string[]) =>
+  `cache/${tenant}/packs/${await digest(members.join("\n"))}.json`;
 
 /** Hits by hunk index. Expired entries are removed and miss. */
 export async function lookup(
@@ -349,6 +379,8 @@ export async function lookup(
   const hits: Record<number, CacheEntry> = {};
   const expired: (Keyed & { object_key: string })[] = [];
   const touched: Keyed[] = [];
+  // Each object is read once, whatever the number of its entries asked for.
+  const wanted = new Map<string, number[]>();
   for (const [index, k] of keys.entries()) {
     const row = rows.get(`${k.hunk_hash}\0${k.context_hash}`);
     if (!row) continue;
@@ -356,10 +388,21 @@ export async function lookup(
       expired.push({ ...k, object_key: row.object_key });
       continue;
     }
-    const object = await env.ARTIFACTS.get(row.object_key);
+    const indexes = wanted.get(row.object_key);
+    if (indexes) indexes.push(index);
+    else wanted.set(row.object_key, [index]);
+  }
+  for (const [key, indexes] of wanted) {
+    const object = await env.ARTIFACTS.get(key);
     if (!object) continue;
-    hits[index] = await object.json<CacheEntry>();
-    touched.push(k);
+    const body = await object.json<CachePack | CacheEntry>();
+    for (const index of indexes) {
+      const entry =
+        "pack" in body ? body.entries[member(keys[index])] : body;
+      if (!entry) continue;
+      hits[index] = entry;
+      touched.push(keys[index]);
+    }
   }
   await remove(env, tenant, expired);
   for (let i = 0; i < touched.length; i += LOOKUP_BATCH)
@@ -377,19 +420,50 @@ export async function lookup(
 /** Hunk hashes per lookup query and statements per D1 batch. */
 const LOOKUP_BATCH = 90;
 
+/**
+ * Deletes the objects among `keys` that no index row names any more, with one
+ * storage request per `LOOKUP_BATCH` keys.
+ */
+async function release(env: Env, tenant: string, keys: string[]) {
+  const distinct = [...new Set(keys)];
+  for (let i = 0; i < distinct.length; i += LOOKUP_BATCH) {
+    const batch = distinct.slice(i, i + LOOKUP_BATCH);
+    const named = await env.DB.prepare(
+      `SELECT DISTINCT object_key FROM agent_cache WHERE tenant=? AND object_key IN (${batch.map(() => "?").join(",")})`,
+    )
+      .bind(tenant, ...batch)
+      .all<{ object_key: string }>();
+    const kept = new Set(named.results.map((r) => r.object_key));
+    const unnamed = batch.filter((key) => !kept.has(key));
+    if (unnamed.length) await env.ARTIFACTS.delete(unnamed);
+  }
+}
+/**
+ * Removes entries: their rows first, then the objects no row names. A pack
+ * outlives the removal of some of its entries, and a failure in between
+ * leaves an object nothing reads. (A store of the same members racing the
+ * removal can leave rows naming a deleted object; a lookup misses on those.)
+ */
 async function remove(
   env: Env,
   tenant: string,
   rows: { hunk_hash: string; context_hash: string; object_key: string }[],
 ) {
-  for (const r of rows) {
-    await env.ARTIFACTS.delete(r.object_key);
-    await env.DB.prepare(
-      "DELETE FROM agent_cache WHERE tenant=? AND hunk_hash=? AND context_hash=?",
-    )
-      .bind(tenant, r.hunk_hash, r.context_hash)
-      .run();
+  for (let i = 0; i < rows.length; i += LOOKUP_BATCH) {
+    const batch = rows.slice(i, i + LOOKUP_BATCH);
+    await env.DB.batch(
+      batch.map((r) =>
+        env.DB.prepare(
+          "DELETE FROM agent_cache WHERE tenant=? AND hunk_hash=? AND context_hash=?",
+        ).bind(tenant, r.hunk_hash, r.context_hash),
+      ),
+    );
   }
+  await release(
+    env,
+    tenant,
+    rows.map((r) => r.object_key),
+  );
 }
 
 /** Removes up to `limit` of the tenant's entries older than the retention. */
@@ -465,6 +539,75 @@ export function slice(
   return out;
 }
 
+/**
+ * Writes entries (hunk index into `keys`, hypotheses) in packs: one object and
+ * one index statement per pack. Each pack's rows follow its object, so a row
+ * never names a missing object and a failure leaves at most one object
+ * unindexed, which the same call, retried, writes again under the same name.
+ */
+export async function storeEntries(
+  env: Env,
+  tenant: string,
+  agent: string,
+  keys: Keyed[],
+  entries: [number, Hypothesis[]][],
+  // The agent run's tokens per missed hunk.
+  share: number,
+  now = Date.now(),
+) {
+  for (let start = 0; start < entries.length;) {
+    const pack: CachePack = { pack: 1, entries: {} };
+    const members: Keyed[] = [];
+    let size = PACK_ENVELOPE;
+    while (start < entries.length && members.length < PACK_ENTRIES) {
+      const [index, list] = entries[start];
+      const k = keys[index];
+      const entry: CacheEntry = {
+        agent,
+        hunk: { path: k.hunk.path, head: k.hunk.head },
+        hypotheses: list.map((h) => ({ ...h, source: { agent } })),
+        tokens: share,
+        created_at: now,
+      };
+      // The object's size as stored, in UTF-8: the entry that would take the
+      // pack past its bound starts the next one.
+      const bytes = entryBytes(member(k), entry);
+      if (members.length && size + bytes > PACK_BYTES) break;
+      size += bytes;
+      pack.entries[member(k)] = entry;
+      members.push(k);
+      start++;
+    }
+    const names = members.map(member);
+    const key = await packKey(tenant, names);
+    await env.ARTIFACTS.put(key, JSON.stringify(pack), {
+      httpMetadata: { contentType: "application/json" },
+    });
+    const rows = JSON.stringify(
+      members.map((k) => ({ h: k.hunk_hash, c: k.context_hash })),
+    );
+    // Objects these entries had before: an expired entry, or a concurrent
+    // review of the same change. The members lead the join (CROSS JOIN fixes
+    // the order), so each is one search of the primary key; led by the table,
+    // the query read the tenant's whole index once per pack.
+    const before = await env.DB.prepare(
+      "SELECT DISTINCT a.object_key FROM json_each(?) j CROSS JOIN agent_cache a WHERE a.tenant=? AND a.hunk_hash=json_extract(j.value,'$.h') AND a.context_hash=json_extract(j.value,'$.c') AND a.object_key<>?",
+    )
+      .bind(rows, tenant, key)
+      .all<{ object_key: string }>();
+    await env.DB.prepare(
+      "INSERT INTO agent_cache(tenant,hunk_hash,context_hash,object_key,created_at,last_hit) SELECT ?,json_extract(value,'$.h'),json_extract(value,'$.c'),?,?,NULL FROM json_each(?) WHERE true ON CONFLICT(tenant,hunk_hash,context_hash) DO UPDATE SET object_key=excluded.object_key,created_at=excluded.created_at,last_hit=NULL",
+    )
+      .bind(tenant, key, now, rows)
+      .run();
+    await release(
+      env,
+      tenant,
+      before.results.map((r) => r.object_key),
+    );
+  }
+  return entries.length;
+}
 export async function store(
   env: Env,
   tenant: string,
@@ -475,37 +618,15 @@ export async function store(
   tokens: number,
   now = Date.now(),
 ) {
-  const sliced = slice(keys, missed, hypotheses);
-  const share = missed.length ? Math.floor(tokens / missed.length) : 0;
-  // Each batch's rows follow its objects, so a row never names a missing
-  // object and a failure leaves at most one batch of objects unindexed.
-  const entries = [...sliced];
-  for (let i = 0; i < entries.length; i += LOOKUP_BATCH) {
-    const written: { k: Keyed; key: string }[] = [];
-    for (const [index, list] of entries.slice(i, i + LOOKUP_BATCH)) {
-      const k = keys[index];
-      const key = objectKey(tenant, k);
-      const entry: CacheEntry = {
-        agent,
-        hunk: { path: k.hunk.path, head: k.hunk.head },
-        hypotheses: list.map((h) => ({ ...h, source: { agent } })),
-        tokens: share,
-        created_at: now,
-      };
-      await env.ARTIFACTS.put(key, JSON.stringify(entry), {
-        httpMetadata: { contentType: "application/json" },
-      });
-      written.push({ k, key });
-    }
-    await env.DB.batch(
-      written.map(({ k, key }) =>
-        env.DB.prepare(
-          "INSERT INTO agent_cache(tenant,hunk_hash,context_hash,object_key,created_at,last_hit) VALUES(?,?,?,?,?,NULL) ON CONFLICT(tenant,hunk_hash,context_hash) DO UPDATE SET object_key=excluded.object_key,created_at=excluded.created_at,last_hit=NULL",
-        ).bind(tenant, k.hunk_hash, k.context_hash, key, now),
-      ),
-    );
-  }
-  return sliced.size;
+  return storeEntries(
+    env,
+    tenant,
+    agent,
+    keys,
+    [...slice(keys, missed, hypotheses)],
+    missed.length ? Math.floor(tokens / missed.length) : 0,
+    now,
+  );
 }
 
 /** Every changed hunk of the reviewed change, in path order. */

@@ -528,6 +528,12 @@ describe("PR mode end to end", () => {
       text.replaceAll(id, "00000000-0000-4000-8000-000000000001");
     const fixedReport = JSON.parse(normalize(JSON.stringify(json)));
     expect(json).toEqual(report);
+    // The count of the review's own storage requests is not part of the
+    // pinned document: it has its own tests and follows the storage code.
+    const { requests } = fixedReport.agent_audit;
+    expect(requests).toMatchObject({ limit: 10000, refused: 0, stopped: 0 });
+    expect(requests.used).toBeGreaterThan(0);
+    delete fixedReport.agent_audit.requests;
     expect(fixedReport).toEqual(withLayout(prLineageReport));
     sarif.runs[0].invocations[0].startTimeUtc = "2026-11-08T12:00:00Z";
     sarif.runs[0].invocations[0].endTimeUtc = "2026-11-08T12:03:00Z";

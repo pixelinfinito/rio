@@ -3,6 +3,50 @@ import type { Ledger } from "./gateway";
 import { scrub } from "./redaction";
 import { invariant } from "./validation";
 import { DEFAULT_TOKENS, reviewWall } from "./budget";
+/**
+ * An object operation the store failed in passing: inside the platform
+ * (10001), unavailable (10043) or asked too often (10058). The same operation
+ * may succeed a moment later.
+ */
+export const passing = (message: string) =>
+  /^(put|get|head|delete|list|createMultipartUpload|uploadPart|completeMultipartUpload|abortMultipartUpload): .*\((10001|10043|10058)\)$/.test(
+    message,
+  );
+/** The waits before an object operation that met a passing fault is tried again. */
+export const STEADY_WAITS_MS = [200, 800];
+/**
+ * The environment with a bucket that tries again a read, a listing, or a
+ * write whose body can be sent again, when the store failed it in passing. A
+ * request's handler uses it: one such fault then ends neither an upload nor
+ * the one request that creates a review, which no client repeats. A
+ * workflow's steps are retried by the platform and need none of it.
+ */
+export function steady(env: Env, waits = STEADY_WAITS_MS): Env {
+  const ARTIFACTS = new Proxy(env.ARTIFACTS, {
+    get(target, key) {
+      const value = Reflect.get(target, key, target);
+      if (typeof value !== "function") return value;
+      if (!["get", "head", "list", "put"].includes(String(key)))
+        return value.bind(target);
+      return async (...args: unknown[]) => {
+        for (let tried = 0; ; tried++)
+          try {
+            return await value.apply(target, args);
+          } catch (error) {
+            if (
+              tried >= waits.length ||
+              !passing(error instanceof Error ? error.message : "") ||
+              // A stream was read by the attempt that failed.
+              (key === "put" && args[1] instanceof ReadableStream)
+            )
+              throw error;
+            await new Promise((resolve) => setTimeout(resolve, waits[tried]));
+          }
+      };
+    },
+  });
+  return { ...env, ARTIFACTS };
+}
 // R2 PUT is atomic. D1 pointers are published only after the object exists.
 export class Store {
   constructor(readonly env: Env) {}

@@ -168,7 +168,7 @@ export async function createPrepareJob(
   const key = `reviews/${review}/jobs/${job}/1/payload.json`;
   await new Store(env).put(key, execution);
   const inserted = await env.DB.prepare(
-    "INSERT INTO jobs(id,review_id,attempt,status,payload_key,created_at) VALUES(?,?,1,'pending',?,?) ON CONFLICT(id) DO NOTHING",
+    "INSERT INTO jobs(id,review_id,attempt,status,payload_key,created_at,kind) VALUES(?,?,1,'pending',?,?,'prepare') ON CONFLICT(id) DO NOTHING",
   )
     .bind(job, review, key, Date.now())
     .run();
@@ -220,6 +220,20 @@ export function validateResult(
           )),
       "invalid model result",
     );
+  invariant(
+    (value.phase === undefined ||
+      value.phase === "transfer" ||
+      value.phase === "command") &&
+      (value.timing === undefined ||
+        (value.timing !== null &&
+          typeof value.timing === "object" &&
+          !Array.isArray(value.timing) &&
+          Object.keys(value.timing).length <= 8 &&
+          Object.values(value.timing).every(
+            (n) => typeof n === "number" && Number.isFinite(n) && n >= 0,
+          ))),
+    "invalid runner result",
+  );
   if (value.artifact !== undefined)
     invariant(
       payload.kind !== "run" &&
@@ -227,6 +241,55 @@ export function validateResult(
           (payload.limits.artifact_bytes ?? 0) + 4096,
       "runner artifact limit exceeded",
     );
+}
+/**
+ * The jobs of a review nobody is working on: not taken by a runner, or taken
+ * under a lease that ran out. Binds the current time.
+ */
+export const IDLE =
+  "(status='pending' OR (status='leased' AND COALESCE(lease_until,0)<?))";
+/**
+ * Withdraws the idle jobs of a review that ended, so no runner starts one and
+ * no late result is taken. A job a runner still holds ends with its result
+ * (kept for the audit), or here once its lease runs out.
+ */
+export const withdrawIdle = (env: Env, review: string, now = Date.now()) =>
+  env.DB.prepare(
+    `UPDATE jobs SET status='failed' WHERE review_id=? AND ${IDLE}`,
+  )
+    .bind(review, now)
+    .run();
+/** Withdraws one job attempt nobody is waiting for; a late result is not kept. */
+export const withdraw = (env: Env, job: string, attempt: number) =>
+  env.DB.prepare(
+    "UPDATE jobs SET status='failed' WHERE id=? AND attempt=? AND status IN ('pending','leased')",
+  )
+    .bind(job, attempt)
+    .run();
+/**
+ * Stops the Sandbox containers still running jobs of a review that ended or
+ * was cancelled: containers are few, and one would otherwise run until its
+ * command's wall for a result nobody waits for. A job whose container
+ * answered the stop is withdrawn here, so it does not read as running until
+ * its lease ends; one that did not keeps its lease and its own deadline.
+ * Model jobs have no container, and a QA run is revoked with its own record.
+ */
+export async function stopRunners(env: Env, review: string) {
+  if (env.RUNNER_BACKEND !== "sandbox") return;
+  const rows = await env.DB.prepare(
+    "SELECT id,attempt FROM jobs WHERE review_id=? AND status='leased' AND kind IN ('checks','graph','static','run','prepare') LIMIT 20",
+  )
+    .bind(review)
+    .all<{ id: string; attempt: number }>();
+  for (const job of rows.results)
+    try {
+      const response = await env.SANDBOX.get(
+        env.SANDBOX.idFromName(`${review}-${job.id}-${job.attempt}`),
+      ).fetch("https://sandbox/stop", { method: "POST" });
+      if (response.ok) await withdraw(env, job.id, job.attempt);
+    } catch {
+      // Best effort: the container's own deadline still ends it.
+    }
 }
 /**
  * Records a job the runner backend could not execute at all (for example the
@@ -290,14 +353,19 @@ export async function finishJob(
   result.kind = payload.kind;
   // Concurrent completions never overwrite the artifact selected by the D1 compare-and-set.
   const key = `reviews/${review}/jobs/${job}/${attempt}/${hash(canonical(result))}.json`;
+  // Whether the review was cancelled before this completion was recorded:
+  // the cancel route then saw the job open and ended its wait itself.
+  let notified = false;
   if (row.status !== "completed") {
     await store.put(key, result);
-    await env.DB.prepare(
-      "UPDATE jobs SET status='completed',result_key=?,completed_at=? WHERE id=? AND attempt=? AND status IN ('pending','leased')" +
-        fence,
-    )
-      .bind(key, Date.now(), job, attempt, ...fenceArgs())
-      .run();
+    const [, review_] = await env.DB.batch<{ cancelled: number }>([
+      env.DB.prepare(
+        "UPDATE jobs SET status='completed',result_key=?,completed_at=? WHERE id=? AND attempt=? AND status IN ('pending','leased')" +
+          fence,
+      ).bind(key, Date.now(), job, attempt, ...fenceArgs()),
+      env.DB.prepare("SELECT cancelled FROM reviews WHERE id=?").bind(review),
+    ]);
+    notified = !!review_.results[0]?.cancelled;
   }
   const published = await env.DB.prepare(
     "SELECT result_key FROM jobs WHERE id=? AND review_id=? AND attempt=?" +
@@ -319,11 +387,35 @@ export async function finishJob(
   // A prepare job hands its review over (Sandbox) or reports why it could not.
   if (payload.kind === "prepare")
     return finishPrepare(env, review, result, payload.snapshot_id);
-  // Keep completed artifacts for audit after cancellation, without resuming model work.
-  if (await store.cancelled(review)) return;
+  // Keep completed artifacts for audit after cancellation or the review's
+  // end, without resuming model work: only an open review waits for a job.
+  // One read: a cancel that lands after it finds this job completed and
+  // sends nothing, and the result sent below ends the wait all the same.
+  const state = await env.DB.prepare(
+    "SELECT status,cancelled,deadline FROM reviews WHERE id=?",
+  )
+    .bind(review)
+    .first<{ status: string; cancelled: number; deadline: number }>();
+  if (!state) return;
+  const type = `job-${job}-${attempt}`;
+  const open = state.status === "queued" || state.status === "running";
+  if (state.status === "cancelled" || (open && state.cancelled)) {
+    // The cancel route ends the waits of the jobs open when it runs. One
+    // that completed just before it was no longer open, so its wait is
+    // ended here, with no result either.
+    if (notified) return;
+    try {
+      const instance = await env.REVIEWS.get(review);
+      await instance.sendEvent({ type, payload: { cancelled: true } });
+    } catch {
+      // No instance, or one that ended: there is no wait to end.
+    }
+    return;
+  }
+  if (!open || Date.now() > state.deadline) return;
   // Re-sending after a transport failure is safe; event type includes the immutable attempt.
   const instance = await env.REVIEWS.get(review);
-  await instance.sendEvent({ type: `job-${job}-${attempt}`, payload: { key } });
+  await instance.sendEvent({ type, payload: { key } });
 }
 
 async function finishPrepare(

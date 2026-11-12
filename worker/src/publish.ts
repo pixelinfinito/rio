@@ -531,15 +531,41 @@ export async function acquireLease(
     await new Promise((resolve) => setTimeout(resolve, 250));
   }
 }
-/** Extends a held lease before an external write; throws when it was lost. */
-export async function renewLease(lease: Lease): Promise<void> {
+/** A publication stopped because its review was cancelled meanwhile. */
+export class PublicationCancelled extends LeaseLost {
+  constructor() {
+    super();
+    this.message = "the review was cancelled while it was published";
+  }
+}
+/**
+ * Extends a held lease before an external write; throws when it was lost. For
+ * the publication of `review` the same statement refuses the write once that
+ * review was cancelled by request.
+ */
+export async function renewLease(lease: Lease, review = ""): Promise<void> {
   const now = Date.now();
   const result = await lease.env.DB.prepare(
-    "UPDATE publication_leases SET until=? WHERE tenant=? AND lineage_id=? AND holder=? AND until>?",
+    "UPDATE publication_leases SET until=? WHERE tenant=? AND lineage_id=? AND holder=? AND until>? AND NOT EXISTS (SELECT 1 FROM reviews r WHERE r.id=? AND r.cancelled=1)",
   )
-    .bind(now + LEASE_MS, lease.tenant, lease.lineage, lease.holder, now)
+    .bind(
+      now + LEASE_MS,
+      lease.tenant,
+      lease.lineage,
+      lease.holder,
+      now,
+      review,
+    )
     .run();
-  if (!result.meta.changes) throw new LeaseLost();
+  if (result.meta.changes) return;
+  const cancelled =
+    review &&
+    (
+      await lease.env.DB.prepare("SELECT cancelled FROM reviews WHERE id=?")
+        .bind(review)
+        .first<{ cancelled: number }>()
+    )?.cancelled;
+  throw cancelled ? new PublicationCancelled() : new LeaseLost();
 }
 /** Releases the lease; the row keeps the lineage's last published round. */
 export async function releaseLease(lease: Lease): Promise<void> {
@@ -549,12 +575,17 @@ export async function releaseLease(lease: Lease): Promise<void> {
     .bind(lease.tenant, lease.lineage, lease.holder)
     .run();
 }
-/** Every write to the host first renews the lease. */
-function guarded(host: Host, lease: Lease): Host {
+/**
+ * Every write to the host first renews the lease. One made for the
+ * publication of `review` is not made once that review was cancelled: a
+ * cancel that arrives while a publication is under way stops it at its next
+ * write.
+ */
+function guarded(host: Host, lease: Lease, review = ""): Host {
   const renewed =
     <A extends unknown[], R>(write: (...args: A) => Promise<R>) =>
     async (...args: A): Promise<R> => {
-      await renewLease(lease);
+      await renewLease(lease, review);
       return write(...args);
     };
   return {
@@ -617,6 +648,12 @@ export async function escalatedPull(env: Env, row: PullRow): Promise<boolean> {
     .bind(row.tenant, row.repository, row.number)
     .first());
 }
+/** What a cancelled review's check run says instead of a publication. */
+export const CANCELLED_UNPUBLISHED =
+  "The review was cancelled before it finished, so nothing was published for this head. Push again or comment `/rio review` to retry.";
+/** The same for a review cancelled while its publication was under way. */
+export const CANCELLED_PUBLISHING =
+  "The review was cancelled while it was being published, so its publication for this head stopped where it was. Push again or comment `/rio review` to retry.";
 export async function publishReview(
   env: Env,
   input: PublishInput,
@@ -627,10 +664,38 @@ export async function publishReview(
     slug: string,
   ) => Host,
 ): Promise<Publication | null> {
+  // A review cancelled by request publishes nothing for its head, whichever
+  // way its workflow ends; one that ran out of time still publishes what it
+  // has. The announced check run is completed with the reason.
+  const review = await env.DB.prepare(
+    "SELECT cancelled FROM reviews WHERE id=?",
+  )
+    .bind(input.review)
+    .first<{ cancelled: number }>();
+  if (review?.cancelled) {
+    await settleAnnouncement(
+      env,
+      input.review,
+      "Review did not complete",
+      CANCELLED_UNPUBLISHED,
+    );
+    return null;
+  }
   let result: Publication | null;
   try {
     result = await publishWith(env, input, host);
   } catch (error) {
+    // Cancelled while it was published: what was written stays, nothing
+    // more is, and the check run says why.
+    if (error instanceof PublicationCancelled) {
+      await settleAnnouncement(
+        env,
+        input.review,
+        "Review did not complete",
+        CANCELLED_PUBLISHING,
+      );
+      return null;
+    }
     result = {
       policy: ["never", "ask", "auto"].includes(input.policy)
         ? input.policy
@@ -833,6 +898,7 @@ async function publishLeased(
             { env, id: row.installation_id },
           ),
       lease,
+      input.review,
     );
     if (decision.full) {
       await refreshQaReportLinks(

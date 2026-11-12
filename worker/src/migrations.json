@@ -175,5 +175,15 @@
       "ALTER TABLE qa_model_usage ADD COLUMN cost_source TEXT CHECK(cost_source IS NULL OR cost_source IN ('provider','estimate','unknown'))",
       "ALTER TABLE qa_runs ADD COLUMN prompt_cache TEXT"
     ]
+  },
+  {
+    "name": "0016_agent_cache_packs.sql",
+    "statements": [
+      "CREATE INDEX IF NOT EXISTS agent_cache_object ON agent_cache(tenant,object_key)"
+    ]
+  },
+  {
+    "name": "0017_review_cancelled_at.sql",
+    "statements": ["ALTER TABLE reviews ADD COLUMN cancelled_at INTEGER"]
   }
 ]

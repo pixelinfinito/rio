@@ -3,7 +3,15 @@ import {
   applyD1Migrations,
   introspectWorkflowInstance,
 } from "cloudflare:test";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
 import { app } from "../src/index";
 import type { Env, Execution, Snapshot } from "../src/types";
 import {
@@ -838,6 +846,78 @@ describe("CLI pull request requests", () => {
       consent: 1,
       state: "preparing",
     });
+    // Its prepare job is named for what it is, so a stop finds its container.
+    const prepare = await runtime.DB.prepare(
+      "SELECT id,kind,status FROM jobs WHERE review_id=?",
+    )
+      .bind(id)
+      .first<{ id: string; kind: string; status: string }>();
+    expect(prepare).toMatchObject({ kind: "prepare", status: "pending" });
+    // Cancelled while it is prepared, the review ends there: no workflow
+    // exists yet that could end it.
+    const cancelled = await app.request(
+      `https://rio/v1/reviews/${id}/cancel`,
+      { method: "POST", headers: owner, body: "{}" },
+      e,
+    );
+    expect(cancelled.status).toBe(200);
+    expect(await cancelled.json()).toEqual({ id, status: "cancelled" });
+    expect((await pullRows("acme/cli", 4))[0]).toMatchObject({
+      state: "failed",
+      reason: "cancelled",
+      review_status: "error",
+      error: "cancelled",
+    });
+    expect(
+      await runtime.DB.prepare(
+        "SELECT cancelled,cancelled_at IS NOT NULL AS stamped FROM reviews WHERE id=?",
+      )
+        .bind(id)
+        .first(),
+    ).toEqual({ cancelled: 1, stamped: 1 });
+    expect(
+      (
+        await runtime.DB.prepare(
+          "SELECT event FROM events WHERE review_id=? ORDER BY seq",
+        )
+          .bind(id)
+          .all<{ event: string }>()
+      ).results.at(-1)?.event,
+    ).toBe("review:error");
+    // The job never runs, and a result that still arrives hands nothing over.
+    const job = () =>
+      runtime.DB.prepare("SELECT status FROM jobs WHERE id=?")
+        .bind(prepare!.id)
+        .first<{ status: string }>();
+    expect((await job())?.status).toBe("failed");
+    await finishJob(e, id, prepare!.id, 1, {
+      outcome: "exited",
+      job_id: prepare!.id,
+      attempt: 1,
+      version: "head",
+      exit_code: 0,
+      stdout: "",
+      stderr: "",
+      timed_out: false,
+      truncated: false,
+      artifact: { submission: submission() },
+    });
+    expect((await job())?.status).toBe("failed");
+    expect(
+      await (
+        await app.request(`https://rio/v1/reviews/${id}`, { headers: owner }, e)
+      ).json(),
+    ).toEqual({ id, status: "error", error: "cancelled" });
+    // A second cancel changes nothing.
+    await app.request(
+      `https://rio/v1/reviews/${id}/cancel`,
+      { method: "POST", headers: owner, body: "{}" },
+      e,
+    );
+    expect((await pullRows("acme/cli", 4))[0]).toMatchObject({
+      state: "failed",
+      review_status: "error",
+    });
     const unconfigured = await app.request(
       "https://rio/v1/pulls",
       {
@@ -848,5 +928,157 @@ describe("CLI pull request requests", () => {
       { ...e, GITHUB_APP_ID: undefined },
     );
     expect(unconfigured.status).toBe(404);
+  });
+
+  const create = async (e: Env, number: number) => {
+    const created = await app.request(
+      "https://rio/v1/pulls",
+      {
+        method: "POST",
+        headers: owner,
+        body: JSON.stringify({
+          repository: "github.com/acme/cli",
+          number,
+          publish: true,
+        }),
+      },
+      e,
+    );
+    expect(created.status).toBe(202);
+    return ((await created.json()) as any).id as string;
+  };
+  const cancel = (e: Env, id: string) =>
+    app.request(
+      `https://rio/v1/reviews/${id}/cancel`,
+      { method: "POST", headers: owner, body: "{}" },
+      e,
+    );
+
+  it("stops the prepare job of a cancelled review although its event cannot be written, and a repeated cancel writes it", async () => {
+    const { env: e, sent } = capture();
+    const id = await create(e, 6);
+    github.pull("acme/cli", 6);
+    await handleReviewRequest(e, sent[0]);
+    // A container has the prepare job.
+    await runtime.DB.prepare(
+      "UPDATE jobs SET status='leased',lease_until=? WHERE review_id=?",
+    )
+      .bind(Date.now() + 600000, id)
+      .run();
+    const stops: string[] = [];
+    const sandbox = {
+      ...e,
+      RUNNER_BACKEND: "sandbox",
+      SANDBOX: {
+        idFromName: (name: string) => name,
+        get: (name: string) => ({
+          fetch: async (url: string) => {
+            stops.push(`${new URL(url).pathname} ${name}`);
+            return new Response(null, { status: 204 });
+          },
+        }),
+      },
+    } as unknown as Env;
+    const event = Store.prototype.event;
+    let refused = 0;
+    const events = vi
+      .spyOn(Store.prototype, "event")
+      .mockImplementation(async function (this: Store, review, name, data) {
+        if (name === "review:error" && !refused++)
+          throw new Error(
+            "D1_ERROR: D1 DB is overloaded. Too many resources consumed within a 10 second window.",
+          );
+        return event.call(this, review, name, data);
+      });
+    const told = async () =>
+      (
+        await runtime.DB.prepare(
+          "SELECT COUNT(*) AS n FROM events WHERE review_id=? AND event='review:error'",
+        )
+          .bind(id)
+          .first<{ n: number }>()
+      )?.n;
+    const job = () =>
+      runtime.DB.prepare("SELECT id,status FROM jobs WHERE review_id=?")
+        .bind(id)
+        .first<{ id: string; status: string }>();
+    try {
+      // The fault is answered as one to repeat after, with the container
+      // stopped and the job withdrawn all the same.
+      const first = await cancel(sandbox, id);
+      expect(first.status).toBe(503);
+      expect(stops).toEqual([`/stop ${id}-${(await job())!.id}-1`]);
+      expect((await job())?.status).toBe("failed");
+      expect((await pullRows("acme/cli", 6))[0]).toMatchObject({
+        state: "failed",
+        reason: "cancelled",
+        review_status: "error",
+        error: "cancelled",
+      });
+      expect(await told()).toBe(0);
+      // The cancel repeated finishes what the first left, once.
+      const second = await cancel(sandbox, id);
+      expect(second.status).toBe(200);
+      expect(await second.json()).toEqual({ id, status: "cancelled" });
+      expect(await told()).toBe(1);
+      expect((await cancel(sandbox, id)).status).toBe(200);
+      expect(await told()).toBe(1);
+      expect(stops).toHaveLength(1);
+    } finally {
+      events.mockRestore();
+    }
+  });
+
+  it("completes a check run that was announced while its review was cancelled", async () => {
+    const { env: e, sent } = capture();
+    const id = await create(e, 7);
+    github.pull("acme/cli", 7);
+    // The repository's policy is known, so the review is announced at once.
+    await runtime.DB.prepare(
+      "UPDATE pull_requests SET publish_policy='ask' WHERE review_id=?",
+    )
+      .bind(id)
+      .run();
+    // The request to cancel lands while the check run is being created: it
+    // finds none to complete yet.
+    const handle = github.handle.bind(github);
+    let cancelled: Response | undefined;
+    github.handle = async (url, init) => {
+      const response = await handle(url, init);
+      if (
+        init?.method === "POST" &&
+        new URL(url).pathname.endsWith("/check-runs") &&
+        !cancelled
+      )
+        cancelled = await cancel(e, id);
+      return response;
+    };
+    await handleReviewRequest(e, sent[0]);
+    expect(cancelled?.status).toBe(200);
+    expect(github.checkRuns).toHaveLength(1);
+    expect(github.checkRuns[0]).toMatchObject({
+      status: "completed",
+      conclusion: "neutral",
+    });
+    expect(github.checkRuns[0].output.title).toBe("Review did not run");
+    expect(github.checkRuns[0].output.summary).toContain(
+      "The review was cancelled before it started.",
+    );
+    expect(
+      github.issueComments.some((c) => c.body.includes("Rio is reviewing")),
+    ).toBe(false);
+    expect(
+      await runtime.DB.prepare(
+        "SELECT announced_check FROM pull_requests WHERE review_id=?",
+      )
+        .bind(id)
+        .first(),
+    ).toEqual({ announced_check: null });
+    // Nothing was prepared for it.
+    expect(
+      await runtime.DB.prepare("SELECT COUNT(*) AS n FROM jobs WHERE review_id=?")
+        .bind(id)
+        .first(),
+    ).toEqual({ n: 0 });
   });
 });

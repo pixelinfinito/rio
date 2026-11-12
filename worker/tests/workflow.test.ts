@@ -8,6 +8,10 @@ import { app } from "../src/index";
 import { Store } from "../src/storage";
 import { Progress } from "../src/progress";
 import { finishJob } from "../src/jobs";
+import { CANCEL_GRACE_MS, reconcile, sweepReviews } from "../src/reconcile";
+import { CANCELLED_NOTE, changedCode } from "../src/workflow";
+import { LARGE, MemorySnapshot } from "../src/snapshot";
+import { Requests, SEARCH_REFUSED } from "../src/requests";
 import { hash, validateHypotheses, validateReport } from "../src/validation";
 import { allMigrations, hypothesis, snapshot, submission } from "./fixtures";
 import { storeSnapshot, uploadSnapshot } from "./snapshots";
@@ -134,6 +138,16 @@ it.each([false, true])(
         "none",
       ]);
       expect(report.agent_audit.verification_usage.input_tokens).toBe(480);
+      // What the review asked of storage and the models, against the limit
+      // the platform sets one workflow instance.
+      expect(report.agent_audit.requests).toMatchObject({
+        limit: 10000,
+        scans: 0,
+        refused: 0,
+        stopped: 0,
+      });
+      expect(report.agent_audit.requests.used).toBeGreaterThan(requests.length);
+      expect(report.agent_audit.requests.used).toBeLessThan(300);
       // The prompt-cache audit: every phase counted; no provider reported cache
       // fields, so the totals and the ratio stay null rather than zero.
       const cache = report.agent_audit.prompt_cache;
@@ -291,6 +305,189 @@ it("marks failed remote votes incomplete and keeps the configured quorum", async
   }
 }, 60000);
 
+// The full benchmark run lost three reviews to the platform's limit of storage
+// requests: the instance ended where it stood, with no report. A review now
+// counts its requests and gives up searches, then model turns, before that.
+const budgeted = async (
+  // Its own model: the earlier tests' cached agent results are not its.
+  model: string,
+  reply: (body: any) => unknown,
+  steps: any[],
+) => {
+  const bodies: any[] = [];
+  const transport = vi
+    .spyOn(globalThis, "fetch")
+    .mockImplementation(async (_, init) => {
+      const body = JSON.parse(init!.body as string);
+      bodies.push(body);
+      const content = JSON.stringify(reply(body));
+      return Response.json({
+        content: [{ type: "text", text: content }],
+        choices: [{ message: { content } }],
+        usage: {
+          input_tokens: 80,
+          output_tokens: 50,
+          prompt_tokens: 80,
+          completion_tokens: 50,
+        },
+      });
+    });
+  try {
+    const uploaded = await uploadSnapshot(
+      (path, method, body) =>
+        app.request(`https://rio${path}`, { method, headers, body }, runtime),
+      snapshot,
+    );
+    const s = submission();
+    s.snapshot_id = ((await uploaded.json()) as any).id;
+    s.profile.models.default = `openai/${model}`;
+    s.profile.steps = steps;
+    const response = await app.request(
+      "https://rio/v1/reviews",
+      { method: "POST", headers, body: JSON.stringify(s) },
+      runtime,
+    );
+    expect(response.status).toBe(202);
+    const { id } = (await response.json()) as any;
+    await using instance = await introspectWorkflowInstance(
+      runtime.REVIEWS,
+      id,
+    );
+    // The workflow ends the review itself; the platform does not end it.
+    await instance.waitForStatus("complete");
+    const row = await runtime.DB.prepare(
+      "SELECT status,report_key FROM reviews WHERE id=?",
+    )
+      .bind(id)
+      .first<any>();
+    const report = await new Store(runtime).get<any>(row.report_key);
+    expect(() => validateReport(report)).not.toThrow();
+    const votes = await runtime.DB.prepare(
+      "SELECT status FROM votes WHERE review_id=?",
+    )
+      .bind(id)
+      .all<{ status: string }>();
+    return {
+      row,
+      report,
+      bodies,
+      votes: votes.results.map((v) => v.status),
+    };
+  } finally {
+    transport.mockRestore();
+  }
+};
+const generation = (body: any) =>
+  body.messages.some((m: any) =>
+    m.content.includes("Review the change independently"),
+  );
+const spentNote = (turns: string) =>
+  `Request budget: ${turns} not started, because the review had used its share of the 10000 requests the platform allows one review; the agents, verifier votes and council answers they belonged to did not complete.`;
+const AGENTS_AND_VERIFY = [
+  { id: "agents", uses: "rio/agents@0.1.0", needs: [], with: {} },
+  { id: "verify", uses: "rio/verify@0.1.0", needs: ["agents"], with: {} },
+];
+it("ends an agent with a disclosed failure when the review's request budget is spent, without calling its model", async () => {
+  const spent = vi
+    .spyOn(Requests.prototype, "exhausted", "get")
+    .mockReturnValue(true);
+  try {
+    const { row, report, bodies } = await budgeted(
+      "budget-spent",
+      () => ({ result: [hypothesis] }),
+      AGENTS_AND_VERIFY,
+    );
+    expect(bodies).toEqual([]);
+    expect([row.status, report.status]).toEqual(["partial", "partial"]);
+    expect(report.findings).toEqual([]);
+    expect(report.footer.notes).toContain(
+      "correctness agent failed: review request budget exhausted; its findings are missing from this review.",
+    );
+    expect(report.footer.notes).toContain(spentNote("1 model turn was"));
+    expect(report.agent_audit.requests).toMatchObject({
+      limit: 10000,
+      stopped: 1,
+    });
+  } finally {
+    spent.mockRestore();
+  }
+}, 60000);
+it("leaves the votes a spent request budget did not cover incomplete, and keeps what the agents raised", async () => {
+  let generated = false;
+  const spent = vi
+    .spyOn(Requests.prototype, "exhausted", "get")
+    .mockImplementation(() => generated);
+  try {
+    const { row, report, bodies, votes } = await budgeted(
+      "budget-votes",
+      (body) => {
+        generated ||= generation(body);
+        return { result: [hypothesis] };
+      },
+      AGENTS_AND_VERIFY,
+    );
+    // The generation call, and no voter's.
+    expect(bodies.filter(generation)).toHaveLength(1);
+    expect(bodies).toHaveLength(1);
+    expect([row.status, report.status]).toEqual(["complete", "incomplete"]);
+    expect(votes).toEqual(["exhausted", "exhausted", "exhausted"]);
+    expect(report.agent_audit.incomplete_votes).toBe(3);
+    expect(report.findings).toEqual([]);
+    expect(report.footer.notes).toEqual(
+      expect.arrayContaining([
+        "3 verifier votes did not complete; inspect the vote audit. Missing votes do not reduce quorum.",
+        spentNote("3 model turns were"),
+      ]),
+    );
+    expect(report.agent_audit.requests.stopped).toBe(3);
+  } finally {
+    spent.mockRestore();
+  }
+}, 60000);
+it("answers a search the request budget no longer covers with a refusal, and reports the review incomplete", async () => {
+  const full = vi
+    .spyOn(Requests.prototype, "searchable", "get")
+    .mockReturnValue(false);
+  try {
+    let asked = false;
+    const { row, report, bodies } = await budgeted(
+      "budget-search",
+      (body) => {
+        if (asked || !generation(body)) return { result: [] };
+        asked = true;
+        return {
+          tools: [
+            { name: "search", args: { pattern: "refresh" } },
+            { name: "read_file", args: { path: "src/a.ts", version: "head" } },
+          ],
+        };
+      },
+      AGENTS_AND_VERIFY,
+    );
+    // The model is told why, and what it can still do; the other tools work.
+    const answered = bodies
+      .map((b) => b.messages.at(-1).content as string)
+      .filter((content) => content.includes("tool_results"));
+    expect(answered).toHaveLength(1);
+    const results = JSON.parse(answered[0]).tool_results;
+    expect(results[0]).toEqual({ name: "search", error: SEARCH_REFUSED });
+    expect(results[1].result).toContain("1: function a()");
+    expect([row.status, report.status]).toEqual(["complete", "incomplete"]);
+    expect(report.agent_audit.requests).toMatchObject({
+      limit: 10000,
+      scans: 0,
+      searches: 0,
+      refused: 1,
+    });
+    expect(report.footer.notes).toContain(
+      "Request budget: 1 tree search was not run, because the review had used its share of the 10000 requests the platform allows one review on searching; what a search would have found is missing from this review.",
+    );
+    expect(report.agent_audit.requests.stopped).toBe(0);
+  } finally {
+    full.mockRestore();
+  }
+}, 60000);
+
 it("resumes an isolated runner job using an attempt-specific event", async () => {
   const store = new Store(runtime),
     id = crypto.randomUUID(),
@@ -385,6 +582,349 @@ it("resumes an isolated runner job using an attempt-specific event", async () =>
   });
   expect(analysis.artifact.report.schema).toBe("rio-report-v1");
 }, 60000);
+
+// A review waiting for a runner job, and the job.
+async function waiting(deadline = 240000) {
+  const store = new Store(runtime),
+    id = crypto.randomUUID(),
+    s = submission();
+  s.profile.steps = [
+    { id: "checks", uses: "rio/checks@0.1.0", needs: [], with: {} },
+    { id: "report", uses: "rio/report@0.1.0", needs: ["checks"], with: {} },
+  ];
+  const stored = await storeSnapshot(runtime, snapshot),
+    key = await store.put(`reviews/${id}/submission.json`, {
+      ...s,
+      snapshot_id: stored.id,
+    });
+  await runtime.DB.prepare(
+    "INSERT INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES(?,?,?,'queued',?,?,?)",
+  )
+    .bind(id, "owner", key, Date.now(), 100000, Date.now() + deadline)
+    .run();
+  const instance = await introspectWorkflowInstance(runtime.REVIEWS, id);
+  await runtime.REVIEWS.create({
+    id,
+    params: { review_id: id, snapshot_key: stored.key },
+  });
+  const job = hash(`${id}-checks`).slice(0, 32);
+  await instance.waitForStepResult({ name: `dispatch-${job}` });
+  const row = () =>
+    runtime.DB.prepare(
+      "SELECT r.status,r.cancelled,r.error,r.report_key,j.status AS job,j.result_key FROM reviews r JOIN jobs j ON j.review_id=r.id WHERE r.id=? AND j.id=?",
+    )
+      .bind(id, job)
+      .first<any>();
+  const result = {
+    job_id: job,
+    attempt: 1,
+    version: "head" as const,
+    exit_code: 0,
+    stdout: "",
+    stderr: "",
+    timed_out: false,
+    truncated: false,
+    artifact: { report: s.report, graphs: s.graphs },
+  };
+  return { id, instance, job, row, result, store, key };
+}
+
+it("ends a cancelled review's wait for a runner job at once, and a late result revives nothing", async () => {
+  const w = await waiting();
+  await using instance = w.instance;
+  // A runner has the job when the review is cancelled.
+  await runtime.DB.prepare(
+    "UPDATE jobs SET status='leased',lease_until=? WHERE id=?",
+  )
+    .bind(Date.now() + 600000, w.job)
+    .run();
+  const cancelled = await app.request(
+    `https://rio/v1/reviews/${w.id}/cancel`,
+    { method: "POST", headers: { ...headers, "rio-protocol": "1" }, body: "{}" },
+    runtime,
+  );
+  expect(cancelled.status).toBe(200);
+  // The wait was for up to the job's deadlines; the workflow ends now, and
+  // the review is partial with its report.
+  await instance.waitForStatus("complete");
+  const ended = await w.row();
+  expect(ended).toMatchObject({ status: "partial", cancelled: 1, job: "leased" });
+  const report = await w.store.get<any>(ended.report_key);
+  expect(report.status).toBe("partial");
+  expect(report.footer.notes).toContain(CANCELLED_NOTE);
+  expect(() => validateReport(report)).not.toThrow();
+  // The runner's result arrives later: kept for the audit, the review as it was.
+  await finishJob(runtime, w.id, w.job, 1, w.result);
+  const after = await w.row();
+  expect(after).toMatchObject({
+    status: "partial",
+    cancelled: 1,
+    job: "completed",
+    report_key: ended.report_key,
+  });
+  expect(after.result_key).toBeTruthy();
+  expect((await instance.getOutput()) as any).toEqual({
+    report_key: ended.report_key,
+  });
+}, 60000);
+
+it("reports the phase and the time of an analysis job that hit its deadline", async () => {
+  const w = await waiting();
+  await using instance = w.instance;
+  await runtime.DB.prepare(
+    "UPDATE jobs SET status='leased',lease_until=? WHERE id=?",
+  )
+    .bind(Date.now() + 600000, w.job)
+    .run();
+  const { artifact: _, ...result } = w.result;
+  await finishJob(runtime, w.id, w.job, 1, {
+    ...result,
+    exit_code: 124,
+    stderr: "runner wall deadline exceeded during transfer",
+    timed_out: true,
+    phase: "transfer",
+    timing: { transfer_ms: 240000, archive_bytes: 5 << 26, storage_ms: 41000 },
+  });
+  await instance.waitForStatus("complete");
+  const ended = await w.row();
+  const report = await w.store.get<any>(ended.report_key);
+  // The review goes on without the checks, and says which part ran out.
+  expect(ended.status).toBe("complete");
+  expect(report.status).toBe("incomplete");
+  expect(report.footer.notes).toContain(
+    "checks: runner analysis failed (timed out during transfer (transfer 240 s)); deterministic checks did not run",
+  );
+  expect(report.incomplete.every((c: any) => c.reason === "timeout")).toBe(true);
+  expect(report.incomplete.length).toBeGreaterThan(0);
+}, 60000);
+
+it("stops the workflow of a cancelled review that does not end in time, and never lets it finish the review later", async () => {
+  const w = await waiting();
+  await using instance = w.instance;
+  // Cancelled, and the workflow does not notice: it is inside a long step
+  // (live, a store step that retried against a platform limit for minutes).
+  await runtime.DB.prepare(
+    "UPDATE reviews SET cancelled=1,status='cancelled',cancelled_at=? WHERE id=?",
+  )
+    .bind(Date.now() - 1000, w.id)
+    .run();
+  const review = async () =>
+    (await runtime.DB.prepare(
+      "SELECT id,status,deadline,submission_key,cancelled_at FROM reviews WHERE id=?",
+    )
+      .bind(w.id)
+      .first<any>())!;
+  // Within the grace the workflow may still end the review itself.
+  expect(await reconcile(runtime, await review())).toBeNull();
+  expect((await w.row()).status).toBe("cancelled");
+  expect(
+    await reconcile(runtime, await review(), Date.now() + CANCEL_GRACE_MS),
+  ).toBe("partial");
+  await instance.waitForStatus("terminated");
+  const ended = await w.row();
+  expect(ended).toMatchObject({
+    status: "partial",
+    cancelled: 1,
+    error: "cancelled",
+    job: "failed",
+    report_key: `reviews/${w.id}/report-reconciled.json`,
+  });
+  const report = await w.store.get<any>(ended.report_key);
+  expect(report.footer.notes.at(-1)).toBe("Rio ended this review: cancelled.");
+  // The withdrawn job's late result is dropped; nothing changes.
+  await finishJob(runtime, w.id, w.job, 1, w.result);
+  expect(await w.row()).toEqual(ended);
+  // Swept again, it is left alone.
+  await sweepReviews(runtime, Date.now() + CANCEL_GRACE_MS);
+  expect(await w.row()).toEqual(ended);
+}, 60000);
+
+it("keeps the end the endpoint gave a review when its workflow finishes afterwards", async () => {
+  const w = await waiting();
+  await using instance = w.instance;
+  // The endpoint ended the overdue review but could not stop the instance.
+  const reconciled = `reviews/${w.id}/report-reconciled.json`;
+  await runtime.DB.prepare(
+    "UPDATE reviews SET status='partial',report_key=?,error='review exceeded its wall budget' WHERE id=?",
+  )
+    .bind(reconciled, w.id)
+    .run();
+  const events = async () =>
+    (
+      await runtime.DB.prepare(
+        "SELECT event FROM events WHERE review_id=? AND event LIKE 'review:%'",
+      )
+        .bind(w.id)
+        .all<{ event: string }>()
+    ).results.map((r) => r.event);
+  const before = await events();
+  // Its job's result still arrives, and the workflow runs to its end.
+  await runtime.DB.prepare("UPDATE jobs SET status='leased' WHERE id=?")
+    .bind(w.job)
+    .run();
+  const sent = await runtime.REVIEWS.get(w.id);
+  const key = await w.store.put(`reviews/${w.id}/late-result.json`, w.result);
+  await sent.sendEvent({ type: `job-${w.job}-1`, payload: { key } });
+  await instance.waitForStatus("complete");
+  expect(await w.row()).toMatchObject({
+    status: "partial",
+    error: "review exceeded its wall budget",
+    report_key: reconciled,
+  });
+  expect(await events()).toEqual(before);
+}, 60000);
+
+it("gives a cancellation that arrives after the report was written the same end in the report", async () => {
+  const id = crypto.randomUUID(),
+    store = new Store(runtime),
+    s = submission();
+  s.profile.models.default = "openai/cancelled-after-report";
+  s.profile.steps = [
+    { id: "agents", uses: "rio/agents@0.1.0", needs: [], with: {} },
+  ];
+  const transport = vi.spyOn(globalThis, "fetch").mockImplementation(
+    async () => {
+      const content = JSON.stringify({ result: [] });
+      return Response.json({
+        content: [{ type: "text", text: content }],
+        choices: [{ message: { content } }],
+        usage: {
+          input_tokens: 80,
+          output_tokens: 50,
+          prompt_tokens: 80,
+          completion_tokens: 50,
+        },
+      });
+    },
+  );
+  // The request to cancel lands just after the report is stored, complete.
+  // The store then fails the write that says so once: the step's next
+  // attempt must still find the report to write.
+  const put = Store.prototype.put;
+  const written: string[] = [];
+  let refused = 0;
+  const puts = vi
+    .spyOn(Store.prototype, "put")
+    .mockImplementation(async function (this: Store, key, value) {
+      if (
+        key === `reviews/${id}/report.json` &&
+        (value as any).status === "partial" &&
+        !refused++
+      )
+        throw new Error(
+          "put: We encountered an internal error. Please try again. (10001)",
+        );
+      const stored = await put.call(this, key, value);
+      if (key === `reviews/${id}/report.json`) {
+        written.push((value as any).status);
+        if (written.length === 1)
+          await runtime.DB.prepare("UPDATE reviews SET cancelled=1 WHERE id=?")
+            .bind(id)
+            .run();
+      }
+      return stored;
+    });
+  try {
+    const stored = await storeSnapshot(runtime, snapshot),
+      key = await store.put(`reviews/${id}/submission.json`, {
+        ...s,
+        snapshot_id: stored.id,
+      });
+    await runtime.DB.prepare(
+      "INSERT INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES(?,?,?,'queued',?,?,?)",
+    )
+      .bind(id, "owner", key, Date.now(), 100000, Date.now() + 240000)
+      .run();
+    await using instance = await introspectWorkflowInstance(
+      runtime.REVIEWS,
+      id,
+    );
+    await instance.modify(async (m) => {
+      await m.disableRetryDelays();
+    });
+    await runtime.REVIEWS.create({
+      id,
+      params: { review_id: id, snapshot_key: stored.key },
+    });
+    await instance.waitForStatus("complete");
+    const row = await runtime.DB.prepare(
+      "SELECT status,cancelled,report_key FROM reviews WHERE id=?",
+    )
+      .bind(id)
+      .first<any>();
+    expect(row).toMatchObject({ status: "partial", cancelled: 1 });
+    expect(refused).toBe(2);
+    // Written once as it stood, and once more to say what the review's row does.
+    expect(written[0]).not.toBe("partial");
+    expect(written.at(-1)).toBe("partial");
+    const report = await store.get<any>(row.report_key);
+    expect(report.status).toBe("partial");
+    expect(
+      report.footer.notes.filter((note: string) => note === CANCELLED_NOTE),
+    ).toHaveLength(1);
+    expect(() => validateReport(report)).not.toThrow();
+    // The event a client follows carries the same report.
+    const ended = await runtime.DB.prepare(
+      "SELECT event,data FROM events WHERE review_id=? AND event LIKE 'review:%' ORDER BY rowid DESC LIMIT 1",
+    )
+      .bind(id)
+      .first<{ event: string; data: string }>();
+    expect(ended?.event).toBe("review:partial");
+    expect(JSON.parse(ended!.data).report.status).toBe("partial");
+  } finally {
+    puts.mockRestore();
+    transport.mockRestore();
+  }
+}, 60000);
+
+it("names a changed file too large to hold in an agent's prompt, without reading it", async () => {
+  const memory = new MemorySnapshot({
+    base: { "src/a.ts": { mode: 0o100644, content: "export const a = 1;\n" } },
+    head: {
+      "src/a.ts": { mode: 0o100644, content: "export const a = 2;\n" },
+      "data/big.json": { mode: 0o100644, content: "{}" },
+      "logo.png": { mode: 0o100644, content: "/w==", encoding: "base64" },
+    },
+  });
+  // The manifest says how large a file is; nothing over the bound is fetched.
+  const read: string[] = [];
+  const tree = (version: "base" | "head") => ({
+    ...memory[version],
+    stat: async (path: string) => {
+      const entry = await memory[version].stat(path);
+      return entry && path === "data/big.json"
+        ? { ...entry, size: LARGE + 1 }
+        : entry;
+    },
+    read: async (entry: any) => {
+      read.push(`${version}:${entry.path}`);
+      if (entry.size > LARGE) throw new Error("a large file was read whole");
+      return memory[version].read(entry);
+    },
+  });
+  const previews = await changedCode(
+    [
+      { path: "data/big.json", lines_changed: 1 },
+      { path: "src/a.ts", lines_changed: 1 },
+      { path: "logo.png", lines_changed: 0 },
+    ],
+    { base: tree("base"), head: tree("head") },
+  );
+  expect(previews).toEqual([
+    {
+      path: "data/big.json",
+      base: null,
+      head: { omitted: true, bytes: LARGE + 1 },
+    },
+    {
+      path: "src/a.ts",
+      base: { line_start: 1, content: "export const a = 1;\n", truncated: false },
+      head: { line_start: 1, content: "export const a = 2;\n", truncated: false },
+    },
+    { path: "logo.png", base: null, head: { binary: true } },
+  ]);
+  expect(read).toEqual(["base:src/a.ts", "head:src/a.ts", "head:logo.png"]);
+});
 
 it("retains reproduced evidence when every blind pass misses, with runner artifacts and risk-selected budget", async () => {
   const transport = vi
@@ -694,7 +1234,8 @@ it.each([
         .bind(id)
         .first<any>();
       expect(row.status).toBe("partial");
-      expect(row.error).toBe(later ? "runtime did not complete" : null);
+      // Named for what ended it: nothing in the runtime failed.
+      expect(row.error).toBe(later ? "cancelled" : null);
       const report = await store.get<any>(row.report_key);
       expect(report.status).toBe("partial");
       expect(() => validateReport(report)).not.toThrow();
@@ -721,7 +1262,7 @@ it.each([
         })),
       );
       expect(report.agent_audit.incomplete_votes).toBe(later ? undefined : 3);
-      expect(report.footer.notes.includes("cancelled")).toBe(later);
+      expect(report.footer.notes.includes(CANCELLED_NOTE)).toBe(later);
       expect(report.footer.notes).toContain(
         `The review stopped before it finished: ${settled} of 2 raised hypotheses had completed verification and are consolidated here; ${2 - settled} had not and are listed in agent_audit.unverified, not as findings.`,
       );
@@ -817,7 +1358,7 @@ it("reports stored progress when a run is replayed after its review stopped", as
   ]);
   expect(report.agent_audit.incomplete_votes).toBe(2);
   expect(report.footer.notes).toEqual([
-    "cancelled",
+    CANCELLED_NOTE,
     "The review stopped before it finished: 2 of 3 raised hypotheses had completed verification and are consolidated here; 1 had not and are listed in agent_audit.unverified, not as findings.",
     "2 verifier votes did not complete; inspect the vote audit. Missing votes do not reduce quorum.",
   ]);
