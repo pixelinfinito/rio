@@ -507,6 +507,14 @@ class AACRAdapterTests(unittest.TestCase):
         gone = checks(outcome="runner_failed", exit_code=1, stderr="runner backend: Network connection lost.")
         self.assertEqual(aacr.infra_failures(None, audit={"executions": [slow, gone, checks(attempt=2)]}),
                          ["job_timeout"])
+        # A command that could not be spawned is not tried again either: the retry
+        # beside it followed the runner's failure, which it recovered.
+        absent = checks(outcome="spawn_failed", exit_code=127, stderr="sandbox executor failed")
+        self.assertEqual(aacr.infra_failures(None, audit={"executions": [
+            checks(outcome="spawn_failed", exit_code=127, stderr="rio-internal: not found"),
+            gone, checks(attempt=2)]}), [])
+        self.assertEqual(aacr.infra_failures(None, audit={"executions": [absent, gone, checks(attempt=2)]}),
+                         ["executor"])
         # One retry does not recover two failures, and nothing says which it followed.
         self.assertEqual(aacr.infra_failures(None, audit={"executions": [gone, gone, checks(attempt=2)]}),
                          ["executor"])

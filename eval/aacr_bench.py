@@ -219,11 +219,12 @@ def audit_failures(audit):
     a repository command an agent asked for is that command's output, never a
     cause.
 
-    Only a runner's failure is tried again, so a timeout ends its call
-    whatever its number. The audit lists jobs in no order, a retry has a job
-    id of its own and nothing names the call an execution belongs to: the
-    runner failures of a command at one attempt were recovered when as many of
-    its executions are numbered one higher, and all count when fewer are.
+    Only a runner's failure is tried again, so a timeout, or a command that
+    could not be spawned, ends its call whatever its number. The audit lists
+    jobs in no order, a retry has a job id of its own and nothing names the
+    call an execution belongs to: the runner failures of a command at one
+    attempt were recovered when as many of its executions are numbered one
+    higher, and all count when fewer are.
     """
     audit = audit if isinstance(audit, dict) else {}
     texts = [str(vote.get("error", "")) for vote in audit.get("votes", [])
@@ -236,11 +237,12 @@ def audit_failures(audit):
     for executions in calls.values():
         tried = Counter(map(attempt, executions))
         failed = Counter(attempt(execution) for execution in executions
-                                     if execution.get("outcome") != "exited")
+                         if execution.get("outcome") == "runner_failed")
         for execution in executions:
-            number = attempt(execution)
-            if (failed[number] > tried[number + 1] if execution.get("outcome") != "exited"
-                    else execution.get("timed_out") and execution.get("kind") != "run"):
+            number, outcome = attempt(execution), execution.get("outcome")
+            if (failed[number] > tried[number + 1] if outcome == "runner_failed"
+                    else outcome != "exited" or (
+                        execution.get("timed_out") and execution.get("kind") != "run")):
                 texts.append(str(execution.get("stderr", "")))
     return texts
 
