@@ -53,13 +53,21 @@ Dependency preparation and tool execution belong to the configured endpoint;
 the runner does not install benchmark project dependencies on the host.
 
 The upstream converter maps `source_commit` to base and `target_commit` to
-head. Some pairs have diverged, so Rio's `--base` merge-base selection would
-review a different diff. The adapter checks out both trees to materialize Git
-objects, checks out the exact base, and uses `git read-tree TARGET` followed
-by `rio review --staged`. It verifies the staged Git tree equals the target
-tree, and the report identifies the exact base and staged snapshot. No
-synthetic commits or altered source files are introduced. Source annotations
-are never copied into the checkout or sent to Rio.
+head. The base is the target branch as it stood later, so most pairs have
+diverged; the annotations are on the pull request's own change, and upstream's
+reviewers review `base...head`. The adapter reviews the same change: it finds
+the pair's merge base in a separate fetch of commit objects, checks that
+commit out, and uses `git read-tree TARGET` followed by `rio review --staged`.
+It verifies the staged Git tree equals the target tree, and the report
+identifies the merge base and staged snapshot; `status.json` records both the
+dataset's base and the merge base. No synthetic commits or altered source
+files are introduced. Source annotations are never copied into the checkout
+or sent to Rio.
+
+Runs made before this (their manifests have no `reviewed_change`) compared the
+dataset's base tree with the head's. Where the base had moved on, the reviewed
+change then held the target branch's newer commits, reversed, next to the pull
+request; their scores do not measure reviews of the annotated changes.
 
 `cases/INSTANCE/` preserves Git command ledgers, tree identities, CLI streams,
 raw report, endpoint ID, audit and status. Failed invocations and wrong diff

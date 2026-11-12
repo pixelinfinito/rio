@@ -335,6 +335,9 @@ def review_group(repo, instances, args, stop_event=None):
     with tempfile.TemporaryDirectory(prefix="aacr-", dir=args.temp_root) as work:
         checkout = Path(work) / "repo"
         checkout.mkdir()
+        # Commit objects only, to find merge bases; never checked out.
+        history = Path(work) / "history"
+        history.mkdir()
         initialized = False
         for instance in instances:
             if stop_event is not None and stop_event.is_set():
@@ -351,26 +354,38 @@ def review_group(repo, instances, args, stop_event=None):
             cache = Path(work) / "cache"
             env["RIO_CACHE_DIR"] = str(cache)
             interrupted = False
-            def git(name, *argv, check=True):
+            def git(name, *argv, check=True, cwd=checkout):
                 """Record a Git command against this disposable checkout."""
-                record, stdout, stderr = execute(["git", *argv], checkout,
+                record, stdout, stderr = execute(["git", *argv], cwd,
                                                 evidence, name, env=env, stop_event=stop_event)
                 if check and (record["exit_code"] or record["timed_out"]):
                     raise RuntimeError(f"git {name} failed; see {name}.stderr: {stderr[-600:]}")
                 return record, stdout.strip()
             try:
                 if not initialized:
+                    url = instance.get("clone_url") or f"https://github.com/{repo}.git"
                     git("init", "init", "--quiet")
-                    git("remote", "remote", "add", "origin",
-                        instance.get("clone_url") or f"https://github.com/{repo}.git")
+                    git("remote", "remote", "add", "origin", url)
+                    git("history-init", "init", "--quiet", "--bare", cwd=history)
+                    git("history-remote", "remote", "add", "origin", url, cwd=history)
                     initialized = True
+                # The annotations are on the pull request's own change, and
+                # upstream's reviewers review base...head: the change since the
+                # pair's merge base. The dataset's base is the target branch as
+                # it stood later, so comparing its tree with the head's would add
+                # that branch's newer commits, reversed, to the reviewed change.
+                git("history-fetch", "fetch", "--quiet", "--no-tags", "--filter=tree:0", "origin",
+                    instance["base_commit"], instance["head_commit"], cwd=history)
+                _, merge_base = git("merge-base", "merge-base", instance["base_commit"],
+                                    instance["head_commit"], cwd=history)
+                status["merge_base"] = merge_base
                 git("fetch", "fetch", "--quiet", "--no-tags", "--filter=blob:none",
-                    "--depth=1", "origin", instance["base_commit"], instance["head_commit"])
+                    "--depth=1", "origin", merge_base, instance["head_commit"])
                 # Materialize both trees, including promised blobs, before gix reads
-                # them. Staged mode avoids --base's merge-base semantics for the
-                # dataset's diverged commit pairs, without inventing commits.
+                # them. Staged mode reviews the head's exact tree against the merge
+                # base, without inventing commits or needing history in the checkout.
                 git("checkout-head", "checkout", "--quiet", "--force", "--detach", instance["head_commit"])
-                git("checkout-base", "checkout", "--quiet", "--force", "--detach", instance["base_commit"])
+                git("checkout-base", "checkout", "--quiet", "--force", "--detach", merge_base)
                 git("clean", "clean", "-fdx")  # Only this runner's disposable checkout.
                 git("stage-head", "read-tree", instance["head_commit"])
                 _, index_tree = git("index-tree", "write-tree")
@@ -406,7 +421,7 @@ def review_group(repo, instances, args, stop_event=None):
                 if record["exit_code"] not in {0, 1, 4} or report.get("status") not in {"complete", "incomplete", "partial"}:
                     raise RuntimeError(f"Review did not produce a usable report: {report.get('status')} "
                                        f"(exit code {record['exit_code']})")
-                if report.get("review", {}).get("base") != instance["base_commit"] or not report.get("review", {}).get("head", "").startswith("snapshot:") or report.get("review", {}).get("mode") != "staged":
+                if report.get("review", {}).get("base") != merge_base or not report.get("review", {}).get("head", "").startswith("snapshot:") or report.get("review", {}).get("mode") != "staged":
                     raise RuntimeError("Report commit pins differ from dataset")
                 comments = comments_from_report(report)
                 status.update(status=report["status"], comments=len(comments),
@@ -454,13 +469,16 @@ def run(args):
     manifest_path = args.out / "manifest.json"
     identity = {"rio_sha256": sha256(args.rio), "dataset_sha256": sha256(args.dataset),
                 "aacr_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=args.aacr, env=git_environment()).decode().strip(),
-                "instances": [x["instance_id"] for x in instances]}
+                "instances": [x["instance_id"] for x in instances],
+                # Runs that compared the dataset's base tree itself have no such
+                # key and are not resumed.
+                "reviewed_change": "merge-base(base_commit, head_commit)..head_commit"}
     env = dict(git_environment(), RIO_CONFIG_DIR=str(args.config_dir))
     profile = subprocess.check_output([str(args.rio), "profile", "show", args.profile, "--raw"], env=env)
     resolved = subprocess.check_output([str(args.rio), "profile", "show", args.profile], env=env)
     if manifest_path.exists():
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-        if not args.resume or any(manifest[k] != v for k, v in identity.items()):
+        if not args.resume or any(manifest.get(k) != v for k, v in identity.items()):
             raise SystemExit("Existing run: --resume requires matching binary, dataset and instances")
         if sha256(args.out / "profile.yaml") != manifest["profile_sha256"]:
             raise SystemExit("Resolved profile changed since run started")

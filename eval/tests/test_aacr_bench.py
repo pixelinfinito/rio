@@ -246,7 +246,7 @@ class AACRAdapterTests(unittest.TestCase):
             if hasattr(self, "check_environment"):
                 self.check_environment(kwargs["env"])
             if argv[0] == "git":
-                return {"exit_code": 0, "timed_out": False}, "tree", ""
+                return {"exit_code": 0, "timed_out": False}, "base" if argv[1] == "merge-base" else "tree", ""
             if interrupt:
                 raise KeyboardInterrupt
             return {"exit_code": exit_code, "timed_out": timed_out,
@@ -276,8 +276,9 @@ class AACRAdapterTests(unittest.TestCase):
                 self.assertTrue((out / "results/owner__repo@head.json").exists())
 
     @patch.dict(os.environ, dict.fromkeys(aacr.GIT_LOCATION_VARIABLES, "/invalid-inherited-git-location"))
-    def test_diverged_commits_review_exact_target_tree(self):
-        """Stage the exact target even with divergent history and inherited Git overrides."""
+    def test_diverged_commits_review_the_change_since_their_merge_base(self):
+        """Stage the exact target against the merge base, as upstream's base...head
+        does: a base that moved on must not add its newer commits, reversed."""
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             source = root / "source"
@@ -315,15 +316,29 @@ class AACRAdapterTests(unittest.TestCase):
                     return execute(argv, cwd, *rest, **kwargs)
                 observed.update(base=git("rev-parse", "HEAD", cwd=cwd),
                                 tree=git("write-tree", cwd=cwd), argv=argv)
+                observed.update(changed=git("diff", "--cached", "--name-only", cwd=cwd).split())
                 return {"exit_code": 0, "timed_out": False, "duration_seconds": 1}, json.dumps({
-                    "status": "complete", "review": {"base": base,
+                    "status": "complete", "review": {"base": observed["base"],
                     "head": "snapshot:hash", "mode": "staged"}}), ""
             with patch.object(aacr, "execute", side_effect=fake_review):
                 aacr.review_group("owner/repo", [instance], args)
-            self.assertEqual(observed["base"], base)
+            self.assertEqual(observed["base"], common)
             self.assertEqual(observed["tree"], git("rev-parse", f"{head}^{{tree}}"))
+            # The base's own later commit is no part of the reviewed change.
+            self.assertEqual(observed["changed"], ["file.txt"])
             self.assertIn(str(args.out / "profile.yaml"), observed["argv"])
             self.assertTrue((args.out / "results/owner__repo@target.json").exists())
+            status = json.loads((args.out / "cases/owner__repo@target/status.json").read_text(encoding="utf-8"))
+            self.assertEqual((status["base_commit"], status["merge_base"]), (base, common))
+            # A report pinned to the dataset's base reviewed another change.
+            instance["instance_id"] = "owner__repo@moved"
+            with patch.object(aacr, "execute", side_effect=lambda argv, cwd, *rest, **kwargs:
+                              execute(argv, cwd, *rest, **kwargs) if argv[0] == "git" else (
+                                  {"exit_code": 0, "timed_out": False, "duration_seconds": 1}, json.dumps({
+                                      "status": "complete", "review": {"base": base,
+                                      "head": "snapshot:hash", "mode": "staged"}}), "")):
+                aacr.review_group("owner/repo", [instance], args)
+            self.assertFalse((args.out / "results/owner__repo@moved.json").exists())
 
     def test_empty_completed_review_is_scored(self):
         """A successful empty review must still count in evaluator denominators."""
