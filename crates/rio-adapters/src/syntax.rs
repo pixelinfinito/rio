@@ -6,7 +6,9 @@ use std::{
     sync::Mutex,
 };
 use streaming_iterator::StreamingIterator;
-use tree_sitter::{Language, Node, ParseOptions, Parser, Query, QueryCursor};
+use tree_sitter::{
+    Language, Node, ParseOptions, Parser, Query, QueryCursor, QueryCursorOptions, QueryMatch,
+};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -216,6 +218,33 @@ pub(crate) fn with_ancestors<'t>(
     }
 }
 
+/// Hands each match of `query` in the tree to `each`; false when the budget
+/// ended it. The cursor asks the budget while it scans, so a large tree with
+/// few matches cannot outlive a deadline between two of them.
+pub(crate) fn query_matches<'t>(
+    query: &Query,
+    root: Node<'t>,
+    source: &[u8],
+    budget: &Budget,
+    mut each: impl FnMut(&QueryMatch<'_, 't>),
+) -> bool {
+    let mut progress = |_: &tree_sitter::QueryCursorState| budget.hit();
+    let mut cursor = QueryCursor::new();
+    let mut matches = cursor.matches_with_options(
+        query,
+        root,
+        source,
+        QueryCursorOptions::new().progress_callback(&mut progress),
+    );
+    while let Some(matched) = matches.next() {
+        if budget.hit() {
+            break;
+        }
+        each(matched);
+    }
+    !budget.stopped()
+}
+
 fn text<'a>(node: Node<'_>, source: &'a [u8]) -> &'a str {
     std::str::from_utf8(&source[node.byte_range()]).unwrap_or_default()
 }
@@ -244,6 +273,9 @@ fn executable_tokens(node: Node<'_>, source: &[u8], lines: &mut BTreeSet<u32>, b
     } else {
         let mut cursor = node.walk();
         for child in node.children(&mut cursor) {
+            if budget.stopped() {
+                break;
+            }
             executable_tokens(child, source, lines, budget);
         }
     }
@@ -446,6 +478,9 @@ fn identifiers<'t>(
     ancestors.push(node);
     let mut cursor = node.walk();
     for child in node.named_children(&mut cursor) {
+        if budget.stopped() {
+            break;
+        }
         identifiers(child, ancestors, source, result, budget);
     }
     ancestors.pop();
@@ -537,13 +572,8 @@ fn analyze_script(path: &str, source: &[u8], budget: &Budget) -> Result<Option<S
         .unwrap_or(path)
         .rsplit_once('.')
         .map_or(path, |(stem, _)| stem);
-    let mut cursor = QueryCursor::new();
-    let mut matches = cursor.matches(&query, tree.root_node(), source);
     let mut found = Vec::new();
-    while let Some(matched) = matches.next() {
-        if budget.hit() {
-            return Ok(None);
-        }
+    if !query_matches(&query, tree.root_node(), source, budget, |matched| {
         let capture = |name| {
             matched
                 .captures
@@ -554,6 +584,8 @@ fn analyze_script(path: &str, source: &[u8], budget: &Budget) -> Result<Option<S
         if let (Some(node), Some(name)) = (capture("symbol"), capture("name")) {
             found.push((node, name));
         }
+    }) {
+        return Ok(None);
     }
     // What each symbol's ancestors say about it: None for one that is not a
     // symbol after all, else its kind and the names of its enclosing declarations.
@@ -636,14 +668,11 @@ fn analyze_script(path: &str, source: &[u8], budget: &Budget) -> Result<Option<S
                 include_str!("../../../modules/adapters/typescript/queries/executable.scm")
             },
         )?;
-        let mut cursor = QueryCursor::new();
-        let mut matches = cursor.matches(&query, tree.root_node(), source);
         let mut captured = HashSet::new();
-        while let Some(matched) = matches.next() {
-            if budget.hit() {
-                return Ok(None);
-            }
+        if !query_matches(&query, tree.root_node(), source, budget, |matched| {
             captured.extend(matched.captures.iter().map(|capture| capture.node.id()));
+        }) {
+            return Ok(None);
         }
         let lines = &mut result.executable_lines;
         with_ancestors(tree.root_node(), &captured, budget, |node, ancestors| {
@@ -693,5 +722,54 @@ impl SyntaxCache {
     /// Files and bytes parsed so far.
     pub fn parsed(&self) -> (usize, u64) {
         *self.parsed.lock().unwrap()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn a_query_asks_the_budget_while_it_scans_a_tree_without_matches() {
+        // Statements only: nothing here is a symbol, so the query yields no match
+        // at which its caller could ask.
+        let path = "wide.ts";
+        let source = "1;\n".repeat(200_000);
+        let tree = parse_source(path, source.as_bytes()).unwrap();
+        let query = cached_query(
+            &syntax_language(path).unwrap(),
+            include_str!("../../../modules/adapters/typescript/queries/symbols.scm"),
+        )
+        .unwrap();
+        let run = |stop: &dyn Fn() -> bool| {
+            let mut found = 0;
+            let ended = query_matches(
+                &query,
+                tree.root_node(),
+                source.as_bytes(),
+                &Budget::new(stop),
+                |_| found += 1,
+            );
+            (ended, found)
+        };
+        let asked = Cell::new(0);
+        assert_eq!(
+            run(&|| {
+                asked.set(asked.get() + 1);
+                false
+            }),
+            (true, 0)
+        );
+        assert!(asked.get() > 0, "the scan never asked");
+        // A yes ends the scan there: nothing is asked again.
+        let asked = Cell::new(0);
+        assert_eq!(
+            run(&|| {
+                asked.set(asked.get() + 1);
+                true
+            }),
+            (false, 0)
+        );
+        assert_eq!(asked.get(), 1);
     }
 }

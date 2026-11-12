@@ -201,9 +201,13 @@ impl Client {
         let deadline = tokio::time::Instant::now() + timeout;
         let mut cursor = 0;
         loop {
-            // Progress is best effort: a failed poll never fails the review.
+            // Progress is best effort: a failed poll never fails the review,
+            // and an interrupt does not wait for it before it cancels.
             if let Some(sender) = events
-                && let Ok((next, batch)) = self.events(id, cursor).await
+                && let Some(Ok((next, batch))) = tokio::select! {
+                    polled = self.events(id, cursor) => Some(polled),
+                    _ = cancellation.cancelled() => None,
+                }
             {
                 cursor = next;
                 for event in batch {
@@ -661,6 +665,72 @@ mod tests {
                 "POST /v1/reviews/r1/cancel HTTP/1.1"
             );
         }
+    }
+    #[tokio::test]
+    async fn an_interrupt_cancels_without_waiting_for_a_progress_poll() {
+        use std::{
+            io::{Read, Write},
+            net::TcpListener,
+        };
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let server = std::thread::spawn(move || {
+            let mut lines = Vec::new();
+            // The events request is read and never answered.
+            let mut held = Vec::new();
+            for answered in [false, true] {
+                let (mut socket, _) = listener.accept().unwrap();
+                let mut bytes = Vec::new();
+                let mut chunk = [0; 4096];
+                while !bytes.windows(4).any(|w| w == b"\r\n\r\n") {
+                    let n = socket.read(&mut chunk).unwrap();
+                    bytes.extend_from_slice(&chunk[..n]);
+                }
+                lines.push(
+                    String::from_utf8_lossy(&bytes)
+                        .lines()
+                        .next()
+                        .unwrap()
+                        .to_owned(),
+                );
+                if answered {
+                    write!(socket, "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: 2\r\nConnection: close\r\n\r\n{{}}").unwrap();
+                }
+                held.push(socket);
+            }
+            lines
+        });
+        let client = Client::new(
+            &format!("http://{address}"),
+            "long-enough-api-token-32-characters".into(),
+        )
+        .unwrap();
+        let cancellation = CancellationToken::new();
+        let interrupt = cancellation.clone();
+        tokio::spawn(async move {
+            tokio::time::sleep(Duration::from_millis(100)).await;
+            interrupt.cancel();
+        });
+        let (events, _received) = tokio::sync::mpsc::unbounded_channel();
+        let started = std::time::Instant::now();
+        let error = client
+            .wait_observed("r1", cancellation, Duration::from_secs(1500), Some(&events))
+            .await
+            .unwrap_err();
+        assert_eq!(
+            format!("{error:#}"),
+            "endpoint review cancelled: interrupted; partial evidence is retained at review r1"
+        );
+        // The unanswered poll would have held the cancellation for the
+        // client's whole request timeout.
+        assert!(started.elapsed() < Duration::from_secs(20));
+        assert_eq!(
+            server.join().unwrap(),
+            vec![
+                "GET /v1/reviews/r1/events?after=0 HTTP/1.1",
+                "POST /v1/reviews/r1/cancel HTTP/1.1"
+            ]
+        );
     }
     #[tokio::test]
     async fn a_cancellation_rides_out_a_busy_endpoint_but_not_a_refusal() {

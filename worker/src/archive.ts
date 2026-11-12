@@ -103,7 +103,8 @@ const SAME_BYTES = 256 * 1024;
  * Joins an archive's parts (a header, a content and padding per file, most
  * of them a few hundred bytes) into chunks of about `CHUNK`: every chunk is
  * a write to the container, and a tree of thousands of files was that many
- * writes three times over. A part of a quarter chunk or more passes as it is.
+ * writes three times over. A part of a quarter chunk or more is not copied:
+ * it passes as it is, a chunk of it at a time when it is larger than one.
  */
 async function* joined(
   parts: AsyncIterable<Uint8Array>,
@@ -120,7 +121,8 @@ async function* joined(
   for await (const part of parts) {
     if (part.length >= CHUNK / 4) {
       if (used) yield flush();
-      yield part;
+      for (let at = 0; at < part.length; at += CHUNK)
+        yield part.subarray(at, at + CHUNK);
       continue;
     }
     if (used + part.length > CHUNK) yield flush();

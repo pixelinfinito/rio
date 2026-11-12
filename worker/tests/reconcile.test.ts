@@ -107,6 +107,10 @@ describe("review reconciliation", () => {
       job: "leased",
     });
     // The cron ends it once the grace is over, well before its deadline.
+    // Five minutes: longer than the one model step that may be under way.
+    expect(CANCEL_GRACE_MS).toBe(5 * 60 * 1000);
+    await sweepReviews(runtime, now + CANCEL_GRACE_MS - 1000);
+    expect((await row("cancelled-late"))?.status).toBe("cancelled");
     await sweepReviews(runtime, now + CANCEL_GRACE_MS + 1000);
     const after = await row("cancelled-late");
     expect(after).toMatchObject({
@@ -119,6 +123,29 @@ describe("review reconciliation", () => {
     expect(report.footer.notes.at(-1)).toBe(
       "Rio ended this review: cancelled.",
     );
+  });
+
+  it("ends an overdue cancellation behind a full batch of open reviews", async () => {
+    const now = Date.now();
+    // More open reviews than one sweep takes, each due before the cancelled
+    // one and none of them late.
+    for (let i = 0; i < 26; i++)
+      await review(`crowd-${i}`, now + 60000 + i);
+    await review("cancelled-behind", now + 600000, "cancelled");
+    await runtime.DB.prepare(
+      "UPDATE reviews SET cancelled=1,cancelled_at=? WHERE id='cancelled-behind'",
+    )
+      .bind(now - CANCEL_GRACE_MS - 1000)
+      .run();
+    await sweepReviews(runtime, now);
+    expect(await row("cancelled-behind")).toMatchObject({
+      status: "partial",
+      error: "cancelled",
+    });
+    expect((await row("crowd-0"))?.status).toBe("running");
+    await runtime.DB.prepare(
+      "UPDATE reviews SET status='complete' WHERE id LIKE 'crowd-%'",
+    ).run();
   });
 
   it("names what stopped the runtime of a review whose workflow ended in error", async () => {
@@ -282,6 +309,8 @@ describe("runner deadlines", () => {
     for (const [id, status, kind] of [
       ["s-checks", "leased", "checks"],
       ["s-run", "leased", "run"],
+      ["s-static", "leased", "static"],
+      ["s-prepare", "leased", "prepare"],
       ["s-model", "leased", "model"],
       ["s-pending", "pending", "graph"],
       ["s-done", "completed", "graph"],
@@ -312,7 +341,9 @@ describe("runner deadlines", () => {
     await stopRunners(sandboxed, "stopping");
     expect(calls.sort()).toEqual([
       "POST https://sandbox/stop stopping-s-checks-2",
+      "POST https://sandbox/stop stopping-s-prepare-2",
       "POST https://sandbox/stop stopping-s-run-2",
+      "POST https://sandbox/stop stopping-s-static-2",
       // The job the helper adds: a leased graph job, attempt 1.
       "POST https://sandbox/stop stopping-stopping-job-1",
     ]);
@@ -329,7 +360,9 @@ describe("runner deadlines", () => {
       "s-done": "completed",
       "s-model": "leased",
       "s-pending": "pending",
+      "s-prepare": "failed",
       "s-run": "failed",
+      "s-static": "failed",
       "stopping-job": "failed",
     });
     // A self-hosted runner's containers are its own.

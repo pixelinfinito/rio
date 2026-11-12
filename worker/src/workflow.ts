@@ -7,8 +7,8 @@ import { NonRetryableError } from "cloudflare:workflows";
 import {
   REQUESTS_EXHAUSTED,
   Requests,
-  counted,
   metered,
+  recording,
   requestLimit,
 } from "./requests";
 import type {
@@ -130,7 +130,7 @@ import {
   type RegistryRecord,
 } from "./history";
 import { updateProposals } from "./proposals";
-import { publishReview } from "./publish";
+import { CANCELLED_UNPUBLISHED, publishReview } from "./publish";
 import { announceReview, settleAnnouncement } from "./announce";
 import {
   changeHunks,
@@ -156,11 +156,13 @@ import {
   type Tree,
 } from "./lineage";
 import {
+  LARGE,
   SYMLINK,
   StoredSnapshot,
   compareUtf8,
   decodeText,
   changeTexts,
+  fileOf,
   holding,
   materialize,
   prefetched,
@@ -174,7 +176,12 @@ export interface WorkflowParams {
   review_id: string;
   snapshot_key: string;
 }
-async function changedCode(
+/**
+ * The first lines of each changed file, in both versions, for an agent's
+ * prompt. A file too large to hold is named with its size and not read: the
+ * excerpt is 80 lines, and the agent runs beside others in one isolate.
+ */
+export async function changedCode(
   changed: Submission["changed"],
   snapshot: SnapshotReader,
 ) {
@@ -185,11 +192,19 @@ async function changedCode(
     for (const version of ["base", "head"] as const) {
       const path =
         version === "base" ? (file.old_path ?? file.path) : file.path;
-      const entry = (await materialize(snapshot[version], [path]))[path];
-      if (!entry) preview[version] = null;
-      else if (entry.encoding === "base64") preview[version] = { binary: true };
+      const entry = await snapshot[version].stat(path);
+      if (!entry) {
+        preview[version] = null;
+        continue;
+      }
+      if (entry.size > LARGE) {
+        preview[version] = { omitted: true, bytes: entry.size };
+        continue;
+      }
+      const held = fileOf(entry, await snapshot[version].read(entry));
+      if (held.encoding === "base64") preview[version] = { binary: true };
       else {
-        const content = entry.content
+        const content = held.content
           .split("\n")
           .slice(0, 80)
           .join("\n")
@@ -197,7 +212,7 @@ async function changedCode(
         preview[version] = {
           line_start: 1,
           content,
-          truncated: content !== entry.content,
+          truncated: content !== held.content,
         };
       }
     }
@@ -330,10 +345,12 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
     super(ctx, metered(env, requests));
     this.requests = requests;
   }
-  async run(event: WorkflowEvent<WorkflowParams>, step: WorkflowStep) {
+  async run(event: WorkflowEvent<WorkflowParams>, durable: WorkflowStep) {
     const id = event.payload.review_id,
       store = new Store(this.env),
-      requests = this.requests;
+      requests = this.requests,
+      // Every step below records the request counts with its result.
+      step = recording(durable, requests);
     const load = await step.do("load", async () => {
       const row = await this.env.DB.prepare(
         "SELECT submission_key,deadline,tenant,created_at FROM reviews WHERE id=?",
@@ -476,9 +493,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
     let promptConfig: PromptSettings = { cache: [], layout: [] };
     let partitions!: Partitions;
     const call = async (name: string, action: () => Promise<ModelResponse>) => {
-      const key = await counted(
-        step,
-        requests,
+      const key = await step.do(
         `model-${name}`,
         // Longer than the call itself (`MODEL_CALL_MS`) and its bookkeeping.
         { retries: { limit: 0, delay: "1 second" }, timeout: "4 minutes" },
@@ -503,9 +518,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
     // The snapshot tool calls of one model turn (see `converse`). The action
     // answers tool errors itself, so a failed attempt is the platform's.
     const record = (name: string, action: () => Promise<string>) =>
-      counted(
-        step,
-        requests,
+      step.do(
         `tools-${name}`,
         { retries: { limit: 1, delay: "2 seconds" }, timeout: "5 minutes" },
         action,
@@ -523,7 +536,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         );
       if (counts.stopped)
         notes.push(
-          `Request budget: ${counts.stopped} model turn${counts.stopped === 1 ? " was" : "s were"} not started, because the review had used ${allowed}; the agents and verifier votes they belonged to did not complete.`,
+          `Request budget: ${counts.stopped} model turn${counts.stopped === 1 ? " was" : "s were"} not started, because the review had used ${allowed}; the agents, verifier votes and council answers they belonged to did not complete.`,
         );
       if (!notes.length) return;
       if (report.status !== "partial") report.status = "incomplete";
@@ -724,6 +737,11 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       councilJobs.push(job);
       // Self-hosted calls cost no vendor but still spend the review's tokens.
       const admitted = await step.do(`${name}-admit`, async () => {
+        // The request budget stops a member's turn as it stops an agent's.
+        if (requests.exhausted) {
+          requests.count(1, "stopped");
+          return { reservation: "", at: Date.now() };
+        }
         try {
           return {
             reservation: await ledger.reserve(
@@ -1006,6 +1024,14 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                         const remaining = deadline - Date.now();
                         if (remaining <= 0)
                           return { error: "timeout", at: Date.now() };
+                        // A member's call is a model turn like an agent's:
+                        // refused once the request budget is spent, counted
+                        // when it starts.
+                        if (requests.exhausted) {
+                          requests.count(1, "stopped");
+                          return { error: "budget", at: Date.now() };
+                        }
+                        requests.count();
                         let reservation: string;
                         try {
                           reservation = await ledger.reserve(
@@ -2604,6 +2630,13 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           )
           .first<{ status: string }>();
         if (!ended) return;
+        // Cancelled after the report was written: the report says what the
+        // review's status does.
+        if (ended.status === "partial" && report.status !== "partial") {
+          report.status = "partial";
+          report.footer.notes.push(CANCELLED_NOTE);
+          await store.put(key, report);
+        }
         await stopRunners(this.env, id);
         await withdrawIdle(this.env, id);
         if (lineage && outcome)
@@ -2705,7 +2738,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           id,
           "Review did not complete",
           reason === "cancelled"
-            ? "The review was cancelled before it finished, so nothing was published for this head. Push again or comment `/rio review` to retry."
+            ? CANCELLED_UNPUBLISHED
             : "Rio's runtime stopped before the review finished, so nothing was published for this head. Push again or comment `/rio review` to retry.",
         );
       });

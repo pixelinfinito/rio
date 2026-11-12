@@ -4,8 +4,8 @@ import { describe, expect, it } from "vitest";
 import {
   REQUEST_LIMIT,
   Requests,
-  counted,
   metered,
+  recording,
   requestLimit,
   requestsOf,
 } from "../src/requests";
@@ -18,10 +18,19 @@ const durable = (records = new Map<string, unknown>()) =>
   ({
     records,
     step: {
-      do: async (name: string, _: unknown, action: () => Promise<unknown>) => {
+      // With or without options, as the platform takes a step.
+      do: async (name: string, ...rest: unknown[]) => {
+        const action = rest.find((part) => typeof part === "function") as (
+          context: unknown,
+        ) => Promise<unknown>;
         if (!records.has(name))
-          records.set(name, structuredClone(await action()));
+          records.set(name, structuredClone(await action({ attempt: 1 })));
         return records.get(name);
+      },
+      sleep: async (name: string) => void records.set(name, "slept"),
+      waitForEvent: async (name: string, options: { type: string }) => {
+        records.set(name, options.type);
+        return { type: options.type, payload: { key: name } };
       },
     } as unknown as WorkflowStep,
   }) as const;
@@ -95,9 +104,7 @@ describe("a review's request budget", () => {
   it("continues from the counts its finished steps recorded", async () => {
     const workflow = durable();
     const first = new Requests(1000);
-    const result = await counted(
-      workflow.step,
-      first,
+    const result = await recording(workflow.step, first).do(
       "model-a",
       {},
       async () => {
@@ -108,7 +115,7 @@ describe("a review's request budget", () => {
       },
     );
     expect(result).toBe("key-a");
-    await counted(workflow.step, first, "tools-b", {}, async () => {
+    await recording(workflow.step, first).do("tools-b", {}, async () => {
       first.count(500);
       first.count(2, "refused");
       return "done-b";
@@ -126,8 +133,9 @@ describe("a review's request budget", () => {
     // steps are answered from their records and nothing is done twice.
     const again = new Requests(1000);
     const ran: string[] = [];
+    const step = recording(workflow.step, again);
     expect(
-      await counted(workflow.step, again, "model-a", {}, async () => {
+      await step.do("model-a", {}, async () => {
         ran.push("model-a");
         return "other";
       }),
@@ -135,7 +143,7 @@ describe("a review's request budget", () => {
     expect(again.used).toBe(40);
     expect(again.searchable).toBe(true);
     expect(
-      await counted(workflow.step, again, "tools-b", {}, async () => {
+      await step.do("tools-b", {}, async () => {
         ran.push("tools-b");
         return "other";
       }),
@@ -146,8 +154,78 @@ describe("a review's request budget", () => {
     again.count(70);
     expect(again.used).toBe(610);
     expect(again.searchable).toBe(false);
-    await counted(workflow.step, again, "model-c", {}, async () => "key-c");
+    await step.do("model-c", {}, async () => "key-c");
     expect((workflow.records.get("model-c") as any).requests.used).toBe(610);
+  });
+
+  it("records the counts of every step, whatever it returns", async () => {
+    // The steps between model turns ask storage too: a wait for a runner
+    // reads its job, the report writes its rows. A run after an interruption
+    // that knew only the model steps' counts would search and call models
+    // past the budget.
+    const workflow = durable();
+    const first = new Requests(1000);
+    const step = recording(workflow.step, first);
+    expect(
+      await step.do("model-a", {}, async () => {
+        first.count(100);
+        return "key-a";
+      }),
+    ).toBe("key-a");
+    // Without options, with the step's context, and with every kind of result.
+    expect(
+      await step.do("load", async (context) => {
+        first.count(450);
+        return { deadline: 7, attempt: context.attempt };
+      }),
+    ).toEqual({ deadline: 7, attempt: 1 });
+    expect(
+      await step.do("spare", async () => {
+        first.count(50);
+        return 12;
+      }),
+    ).toBe(12);
+    expect(
+      await step.do("rows", async () => {
+        first.count(20);
+        return [{ requests: 1 }];
+      }),
+    ).toEqual([{ requests: 1 }]);
+    expect(
+      await step.do("written", async () => {
+        first.count(180);
+      }),
+    ).toBeUndefined();
+    expect(await step.do("nothing", async () => null)).toBeNull();
+    expect(first.used).toBe(800);
+    // The waits are the platform's own.
+    await step.sleep("pause", "1 second");
+    expect(
+      (await step.waitForEvent("wait", { type: "job-1" })).payload,
+    ).toEqual({ key: "wait" });
+    expect([workflow.records.get("pause"), workflow.records.get("wait")]).toEqual(
+      ["slept", "job-1"],
+    );
+
+    const again = new Requests(1000);
+    const replayed = recording(workflow.step, again);
+    const never = async (): Promise<never> => {
+      throw new Error("a finished step ran again");
+    };
+    expect(await replayed.do("model-a", {}, never)).toBe("key-a");
+    expect(again.used).toBe(100);
+    expect(await replayed.do("load", never)).toEqual({ deadline: 7, attempt: 1 });
+    // The plain step's requests are known again: searches stop here, as
+    // they had in the first run.
+    expect(again.used).toBe(550);
+    expect(again.searchable).toBe(true);
+    expect(await replayed.do("spare", never)).toBe(12);
+    expect(again.searchable).toBe(false);
+    expect(await replayed.do("rows", never)).toEqual([{ requests: 1 }]);
+    expect(await replayed.do("written", never)).toBeUndefined();
+    expect(await replayed.do("nothing", never)).toBeNull();
+    expect(again.counts).toEqual(first.counts);
+    expect(again.exhausted).toBe(true);
   });
 
   it("takes the highest recorded count when steps finish out of order", async () => {
@@ -160,17 +238,22 @@ describe("a review's request budget", () => {
   });
 
   it("answers the step of an instance begun before counts were recorded", async () => {
-    const workflow = durable(new Map<string, unknown>([["model-old", "key"]]));
+    // Bare results, one of them an object with a field of the record's name.
+    const old = { requests: { used: 3 }, deadline: 9 };
+    const workflow = durable(
+      new Map<string, unknown>([
+        ["model-old", "key"],
+        ["load", old],
+        ["rows", [1, 2]],
+        ["written", undefined],
+      ]),
+    );
     const requests = new Requests(1000);
-    expect(
-      await counted(
-        workflow.step,
-        requests,
-        "model-old",
-        {},
-        async () => "new",
-      ),
-    ).toBe("key");
+    const step = recording(workflow.step, requests);
+    expect(await step.do("model-old", {}, async () => "new")).toBe("key");
+    expect(await step.do("load", async () => ({}))).toEqual(old);
+    expect(await step.do("rows", async () => [])).toEqual([1, 2]);
+    expect(await step.do("written", async () => {})).toBeUndefined();
     expect(requests.used).toBe(0);
   });
 });

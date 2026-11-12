@@ -1,4 +1,4 @@
-import type { WorkflowStep, WorkflowStepConfig } from "cloudflare:workers";
+import type { WorkflowStep } from "cloudflare:workers";
 import type { Env } from "./types";
 
 /**
@@ -95,30 +95,50 @@ export class Requests {
   }
 }
 
+/** A step's result as `recording` stores it. */
+type StepRecord = { result?: unknown; requests: Partial<Counts> };
+const isRecord = (value: unknown): value is StepRecord =>
+  !!value &&
+  typeof value === "object" &&
+  !Array.isArray(value) &&
+  !!(value as StepRecord).requests &&
+  typeof (value as StepRecord).requests === "object" &&
+  Object.keys(value).every((key) => key === "result" || key === "requests");
 /**
- * A step that records the request counts with its result, so that a run of
- * the workflow code after an interruption continues from them. An instance
- * begun before the counts were recorded has the bare result.
+ * The workflow's steps, each recording the request counts with its result, so
+ * that a run of the workflow code after an interruption continues from them:
+ * a finished step is answered from its record, whatever it asked of storage.
+ * Every step is recorded, not only the model's: a wait for a runner or a
+ * report's writes count like a model turn's reads. An instance begun before
+ * the counts were recorded has bare results, which pass through.
  */
-export async function counted<T extends string>(
+export function recording(
   step: WorkflowStep,
   requests: Requests,
-  name: string,
-  options: WorkflowStepConfig,
-  action: () => Promise<T>,
-): Promise<T> {
-  let ran = false;
-  const done: T | { result: T; requests: Counts } = await step.do(
-    name,
-    options,
-    async () => {
+): WorkflowStep {
+  // The name, then the options when there are any, then the action.
+  const run = async (name: string, ...rest: unknown[]) => {
+    const at = rest.findIndex((part) => typeof part === "function");
+    const action = rest[at] as (...context: unknown[]) => Promise<unknown>;
+    let ran = false;
+    rest[at] = async (...context: unknown[]) => {
       ran = true;
-      return { result: await action(), requests: requests.counts };
-    },
-  );
-  if (typeof done === "string") return done;
-  if (!ran) requests.resume(done.requests);
-  return done.result;
+      return { result: await action(...context), requests: requests.counts };
+    };
+    const done: unknown = await (step as any).do(name, ...rest);
+    if (!isRecord(done)) return done;
+    if (!ran) requests.resume(done.requests);
+    return done.result;
+  };
+  // A plain object: the platform's step may be a stub that cannot be proxied.
+  return {
+    do: run,
+    sleep: (...args: Parameters<WorkflowStep["sleep"]>) => step.sleep(...args),
+    sleepUntil: (...args: Parameters<WorkflowStep["sleepUntil"]>) =>
+      step.sleepUntil(...args),
+    waitForEvent: (name: string, options: any) =>
+      step.waitForEvent(name, options),
+  } as unknown as WorkflowStep;
 }
 
 const budgets = new WeakMap<object, Requests>();

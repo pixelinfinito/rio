@@ -177,7 +177,9 @@ INFRA_PATTERNS = [
                           "Request budget:")),
     # The endpoint's database refusing or losing a query: before the causes
     # below, so "D1_ERROR: Network connection lost" is not a runner's failure.
-    ("storage", ("D1_ERROR", "D1 DB is overloaded", "D1 DB reset")),
+    # Likewise its object store failing an operation inside the platform.
+    ("storage", ("D1_ERROR", "D1 DB is overloaded", "D1 DB reset",
+                 "We encountered an internal", "Please try again. (10001)")),
     ("deadline", ("Rio ended this review", "exceeded its wall budget",
                   "review wall budget exhausted", "endpoint review cancelled",
                   "Review cancelled before it finished", "exceeded the adapter's")),
@@ -193,6 +195,19 @@ INFRA_PATTERNS = [
 # Whole notes too short to match as a part of other text: the note older
 # endpoints left on a review cancelled at the client's deadline.
 INFRA_NOTES = {"cancelled": "deadline"}
+# The note of a review the endpoint ended because its workflow had stopped;
+# the platform's reason follows.
+RUNTIME_STOPPED = "Rio ended this review: runtime stopped: "
+
+
+def infra_cause(text):
+    """The cause a text names: the first in INFRA_PATTERNS, else None. A
+    stopped workflow counts under the platform's reason where that is a cause
+    (a limit, an internal error), not as the deadline its note would read as."""
+    if text.startswith(RUNTIME_STOPPED):
+        return infra_cause(text[len(RUNTIME_STOPPED):]) or "deadline"
+    return next((cause for cause, needles in INFRA_PATTERNS
+                 if any(needle in text for needle in needles)), None)
 
 
 def audit_failures(audit):
@@ -202,17 +217,25 @@ def audit_failures(audit):
     counts when its last attempt never ran the command (the runner failed), or
     when one of Rio's own analysis jobs timed out; the stderr of a repository
     command an agent asked for is that command's output, never a cause.
+
+    The audit lists jobs in no order and a retry has a job id of its own, so
+    the last attempt of a command is the one numbered highest; separate calls
+    of one command share that number and all count.
     """
-    texts = [str(vote.get("error", "")) for vote in (audit or {}).get("votes", [])
+    audit = audit if isinstance(audit, dict) else {}
+    texts = [str(vote.get("error", "")) for vote in audit.get("votes", [])
              if vote.get("status") != "completed"]
-    last = {}
-    for execution in (audit or {}).get("executions", []):
-        last[(execution.get("kind"), execution.get("version"),
-              json.dumps(execution.get("command")))] = execution
-    for execution in last.values():
-        if execution.get("outcome") != "exited" or (
-                execution.get("timed_out") and execution.get("kind") != "run"):
-            texts.append(str(execution.get("stderr", "")))
+    calls = {}
+    for execution in audit.get("executions", []):
+        calls.setdefault((execution.get("kind"), execution.get("version"),
+                          json.dumps(execution.get("command"))), []).append(execution)
+    attempt = lambda execution: execution.get("attempt") or 1
+    for executions in calls.values():
+        last = max(map(attempt, executions))
+        for execution in executions:
+            if attempt(execution) == last and (execution.get("outcome") != "exited" or (
+                    execution.get("timed_out") and execution.get("kind") != "run")):
+                texts.append(str(execution.get("stderr", "")))
     return texts
 
 
@@ -224,17 +247,20 @@ def infra_failures(report, error="", audit=None):
     so it is not a cause. Such a case is still scored (as whatever comments it
     has); summaries also report scores without these cases, so platform failures
     do not read as reviewer misses. A check that was skipped (no dependencies
-    offline, nothing configured) is the review's own outcome, not a cause.
+    offline, nothing configured) is the review's own outcome, not a cause. A
+    cache write the database refused stays one (`storage`) although the agent's
+    results were kept: its note is the only trace of that fault, and a canary
+    has to see it. `error` is one text or several.
     """
-    notes = [n for n in (report or {}).get("footer", {}).get("notes", [])
+    report = report if isinstance(report, dict) else {}
+    notes = [n for n in report.get("footer", {}).get("notes", [])
              if not n.endswith("; retried")]
-    texts = [*notes, error or "", *audit_failures(audit)]
+    errors = [error or ""] if isinstance(error, str) or error is None else list(error)
+    texts = [*notes, *errors, *audit_failures(audit)]
     # A text counts once, under its first cause: a timed-out job is not also
     # an executor failure.
     found = {INFRA_NOTES[n] for n in notes if n in INFRA_NOTES}
-    for text in texts:
-        found.add(next((cause for cause, needles in INFRA_PATTERNS
-                        if any(needle in text for needle in needles)), None))
+    found.update(infra_cause(text) for text in texts)
     return [cause for cause, _ in INFRA_PATTERNS if cause in found]
 
 
@@ -250,20 +276,28 @@ def case_infra_failures(evidence, status):
     def saved(name):
         path = evidence / name
         try:
-            return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+            value = json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
         except ValueError:
             return None
-    error = ""
+        # Anything but an object is no report and no audit.
+        return value if isinstance(value, dict) else None
+    # A text counts under one cause, so the error, the stderr and the report's
+    # own error are each a text: a deadline in one hides no lost connection
+    # in another.
+    errors = []
+    report = saved("report.json")
     if status.get("status") == "failed":
         stderr = evidence / "review.stderr"
-        tail = stderr.read_text(encoding="utf-8", errors="replace")[-4000:] if stderr.exists() else ""
-        error = f"{status.get('error', '')}\n{tail}"
-    report = saved("report.json")
-    if status.get("status") == "failed" and isinstance(report, dict):
-        error += f"\n{(report.get('error') or {}).get('message', '')}"
-    causes = infra_failures(report, error, saved("audit.json"))
-    recorded = status.get("infra_failure")
-    return causes if causes or not recorded else [recorded]
+        errors = [str(status.get("error", "")),
+                  stderr.read_text(encoding="utf-8", errors="replace")[-4000:] if stderr.exists() else "",
+                  str(((report or {}).get("error") or {}).get("message", ""))]
+    causes = infra_failures(report, errors, saved("audit.json"))
+    if causes:
+        return causes
+    # The evidence no longer names one: what the status recorded, every cause
+    # where it has them (older statuses hold only the first).
+    recorded = status.get("infra_failures") or [status.get("infra_failure")]
+    return [cause for cause in recorded if cause]
 
 
 def case_infra_failure(evidence, status):
@@ -350,7 +384,10 @@ def review_group(repo, instances, args, stop_event=None):
                 try:
                     report = json.loads(stdout)
                 except ValueError:
-                    raise RuntimeError(f"Review printed no report (exit code {record['exit_code']})") from None
+                    report = None
+                # Its output stays in review.stdout; only an object is a report.
+                if not isinstance(report, dict):
+                    raise RuntimeError(f"Review printed no report (exit code {record['exit_code']})")
                 write_json(evidence / "report.json", report)
                 # An error envelope holds the CLI's or the endpoint's own error and
                 # no review identity: say what Rio said, before any identity check.

@@ -274,8 +274,10 @@ export interface ChangeTexts {
  * that hold a whole change (triage, the contract inventory) run in a 128 MiB
  * isolate, and a change of 45 MiB of text ended one. Smaller files are read
  * first, so the budget leaves out the fewest; a file is read in both versions
- * or in neither, so an unread file never looks added or deleted. What is left
- * out is counted, for the report to say so.
+ * or in neither, so an unread file never looks added or deleted. Records that
+ * share a path (a rename and the file that took its old name) are read or
+ * left out together, for the same reason. What is left out is counted, for
+ * the report to say so.
  */
 export async function changeTexts(
   snapshot: SnapshotReader,
@@ -314,17 +316,40 @@ export async function changeTexts(
       return { f, size: base + head, large: Math.max(base, head) > LARGE };
     })
     .sort((a, b) => a.size - b.size || compareUtf8(a.f.path, b.f.path));
-  const kept = { base: new Set<string>(), head: new Set<string>() };
-  let size = 0;
-  for (const { f, size: bytes, large } of files)
-    if (!large && size + bytes <= budget) {
-      size += bytes;
-      kept.base.add(f.old_path ?? f.path);
-      kept.head.add(f.path);
-    } else {
-      result.omitted.files++;
-      result.omitted.bytes += bytes;
-    }
+  const kept = { base: new Set<string>(), head: new Set<string>() },
+    left = { base: new Set<string>(), head: new Set<string>() };
+  const omit = ({ f, size }: (typeof files)[number]) => {
+    left.base.add(f.old_path ?? f.path);
+    left.head.add(f.path);
+    result.omitted.files++;
+    result.omitted.bytes += size;
+  };
+  let held: typeof files = [],
+    size = 0;
+  for (const file of files)
+    if (!file.large && size + file.size <= budget) {
+      size += file.size;
+      held.push(file);
+    } else omit(file);
+  // A path one record left unread is unread for every record: read for
+  // another, it would show the first as a deletion or an addition.
+  for (let settled = false; !settled;) {
+    settled = true;
+    held = held.filter((file) => {
+      if (
+        !left.base.has(file.f.old_path ?? file.f.path) &&
+        !left.head.has(file.f.path)
+      )
+        return true;
+      omit(file);
+      settled = false;
+      return false;
+    });
+  }
+  for (const { f } of held) {
+    kept.base.add(f.old_path ?? f.path);
+    kept.head.add(f.path);
+  }
   for (const version of ["base", "head"] as const)
     for (const [path, text] of await textsOf(snapshot[version], kept[version]))
       result[version][path] = text;
@@ -833,13 +858,14 @@ export class StoredSnapshot implements SnapshotReader {
         const run = runs[next++];
         this.reads.push(run.pack);
         this.fetched.bytes += run.end - run.start;
-        const reader = (
-          await this.object(run.pack, {
-            offset: run.start,
-            length: run.end - run.start,
-          })
-        ).body.getReader();
+        let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
         try {
+          reader = (
+            await this.object(run.pack, {
+              offset: run.start,
+              length: run.end - run.start,
+            })
+          ).body.getReader();
           // `at` is the pack offset of the piece; entries before `first`
           // have ended.
           let at = run.start,
@@ -874,9 +900,10 @@ export class StoredSnapshot implements SnapshotReader {
           }
           invariant(at === run.end, "snapshot content missing");
         } catch (error) {
-          // The other reads end with their current run.
+          // The other reads end with their current run, whether storage
+          // refused this one or its content came short.
           next = runs.length;
-          await reader.cancel().catch(() => {});
+          await reader?.cancel().catch(() => {});
           throw error;
         }
       }

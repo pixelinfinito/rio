@@ -838,6 +838,78 @@ describe("CLI pull request requests", () => {
       consent: 1,
       state: "preparing",
     });
+    // Its prepare job is named for what it is, so a stop finds its container.
+    const prepare = await runtime.DB.prepare(
+      "SELECT id,kind,status FROM jobs WHERE review_id=?",
+    )
+      .bind(id)
+      .first<{ id: string; kind: string; status: string }>();
+    expect(prepare).toMatchObject({ kind: "prepare", status: "pending" });
+    // Cancelled while it is prepared, the review ends there: no workflow
+    // exists yet that could end it.
+    const cancelled = await app.request(
+      `https://rio/v1/reviews/${id}/cancel`,
+      { method: "POST", headers: owner, body: "{}" },
+      e,
+    );
+    expect(cancelled.status).toBe(200);
+    expect(await cancelled.json()).toEqual({ id, status: "cancelled" });
+    expect((await pullRows("acme/cli", 4))[0]).toMatchObject({
+      state: "failed",
+      reason: "cancelled",
+      review_status: "error",
+      error: "cancelled",
+    });
+    expect(
+      await runtime.DB.prepare(
+        "SELECT cancelled,cancelled_at IS NOT NULL AS stamped FROM reviews WHERE id=?",
+      )
+        .bind(id)
+        .first(),
+    ).toEqual({ cancelled: 1, stamped: 1 });
+    expect(
+      (
+        await runtime.DB.prepare(
+          "SELECT event FROM events WHERE review_id=? ORDER BY seq",
+        )
+          .bind(id)
+          .all<{ event: string }>()
+      ).results.at(-1)?.event,
+    ).toBe("review:error");
+    // The job never runs, and a result that still arrives hands nothing over.
+    const job = () =>
+      runtime.DB.prepare("SELECT status FROM jobs WHERE id=?")
+        .bind(prepare!.id)
+        .first<{ status: string }>();
+    expect((await job())?.status).toBe("failed");
+    await finishJob(e, id, prepare!.id, 1, {
+      outcome: "exited",
+      job_id: prepare!.id,
+      attempt: 1,
+      version: "head",
+      exit_code: 0,
+      stdout: "",
+      stderr: "",
+      timed_out: false,
+      truncated: false,
+      artifact: { submission: submission() },
+    });
+    expect((await job())?.status).toBe("failed");
+    expect(
+      await (
+        await app.request(`https://rio/v1/reviews/${id}`, { headers: owner }, e)
+      ).json(),
+    ).toEqual({ id, status: "error", error: "cancelled" });
+    // A second cancel changes nothing.
+    await app.request(
+      `https://rio/v1/reviews/${id}/cancel`,
+      { method: "POST", headers: owner, body: "{}" },
+      e,
+    );
+    expect((await pullRows("acme/cli", 4))[0]).toMatchObject({
+      state: "failed",
+      review_status: "error",
+    });
     const unconfigured = await app.request(
       "https://rio/v1/pulls",
       {

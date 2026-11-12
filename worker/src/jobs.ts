@@ -168,7 +168,7 @@ export async function createPrepareJob(
   const key = `reviews/${review}/jobs/${job}/1/payload.json`;
   await new Store(env).put(key, execution);
   const inserted = await env.DB.prepare(
-    "INSERT INTO jobs(id,review_id,attempt,status,payload_key,created_at) VALUES(?,?,1,'pending',?,?) ON CONFLICT(id) DO NOTHING",
+    "INSERT INTO jobs(id,review_id,attempt,status,payload_key,created_at,kind) VALUES(?,?,1,'pending',?,?,'prepare') ON CONFLICT(id) DO NOTHING",
   )
     .bind(job, review, key, Date.now())
     .run();
@@ -272,11 +272,12 @@ export const withdraw = (env: Env, job: string, attempt: number) =>
  * command's wall for a result nobody waits for. A job whose container
  * answered the stop is withdrawn here, so it does not read as running until
  * its lease ends; one that did not keeps its lease and its own deadline.
+ * Model jobs have no container, and a QA run is revoked with its own record.
  */
 export async function stopRunners(env: Env, review: string) {
   if (env.RUNNER_BACKEND !== "sandbox") return;
   const rows = await env.DB.prepare(
-    "SELECT id,attempt FROM jobs WHERE review_id=? AND status='leased' AND kind IN ('checks','graph','run') LIMIT 20",
+    "SELECT id,attempt FROM jobs WHERE review_id=? AND status='leased' AND kind IN ('checks','graph','static','run','prepare') LIMIT 20",
   )
     .bind(review)
     .all<{ id: string; attempt: number }>();
@@ -352,14 +353,19 @@ export async function finishJob(
   result.kind = payload.kind;
   // Concurrent completions never overwrite the artifact selected by the D1 compare-and-set.
   const key = `reviews/${review}/jobs/${job}/${attempt}/${hash(canonical(result))}.json`;
+  // Whether the review was cancelled before this completion was recorded:
+  // the cancel route then saw the job open and ended its wait itself.
+  let notified = false;
   if (row.status !== "completed") {
     await store.put(key, result);
-    await env.DB.prepare(
-      "UPDATE jobs SET status='completed',result_key=?,completed_at=? WHERE id=? AND attempt=? AND status IN ('pending','leased')" +
-        fence,
-    )
-      .bind(key, Date.now(), job, attempt, ...fenceArgs())
-      .run();
+    const [, review_] = await env.DB.batch<{ cancelled: number }>([
+      env.DB.prepare(
+        "UPDATE jobs SET status='completed',result_key=?,completed_at=? WHERE id=? AND attempt=? AND status IN ('pending','leased')" +
+          fence,
+      ).bind(key, Date.now(), job, attempt, ...fenceArgs()),
+      env.DB.prepare("SELECT cancelled FROM reviews WHERE id=?").bind(review),
+    ]);
+    notified = !!review_.results[0]?.cancelled;
   }
   const published = await env.DB.prepare(
     "SELECT result_key FROM jobs WHERE id=? AND review_id=? AND attempt=?" +
@@ -383,16 +389,28 @@ export async function finishJob(
     return finishPrepare(env, review, result, payload.snapshot_id);
   // Keep completed artifacts for audit after cancellation or the review's
   // end, without resuming model work: only an open review waits for a job.
-  if (await store.cancelled(review)) return;
-  const open = await env.DB.prepare(
-    "SELECT 1 FROM reviews WHERE id=? AND status IN ('queued','running')",
-  )
+  const state = await env.DB.prepare("SELECT status FROM reviews WHERE id=?")
     .bind(review)
-    .first();
-  if (!open) return;
+    .first<{ status: string }>();
+  const type = `job-${job}-${attempt}`;
+  if (state?.status === "cancelled") {
+    // The cancel route ends the waits of the jobs open when it runs. One
+    // that completed just before it was no longer open, so its wait is
+    // ended here, with no result either.
+    if (notified) return;
+    try {
+      const instance = await env.REVIEWS.get(review);
+      await instance.sendEvent({ type, payload: { cancelled: true } });
+    } catch {
+      // No instance, or one that ended: there is no wait to end.
+    }
+    return;
+  }
+  if (await store.cancelled(review)) return;
+  if (state?.status !== "queued" && state?.status !== "running") return;
   // Re-sending after a transport failure is safe; event type includes the immutable attempt.
   const instance = await env.REVIEWS.get(review);
-  await instance.sendEvent({ type: `job-${job}-${attempt}`, payload: { key } });
+  await instance.sendEvent({ type, payload: { key } });
 }
 
 async function finishPrepare(

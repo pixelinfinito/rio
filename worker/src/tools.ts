@@ -111,19 +111,30 @@ export async function readFile(
  * Whether `needle` occurs in `bytes`. UTF-8 is self-synchronising, so a text
  * holds a pattern exactly when its bytes hold the pattern's: a search decodes
  * and splits only the files that can match, not every file of the tree.
+ * Every byte is compared a bounded number of times, whatever the pattern
+ * repeats (Knuth-Morris-Pratt): a pattern of 499 `a` and a `b` over 8 MiB
+ * of `a` was four billion comparisons when each start was tried in full.
  */
 export function holds(bytes: Uint8Array, needle: Uint8Array): boolean {
-  const first = needle[0],
-    last = bytes.length - needle.length;
-  for (
-    let at = bytes.indexOf(first);
-    at !== -1 && at <= last;
-    at = bytes.indexOf(first, at + 1)
-  ) {
-    let i = 1;
-    while (i < needle.length && bytes[at + i] === needle[i]) i++;
-    if (i === needle.length) return true;
+  const length = needle.length,
+    first = needle[0],
+    last = bytes.length - length;
+  // For each prefix of the pattern, the longest proper prefix that ends it.
+  const back = new Int32Array(length);
+  for (let i = 1, k = 0; i < length; i++) {
+    while (k && needle[i] !== needle[k]) k = back[k - 1];
+    if (needle[i] === needle[k]) k++;
+    back[i] = k;
   }
+  // `matched` bytes of the pattern end before `at`. With none matched the
+  // next candidate is found natively, as most of a file is skipped.
+  let matched = 0;
+  for (let at = bytes.indexOf(first); at !== -1 && at - matched <= last;)
+    if (bytes[at] === needle[matched]) {
+      at++;
+      if (++matched === length) return true;
+    } else if (matched) matched = back[matched - 1];
+    else at = bytes.indexOf(first, at + 1);
   return false;
 }
 /** Lines of a large file, streamed; null when it is not text. */

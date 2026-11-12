@@ -331,12 +331,17 @@ export const objectKey = (tenant: string, k: Keyed) =>
  * one entry and is still read.
  */
 export const PACK_ENTRIES = 256;
-const PACK_BYTES = 2 * 1024 * 1024;
+/** Bytes of a pack's object; one entry larger than this is a pack of its own. */
+export const PACK_BYTES = 2 * 1024 * 1024;
 interface CachePack {
   pack: 1;
   // By `member`.
   entries: Record<string, CacheEntry>;
 }
+/** Bytes of a pack without entries, and those one entry adds to its object. */
+const PACK_ENVELOPE = JSON.stringify({ pack: 1, entries: {} }).length;
+const entryBytes = (name: string, entry: CacheEntry) =>
+  encoder.encode(`${JSON.stringify(name)}:${JSON.stringify(entry)},`).length;
 const member = (k: { hunk_hash: string; context_hash: string }) =>
   `${k.hunk_hash}/${k.context_hash}`;
 /**
@@ -553,13 +558,9 @@ export async function storeEntries(
   for (let start = 0; start < entries.length;) {
     const pack: CachePack = { pack: 1, entries: {} };
     const members: Keyed[] = [];
-    let size = 0;
-    while (
-      start < entries.length &&
-      members.length < PACK_ENTRIES &&
-      (members.length === 0 || size < PACK_BYTES)
-    ) {
-      const [index, list] = entries[start++];
+    let size = PACK_ENVELOPE;
+    while (start < entries.length && members.length < PACK_ENTRIES) {
+      const [index, list] = entries[start];
       const k = keys[index];
       const entry: CacheEntry = {
         agent,
@@ -568,9 +569,14 @@ export async function storeEntries(
         tokens: share,
         created_at: now,
       };
-      size += JSON.stringify(entry).length;
+      // The object's size as stored, in UTF-8: the entry that would take the
+      // pack past its bound starts the next one.
+      const bytes = entryBytes(member(k), entry);
+      if (members.length && size + bytes > PACK_BYTES) break;
+      size += bytes;
       pack.entries[member(k)] = entry;
       members.push(k);
+      start++;
     }
     const names = members.map(member);
     const key = await packKey(tenant, names);

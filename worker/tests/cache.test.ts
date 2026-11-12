@@ -17,6 +17,7 @@ import {
   expire,
   hunkHash,
   lookup,
+  PACK_BYTES,
   PACK_ENTRIES,
   slice,
   store as storeCache,
@@ -864,6 +865,60 @@ describe("cache packs", () => {
     });
     expect(reading.requests.get).toBe(2);
     expect(reading.requests.put + reading.requests.delete).toBe(0);
+  });
+
+  it("bounds a pack by the bytes its object takes, not by its characters", async () => {
+    const tenant = "packs-bytes";
+    // Text outside ASCII is two or three bytes a character: counted in
+    // characters, these eight entries were one object of 3.8 MiB.
+    const keys = Array.from({ length: 8 }, (_, n) => keyedHunk("wide", n));
+    const wide = (n: number) => ({
+      ...hyp(`wide/${n}.ts`, 1, "a"),
+      message: "é".repeat(170 * 1024) + "語".repeat(50 * 1024),
+    });
+    const all = keys.map((_, n): [number, any[]] => [n, [wide(n)]]);
+    expect(
+      await storeEntries(runtime, tenant, "correctness", keys, all, 7),
+    ).toBe(8);
+    const sizes = (
+      await runtime.ARTIFACTS.list({ prefix: `cache/${tenant}/packs/` })
+    ).objects.map((o) => o.size);
+    // Four entries of 490 KiB to a pack; the fifth would cross the bound.
+    expect(sizes).toHaveLength(2);
+    for (const size of sizes) {
+      expect(size).toBeGreaterThan(1.5 * 1024 * 1024);
+      expect(size).toBeLessThanOrEqual(PACK_BYTES);
+    }
+    expect(await entries(tenant)).toBe(8);
+    const hits = await lookup(runtime, tenant, keys);
+    expect(Object.keys(hits)).toHaveLength(8);
+    expect(hits[7].hypotheses[0].message).toBe(wide(7).message);
+    // An entry larger than a pack is stored alone, and its neighbours are
+    // not held back by it.
+    const huge = "packs-huge";
+    const three = [0, 1, 2].map((n) => keyedHunk("huge", n));
+    const over = {
+      ...hyp("huge/1.ts", 1, "b"),
+      message: "語".repeat(PACK_BYTES / 3 + 1024),
+    };
+    expect(
+      await storeEntries(
+        runtime,
+        huge,
+        "correctness",
+        three,
+        [
+          [0, []],
+          [1, [over]],
+          [2, []],
+        ],
+        7,
+      ),
+    ).toBe(3);
+    expect(await packs(huge)).toHaveLength(3);
+    const found = await lookup(runtime, huge, three);
+    expect(found[1].hypotheses[0].message).toBe(over.message);
+    expect(found[2].hypotheses).toEqual([]);
   });
 
   it("stores and looks up by key, however many entries the tenant has", async () => {

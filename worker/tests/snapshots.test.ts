@@ -12,6 +12,7 @@ import { OUTPUT_LIMIT, Tools } from "../src/tools";
 import {
   BATCH_BYTES,
   StoredSnapshot,
+  changeTexts,
   entriesOf,
   fileOf,
   indexKey,
@@ -807,6 +808,77 @@ describe("snapshot reader", () => {
     ).rejects.toThrow("snapshot content missing");
     expect(seen.reduce((n, length) => n + length, 0)).toBeLessThan(1 << 20);
   });
+  it("starts no further read once storage refuses one", async () => {
+    const stored = await storeInterleaved(testEnv, spread, SPREAD_PACKS, "refused");
+    // Storage fails the first content read it is asked for.
+    let failing = false,
+      asked = 0;
+    const get = async (key: string, options?: R2GetOptions) => {
+      if (failing && options?.range && ++asked === 1)
+        throw new Error("storage is down");
+      return testEnv.ARTIFACTS.get(key, options);
+    };
+    const bucket = new Proxy(testEnv.ARTIFACTS, {
+      get: (target, key) =>
+        key === "get" ? get : Reflect.get(target, key, target).bind(target),
+    });
+    const reader = await StoredSnapshot.open(
+      new Proxy(testEnv, {
+        get: (target, key) =>
+          key === "ARTIFACTS" ? bucket : Reflect.get(target, key, target),
+      }),
+      stored.key,
+    );
+    const entries = [
+      ...(await entriesOf(reader.head, Object.keys(spread))).values(),
+    ];
+    // More runs than are read at a time.
+    expect(new Set(entries.map((e) => e.pack)).size).toBe(SPREAD_PACKS);
+    failing = true;
+    reader.reads.length = 0;
+    await expect(
+      reader.pour({ base: [], head: entries }, () => {}),
+    ).rejects.toThrow("storage is down");
+    // The reads in flight end with their run; none of them takes another.
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    expect(reader.reads.length).toBeLessThanOrEqual(6);
+    expect(asked).toBe(reader.reads.length);
+  });
+  it("reads or leaves out together the records of a change that share a path", async () => {
+    const text = (size: number, of: string) => of.repeat(size);
+    const file = (content: string): File => ({ mode: 0o100644, content });
+    // `a.ts` became `b.ts`, and a new, small `a.ts` took its name.
+    const memory = new MemorySnapshot({
+      base: { "a.ts": file(text(600, "a")), "c.ts": file(text(10, "c")) },
+      head: {
+        "b.ts": file(text(600, "a")),
+        "a.ts": file(text(50, "n")),
+        "c.ts": file(text(20, "c")),
+      },
+    });
+    const changed = [
+      { path: "b.ts", old_path: "a.ts" },
+      { path: "a.ts" },
+      { path: "c.ts" },
+    ];
+    // The rename is over the budget. The replacement fits, but reading the
+    // old `a.ts` for it would show the rename as a file deleted.
+    expect(await changeTexts(memory, changed, 1000)).toEqual({
+      base: { "a.ts": null, "c.ts": text(10, "c") },
+      head: { "a.ts": null, "b.ts": null, "c.ts": text(20, "c") },
+      omitted: { files: 2, bytes: 1200 + 650 },
+    });
+    // Within the budget every record is read.
+    expect(await changeTexts(memory, changed, 2000)).toEqual({
+      base: { "a.ts": text(600, "a"), "c.ts": text(10, "c") },
+      head: {
+        "a.ts": text(50, "n"),
+        "b.ts": text(600, "a"),
+        "c.ts": text(20, "c"),
+      },
+      omitted: { files: 0, bytes: 0 },
+    });
+  });
 });
 
 describe("searches of a stored snapshot", () => {
@@ -1245,6 +1317,11 @@ describe("runner archives", () => {
       content: "long non-ASCII name\n",
     };
     common["empty"] = { mode: 0o100644, content: "" };
+    // A file of several chunks, which a batch read gives as one array.
+    common["data/table.csv"] = {
+      mode: 0o100644,
+      content: "0123456789abcde\n".repeat(160 * 1024),
+    };
     const tree: Snapshot = {
       base: {
         ...common,
@@ -1339,9 +1416,17 @@ describe("runner archives", () => {
     // Three parts per file (header, content, padding) reach the container as
     // chunks of about a MiB, not as thousands of writes.
     expect(wholeBytes).toBeGreaterThan(1024 * 1024);
-    for (const sent of [chunks, whole]) {
+    // The file of several chunks is sent a chunk at a time, once when the
+    // trees share it and twice when they do not; each time it ends the chunk
+    // before it and ends short itself.
+    for (const [sent, copies] of [
+      [chunks, 1],
+      [whole, 2],
+    ] as const) {
       expect(sent.length).toBeLessThanOrEqual(
-        Math.ceil(sent.reduce((n, c) => n + c.length, 0) / (768 * 1024)) + 1,
+        Math.ceil(sent.reduce((n, c) => n + c.length, 0) / (768 * 1024)) +
+          1 +
+          2 * copies,
       );
       expect(Math.max(...sent.map((c) => c.length))).toBeLessThanOrEqual(
         1024 * 1024,
@@ -1424,11 +1509,14 @@ describe("runner archives", () => {
     ] as const) {
       await createJob(runtime, id, name, "run", ["true"], "head", snapshotId);
       const job = await payload(id, name);
+      let begin!: () => void;
+      const begun = new Promise<void>((resolve) => (begin = resolve));
       const container = {
         running: false,
         destroyed: 0,
         start: () => {
           container.running = true;
+          begin();
         },
         destroy: async () => {
           container.destroyed++;
@@ -1438,7 +1526,7 @@ describe("runner archives", () => {
       };
       const runner = new SandboxRunner({ container } as any, runtime);
       const execution = runner.run(job);
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      await begun;
       expect(container.running).toBe(true);
       expect(await runner.stop()).toEqual({ stopped: true });
       expect(await execution).toEqual(stopped(job));
@@ -1447,6 +1535,125 @@ describe("runner archives", () => {
       expect(await runner.run(job)).toEqual(stopped(job));
       expect(container.running).toBe(false);
     }
+  });
+  it("answers a stop while the job's input is still being read, and starts nothing after it", async () => {
+    const { id, snapshot: snapshotId } = await review();
+    await createJob(runtime, id, "slow", "run", ["true"], "head", snapshotId);
+    const job = await payload(id, "slow");
+    const container = {
+      running: false,
+      started: 0,
+      destroyed: 0,
+      start: () => {
+        container.started++;
+        container.running = true;
+      },
+      destroy: async () => {
+        container.destroyed++;
+        container.running = false;
+      },
+      exec: async () => ({
+        stdin: new WritableStream(),
+        output: () => new Promise<never>(() => {}),
+      }),
+    };
+    // Storage that answers a named statement only when released.
+    const held = (sql: RegExp) => {
+      let reached!: () => void, release!: () => void;
+      const at = new Promise<void>((resolve) => (reached = resolve));
+      const gate = new Promise<void>((resolve) => (release = resolve));
+      const DB = new Proxy(runtime.DB, {
+        get(target, key) {
+          const value = Reflect.get(target, key);
+          if (key !== "prepare")
+            return typeof value === "function" ? value.bind(target) : value;
+          return (text: string) => {
+            const statement = target.prepare(text);
+            if (!sql.test(text)) return statement;
+            return {
+              bind: (...values: unknown[]) => ({
+                first: async () => {
+                  reached();
+                  await gate;
+                  return statement.bind(...values).first();
+                },
+              }),
+            };
+          };
+        },
+      });
+      return { env: { ...runtime, DB } as Env, at, release };
+    };
+    // Stopped while the snapshot is looked up, before any container: the
+    // answer does not wait for storage, and no container starts afterwards.
+    const sizing = held(/FROM snapshots s JOIN reviews/);
+    let runner = new SandboxRunner({ container } as any, sizing.env);
+    let execution = runner.run(job);
+    await sizing.at;
+    expect(await runner.stop()).toEqual({ stopped: true });
+    expect(await execution).toEqual(stopped(job));
+    sizing.release();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(container.started).toBe(0);
+    // Stopped while the last container of the object is being destroyed.
+    let destroying!: () => void, destroyed!: () => void;
+    const going = new Promise<void>((resolve) => (destroying = resolve));
+    const gone = new Promise<void>((resolve) => (destroyed = resolve));
+    const busy = {
+      ...container,
+      running: true,
+      start: () => {
+        container.started++;
+      },
+      destroy: async () => {
+        destroying();
+        await gone;
+        busy.running = false;
+      },
+    };
+    runner = new SandboxRunner({ container: busy } as any, runtime);
+    execution = runner.run(job);
+    await going;
+    const stop = runner.stop();
+    destroyed();
+    expect(await stop).toEqual({ stopped: true });
+    expect(await execution).toEqual(stopped(job));
+    expect(container.started).toBe(0);
+    // A delivery repeated while the job is at work joins it: one container,
+    // and the one stop ends both.
+    let begin!: () => void;
+    const begun = new Promise<void>((resolve) => (begin = resolve));
+    const one = {
+      ...container,
+      start: () => {
+        container.started++;
+        one.running = true;
+        begin();
+      },
+      destroy: async () => {
+        one.running = false;
+      },
+    };
+    runner = new SandboxRunner({ container: one } as any, runtime);
+    const [first, second] = [runner.run(job), runner.run(job)];
+    await begun;
+    expect(container.started).toBe(1);
+    await runner.stop();
+    expect(await Promise.all([first, second])).toEqual([
+      stopped(job),
+      stopped(job),
+    ]);
+    expect(container.started).toBe(1);
+    // A stop that was answered withdrew the job. An object that forgot the
+    // stop (it left memory in between) still starts nothing for that job.
+    await runtime.DB.prepare(
+      "UPDATE jobs SET status='failed' WHERE id='slow' AND review_id=?",
+    )
+      .bind(id)
+      .run();
+    runner = new SandboxRunner({ container: one } as any, runtime);
+    expect(await runner.run(job)).toEqual(stopped(job));
+    expect(container.started).toBe(1);
   });
   it("serves the archive only with that job's capability", async () => {
     const { id, snapshot: snapshotId } = await review();

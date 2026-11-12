@@ -64,6 +64,7 @@ import { dismissRecommendation } from "./qa-recommendation-history";
 import { APP_TENANT, handleGitHubWebhook, installationFor } from "./webhooks";
 import {
   handleReviewRequest,
+  cancelPreparing,
   failPrepare,
   failUnscheduled,
   prepareCredential,
@@ -88,12 +89,17 @@ export { Sandbox } from "./sandbox";
 export { QaSandboxGateway } from "./qa-sandbox-gateway";
 const app = new Hono<{ Bindings: Env }>();
 /**
- * Storage faults that pass (D1 overloaded, reset or unreachable): the same
- * request may succeed a moment later, so the answer is 503, which clients
- * retry, and never 400, which tells them the request itself was wrong.
+ * Storage faults that pass (D1 overloaded, reset or unreachable; an object
+ * store operation that failed inside the platform, was unavailable or was
+ * asked too often): the same request may succeed a moment later, so the
+ * answer is 503, which clients retry, and never 400, which tells them the
+ * request itself was wrong.
  */
 export const transient = (message: string) =>
   /D1 DB is overloaded|D1 DB reset|D1 DB storage operation exceeded timeout|Cannot resolve D1 DB due to transient issue|D1_ERROR: (Network connection lost|Internal error)/i.test(
+    message,
+  ) ||
+  /^(put|get|head|delete|list|createMultipartUpload|uploadPart|completeMultipartUpload|abortMultipartUpload): .*\((10001|10043|10058)\)$/.test(
     message,
   );
 app.onError((error, c) => {
@@ -537,35 +543,45 @@ app.post("/v1/reviews/:id/cancel", async (c) => {
     c.req.param("id"),
     "reviews:write",
   );
+  // A review still being prepared has no workflow to end it: it ends here,
+  // and its prepare job with it.
+  if (await cancelPreparing(c.env, row.id)) {
+    await stopRunners(c.env, row.id);
+    await withdrawIdle(c.env, row.id);
+    return c.json({ id: row.id, status: "cancelled" });
+  }
   // The workflow sees the flag between steps and ends the review as partial
   // with what it had; the sweep stops one that has not within the grace.
-  const stopped = await c.env.DB.prepare(
-    "UPDATE reviews SET cancelled=1,status='cancelled',cancelled_at=COALESCE(cancelled_at,?) WHERE id=? AND status NOT IN ('complete','partial','error') RETURNING id",
-  )
-    .bind(Date.now(), row.id)
-    .first();
-  if (stopped) {
-    const open = await c.env.DB.prepare(
-      "SELECT id,attempt,status FROM jobs WHERE review_id=? AND status IN ('pending','leased')",
-    )
-      .bind(row.id)
-      .all<{ id: string; attempt: number; status: string }>();
+  // The jobs open at that moment are read with it: one that completes later
+  // finds the review cancelled, one that completed earlier ends its own wait
+  // (`finishJob`).
+  const [stopped, open] = (await c.env.DB.batch([
+    c.env.DB.prepare(
+      "UPDATE reviews SET cancelled=1,status='cancelled',cancelled_at=COALESCE(cancelled_at,?) WHERE id=? AND status NOT IN ('complete','partial','error') RETURNING id",
+    ).bind(Date.now(), row.id),
+    c.env.DB.prepare(
+      "SELECT id,attempt FROM jobs WHERE review_id=? AND status IN ('pending','leased')",
+    ).bind(row.id),
+  ])) as [D1Result<{ id: string }>, D1Result<{ id: string; attempt: number }>];
+  if (stopped.results.length) {
     // A job no runner has taken never runs. One a runner has is stopped
     // (Sandbox) or keeps its result for the audit, and the workflow stops
     // waiting for it now.
     await stopRunners(c.env, row.id);
     await withdrawIdle(c.env, row.id);
-    if (open.results.length)
-      try {
-        const instance = await c.env.REVIEWS.get(row.id);
+    if (open.results.length) {
+      // No instance, or one that ended, has no wait to end. Each job on its
+      // own: an event that fails leaves the other waits their end.
+      const instance = await c.env.REVIEWS.get(row.id).catch(() => null);
+      if (instance)
         for (const job of open.results)
-          await instance.sendEvent({
-            type: `job-${job.id}-${job.attempt}`,
-            payload: { cancelled: true },
-          });
-      } catch {
-        // No instance, or one that ended: there is no wait to end.
-      }
+          await instance
+            .sendEvent({
+              type: `job-${job.id}-${job.attempt}`,
+              payload: { cancelled: true },
+            })
+            .catch(() => {});
+    }
   }
   const qa = await c.env.DB.prepare(
     "SELECT q.id FROM qa_runs q JOIN reviews r ON r.id=q.review_id WHERE q.review_id=? AND r.cancelled=1",
@@ -1081,7 +1097,8 @@ export default {
           continue;
         }
         const row = await env.DB.prepare(
-          "UPDATE jobs SET status='leased',lease_until=? WHERE id=? AND attempt=? AND status IN ('pending','leased') RETURNING payload_key",
+          // Not for a review that ended: its jobs are withdrawn, never begun.
+          "UPDATE jobs SET status='leased',lease_until=? WHERE id=? AND attempt=? AND status IN ('pending','leased') AND NOT EXISTS (SELECT 1 FROM reviews r WHERE r.id=jobs.review_id AND r.status IN ('complete','partial','error')) RETURNING payload_key",
         )
           // Held for the longest Sandbox job: transfer, command wall and teardown.
           .bind(

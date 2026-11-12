@@ -9,7 +9,8 @@ import { Store } from "../src/storage";
 import { Progress } from "../src/progress";
 import { finishJob } from "../src/jobs";
 import { CANCEL_GRACE_MS, reconcile, sweepReviews } from "../src/reconcile";
-import { CANCELLED_NOTE } from "../src/workflow";
+import { CANCELLED_NOTE, changedCode } from "../src/workflow";
+import { LARGE, MemorySnapshot } from "../src/snapshot";
 import { Requests, SEARCH_REFUSED } from "../src/requests";
 import { hash, validateHypotheses, validateReport } from "../src/validation";
 import { allMigrations, hypothesis, snapshot, submission } from "./fixtures";
@@ -381,7 +382,7 @@ const generation = (body: any) =>
     m.content.includes("Review the change independently"),
   );
 const spentNote = (turns: string) =>
-  `Request budget: ${turns} not started, because the review had used its share of the 10000 requests the platform allows one review; the agents and verifier votes they belonged to did not complete.`;
+  `Request budget: ${turns} not started, because the review had used its share of the 10000 requests the platform allows one review; the agents, verifier votes and council answers they belonged to did not complete.`;
 const AGENTS_AND_VERIFY = [
   { id: "agents", uses: "rio/agents@0.1.0", needs: [], with: {} },
   { id: "verify", uses: "rio/verify@0.1.0", needs: ["agents"], with: {} },
@@ -772,6 +773,143 @@ it("keeps the end the endpoint gave a review when its workflow finishes afterwar
   });
   expect(await events()).toEqual(before);
 }, 60000);
+
+it("gives a cancellation that arrives after the report was written the same end in the report", async () => {
+  const id = crypto.randomUUID(),
+    store = new Store(runtime),
+    s = submission();
+  s.profile.models.default = "openai/cancelled-after-report";
+  s.profile.steps = [
+    { id: "agents", uses: "rio/agents@0.1.0", needs: [], with: {} },
+  ];
+  const transport = vi.spyOn(globalThis, "fetch").mockImplementation(
+    async () => {
+      const content = JSON.stringify({ result: [] });
+      return Response.json({
+        content: [{ type: "text", text: content }],
+        choices: [{ message: { content } }],
+        usage: {
+          input_tokens: 80,
+          output_tokens: 50,
+          prompt_tokens: 80,
+          completion_tokens: 50,
+        },
+      });
+    },
+  );
+  // The request to cancel lands just after the report is stored, complete.
+  const put = Store.prototype.put;
+  const written: string[] = [];
+  const puts = vi
+    .spyOn(Store.prototype, "put")
+    .mockImplementation(async function (this: Store, key, value) {
+      const stored = await put.call(this, key, value);
+      if (key === `reviews/${id}/report.json`) {
+        written.push((value as any).status);
+        if (written.length === 1)
+          await runtime.DB.prepare("UPDATE reviews SET cancelled=1 WHERE id=?")
+            .bind(id)
+            .run();
+      }
+      return stored;
+    });
+  try {
+    const stored = await storeSnapshot(runtime, snapshot),
+      key = await store.put(`reviews/${id}/submission.json`, {
+        ...s,
+        snapshot_id: stored.id,
+      });
+    await runtime.DB.prepare(
+      "INSERT INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES(?,?,?,'queued',?,?,?)",
+    )
+      .bind(id, "owner", key, Date.now(), 100000, Date.now() + 240000)
+      .run();
+    await using instance = await introspectWorkflowInstance(
+      runtime.REVIEWS,
+      id,
+    );
+    await runtime.REVIEWS.create({
+      id,
+      params: { review_id: id, snapshot_key: stored.key },
+    });
+    await instance.waitForStatus("complete");
+    const row = await runtime.DB.prepare(
+      "SELECT status,cancelled,report_key FROM reviews WHERE id=?",
+    )
+      .bind(id)
+      .first<any>();
+    expect(row).toMatchObject({ status: "partial", cancelled: 1 });
+    // Written once as it stood, and once more to say what the review's row does.
+    expect(written[0]).not.toBe("partial");
+    expect(written.at(-1)).toBe("partial");
+    const report = await store.get<any>(row.report_key);
+    expect(report.status).toBe("partial");
+    expect(
+      report.footer.notes.filter((note: string) => note === CANCELLED_NOTE),
+    ).toHaveLength(1);
+    expect(() => validateReport(report)).not.toThrow();
+    // The event a client follows carries the same report.
+    const ended = await runtime.DB.prepare(
+      "SELECT event,data FROM events WHERE review_id=? AND event LIKE 'review:%' ORDER BY rowid DESC LIMIT 1",
+    )
+      .bind(id)
+      .first<{ event: string; data: string }>();
+    expect(ended?.event).toBe("review:partial");
+    expect(JSON.parse(ended!.data).report.status).toBe("partial");
+  } finally {
+    puts.mockRestore();
+    transport.mockRestore();
+  }
+}, 60000);
+
+it("names a changed file too large to hold in an agent's prompt, without reading it", async () => {
+  const memory = new MemorySnapshot({
+    base: { "src/a.ts": { mode: 0o100644, content: "export const a = 1;\n" } },
+    head: {
+      "src/a.ts": { mode: 0o100644, content: "export const a = 2;\n" },
+      "data/big.json": { mode: 0o100644, content: "{}" },
+      "logo.png": { mode: 0o100644, content: "/w==", encoding: "base64" },
+    },
+  });
+  // The manifest says how large a file is; nothing over the bound is fetched.
+  const read: string[] = [];
+  const tree = (version: "base" | "head") => ({
+    ...memory[version],
+    stat: async (path: string) => {
+      const entry = await memory[version].stat(path);
+      return entry && path === "data/big.json"
+        ? { ...entry, size: LARGE + 1 }
+        : entry;
+    },
+    read: async (entry: any) => {
+      read.push(`${version}:${entry.path}`);
+      if (entry.size > LARGE) throw new Error("a large file was read whole");
+      return memory[version].read(entry);
+    },
+  });
+  const previews = await changedCode(
+    [
+      { path: "data/big.json", lines_changed: 1 },
+      { path: "src/a.ts", lines_changed: 1 },
+      { path: "logo.png", lines_changed: 0 },
+    ],
+    { base: tree("base"), head: tree("head") },
+  );
+  expect(previews).toEqual([
+    {
+      path: "data/big.json",
+      base: null,
+      head: { omitted: true, bytes: LARGE + 1 },
+    },
+    {
+      path: "src/a.ts",
+      base: { line_start: 1, content: "export const a = 1;\n", truncated: false },
+      head: { line_start: 1, content: "export const a = 2;\n", truncated: false },
+    },
+    { path: "logo.png", base: null, head: { binary: true } },
+  ]);
+  expect(read).toEqual(["base:src/a.ts", "head:src/a.ts", "head:logo.png"]);
+});
 
 it("retains reproduced evidence when every blind pass misses, with runner artifacts and risk-selected budget", async () => {
   const transport = vi

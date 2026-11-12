@@ -307,6 +307,41 @@ describe("search over bytes", () => {
         text.includes(pattern),
       );
   });
+  it("finds a pattern that repeats itself in time linear in the file", () => {
+    // Every start of the pattern's long prefix matched 499 bytes before it
+    // failed: four billion comparisons for one file of the size searched whole.
+    const pattern = utf8("a".repeat(499) + "b");
+    const bytes = new Uint8Array(8 * 1024 * 1024).fill(0x61);
+    expect(holds(bytes, pattern)).toBe(false);
+    bytes[bytes.length - 1] = 0x62;
+    expect(holds(bytes, pattern)).toBe(true);
+    bytes[bytes.length - 1] = 0x61;
+    bytes[4 * 1024 * 1024] = 0x62;
+    expect(holds(bytes, pattern)).toBe(true);
+    bytes.fill(0x62, 0, 499);
+    bytes[4 * 1024 * 1024] = 0x61;
+    expect(holds(bytes, pattern)).toBe(false);
+    // Patterns that overlap themselves, against the text's own answer.
+    let seed = 7;
+    const letters = (count: number) => {
+      let text = "";
+      for (let i = 0; i < count; i++) {
+        seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+        text += "ab"[(seed >> 16) & 1];
+      }
+      return text;
+    };
+    for (let round = 0; round < 400; round++) {
+      const text = letters(1 + (round % 60)),
+        part = letters(1 + (round % 7));
+      expect(holds(utf8(text), utf8(part)), `${part} in ${text}`).toBe(
+        text.includes(part),
+      );
+    }
+    expect(holds(utf8("abababc"), utf8("ababc"))).toBe(true);
+    expect(holds(utf8("aabaabaaa"), utf8("aabaaa"))).toBe(true);
+    expect(holds(utf8("aabaabaab"), utf8("aabaaa"))).toBe(false);
+  });
   it("returns what a decode of every file returns", async () => {
     const files: Record<string, string | Uint8Array> = {
       "a/ascii.ts": "const total = 1;\nexport const sum = total + 1;\n",

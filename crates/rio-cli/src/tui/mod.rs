@@ -66,7 +66,7 @@ pub async fn review(args: crate::ReviewArgs, started: String) -> u8 {
             host.exit_killed();
         }
         // Quitting during a run stops it (an endpoint review is cancelled)
-        // before the process exits.
+        // before the process exits; so does a request to terminate.
         host.stop();
         result.map(|()| host.killed)
     })

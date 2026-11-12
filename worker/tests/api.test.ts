@@ -595,6 +595,38 @@ describe("Worker API and storage", () => {
     )
       .bind(id)
       .all<{ id: string; status: string }>();
+    // Nor is a job begun for a review that ended without being cancelled
+    // (its runtime stopped, say) and whose stop did not reach the container.
+    const ended = crypto.randomUUID();
+    await runtime.DB.prepare(
+      "INSERT INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES(?,'owner','unused','running',?,?,?)",
+    )
+      .bind(ended, Date.now(), 100000, Date.now() + 600000)
+      .run();
+    await createJob(runtime, ended, "late", "run", ["true"], "head", snapshotId);
+    await runtime.DB.prepare(
+      "UPDATE jobs SET status='leased',lease_until=? WHERE id='late' AND review_id=?",
+    )
+      .bind(Date.now() + 600000, ended)
+      .run();
+    await runtime.DB.prepare("UPDATE reviews SET status='partial' WHERE id=?")
+      .bind(ended)
+      .run();
+    await worker.queue(
+      {
+        messages: [
+          {
+            body: { review_id: ended, job_id: "late", attempt: 1 },
+            attempts: 1,
+            ack: () => outcomes.push("ack:late"),
+            retry: () => outcomes.push("retry:late"),
+          },
+        ],
+      } as any,
+      sandboxEnv,
+    );
+    expect(outcomes.at(-1)).toBe("ack:late");
+    expect(started).toEqual([]);
     // Only the delivered attempt: a stale delivery leaves a newer one alone.
     expect(rows.results).toEqual([
       { id: "begun", status: "failed" },
@@ -636,6 +668,11 @@ describe("Worker API and storage", () => {
       "D1_ERROR: D1 DB reset because its code was updated.",
       "D1_ERROR: Network connection lost.",
       "D1_ERROR: D1 DB storage operation exceeded timeout which caused object to be reset.",
+      // The object store's own faults. The first ended a benchmark case as a
+      // bad request while its snapshot was uploaded (FreeCAD@a050e42).
+      "put: We encountered an internal connectivity issue. Please try again. (10001)",
+      "get: We encountered an internal error. Please try again. (10001)",
+      "uploadPart: Service temporarily unavailable. (10043)",
     ]) {
       expect(transient(message)).toBe(true);
       const response = await failing(message);
@@ -648,6 +685,8 @@ describe("Worker API and storage", () => {
     for (const message of [
       "D1_ERROR: UNIQUE constraint failed: reviews.id: SQLITE_CONSTRAINT",
       "D1_ERROR: no such column: missing: SQLITE_ERROR",
+      "put: The specified key does not exist. (10007)",
+      "completeMultipartUpload: There was a problem with the multipart upload. (10048)",
       "review not found",
     ]) {
       expect(transient(message)).toBe(false);
@@ -747,6 +786,75 @@ describe("Worker API and storage", () => {
     // A second cancel sends nothing more: no job is open.
     await request(`/v1/reviews/${id}/cancel`, "POST", {});
     expect(fakeWorkflow.events).toHaveLength(events);
+  });
+  it("ends the wait of a job that completed just before its review was cancelled", async () => {
+    const id = await createReview();
+    await createJob(runtime, id, "raced", "run", ["true"], "head", snapshotId);
+    // The cancel arrives right after the completion is recorded: the route no
+    // longer finds the job open, and the completion finds the review cancelled.
+    let cancel: (() => Promise<unknown>) | undefined = () =>
+      request(`/v1/reviews/${id}/cancel`, "POST", {});
+    const racing = {
+      ...runtime,
+      DB: new Proxy(runtime.DB, {
+        get(target, key) {
+          const value = Reflect.get(target, key);
+          if (key !== "batch")
+            return typeof value === "function" ? value.bind(target) : value;
+          return async (statements: D1PreparedStatement[]) => {
+            const done = await target.batch(statements);
+            const run = cancel;
+            cancel = undefined;
+            await run?.();
+            return done;
+          };
+        },
+      }),
+    } as Env;
+    await finishJob(racing, id, "raced", 1, {
+      job_id: "raced",
+      attempt: 1,
+      version: "head",
+      exit_code: 0,
+      stdout: "",
+      stderr: "",
+      timed_out: false,
+      truncated: false,
+    });
+    expect(cancel).toBeUndefined();
+    expect(fakeWorkflow.events.map((e) => [e.type, e.payload])).toEqual([
+      ["job-raced-1", { cancelled: true }],
+    ]);
+    expect(
+      (
+        await runtime.DB.prepare(
+          "SELECT status FROM jobs WHERE id='raced'",
+        ).first<any>()
+      ).status,
+    ).toBe("completed");
+  });
+  it("ends every open wait of a cancelled review when one event cannot be sent", async () => {
+    const id = await createReview();
+    for (const job of ["first", "second", "third"])
+      await createJob(runtime, id, job, "run", ["true"], "head", snapshotId);
+    const sent: string[] = [];
+    const response = await app.request(
+      `https://rio.test/v1/reviews/${id}/cancel`,
+      { method: "POST", headers: owner, body: "{}" },
+      {
+        ...runtime,
+        REVIEWS: {
+          get: async () => ({
+            sendEvent: async (event: any) => {
+              if (event.type === "job-first-1") throw new Error("unavailable");
+              sent.push(event.type);
+            },
+          }),
+        },
+      } as unknown as Env,
+    );
+    expect(response.status).toBe(200);
+    expect(sent.sort()).toEqual(["job-second-1", "job-third-1"]);
   });
   it("changes selected budget from creation time without resetting spent or reserved tokens", async () => {
     const id = await createReview(),

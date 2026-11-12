@@ -162,10 +162,24 @@ pub async fn review(args: ReviewArgs, started: String) -> u8 {
     }
     let cancellation = CancellationToken::new();
     let signal = cancellation.clone();
+    // Set once the endpoint's review has ended: nothing is left to cancel.
+    let reviewed = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
+    let signal_reviewed = reviewed.clone();
     let signals = tokio::spawn(async move {
-        if crate::interrupted().await.is_ok() {
-            signal.cancel();
-            eprintln!("Interrupted; cancelling the endpoint review…");
+        let Ok(mut interrupts) = crate::Interrupts::listen() else {
+            return;
+        };
+        while interrupts.next().await.is_some() {
+            // The listeners replace the signals' default actions for the
+            // life of the process: after the review an interrupt still has
+            // to end the CLI, at the publication prompt as anywhere else.
+            if signal_reviewed.load(std::sync::atomic::Ordering::SeqCst) {
+                std::process::exit(130);
+            }
+            if !signal.is_cancelled() {
+                signal.cancel();
+                eprintln!("Interrupted; cancelling the endpoint review…");
+            }
         }
     });
     let id = match client.pull_review(&repository, number, args.publish).await {
@@ -198,7 +212,7 @@ pub async fn review(args: ReviewArgs, started: String) -> u8 {
             );
         }
     };
-    signals.abort();
+    reviewed.store(true, std::sync::atomic::Ordering::SeqCst);
     let reason = report.publication.as_ref().and_then(|p| p.reason);
     if args.publish && reason == Some(UnpublishedReason::PolicyNever) {
         eprintln!("The profile forbids publication (publish: never); nothing was published.");
@@ -206,6 +220,8 @@ pub async fn review(args: ReviewArgs, started: String) -> u8 {
     // In a terminal the findings hub opens on the report; its `P` previews
     // what publishing would post and publishes only after `y`.
     if crate::tui::interactive(args.format.is_some(), args.no_tui) {
+        // The UI reads Ctrl-C as a key and handles a request to terminate itself.
+        signals.abort();
         let policy = endpoint_policy(&report);
         return crate::tui::pull_request(args, started, report, policy, id, number).await;
     }

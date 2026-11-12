@@ -186,6 +186,35 @@ async function fail(env: Env, review: string, state: string, reason: string) {
   await new Store(env).event(review, "review:error", { error: reason });
   await settleAnnouncement(env, review, "Review did not run", reason);
 }
+/**
+ * Ends a review cancelled while it was being prepared: no workflow exists yet
+ * to end it, and the sweep ends only reviews that were handed over. False
+ * when the review is not being prepared (any more).
+ */
+export async function cancelPreparing(
+  env: Env,
+  review: string,
+): Promise<boolean> {
+  const ended = await env.DB.prepare(
+    "UPDATE reviews SET cancelled=1,cancelled_at=COALESCE(cancelled_at,?),status='error',error='cancelled' WHERE id=? AND status='preparing' AND submission_key='' RETURNING id",
+  )
+    .bind(Date.now(), review)
+    .first();
+  if (!ended) return false;
+  await env.DB.prepare(
+    "UPDATE pull_requests SET state='failed',reason='cancelled' WHERE review_id=? AND state IN ('requested','preparing')",
+  )
+    .bind(review)
+    .run();
+  await new Store(env).event(review, "review:error", { error: "cancelled" });
+  await settleAnnouncement(
+    env,
+    review,
+    "Review did not run",
+    "The review was cancelled before it started. Push again or comment `/rio review` to retry.",
+  );
+  return true;
+}
 
 /**
  * The review-request consumer. The pull request is read from GitHub with a

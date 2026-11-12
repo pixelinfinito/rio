@@ -421,6 +421,9 @@ class AACRAdapterTests(unittest.TestCase):
             (notes("Rio ended this review: runtime stopped: Too many API requests by single Worker "
                    "invocation."), "subrequest_limit"),
             (notes("Rio ended this review: runtime stopped: Worker exceeded memory limit."), "memory_limit"),
+            # So does a cause that is listed after the deadline.
+            (notes("Rio ended this review: runtime stopped: Attempt failed due to internal workflows "
+                   "error."), "workflow_internal"),
             # The review's own request budget, kept below the platform's limit.
             (notes("correctness agent failed: review request budget exhausted; its findings are missing "
                    "from this review."), "subrequest_limit"),
@@ -428,8 +431,8 @@ class AACRAdapterTests(unittest.TestCase):
                    "the 50000 requests the platform allows one review on searching; what a search would "
                    "have found is missing from this review."), "subrequest_limit"),
             (notes("Request budget: 1 model turn was not started, because the review had used its share "
-                   "of the 50000 requests the platform allows one review; the agents and verifier votes "
-                   "they belonged to did not complete."), "subrequest_limit"),
+                   "of the 50000 requests the platform allows one review; the agents, verifier votes "
+                   "and council answers they belonged to did not complete."), "subrequest_limit"),
             (notes("correctness agent failed: The operation was aborted due to timeout; its findings are "
                    "missing from this review."), "model_timeout"),
             (notes("Agent result cache not updated for correctness: D1_ERROR: D1 DB is overloaded. Too many "
@@ -449,6 +452,11 @@ class AACRAdapterTests(unittest.TestCase):
         self.assertEqual(aacr.infra_failure(
             None, "Rio reported an error (internal_error): endpoint error: D1_ERROR: D1 DB is overloaded. "
                   "Too many resources consumed within a 10 second window.: Rio endpoint returned HTTP 400"),
+            "storage")
+        # The fix4 full run: the object store failed a write while a snapshot was uploaded.
+        self.assertEqual(aacr.infra_failure(
+            None, "Rio reported an error (internal_error): endpoint error: put: We encountered an internal "
+                  "connectivity issue. Please try again. (10001): Rio endpoint returned HTTP 400"),
             "storage")
         self.assertIsNone(aacr.infra_failure(None, "Report commit pins differ from dataset"))
         # Every cause is kept, in a stable order.
@@ -486,7 +494,22 @@ class AACRAdapterTests(unittest.TestCase):
             lost, execution(kind="graph", command=["rio-internal", "rio/graph"], attempt=2)]}), [])
         self.assertEqual(aacr.infra_failures(None, audit={"executions": [lost, {**lost, "attempt": 2}]}),
                          ["executor"])
+        # The audit lists jobs in no order: the retry counts wherever it stands.
+        self.assertEqual(aacr.infra_failures(None, audit={"executions": [
+            execution(kind="graph", command=["rio-internal", "rio/graph"], attempt=2), lost]}), [])
+        # Two calls of one command are two executions, not attempts of one.
+        self.assertEqual(aacr.infra_failures(None, audit={"executions": [
+            execution(outcome="runner_failed", exit_code=1, stderr="sandbox executor failed"),
+            execution()]}), ["executor"])
         self.assertEqual(aacr.infra_failures(None, audit={}), [])
+        # Neither a list where a report or an audit belongs nor an expired job is a cause or an error.
+        self.assertEqual(aacr.infra_failures([{"status": "error"}], audit=[]), [])
+        self.assertEqual(aacr.infra_failures(None, audit={"executions": [{"job_id": "a", "expired": True}]}), [])
+
+    def test_error_texts_count_one_by_one(self):
+        self.assertEqual(aacr.infra_failures(None, [
+            "Review exceeded the adapter's 2700 s limit", "contacting Rio endpoint: connection error"]),
+            ["deadline", "transport"])
 
     def test_saved_evidence_is_classified_under_the_current_rules(self):
         """A status written before a cause had a label is classified from its
@@ -506,6 +529,22 @@ class AACRAdapterTests(unittest.TestCase):
             (evidence / "report.json").unlink()
             self.assertEqual(aacr.case_infra_failures(evidence, {"status": "partial", "infra_failure": "executor"}),
                              ["executor"])
+            # Every recorded cause stays, not only the first.
+            self.assertEqual(aacr.case_infra_failures(evidence, {
+                "status": "partial", "infra_failure": "cpu_limit",
+                "infra_failures": ["cpu_limit", "memory_limit"]}), ["cpu_limit", "memory_limit"])
+            self.assertEqual(aacr.case_infra_failures(evidence, {"status": "partial", "infra_failure": None,
+                                                                 "infra_failures": []}), [])
+            # A saved report that is no object is no report, and no error either.
+            (evidence / "report.json").write_text('[{"status": "error"}]', encoding="utf-8")
+            self.assertEqual(aacr.case_infra_failures(evidence, {"status": "failed", "error": "x"}), [])
+            (evidence / "report.json").unlink()
+            # The error and the stderr are separate texts: each names its own cause.
+            (evidence / "review.stderr").write_text(
+                "contacting Rio endpoint: connection error", encoding="utf-8")
+            self.assertEqual(aacr.case_infra_failures(evidence, {
+                "status": "failed", "error": "Review exceeded the adapter's 2700 s limit"}),
+                ["deadline", "transport"])
             (evidence / "review.stderr").write_text(
                 "contacting Rio endpoint: connection error: Connection reset by peer", encoding="utf-8")
             self.assertEqual(aacr.case_infra_failure(evidence, {"status": "failed"}), "transport")

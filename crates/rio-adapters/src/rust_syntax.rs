@@ -1,9 +1,8 @@
-use crate::syntax::{Budget, parse_source_until, with_ancestors};
+use crate::syntax::{Budget, parse_source_until, query_matches, with_ancestors};
 use crate::{Identifier, Import, Symbol, SymbolKind, SyntaxTable};
 use anyhow::Result;
 use std::collections::{BTreeMap, HashMap};
-use streaming_iterator::StreamingIterator;
-use tree_sitter::{Node, QueryCursor};
+use tree_sitter::Node;
 
 fn text<'a>(node: Node<'_>, source: &'a [u8]) -> &'a str {
     std::str::from_utf8(&source[node.byte_range()]).unwrap_or_default()
@@ -154,6 +153,9 @@ fn walk<'t>(
     ancestors.push(node);
     let mut cursor = node.walk();
     for child in node.named_children(&mut cursor) {
+        if budget.stopped() {
+            break;
+        }
         walk(child, ancestors, source, result, budget);
     }
     ancestors.pop();
@@ -183,6 +185,9 @@ fn runtime_tokens(node: Node<'_>, source: &[u8], result: &mut SyntaxTable, budge
     } else {
         let mut cursor = node.walk();
         for child in node.children(&mut cursor) {
+            if budget.stopped() {
+                break;
+            }
             runtime_tokens(child, source, result, budget);
         }
     }
@@ -209,18 +214,13 @@ pub(crate) fn analyze_rust(
         parse_errors: tree.root_node().has_error(),
         ..Default::default()
     };
-    let mut cursor = QueryCursor::new();
-    let mut matches = cursor.matches(&query, tree.root_node(), source);
     let stem = path
         .rsplit('/')
         .next()
         .unwrap_or(path)
         .trim_end_matches(".rs");
     let mut found = Vec::new();
-    while let Some(matched) = matches.next() {
-        if budget.hit() {
-            return Ok(None);
-        }
+    if !query_matches(&query, tree.root_node(), source, budget, |matched| {
         let capture = |name| {
             matched
                 .captures
@@ -231,6 +231,8 @@ pub(crate) fn analyze_rust(
         if let (Some(node), Some(name)) = (capture("symbol"), capture("name")) {
             found.push((node, name));
         }
+    }) {
+        return Ok(None);
     }
     // Each symbol's kind and the names of its enclosing items, outermost first.
     let mut placed = HashMap::<usize, (SymbolKind, Vec<String>)>::new();
@@ -292,12 +294,10 @@ pub(crate) fn analyze_rust(
         &language,
         include_str!("../../../modules/adapters/rust/queries/executable.scm"),
     )?;
-    let mut cursor = QueryCursor::new();
-    let mut matches = cursor.matches(&query, tree.root_node(), source);
-    while let Some(matched) = matches.next() {
+    let ended = query_matches(&query, tree.root_node(), source, budget, |matched| {
         for capture in matched.captures {
             runtime_tokens(capture.node, source, &mut result, budget);
         }
-    }
-    Ok((!budget.stopped()).then_some(result))
+    });
+    Ok(ended.then_some(result))
 }

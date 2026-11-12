@@ -617,6 +617,9 @@ export async function escalatedPull(env: Env, row: PullRow): Promise<boolean> {
     .bind(row.tenant, row.repository, row.number)
     .first());
 }
+/** What a cancelled review's check run says instead of a publication. */
+export const CANCELLED_UNPUBLISHED =
+  "The review was cancelled before it finished, so nothing was published for this head. Push again or comment `/rio review` to retry.";
 export async function publishReview(
   env: Env,
   input: PublishInput,
@@ -627,6 +630,23 @@ export async function publishReview(
     slug: string,
   ) => Host,
 ): Promise<Publication | null> {
+  // A review cancelled by request publishes nothing for its head, whichever
+  // way its workflow ends; one that ran out of time still publishes what it
+  // has. The announced check run is completed with the reason.
+  const review = await env.DB.prepare(
+    "SELECT cancelled FROM reviews WHERE id=?",
+  )
+    .bind(input.review)
+    .first<{ cancelled: number }>();
+  if (review?.cancelled) {
+    await settleAnnouncement(
+      env,
+      input.review,
+      "Review did not complete",
+      CANCELLED_UNPUBLISHED,
+    );
+    return null;
+  }
   let result: Publication | null;
   try {
     result = await publishWith(env, input, host);

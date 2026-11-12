@@ -69,6 +69,8 @@ export class SandboxRunner {
   private stopped = false;
   /** Ends the wait of the execution in flight. */
   private halt?: () => void;
+  /** The execution in flight: the object is one job attempt's. */
+  private running?: Promise<ExecutionResult>;
   constructor(
     private ctx: Pick<DurableObjectState, "container">,
     private env: Env,
@@ -81,7 +83,29 @@ export class SandboxRunner {
     if (this.ctx.container?.running) await this.ctx.container.destroy();
     return { stopped: true };
   }
-  async run(job: Execution): Promise<ExecutionResult> {
+  /**
+   * A message delivered again while its job is at work joins that execution:
+   * one stop ends both, and neither destroys the other's container.
+   */
+  run(job: Execution): Promise<ExecutionResult> {
+    return (this.running ??= this.execute(job).finally(() => {
+      this.running = undefined;
+    }));
+  }
+  /**
+   * Whether the job was withdrawn, as a stop that was answered leaves it:
+   * the record that outlives this object, which remembers a stop only while
+   * it stays in memory.
+   */
+  private async withdrawn(job: Execution): Promise<boolean> {
+    const row = await this.env.DB.prepare(
+      "SELECT status FROM jobs WHERE id=? AND review_id=? AND attempt=?",
+    )
+      .bind(job.job_id, job.review_id, job.attempt)
+      .first<{ status: string }>();
+    return row?.status === "failed";
+  }
+  private async execute(job: Execution): Promise<ExecutionResult> {
     invariant(
       job.network === false &&
         job.limits.memory_mb <= SANDBOX_MEMORY_MB &&
@@ -91,25 +115,11 @@ export class SandboxRunner {
         (job.limits.artifact_bytes ?? 0) <= ARTIFACT_LIMIT,
       "invalid sandbox limits",
     );
-    // The archive has its own deadline; the command's wall starts once it is in.
-    const transfer = transferMs(
-      (await snapshotFor(this.env, job)).index.trees,
-      job.needs,
-    );
     const container = this.ctx.container;
     invariant(container, "Cloudflare Container is unavailable");
     if (this.stopped) return stopped(job);
-    if (container.running) await container.destroy();
-    container.start({
-      enableInternet: false,
-      entrypoint: [
-        "/bin/sleep",
-        String(
-          Math.ceil((transfer + job.limits.wall_ms + EXTRACT_GRACE_MS) / 1000) +
-            30,
-        ),
-      ],
-    });
+    // From here a stop ends every wait, the storage reads before the
+    // container starts included.
     const abort = new AbortController();
     const halted = new Promise<never>((_, reject) => {
       this.halt = () => {
@@ -118,11 +128,16 @@ export class SandboxRunner {
       };
     });
     halted.catch(() => {});
+    /** The value of work a stop does not wait for. */
+    const unlessStopped = <T>(work: Promise<T>): Promise<T> => {
+      work.catch(() => {});
+      return Promise.race([work, halted]);
+    };
     let phase: "transfer" | "command" = "transfer";
-    let timer = setTimeout(() => abort.abort(), transfer);
+    let timer: ReturnType<typeof setTimeout> | null = null;
     // Where the job's time went, reported with its result or its deadline.
     const measured: Transfer = { bytes: 0, storage_ms: 0 };
-    const started = Date.now();
+    let started = Date.now();
     let transferred: number | undefined;
     const timing = () => ({
       transfer_ms: transferred ?? Date.now() - started,
@@ -130,6 +145,28 @@ export class SandboxRunner {
       storage_ms: measured.storage_ms,
     });
     try {
+      // The archive has its own deadline; the command's wall starts once it is in.
+      const transfer = transferMs(
+        (await unlessStopped(snapshotFor(this.env, job))).index.trees,
+        job.needs,
+      );
+      if (await unlessStopped(this.withdrawn(job))) return stopped(job);
+      if (container.running) await container.destroy();
+      // A stop that arrived meanwhile found no container to destroy.
+      if (this.stopped) return stopped(job);
+      container.start({
+        enableInternet: false,
+        entrypoint: [
+          "/bin/sleep",
+          String(
+            Math.ceil(
+              (transfer + job.limits.wall_ms + EXTRACT_GRACE_MS) / 1000,
+            ) + 30,
+          ),
+        ],
+      });
+      timer = setTimeout(() => abort.abort(), transfer);
+      started = Date.now();
       const starting = container.exec(
         ["/usr/bin/python3", "/opt/rio/execute.py"],
         {
@@ -140,11 +177,16 @@ export class SandboxRunner {
           user: "10001",
         },
       );
-      starting.catch(() => {});
-      const process = await Promise.race([starting, halted]);
+      const process = await unlessStopped(starting);
       // Stream the header and tree archive; output is collected concurrently so
       // neither side can block on a full pipe.
-      const input = (await jobInput(this.env, job, { shared: true, measured }))
+      const archive = jobInput(this.env, job, { shared: true, measured });
+      const stream = await unlessStopped(archive).catch((error: unknown) => {
+        // Left unread by a stop: cancelled once it exists, so it holds nothing.
+        void archive.then((left) => left.cancel()).catch(() => {});
+        throw error;
+      });
+      const input = stream
         .pipeTo(process.stdin!, { signal: abort.signal })
         .then(
           () => {
@@ -162,9 +204,9 @@ export class SandboxRunner {
         );
       let output: Awaited<ReturnType<typeof process.output>>, piped: unknown;
       try {
-        const running = Promise.all([process.output(), input]);
-        running.catch(() => {});
-        [output, piped] = await Promise.race([running, halted]);
+        [output, piped] = await unlessStopped(
+          Promise.all([process.output(), input]),
+        );
       } catch (error) {
         if (this.stopped) return stopped(job);
         if (abort.signal.aborted) return timedOut(job, phase, timing());

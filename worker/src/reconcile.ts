@@ -109,12 +109,20 @@ export async function reconcile(
 
 /** The cron sweep: reviews that may need ending, a bounded batch per tick. */
 export async function sweepReviews(env: Env, now = Date.now()) {
-  const rows = await env.DB.prepare(
-    "SELECT id,status,deadline,submission_key,cancelled_at FROM reviews WHERE (status IN ('queued','running') OR (status='cancelled' AND COALESCE(cancelled_at,0)<? AND submission_key<>'')) AND created_at<? ORDER BY deadline LIMIT 25",
+  const columns = "SELECT id,status,deadline,submission_key,cancelled_at";
+  const active = await env.DB.prepare(
+    `${columns} FROM reviews WHERE status IN ('queued','running') AND created_at<? ORDER BY deadline LIMIT 25`,
   )
-    .bind(now - CANCEL_GRACE_MS, now - 60000)
+    .bind(now - 60000)
     .all<ReviewRow>();
-  for (const row of rows.results)
+  // Their own batch: any number of open reviews with earlier deadlines
+  // leaves the cancelled ones their turn.
+  const cancelled = await env.DB.prepare(
+    `${columns} FROM reviews WHERE status='cancelled' AND COALESCE(cancelled_at,0)<? AND submission_key<>'' ORDER BY cancelled_at LIMIT 25`,
+  )
+    .bind(now - CANCEL_GRACE_MS)
+    .all<ReviewRow>();
+  for (const row of [...active.results, ...cancelled.results])
     await reconcile(env, row, now).catch((error: unknown) =>
       console.log(
         `rio: reconcile ${row.id} failed: ${error instanceof Error ? error.name : "error"}`,
