@@ -145,7 +145,7 @@ describe("agent-order", () => {
     intent: '<repository_data label="intent">["x"]</repository_data>',
     focus: '<repository_data label="suggested_focus">["src/a.ts"]</repository_data>',
     graph: '<repository_data label="graph excerpt">{}</repository_data>',
-    changed: '<repository_data label="changed code excerpts">[1]</repository_data>',
+    changed: '<repository_data label="change diff">[1]</repository_data>',
     checks: '<repository_data label="deterministic checks">[]</repository_data>',
     data: "",
     guidance: '<repository_data label="owner guidance">["keep"]</repository_data>',
@@ -180,7 +180,7 @@ describe("agent-order", () => {
     const narrowed = join(
       generationPrompt({
         ...base,
-        changed: '<repository_data label="changed code excerpts">[2]</repository_data>',
+        changed: '<repository_data label="change diff">[2]</repository_data>',
       }),
     );
     let i = 0;

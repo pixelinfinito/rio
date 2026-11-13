@@ -15,6 +15,7 @@ import {
 } from "../src/validation";
 import { classId, consolidate, triggerHash } from "../src/consolidate";
 import type { Verified } from "../src/consolidate";
+import { HISTORY_BYTES } from "../src/gateway";
 import { allMigrations, hypothesis, profile, submission } from "./fixtures";
 import lineageRound4 from "../../crates/rio-core/tests/fixtures/lineage-round4.json";
 import type {
@@ -329,6 +330,54 @@ describe("class-level findings", () => {
         classThreshold: 2,
       }).defects,
     ).toHaveLength(1);
+  });
+});
+
+describe("verification", () => {
+  it("verifies hypotheses three at a time, each batch before the next", async () => {
+    const names = ["a", "b", "c", "d", "e"];
+    const files = (body: string) =>
+      Object.fromEntries(
+        names.map((n) => [`src/${n}.ts`, `function ${n}(){ ${body} }\n`]),
+      );
+    const raised = names.map((n) =>
+      hyp(`src/${n}.ts`, n, 1, `correctness/throw-${n}`),
+    );
+    const r = await review({
+      base: files("return 0;"),
+      head: files("throw new Error();"),
+      agents: () => raised,
+      // Tokens for the voters of three hypotheses at once.
+      mutate: (s) => {
+        s.profile.budget.fast.tokens = 9 * HISTORY_BYTES + 60_000;
+      },
+    });
+    expect(r.report.findings.map((f: any) => f.id).sort()).toEqual(
+      raised.map(idOf).sort(),
+    );
+    // Every model call of the voters, in the order the calls were made.
+    const calls = (
+      await runtime.DB.prepare(
+        "SELECT actor,phase FROM usage WHERE review_id=? AND phase LIKE 'verify-%' ORDER BY rowid",
+      )
+        .bind(r.id)
+        .all<{ actor: string; phase: string }>()
+    ).results.map((u) => ({
+      name: names[raised.findIndex((h) => u.actor.startsWith(idOf(h)))],
+      blind: u.phase === "verify-blind",
+    }));
+    expect(calls).toHaveLength(30);
+    const first = (name: string, blind: boolean) =>
+        calls.findIndex((c) => c.name === name && c.blind === blind),
+      last = (name: string) => calls.findLastIndex((c) => c.name === name);
+    // The first three are verified together: the third is asked its blind
+    // question before the first is told its hypothesis.
+    expect(first("c", true)).toBeLessThan(first("a", false));
+    // The fourth starts only when all three have ended.
+    expect(Math.max(last("a"), last("b"), last("c"))).toBeLessThan(
+      first("d", true),
+    );
+    expect(first("e", true)).toBeLessThan(first("d", false));
   });
 });
 
@@ -655,10 +704,11 @@ describe("review lineages", () => {
     ]);
     // Agents receive only the previous-head -> new-head diff plus prior findings.
     expect(r2.prompts).toHaveLength(1);
-    const excerpts = block(r2.prompts[0], "changed code excerpts");
+    const excerpts = block(r2.prompts[0], "change diff");
     expect(excerpts.map((e: any) => e.path)).toEqual(["src/a.ts"]);
-    expect(excerpts[0].base.content).toBe(head1["src/a.ts"]);
-    expect(excerpts[0].head.content).toBe(head2["src/a.ts"]);
+    expect(excerpts[0].diff).toBe(
+      "@@ -1,0 +1,2 @@\n1 +// moved down\n2 +// by two lines\n3  function a(){ throw new Error(); }",
+    );
     expect(block(r2.prompts[0], "suggested_focus")).toEqual(["src/a.ts"]);
     expect(
       block(r2.prompts[0], "previous round findings")

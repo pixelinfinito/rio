@@ -1015,9 +1015,15 @@ describe("agent result cache store", () => {
   it("populates and replays a change of more hunks than one pack or lookup step holds", async () => {
     const tenant = "tenant-cache-packs";
     const files = change("wide", PACK_ENTRIES + 44);
+    // The first message of so wide a change is more than a third of the
+    // fixture's tokens: the one agent takes them all.
+    const mutate = (s: Submission) => {
+      s.profile.budget.fast.agents_max = 1;
+    };
     const first = await review({
       files,
       tenant,
+      mutate,
       agent: () => [hyp("src/wide/f7.ts", 2, "f7")],
     });
     expect(first.report.footer.notes.join("\n")).not.toMatch(/result cache/);
@@ -1030,6 +1036,7 @@ describe("agent result cache store", () => {
     const second = await review({
       files,
       tenant,
+      mutate,
       agent: () => {
         throw new Error("no model call expected");
       },

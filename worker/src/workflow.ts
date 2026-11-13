@@ -28,7 +28,12 @@ import type {
 import { Store, D1Ledger } from "./storage";
 import { DEFAULT_TOKENS } from "./budget";
 import { Progress } from "./progress";
-import { ProviderGateway, converse, settledUsage } from "./gateway";
+import {
+  HISTORY_BYTES,
+  ProviderGateway,
+  converse,
+  settledUsage,
+} from "./gateway";
 import { promptCacheReport, selfHostedCache } from "./usage";
 import { generationPrompt, redactPartitions } from "./prompt";
 /** The provider identity of self-hosted council members' partition. */
@@ -135,6 +140,7 @@ import { announceReview, settleAnnouncement } from "./announce";
 import {
   changeHunks,
   ContextMemo,
+  diffHunks,
   context as cacheContext,
   expire,
   hunkHash,
@@ -176,52 +182,132 @@ export interface WorkflowParams {
   review_id: string;
   snapshot_key: string;
 }
+/** Hypotheses verified at once, each with its own voters, while tokens allow. */
+const VERIFIED_TOGETHER = 3;
+/** Characters of diff an agent's first message holds, over all changed files. */
+export const CHANGE_PROMPT_CHARS = 60_000;
+/** Changed files read for an agent's prompt; the files after them are named. */
+export const CHANGE_PROMPT_FILES = 200;
+// A diff cut shorter than this says too little: the file is named instead.
+const SHORTEST_CUT = 600;
+const CONTEXT_LINES = 3;
+const LONGEST_LINE = 400;
+
 /**
- * The first lines of each changed file, in both versions, for an agent's
- * prompt. A file too large to hold is named with its size and not read: the
- * excerpt is 80 lines, and the agent runs beside others in one isolate.
+ * One file's change as a diff: its hunks with three lines of context, removed
+ * lines marked `-`, added lines `+`, and the head line number before every
+ * line the head has.
+ */
+export function renderDiff(before: string | null, after: string | null) {
+  const split = (text: string | null) =>
+    text === null ? [] : text.replace(/\n$/, "").split("\n");
+  const a = split(before),
+    b = split(after);
+  const width = String(b.length).length;
+  const clip = (line: string) =>
+    line.length > LONGEST_LINE ? `${line.slice(0, LONGEST_LINE)}…` : line;
+  const head = (n: number, mark: string) =>
+    `${String(n).padStart(width)} ${mark}${clip(b[n - 1])}`;
+  const hunks = diffHunks("", "", before, after);
+  const out: string[] = [];
+  // The last head line written.
+  let shown = 0;
+  hunks.forEach((h, i) => {
+    const from = Math.max(shown + 1, h.head.start - CONTEXT_LINES);
+    if (i === 0 || from > shown + 1)
+      out.push(
+        `@@ -${h.base.start},${h.base.count} +${h.head.start},${h.head.count} @@`,
+      );
+    for (let n = from; n < h.head.start; n++) out.push(head(n, " "));
+    for (let k = 0; k < h.base.count; k++)
+      out.push(`${" ".repeat(width)} -${clip(a[h.base.start - 1 + k])}`);
+    for (let k = 0; k < h.head.count; k++)
+      out.push(head(h.head.start + k, "+"));
+    shown = h.head.start + h.head.count - 1;
+    const until = Math.min(
+      b.length,
+      shown + CONTEXT_LINES,
+      i + 1 < hunks.length ? hunks[i + 1].head.start - 1 : Infinity,
+    );
+    for (let n = shown + 1; n <= until; n++) out.push(head(n, " "));
+    shown = Math.max(shown, until);
+  });
+  return out.join("\n");
+}
+
+/**
+ * The change itself for an agent's prompt: every changed file's diff, within
+ * a character budget shared so that short diffs are whole and the longest are
+ * cut alike. A cut diff says so, and a file whose share would say too little,
+ * or that comes after the files read, is named as unshown: the agent reads
+ * those with its tools. A file too large to hold is named with its size and
+ * not read; the agent runs beside others in one isolate.
  */
 export async function changedCode(
   changed: Submission["changed"],
   snapshot: SnapshotReader,
+  budget = CHANGE_PROMPT_CHARS,
 ) {
-  const previews: any[] = [];
-  let remaining = 16000;
-  for (const file of changed) {
-    const preview: any = { path: file.path };
-    for (const version of ["base", "head"] as const) {
-      const path =
-        version === "base" ? (file.old_path ?? file.path) : file.path;
-      const entry = await snapshot[version].stat(path);
-      if (!entry) {
-        preview[version] = null;
-        continue;
-      }
-      if (entry.size > LARGE) {
-        preview[version] = { omitted: true, bytes: entry.size };
-        continue;
-      }
-      const held = fileOf(entry, await snapshot[version].read(entry));
-      if (held.encoding === "base64") preview[version] = { binary: true };
-      else {
-        const content = held.content
-          .split("\n")
-          .slice(0, 80)
-          .join("\n")
-          .slice(0, 4000);
-        preview[version] = {
-          line_start: 1,
-          content,
-          truncated: content !== held.content,
-        };
-      }
+  const files: any[] = [];
+  const diffs: { file: any; diff: string }[] = [];
+  for (const [index, file] of changed.entries()) {
+    const shown: any = { path: file.path };
+    files.push(shown);
+    if (index >= CHANGE_PROMPT_FILES) {
+      shown.unshown = true;
+      continue;
     }
-    const size = JSON.stringify(preview).length;
-    if (size > remaining) break;
-    previews.push(preview);
-    remaining -= size;
+    const old = file.old_path ?? file.path;
+    if (old !== file.path) shown.old_path = old;
+    const entries = {
+      base: await snapshot.base.stat(old),
+      head: await snapshot.head.stat(file.path),
+    };
+    const large = Math.max(entries.base?.size ?? 0, entries.head?.size ?? 0);
+    if (large > LARGE) {
+      shown.omitted = true;
+      shown.bytes = large;
+      continue;
+    }
+    const texts: Record<"base" | "head", string | null> = {
+      base: null,
+      head: null,
+    };
+    for (const version of ["base", "head"] as const) {
+      const entry = entries[version];
+      if (!entry) continue;
+      const held = fileOf(entry, await snapshot[version].read(entry));
+      if (held.encoding === "base64") shown.binary = true;
+      else texts[version] = held.content;
+    }
+    if (shown.binary) continue;
+    if (!entries.base) shown.change = "added";
+    else if (!entries.head) shown.change = "deleted";
+    // No diff of one file is read past the whole budget.
+    diffs.push({
+      file: shown,
+      diff: renderDiff(texts.base, texts.head).slice(0, budget + 1),
+    });
   }
-  return previews;
+  let remaining = budget;
+  const shortestFirst = [...diffs].sort(
+    (x, y) => x.diff.length - y.diff.length,
+  );
+  for (const [i, { file, diff }] of shortestFirst.entries()) {
+    const share = Math.floor(remaining / (shortestFirst.length - i));
+    if (diff.length <= share) file.diff = diff;
+    else if (share < SHORTEST_CUT) {
+      delete file.change;
+      file.unshown = true;
+      continue;
+    } else {
+      const cut = diff.slice(0, share);
+      file.diff = cut.slice(0, Math.max(cut.lastIndexOf("\n"), 0));
+      file.truncated = true;
+    }
+    remaining -= file.diff.length;
+  }
+  return files;
 }
 /** Paths whose content or mode differ between two trees, by manifest hash. */
 async function differing(before: TreeReader, after: TreeReader) {
@@ -1746,8 +1832,14 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             focus: dataBlock("suggested_focus", scope.focus),
             graph: dataBlock("graph excerpt", promptGraph(graphs)),
             changed: dataBlock(
-              "changed code excerpts",
-              await changedCode(scope.changed, reviewed.snapshot),
+              "change diff",
+              // Every turn sends the first message again: the diff takes no
+              // more than an eighth of the agent's tokens.
+              await changedCode(
+                scope.changed,
+                reviewed.snapshot,
+                Math.min(CHANGE_PROMPT_CHARS, Math.floor(agentTokens / 8)),
+              ),
             ),
             checks: dataBlock("deterministic checks", report.checks),
             data: agentData,
@@ -2097,7 +2189,11 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             not_reverified: reverify.skipped,
           };
         }
-        for (const [index, h] of candidates.entries()) {
+        // Hypotheses are verified a few at a time, each with its own voters,
+        // conversations and steps; `verified` keeps the order they were raised in.
+        const outcomes: Verified[] = [];
+        let done = 0;
+        const verifyOne = async (h: Hypothesis, index: number) => {
           const key = `reviews/${id}/hypotheses/${h.id}.json`;
           await store.put(key, h);
           await this.env.DB.prepare(
@@ -2153,7 +2249,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                 .run();
             },
           });
-          verified.push(result.verified);
+          outcomes[index] = result.verified;
           // Votes missing once the review has stopped were cut short by the stop.
           const missing = result.votes.filter(
             (v) => v.status !== "completed",
@@ -2172,12 +2268,36 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               evidence_level: result.verified.evidence_level,
             }),
           );
+          const count = ++done;
           await step.do(`verify-progress-${s.id}-${h.id}`, () =>
             store.event(id, "verify:progress", {
-              done: index + 1,
+              done: count,
               total: candidates.length,
             }),
           );
+        };
+        try {
+          for (let from = 0; from < candidates.length; ) {
+            // Every voter's call reserves its whole conversation, up to the
+            // size where one is compacted, until the call returns: only as
+            // many hypotheses start together as the review's tokens cover.
+            const room = Math.floor(
+              (await ledger.remaining()) /
+                (submission.profile.verify.voters * HISTORY_BYTES),
+            );
+            const together = Math.max(1, Math.min(VERIFIED_TOGETHER, room));
+            const batch = await Promise.allSettled(
+              candidates
+                .slice(from, from + together)
+                .map((h, i) => verifyOne(h, from + i)),
+            );
+            const failed = batch.find((r) => r.status === "rejected");
+            if (failed) throw failed.reason;
+            from += together;
+          }
+        } finally {
+          // A sparse list where a verification did not end: `filter` skips the gaps.
+          verified.push(...outcomes.filter(() => true));
         }
       }
       if (module === "rio/council" && s.with.enabled === true)

@@ -4,7 +4,9 @@
   "type": "object",
   "properties": {
     "version": {
-      "const": 1
+      "description": "Raised with every change to the agent's prompt.",
+      "type": "integer",
+      "minimum": 1
     },
     "name": {
       "enum": [

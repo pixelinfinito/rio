@@ -104,16 +104,16 @@ async function gateway(
   const text = body.messages.map((m: any) => m.content).join("\n");
   let result: any = [];
   if (text.includes("Review the change independently")) {
-    const head = block(text, "changed code excerpts") ?? [];
+    const head = block(text, "change diff") ?? [];
     const content: string = JSON.stringify(head);
     result = agentSymbols
       .filter((s) => content.includes(`function ${s}()`))
       .map((s) => {
-        const line =
-          (head[0]?.head?.content ?? "")
-            .split("\n")
-            .findIndex((l: string) => l.startsWith(`function ${s}(`)) + 1;
-        return hyp(s, line);
+        // A head line of the diff: its number, a mark, then the line.
+        const line = (head[0]?.diff ?? "")
+          .split("\n")
+          .find((l: string) => /^ *\d+ [+ ]/.test(l) && l.includes(`function ${s}(`));
+        return hyp(s, line ? parseInt(line, 10) : 0);
       });
   } else if (text.includes("Verify this hypothesis.")) {
     const h =

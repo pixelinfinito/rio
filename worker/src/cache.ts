@@ -130,10 +130,11 @@ export interface ContextInputs {
 /**
  * The context key's own version: 2 keys the true one-hop neighbourhood with
  * SHA-256 digests; 3, 4 and 5 each leave behind the entries of a build whose
- * reviews ended at platform limits. Entries of another version are never
+ * reviews ended at platform limits; 6 those of agents that read file heads
+ * where they now read the change's diff. Entries of another version are never
  * replayed.
  */
-export const CONTEXT_KEY_VERSION = 5;
+export const CONTEXT_KEY_VERSION = 6;
 const encoder = new TextEncoder();
 /** Hex SHA-256 through the runtime's native digest. */
 async function digest(text: string): Promise<string> {

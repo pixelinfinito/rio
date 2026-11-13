@@ -193,7 +193,7 @@ fn agent_manifests_validate_and_declare_v03_roles() {
         // Agents with their own instructions ship them as prompt.md.
         assert_eq!(
             directory.join("prompt.md").is_file(),
-            ["contracts", "security"].contains(&name),
+            ["contracts", "correctness", "security"].contains(&name),
             "{name}"
         );
     }

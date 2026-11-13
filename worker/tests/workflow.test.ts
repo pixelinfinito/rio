@@ -9,7 +9,7 @@ import { Store } from "../src/storage";
 import { Progress } from "../src/progress";
 import { finishJob } from "../src/jobs";
 import { CANCEL_GRACE_MS, reconcile, sweepReviews } from "../src/reconcile";
-import { CANCELLED_NOTE, changedCode } from "../src/workflow";
+import { CANCELLED_NOTE, changedCode, renderDiff } from "../src/workflow";
 import { LARGE, MemorySnapshot } from "../src/snapshot";
 import { Requests, SEARCH_REFUSED } from "../src/requests";
 import { hash, validateHypotheses, validateReport } from "../src/validation";
@@ -911,19 +911,101 @@ it("names a changed file too large to hold in an agent's prompt, without reading
     { base: tree("base"), head: tree("head") },
   );
   expect(previews).toEqual([
-    {
-      path: "data/big.json",
-      base: null,
-      head: { omitted: true, bytes: LARGE + 1 },
-    },
+    { path: "data/big.json", omitted: true, bytes: LARGE + 1 },
     {
       path: "src/a.ts",
-      base: { line_start: 1, content: "export const a = 1;\n", truncated: false },
-      head: { line_start: 1, content: "export const a = 2;\n", truncated: false },
+      diff: "@@ -1,1 +1,1 @@\n  -export const a = 1;\n1 +export const a = 2;",
     },
-    { path: "logo.png", base: null, head: { binary: true } },
+    { path: "logo.png", binary: true },
   ]);
   expect(read).toEqual(["base:src/a.ts", "head:src/a.ts", "head:logo.png"]);
+});
+
+it("renders a change as hunks with context and head line numbers", () => {
+  const base = Array.from({ length: 30 }, (_, i) => `line ${i + 1}`);
+  const head = [...base];
+  head[4] = "line five";
+  head.splice(6, 1);
+  head.splice(20, 0, "inserted");
+  expect(renderDiff(`${base.join("\n")}\n`, `${head.join("\n")}\n`)).toBe(
+    [
+      "@@ -5,1 +5,1 @@",
+      " 2  line 2",
+      " 3  line 3",
+      " 4  line 4",
+      "   -line 5",
+      " 5 +line five",
+      " 6  line 6",
+      // The next hunk starts inside this one's context: no new header.
+      "   -line 7",
+      " 7  line 8",
+      " 8  line 9",
+      " 9  line 10",
+      "@@ -22,0 +21,1 @@",
+      "18  line 19",
+      "19  line 20",
+      "20  line 21",
+      "21 +inserted",
+      "22  line 22",
+      "23  line 23",
+      "24  line 24",
+    ].join("\n"),
+  );
+  expect(renderDiff(null, "a\nb\n")).toBe("@@ -1,0 +1,2 @@\n1 +a\n2 +b");
+  expect(renderDiff("a\nb\n", null)).toBe("@@ -1,2 +1,0 @@\n  -a\n  -b");
+  expect(renderDiff("x".repeat(500), "y")).toBe(
+    `@@ -1,1 +1,1 @@\n  -${"x".repeat(400)}…\n1 +y`,
+  );
+});
+
+it("shares the prompt's diff budget: short diffs whole, long ones cut alike, the rest named", async () => {
+  const file = (lines: number, tag: string) => ({
+    mode: 0o100644,
+    content: Array.from({ length: lines }, (_, i) => `${tag} ${i}`).join("\n"),
+  });
+  const snapshot = new MemorySnapshot({
+    base: { "gone.ts": file(2, "gone"), "old/name.ts": file(3, "same") },
+    head: {
+      "a/long.ts": file(400, "first"),
+      "b/short.ts": file(2, "short"),
+      "c/long.ts": file(400, "second"),
+      "new/name.ts": file(3, "same"),
+    },
+  });
+  const changed = [
+    { path: "a/long.ts" },
+    { path: "b/short.ts" },
+    { path: "c/long.ts" },
+    { path: "gone.ts" },
+    { path: "new/name.ts", old_path: "old/name.ts" },
+  ];
+  const files = await changedCode(changed, snapshot, 3000);
+  expect(files.map((f) => [f.path, f.change, !!f.truncated])).toEqual([
+    ["a/long.ts", "added", true],
+    ["b/short.ts", "added", false],
+    ["c/long.ts", "added", true],
+    ["gone.ts", "deleted", false],
+    ["new/name.ts", undefined, false],
+  ]);
+  expect(files[1].diff).toBe("@@ -1,0 +1,2 @@\n1 +short 0\n2 +short 1");
+  expect(files[4]).toEqual({
+    path: "new/name.ts",
+    old_path: "old/name.ts",
+    diff: "",
+  });
+  // Both long diffs are cut at a line end, to within a line of each other.
+  const [first, second] = [files[0].diff, files[2].diff];
+  expect(first.endsWith("\n")).toBe(false);
+  expect(first.split("\n").at(-1)).toMatch(/^ *\d+ \+first \d+$/);
+  expect(Math.abs(first.length - second.length)).toBeLessThan(20);
+  expect(files.reduce((n, f) => n + f.diff.length, 0)).toBeLessThanOrEqual(3000);
+  // A share too short to say anything names the file instead, and leaves its
+  // share to the files after it.
+  const tight = await changedCode(changed, snapshot, 700);
+  expect(tight[0]).toEqual({ path: "a/long.ts", unshown: true });
+  expect(tight[2].truncated).toBe(true);
+  expect(tight[2].diff.length).toBeGreaterThan(500);
+  expect(tight.filter((f) => f.unshown).length).toBe(1);
 });
 
 it("retains reproduced evidence when every blind pass misses, with runner artifacts and risk-selected budget", async () => {

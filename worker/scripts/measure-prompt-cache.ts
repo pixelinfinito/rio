@@ -56,7 +56,7 @@ export function refusal(env: Record<string, string | undefined>, plan: Plan): st
 function context(salt: string, kb = 24) {
   const line = (i: number) =>
     `export function handler${i}(input: Request): Response { return route(input, ${i}); }`;
-  return `<repository_data label="changed code excerpts">${JSON.stringify(
+  return `<repository_data label="change diff">${JSON.stringify(
     Array.from({ length: kb * 12 }, (_, i) => line(i)),
   )}</repository_data>\n<!-- measurement ${salt} -->`;
 }
