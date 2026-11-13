@@ -422,6 +422,8 @@ const OPEN = "(status IN ('queued','running','cancelled') OR report_key=?)";
 export const CANCELLED_NOTE = "Review cancelled before it finished.";
 /** Cache entries written per store step: four packs. */
 const CACHE_STORE_CHUNK = 4 * PACK_ENTRIES;
+/** The review's token or wall budget refusing a model call. */
+const BUDGET_REFUSAL = /^(review )?(token|wall) budget exhausted$/;
 /**
  * The action of a model call's step: the reply is stored under `key` and the
  * key is the step's result. A failure of the call itself is final, because it
@@ -436,7 +438,9 @@ export function modelStep(
   key: string,
   action: () => Promise<ModelResponse>,
 ) {
-  return async (context?: { attempt?: number }): Promise<string> => {
+  return async (context?: {
+    attempt?: number;
+  }): Promise<string | { refused: string }> => {
     if (context?.attempt !== 1 && (await store.has(key))) return key;
     // Refused while the review can still report what it has. The refusal is
     // the step's result, so it is counted once and a later run of this code
@@ -450,9 +454,11 @@ export function modelStep(
     try {
       result = await action();
     } catch (error) {
-      throw new NonRetryableError(
-        error instanceof Error ? error.message : String(error),
-      );
+      const message = error instanceof Error ? error.message : String(error);
+      // A budget of the review refuses a call before anything is sent. That
+      // is the step's result too: a failed step is a fault, and this is none.
+      if (BUDGET_REFUSAL.test(message)) return { refused: message };
+      throw new NonRetryableError(message);
     }
     return store.put(key, result);
   };
@@ -634,6 +640,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             : error;
         });
       invariant(key, REQUESTS_EXHAUSTED);
+      if (typeof key !== "string") throw new Error(key.refused);
       return store.get<ModelResponse>(key);
     };
     // The snapshot tool calls of one model turn (see `converse`). The action

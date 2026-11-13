@@ -305,6 +305,30 @@ describe("a model call's step", () => {
     expect(await store.has(key)).toBe(false);
   });
 
+  it("answers a budget's refusal as the step's result", async () => {
+    // Nothing was sent or charged: the step did not fail, and the platform
+    // records no failed attempt for a review that only ran out of budget.
+    for (const message of [
+      "token budget exhausted",
+      "review token budget exhausted",
+      "review wall budget exhausted",
+    ]) {
+      const key = `reviews/${crypto.randomUUID()}/models/agent.json`;
+      const action = modelStep(store, new Requests(1000), key, async () => {
+        throw new Error(message);
+      });
+      expect(await action({ attempt: 1 }), message).toEqual({
+        refused: message,
+      });
+      expect(await store.has(key)).toBe(false);
+    }
+    // Any other message that names a budget is the call's failure.
+    const other = modelStep(store, new Requests(1000), "k", async () => {
+      throw new Error("provider failed (400): token budget exhausted for key");
+    });
+    await expect(other({ attempt: 1 })).rejects.toThrow("provider failed");
+  });
+
   it("refuses a turn once the review's requests are spent", async () => {
     const key = `reviews/${crypto.randomUUID()}/models/agent.json`;
     const requests = new Requests(10);
