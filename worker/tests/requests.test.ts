@@ -10,7 +10,8 @@ import {
   requestsOf,
 } from "../src/requests";
 import { Store } from "../src/storage";
-import type { Env } from "../src/types";
+import type { Env, ModelResponse } from "../src/types";
+import { modelStep } from "../src/workflow";
 
 const runtime = env as Env;
 // Durable step results, as a workflow keeps them across runs of its code.
@@ -255,5 +256,65 @@ describe("a review's request budget", () => {
     expect(await step.do("rows", async () => [])).toEqual([1, 2]);
     expect(await step.do("written", async () => {})).toBeUndefined();
     expect(requests.used).toBe(0);
+  });
+});
+
+describe("a model call's step", () => {
+  const reply = (text: string) => ({ text }) as unknown as ModelResponse;
+  const store = new Store(runtime);
+
+  it("stores the reply, and answers a later attempt with it", async () => {
+    const key = `reviews/${crypto.randomUUID()}/models/agent.json`;
+    const requests = new Requests(1000);
+    let asked = 0;
+    const action = modelStep(store, requests, key, async () => {
+      asked++;
+      return reply(`answer ${asked}`);
+    });
+    expect(await action({ attempt: 1 })).toBe(key);
+    expect(await store.get(key)).toEqual({ text: "answer 1" });
+    // The platform failed the attempt after the reply was stored: the model
+    // is not asked again, and no request of a turn is counted.
+    expect(await action({ attempt: 2 })).toBe(key);
+    // An engine that passes no attempt number is answered the same way.
+    expect(await action()).toBe(key);
+    expect([asked, requests.used]).toEqual([1, 1]);
+    expect(await store.get(key)).toEqual({ text: "answer 1" });
+  });
+
+  it("asks the model on a later attempt that finds no reply", async () => {
+    const key = `reviews/${crypto.randomUUID()}/models/agent.json`;
+    const requests = new Requests(1000);
+    const action = modelStep(store, requests, key, async () => reply("late"));
+    expect(await store.has(key)).toBe(false);
+    expect(await action({ attempt: 2 })).toBe(key);
+    expect(await store.get(key)).toEqual({ text: "late" });
+    expect(requests.used).toBe(1);
+  });
+
+  it("ends the step on the call's own failure", async () => {
+    const key = `reviews/${crypto.randomUUID()}/models/agent.json`;
+    const requests = new Requests(1000);
+    const action = modelStep(store, requests, key, async () => {
+      throw new Error("provider failed (400)");
+    });
+    const error = await action({ attempt: 1 }).catch((error) => error);
+    // The platform retries no step that ends with this error.
+    expect(error.name).toBe("NonRetryableError");
+    expect(error.message).toBe("provider failed (400)");
+    expect(await store.has(key)).toBe(false);
+  });
+
+  it("refuses a turn once the review's requests are spent", async () => {
+    const key = `reviews/${crypto.randomUUID()}/models/agent.json`;
+    const requests = new Requests(10);
+    requests.count(8);
+    const never = async () => {
+      throw new Error("the model was asked");
+    };
+    expect(await modelStep(store, requests, key, never)({ attempt: 1 })).toBe(
+      "",
+    );
+    expect(requests.counts).toMatchObject({ used: 8, stopped: 1 });
   });
 });

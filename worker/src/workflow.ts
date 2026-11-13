@@ -422,6 +422,41 @@ const OPEN = "(status IN ('queued','running','cancelled') OR report_key=?)";
 export const CANCELLED_NOTE = "Review cancelled before it finished.";
 /** Cache entries written per store step: four packs. */
 const CACHE_STORE_CHUNK = 4 * PACK_ENTRIES;
+/**
+ * The action of a model call's step: the reply is stored under `key` and the
+ * key is the step's result. A failure of the call itself is final, because it
+ * repeats or its tokens were charged. An attempt after the first is therefore
+ * the platform's doing, which at times fails an attempt whose call was answered
+ * and whose reply is stored: that reply is the step's result, and no model is
+ * asked again.
+ */
+export function modelStep(
+  store: Store,
+  requests: Requests,
+  key: string,
+  action: () => Promise<ModelResponse>,
+) {
+  return async (context?: { attempt?: number }): Promise<string> => {
+    if (context?.attempt !== 1 && (await store.has(key))) return key;
+    // Refused while the review can still report what it has. The refusal is
+    // the step's result, so it is counted once and a later run of this code
+    // meets it again.
+    if (requests.exhausted) {
+      requests.count(1, "stopped");
+      return "";
+    }
+    requests.count();
+    let result: ModelResponse;
+    try {
+      result = await action();
+    } catch (error) {
+      throw new NonRetryableError(
+        error instanceof Error ? error.message : String(error),
+      );
+    }
+    return store.put(key, result);
+  };
+}
 export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
   // What this run asks of the database and the bucket is counted: `this.env`
   // is the metered environment.
@@ -579,25 +614,25 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
     let promptConfig: PromptSettings = { cache: [], layout: [] };
     let partitions!: Partitions;
     const call = async (name: string, action: () => Promise<ModelResponse>) => {
-      const key = await step.do(
-        `model-${name}`,
-        // Longer than the call itself (`MODEL_CALL_MS`) and its bookkeeping.
-        { retries: { limit: 0, delay: "1 second" }, timeout: "4 minutes" },
-        async () => {
-          // Refused while the review can still report what it has. The
-          // refusal is the step's result, so it is counted once and a later
-          // run of this code meets it again.
-          if (requests.exhausted) {
-            requests.count(1, "stopped");
-            return "";
-          }
-          requests.count();
-          const result = await action();
-          const key = `reviews/${id}/models/${name}.json`;
-          await store.put(key, result);
-          return key;
-        },
-      );
+      const key = await step
+        .do(
+          `model-${name}`,
+          // Longer than the call itself (`MODEL_CALL_MS`) and its bookkeeping.
+          // The one retry is for an attempt the platform failed.
+          { retries: { limit: 1, delay: "1 second" }, timeout: "4 minutes" },
+          modelStep(
+            store,
+            requests,
+            `reviews/${id}/models/${name}.json`,
+            action,
+          ),
+        )
+        .catch((error) => {
+          // A non-retryable step error carries its class name in the message.
+          throw error instanceof Error
+            ? new Error(error.message.replace(/^NonRetryableError: /, ""))
+            : error;
+        });
       invariant(key, REQUESTS_EXHAUSTED);
       return store.get<ModelResponse>(key);
     };
