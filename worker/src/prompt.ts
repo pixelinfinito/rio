@@ -79,14 +79,6 @@ export const partitionElement = (value: string) =>
 export const GENERATION_INSTRUCTIONS =
   "Inspect actual base and head code before making a claim; symbol names and graph hashes are not source code. The change diff holds the changed lines of each file with their head line numbers; an entry marked truncated, unshown or omitted holds more change than it shows, and read_file gives the rest. Suggested focus is only a hint; tools can read/search either entire repository snapshot. The graph excerpt holds the changed symbols and their nearest neighbours; query graph_query for anything beyond it. Category defect is behaviour that is wrong in head; risk is a hazard that is not settled, or an improvement that is not a wrong behaviour; diagnostic is only a restatement of a diagnostic in the checks block; style is only a preference of layout or taste. Diagnostic and style hypotheses are not reported. Omit guidance unless citing a real owner-guidance document supplied below; source-code lines are not owner guidance. Check guidance/contradiction and guidance/stale risks against existing guidance lines: emit category risk, cite guidance:{path,line} and the changed code behavior.";
 
-/**
- * The second look: asked once after an agent's result, in the same conversation,
- * of agents whose manifest takes one. A first pass follows what stands out; this
- * turn is for what it read past.
- */
-export const SECOND_LOOK =
-  'That result is your first pass. A first pass follows the concerns that stand out and reads the rest of the change faster, so problems remain in the hunks it passed over and next to the ones it raised. Take a second look for those. Go through the change diff again, hunk by hunk, also where a hunk already carries a hypothesis, and check each against the list in your instructions as if nobody had reviewed it yet: inputs it does not handle, conditions, arguments and return values, error paths, the text of comments, messages and names, leftovers, and a fix made in one place and missing from its sibling. Read surrounding code with the tools where a concern needs it. Return {"result": [...]} holding hypotheses only for problems the first result does not hold, under the same rules; never a hypothesis of the first result again, in the same or in other words. An empty array is the right result when the second look finds nothing you would raise with the author.';
-
 /** The rendered blocks of one agent's first generation message. */
 export interface GenerationInputs {
   agent: string;

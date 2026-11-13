@@ -4,8 +4,7 @@
   },
   "correctness": {
     "1": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262",
-    "2": "a07ddc3db499eb91f436cc40b4bf21e70f92992fe6a96bfb16e8b488a4370460",
-    "3": "7d5d12693ae04e162c444964f537b1818a94f4fa3211a1711135a0cce0a82415"
+    "2": "a07ddc3db499eb91f436cc40b4bf21e70f92992fe6a96bfb16e8b488a4370460"
   },
   "performance": {
     "1": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262"

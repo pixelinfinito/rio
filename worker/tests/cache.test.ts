@@ -6,7 +6,6 @@ import {
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import { Store } from "../src/storage";
 import { hash } from "../src/validation";
-import { SECOND_LOOK } from "../src/prompt";
 import agentPrompts from "../src/agent-prompts.json";
 import { agents } from "../src/manifests";
 import {
@@ -377,10 +376,7 @@ async function review(run: Run) {
       ).content;
       const last: string = body.messages.at(-1).content;
       let result: unknown = [];
-      if (last === SECOND_LOOK) calls.push("second-look");
-      else if (
-        /Review the change independently for correctness\./.test(first)
-      ) {
+      if (/Review the change independently for correctness\./.test(first)) {
         calls.push("agent");
         prompts.push(first);
         result = run.agent(first);

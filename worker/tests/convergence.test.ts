@@ -4,7 +4,6 @@ import {
   introspectWorkflowInstance,
 } from "cloudflare:test";
 import { beforeAll, describe, expect, it, vi } from "vitest";
-import { SECOND_LOOK } from "../src/prompt";
 import { app } from "../src/index";
 import { Store } from "../src/storage";
 import { finishJob } from "../src/jobs";
@@ -148,10 +147,7 @@ async function review(round: Round) {
     .mockImplementation(async (input, init) => {
       const body = JSON.parse(init!.body as string);
       const text = body.messages.map((m: any) => m.content).join("\n");
-      // The second look of an agent adds nothing in these rounds.
-      const generated =
-        body.messages.at(-1).content !== SECOND_LOOK &&
-        text.includes("Review the change independently");
+      const generated = text.includes("Review the change independently");
       const disclosed = text.includes("Verify this hypothesis.");
       let result: any = [];
       if (generated) {

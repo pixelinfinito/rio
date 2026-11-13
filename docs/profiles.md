@@ -99,7 +99,7 @@ Steps need unique `id` values. `needs` names existing steps and must form a DAG.
 | `rio/checks` | `typecheck`, `lint`, `secrets`, `coverage`, `dependencies`, `baseline` (all default true); `trust_installed_dependencies` (default false) | Bounded deterministic checks and baseline comparison |
 | `rio/graph` | `hops: 2`, `max_nodes: 2000` | Base/head/delta graph and impact summary |
 | `rio/report` | `class_threshold` (default 3); `proposal_threshold` (integer of at least 1, default 3; dismissals that yield a suppression proposal) | Suppressions, policy, summary and persistence |
-| `rio/agents` | `cache` (default true; agent result cache); `second_look` (default true; the correctness agent is asked once more, in the same conversation, for what its first pass left out) | Deferred locally with `no_endpoint` |
+| `rio/agents` | `cache` (default true; agent result cache) | Deferred locally with `no_endpoint` |
 | `rio/triage`, `rio/verify` | reserved module-defined options | Deferred locally with `no_endpoint` |
 
 Disabled checks have outcome `skipped`, reason `disabled`. Trust allows an unverifiable installation, never a known mismatch, and disables baseline classification. Trusted diagnostics remain unclassified. `baseline: false` also leaves diagnostic state unclassified.
