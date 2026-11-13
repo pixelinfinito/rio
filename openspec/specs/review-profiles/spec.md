@@ -202,6 +202,29 @@ The resolved profile, including the chain, the pinned versions of every referenc
 - **WHEN** a suppression is added to the profile and the same change is reviewed again
 - **THEN** the review id differs from the previous run
 
+### Requirement: An agent under several models
+A step's agent declaration SHALL accept `models`, a list of one to four distinct model aliases, in place of or besides `model`; a declaration with neither SHALL be rejected. The agent SHALL review the same code once under each listed alias the profile defines, skipping an alias the profile does not define and an alias that resolves to a model already listed; with no listed alias defined it SHALL review once as without the list. The hypotheses of the reviews SHALL be combined before verification in the order of the list: a hypothesis SHALL be dropped when an earlier model raised a hypothesis with the same id, or one in the same file on overlapping lines with the same catalog item that shares at least three in ten of the words of the shorter statement. Two hypotheses of one model SHALL NOT be combined. The report's `agent_audit.raised_under` SHALL name, per hypothesis id, the aliases that raised it. Where one voter settles a hypothesis (`voters` or `risk_voters` of one), the resolved verification model SHALL differ from every model the lists resolve to.
+
+#### Scenario: Two models find the same issue
+- **WHEN** an agent declared with `models: [default, second]` raises the same issue on the same lines under both models
+- **THEN** the issue is verified and reported once, in the words of `default`, and `agent_audit.raised_under` names both aliases for it
+
+#### Scenario: Second model not defined
+- **WHEN** a profile declares `models: [default, second]` for an agent and defines no `second` alias
+- **THEN** the profile is valid and the agent reviews once under `default`
+
+#### Scenario: One model's review fails
+- **WHEN** one of an agent's two reviews fails
+- **THEN** the report is partial, names the agent and the alias that failed, and carries what the other review raised
+
+#### Scenario: One voter and a listed model
+- **WHEN** a profile sets `verify: { risk_voters: 1 }` and an agent's `models` lists an alias of the verification model
+- **THEN** validation rejects the profile at `/models/verifier`
+
+#### Scenario: Security coverage of two reviews
+- **WHEN** the security agent reviews under two models and each assesses different catalog items
+- **THEN** the coverage lists an item as assessed when either review assessed it
+
 ### Requirement: Verification settings
 Profiles SHALL accept optional `verify: { voters, quorum, model, risk_voters }`. Defaults SHALL be three voters, quorum two, and the `verifier` model alias when present, otherwise `default`. Voters and quorum SHALL be positive integers with quorum no greater than voters. An omitted quorum for one voter SHALL resolve to one. An explicit model alias SHALL resolve through `models`. `risk_voters` SHALL be a positive integer no greater than voters, SHALL default to voters, and when it is one the resolved verification model SHALL differ from `models.default`, as for one voter.
 

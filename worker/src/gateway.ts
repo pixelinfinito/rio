@@ -9,6 +9,7 @@ import type {
 import { scrub } from "./redaction";
 import { invariant } from "./validation";
 import { agents } from "./manifests";
+import { reviewModels } from "./combine";
 import { costOf, normalizeUsage, usageConvention } from "./usage";
 import {
   join,
@@ -342,13 +343,12 @@ export function renderPrompt(
 }
 /**
  * The model aliases a profile can actually call, resolved exactly as the
- * Workflow and the verifier do: an agent uses its step declaration's `model`,
- * else the alias named after it, else `default`; the verifier uses
+ * Workflow and the verifier do: an agent uses the aliases of its step
+ * declaration's `models` that the profile defines, else the declaration's
+ * `model`, else the alias named after it, else `default`; the verifier uses
  * `verify.model`, else `verifier`, else `default`.
  */
 export function reachableAliases(profile: Profile): Set<string> {
-  const resolve = (alias: string) =>
-    profile.models[alias] !== undefined ? alias : "default";
   const aliases = new Set<string>();
   for (const step of profile.steps) {
     const module = step.uses.split("@")[0];
@@ -370,7 +370,13 @@ export function reachableAliases(profile: Profile): Set<string> {
       const declaration = (step.agents ?? []).find((a) =>
         Object.hasOwn(a, agent),
       );
-      aliases.add(resolve((declaration?.[agent] as any)?.model ?? agent));
+      const reviews = reviewModels(
+        agent,
+        declaration?.[agent] ?? {},
+        profile.models,
+      );
+      for (const { alias } of reviews) aliases.add(alias);
+      if (!reviews.length) aliases.add("default");
     }
   }
   return aliases;

@@ -596,6 +596,36 @@ describe("quorum", () => {
     expect(submit({ voters: 3, quorum: 2, risk_voters: 1 }, same)).toThrow(
       "single verifier must use a different model",
     );
+    // One voter is none of the models an agent's `models` lists either.
+    const under = (models: Record<string, string>, verify: object) => () => {
+      const s = submission();
+      validateSubmission({
+        ...s,
+        profile: {
+          ...profile,
+          models,
+          verify,
+          steps: [
+            ...s.profile.steps,
+            {
+              id: "more",
+              uses: "rio/agents@0.1.0",
+              needs: [],
+              with: {},
+              agents: [{ correctness: { models: ["default", "second"] } }],
+            },
+            { id: "v", uses: "rio/verify@0.1.0", needs: ["more"], with: {} },
+          ],
+        },
+      });
+    };
+    const second = { ...profile.models, second: profile.models.verifier };
+    const third = { ...profile.models, second: "openai/third" };
+    expect(under(second, { voters: 3, quorum: 2, risk_voters: 1 })).toThrow(
+      "single verifier must use a different model",
+    );
+    expect(under(second, { voters: 3, quorum: 2 })).not.toThrow();
+    expect(under(third, { voters: 3, quorum: 2, risk_voters: 1 })).not.toThrow();
   });
   it("records cancelled, malformed and exhausted voters without reducing quorum", async () => {
     for (const error of [

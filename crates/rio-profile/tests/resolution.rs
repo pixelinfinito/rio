@@ -380,6 +380,36 @@ fn verifier_defaults_budgets_aliases_and_guardrails() {
             false,
         ),
         ("budget: {fast: {verify_tokens: 0}}", false),
+        // An agent may review under several models; one voter is none of them,
+        // and an alias the profile does not define is not a model.
+        (
+            "steps: [{id: agents, uses: rio/agents, agents: [{correctness: {models: [default, second]}}]}, {id: verify, uses: rio/verify, needs: [agents]}]\nmodels: {second: openai/c}\nverify: {risk_voters: 1}",
+            true,
+        ),
+        (
+            "steps: [{id: agents, uses: rio/agents, agents: [{correctness: {models: [default, second]}}]}, {id: verify, uses: rio/verify, needs: [agents]}]\nmodels: {second: openai/b}\nverify: {risk_voters: 1}",
+            false,
+        ),
+        (
+            "steps: [{id: agents, uses: rio/agents, agents: [{correctness: {models: [default, second]}}]}, {id: verify, uses: rio/verify, needs: [agents]}]\nmodels: {second: openai/b}",
+            true,
+        ),
+        (
+            "steps: [{id: agents, uses: rio/agents, agents: [{correctness: {models: [default, second]}}]}, {id: verify, uses: rio/verify, needs: [agents]}]\nverify: {risk_voters: 1}",
+            true,
+        ),
+        (
+            "steps: [{id: agents, uses: rio/agents, agents: [{correctness: {run: true}}]}, {id: verify, uses: rio/verify, needs: [agents]}]",
+            false,
+        ),
+        (
+            "steps: [{id: agents, uses: rio/agents, agents: [{correctness: {models: []}}]}, {id: verify, uses: rio/verify, needs: [agents]}]",
+            false,
+        ),
+        (
+            "steps: [{id: agents, uses: rio/agents, agents: [{correctness: {models: [default, default]}}]}, {id: verify, uses: rio/verify, needs: [agents]}]",
+            false,
+        ),
     ] {
         write(
             root.path(),

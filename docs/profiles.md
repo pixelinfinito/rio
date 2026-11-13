@@ -158,6 +158,24 @@ Path globs, rule globs and exact finding IDs suppress grouped findings, includin
 
 Step `rules` contain syntax-validated expressions/actions, and step `agents` hold endpoint agent declarations. Predicates and boolean operators are validated even in local mode. `publish` accepts `never`, `ask` or `auto`; local mode never publishes. Without an endpoint these declarations remain deferred. See [Cloudflare setup](cloudflare.md).
 
+An agent declaration names the model alias the agent runs under (`model`), or up to four aliases it reviews the same code under, once each (`models`):
+
+```yaml
+models:
+  default: anthropic/claude-opus-5-5
+  second: openai/gpt-6-astra
+  verifier: openai/gpt-6.1-sol
+steps:
+  - id: agents
+    uses: rio/agents
+    agents:
+      - correctness: { models: [default, second] }
+```
+
+The reviews run at the same time, each allowed the agent's share of the token budget (`tokens / agents_max`). The review's `tokens` still bound everything together, and two models raise more hypotheses for the verifier to examine, so a profile that adds a model usually needs a larger `tokens` and `wall_time`. What they raise is combined before verification, in the order of the list: a hypothesis is dropped when an earlier model of the list raised the same issue (the same file, overlapping lines, the same catalog item, and three in ten of the shorter statement's words shared), so an issue two models found is verified and reported once, in the first model's words. Two hypotheses of one model are never combined. `agent_audit.raised_under` in the report names, per hypothesis id, the aliases that raised it. A model whose review fails leaves a partial report with what the other raised.
+
+An alias in `models` that the profile does not define is skipped, and so is one that names a model already in the list; with none defined the agent reviews once as without the list. A built-in profile can therefore name a second model that only some children define. The declaration works the same for the security step's `security` agent, whose catalog coverage counts an item as assessed when either review assessed it.
+
 ## Verifier quorum and presets
 
 `verify: { voters: 3, quorum: 2 }` is the default. Omitted quorum becomes one for
@@ -169,6 +187,8 @@ classed as a `risk` (a hazard it could not settle, or an improvement): such a
 hypothesis is never reported as a defect, and its quorum is `quorum` or
 `risk_voters`, whichever is smaller. It defaults to `voters`, may not exceed it,
 and `risk_voters: 1` falls under the same single-voter independence rule.
+Where one voter settles a hypothesis, the verifier also has to differ from every
+model an agent's `models` list resolves to.
 `rio/openrouter`, whose verifier is another model than its agent's, sets
 `risk_voters: 1`; a child profile restores the full panel with `risk_voters: 3`.
 Both budget modes accept `verify_tokens`. Each voter's entire two-turn allowance
@@ -228,6 +248,10 @@ security review. On fork pull requests the agent is static-only.
 The built-in `rio/security` community profile extends `rio/base` and only enables
 the step with `posture: thorough` and `catalog: asvs-5.0`; every other base setting
 is unchanged. Select it with `--profile rio/security` or `extends: rio/security`.
+Its security agent is declared with `models: [default, second]`: a child that
+defines a `second` model alias gets the change reviewed for security under both
+models (see [Rules and agents](#rules-and-agents)), and one that does not gets one
+review under `default`.
 
 ## Council
 

@@ -32,6 +32,8 @@ function block(content: string, label: string): any {
     content.slice(from, content.indexOf("\n</repository_data>", from)),
   );
 }
+/** A model whose every reply is an empty tool list, which no repair fixes. */
+const FAILS = Symbol("fails");
 interface Run {
   base: Files;
   head: Files;
@@ -44,6 +46,8 @@ interface Run {
   raw?: Record<string, string>;
   /** Generation results per agent in call order, the last one repeating. */
   turns?: Record<string, unknown[]>;
+  /** Generation result per agent and model, for an agent under several. */
+  models?: Record<string, Record<string, unknown>>;
   /** Disclosed verification answer for a hypothesis. */
   vote?: (h: any) => unknown;
   mutate?: (s: Submission) => void;
@@ -72,8 +76,12 @@ async function review(run: Run) {
         calls.push(agent);
         result = turns
           ? turns[Math.min(turn, turns.length - 1)]
-          : (run.agents[agent] ?? []);
-        raw = run.raw?.[agent];
+          : (run.models?.[agent]?.[body.model] ?? run.agents[agent] ?? []);
+        raw =
+          run.models?.[agent]?.[body.model] === FAILS
+            ? '{"tools":[]}'
+            : run.raw?.[agent];
+        if (run.models) calls.push(`${agent}:${body.model}`);
       } else if (last.startsWith("Verify this hypothesis.")) {
         calls.push("verify");
         result = run.vote?.(block(last, "hypothesis")) ?? {
@@ -848,7 +856,12 @@ describe("security agent", () => {
           needs: ["triage"],
           with: { enabled: true, catalog: "asvs-5.0" },
         },
-        { id: "verify", uses: "rio/verify@0.1.0", needs: ["security"], with: {} },
+        {
+          id: "verify",
+          uses: "rio/verify@0.1.0",
+          needs: ["security"],
+          with: {},
+        },
       ],
       agents: { security: { hypotheses: [] } },
     });
@@ -857,13 +870,17 @@ describe("security agent", () => {
     expect(report.status).toBe("partial");
     expect(
       report.footer.notes.some((n: string) =>
-        /^security agent failed: security result must be an object with hypotheses, assessed and unassessed/.test(n),
+        /^security agent failed: security result must be an object with hypotheses, assessed and unassessed/.test(
+          n,
+        ),
       ),
     ).toBe(true);
     const coverage = report.security_coverage;
     expect(coverage.assessed).toEqual([]);
     expect(coverage.unassessed.length).toBeGreaterThan(0);
-    expect(coverage.unassessed.every((u: any) => u.reason === "tools_unavailable")).toBe(true);
+    expect(
+      coverage.unassessed.every((u: any) => u.reason === "tools_unavailable"),
+    ).toBe(true);
   }, 60000);
 
   it("lists assessed and unassessed items when no hypothesis is produced", async () => {
@@ -935,6 +952,217 @@ describe("security agent", () => {
     // Browser-only items do not apply to a server-side TypeScript change.
     expect(coverage.not_applicable.map((i: any) => i.item)).toContain("V3.6");
     expect(coverage.unassessed.map((i: any) => i.item)).toContain("V1.2");
+  }, 60000);
+});
+
+describe("an agent under two models", () => {
+  const base = {
+    "src/pay.ts": `export function total(items) {\n  let sum = 0;\n  for (const item of items) sum += item.price;\n  return sum;\n}\n`,
+  };
+  const head = {
+    "src/pay.ts": `export function total(items) {\n  let sum = 0;\n  for (const item of items) sum += item.price * item.count;\n  return sum / items.length;\n}\n`,
+  };
+  const division = {
+    rule_id: "correctness/division-by-zero",
+    category: "defect",
+    severity: "error",
+    location: at("src/pay.ts", 4, "pay.total"),
+    message:
+      "`total` divides `sum` by `items.length`, which is zero for an empty list.",
+    trigger: "total([]) returns NaN",
+  };
+  // The same issue in another model's words, and one only that model raises.
+  const divisionAgain = {
+    ...division,
+    rule_id: "correctness/nan-on-empty",
+    message:
+      "An empty `items` list makes `sum / items.length` evaluate to NaN.",
+    trigger: "call total with an empty items array",
+  };
+  const count = {
+    rule_id: "correctness/missing-count",
+    category: "risk",
+    severity: "warning",
+    location: at("src/pay.ts", 3, "pay.total"),
+    message: "An item without `count` multiplies its price by undefined.",
+    trigger: "total([{ price: 2 }])",
+  };
+  // Identical changes across these tests must not share the agent result cache.
+  const fresh = (s: Submission) => {
+    s.profile.steps[1].with = { ...s.profile.steps[1].with, cache: false };
+  };
+  const second = (s: Submission) => {
+    s.profile.models.second = "openai/second";
+  };
+  const two = (s: Submission) => {
+    second(s);
+    fresh(s);
+  };
+  const declared = [{ correctness: { models: ["default", "second"] } }];
+
+  it("reviews once under each model, verifies an issue both raised once and names the models that raised each", async () => {
+    const { report, calls } = await review({
+      base,
+      head,
+      changed: ["src/pay.ts"],
+      steps: agentSteps(declared),
+      agents: {},
+      models: {
+        correctness: { test: [division], second: [divisionAgain, count] },
+      },
+      mutate: two,
+    });
+    expect(calls.filter((c) => c === "correctness:test")).toHaveLength(1);
+    expect(calls.filter((c) => c === "correctness:second")).toHaveLength(1);
+    expect(report.status).toBe("complete");
+    const reported = [...report.findings, ...report.risks];
+    // The first model's statement of the shared issue stands.
+    expect(reported.map((f: any) => f.rule_id).sort()).toEqual([
+      "correctness/division-by-zero",
+      "correctness/missing-count",
+    ]);
+    const id = (rule: string) =>
+      reported.find((f: any) => f.rule_id === rule).id;
+    expect(report.agent_audit.raised_under).toEqual({
+      [id("correctness/division-by-zero")]: ["default", "second"],
+      [id("correctness/missing-count")]: ["second"],
+    });
+    // Three voters for the defect, each blind then disclosed, and as many
+    // for the risk: nothing is verified twice.
+    expect(calls.filter((c) => c === "verify")).toHaveLength(6);
+  }, 60000);
+
+  it("keeps one model's hypotheses when the other model's review fails, in a partial report that names it", async () => {
+    const { report } = await review({
+      base,
+      head,
+      changed: ["src/pay.ts"],
+      steps: agentSteps(declared),
+      agents: {},
+      models: { correctness: { test: [division], second: FAILS } },
+      mutate: two,
+    });
+    expect(report.status).toBe("partial");
+    expect(
+      report.footer.notes.filter((n: string) => / failed: /.test(n)),
+    ).toEqual([
+      expect.stringMatching(
+        /^correctness agent \(second\) failed: malformed tool output/,
+      ),
+    ]);
+    expect(
+      [...report.findings, ...report.risks].map((f: any) => f.rule_id),
+    ).toEqual(["correctness/division-by-zero"]);
+    expect(Object.values(report.agent_audit.raised_under)).toEqual([
+      ["default"],
+    ]);
+  }, 60000);
+
+  it("reviews once when the profile does not define the second alias", async () => {
+    const { report, calls } = await review({
+      base,
+      head,
+      changed: ["src/pay.ts"],
+      steps: agentSteps(declared),
+      agents: {},
+      models: { correctness: { test: [division] } },
+      mutate: fresh,
+    });
+    expect(calls.filter((c) => c.startsWith("correctness:"))).toEqual([
+      "correctness:test",
+    ]);
+    expect(report.status).toBe("complete");
+    expect(report.agent_audit.raised_under).toBeUndefined();
+  }, 60000);
+
+  it("joins the catalog coverage of two security reviews: an item either assessed is assessed", async () => {
+    const injection = {
+      rule_id: "security/sql-injection",
+      category: "security",
+      severity: "error",
+      catalog_item: "A05:2025",
+      trace_change: "removed",
+      location: at("src/api/users.ts", 3, "users.getUser"),
+      message: "The name query parameter reaches a concatenated SQL string.",
+      trigger: "GET /users?name=' OR '1'='1",
+    };
+    const { report } = await review({
+      base: {
+        "src/api/users.ts": `export async function getUser(req, res) {\n  const name = String(req.query.name).slice(0, 64);\n  const rows = await db.query("SELECT * FROM users WHERE name = ?", [name]);\n  res.json(rows);\n}\napp.get("/users", getUser);\n`,
+      },
+      head: {
+        "src/api/users.ts": `export async function getUser(req, res) {\n  const name = req.query.name;\n  const rows = await db.query("SELECT * FROM users WHERE name = '" + name + "'");\n  res.json(rows);\n}\napp.get("/users", getUser);\n`,
+      },
+      changed: ["src/api/users.ts"],
+      steps: [
+        { id: "triage", uses: "rio/triage@0.1.0", needs: [], with: {} },
+        {
+          id: "security",
+          uses: "rio/security@0.2.0",
+          needs: ["triage"],
+          with: { enabled: true },
+          agents: [{ security: { models: ["default", "second"] } }],
+        },
+        {
+          id: "verify",
+          uses: "rio/verify@0.1.0",
+          needs: ["security"],
+          with: {},
+        },
+      ],
+      agents: {},
+      models: {
+        security: {
+          test: {
+            hypotheses: [injection],
+            assessed: ["A01:2025"],
+            unassessed: [{ item: "A06:2025", reason: "tools_unavailable" }],
+          },
+          second: {
+            hypotheses: [
+              {
+                ...injection,
+                rule_id: "security/sqli",
+                message:
+                  "The SQL string is built by concatenating the name query parameter.",
+              },
+            ],
+            assessed: ["A06:2025", "A10:2025"],
+            unassessed: [{ item: "A01:2025", reason: "budget" }],
+          },
+        },
+      },
+      mutate: second,
+    });
+    expect(report.status).toBe("complete");
+    expect(report.security.map((f: any) => f.rule_id)).toEqual([
+      "security/sql-injection",
+    ]);
+    const coverage = report.security_coverage;
+    expect(coverage.assessed.map((a: any) => a.item)).toEqual([
+      "A01:2025",
+      "A05:2025",
+      "A06:2025",
+      "A10:2025",
+    ]);
+    expect(coverage.assessed[1].findings).toEqual([report.security[0].id]);
+    expect(coverage.unassessed).toEqual([
+      {
+        item: "A02:2025",
+        title: "Security Misconfiguration",
+        reason: "no_evidence",
+      },
+      {
+        item: "A08:2025",
+        title: "Software or Data Integrity Failures",
+        reason: "no_evidence",
+      },
+      {
+        item: "A09:2025",
+        title: "Security Logging and Alerting Failures",
+        reason: "no_evidence",
+      },
+    ]);
   }, 60000);
 });
 

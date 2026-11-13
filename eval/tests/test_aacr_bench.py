@@ -230,8 +230,11 @@ class AACRAdapterTests(unittest.TestCase):
             report["findings"].append(dict(finding, id=str(i), state=state))
         report["risks"].append(dict(finding, id="risk", evidence_level="plausible"))
         report["risks"].append(dict(finding, id="refuted", evidence_level="refuted"))
+        # The security step's findings are comments too, under the same exclusions.
+        report["security"] = [dict(finding, id="injection", evidence_level="plausible"),
+                              dict(finding, id="old", state="pre-existing")]
         comments = aacr.comments_from_report(report)
-        self.assertEqual([x["rio_finding_id"] for x in comments], ["a", "risk"])
+        self.assertEqual([x["rio_finding_id"] for x in comments], ["a", "risk", "injection"])
         self.assertEqual(comments[0]["content"], "Problem\nCrash\nGuard it")
         self.assertEqual((comments[0]["start_line"], comments[0]["end_line"]), (3, 4))
 

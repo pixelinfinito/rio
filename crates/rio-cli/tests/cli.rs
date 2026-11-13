@@ -466,6 +466,11 @@ fn security_community_profile_validates_offline_and_enables_thorough_asvs() {
     assert_eq!(security["with"]["enabled"], true);
     assert_eq!(security["with"]["posture"], "thorough");
     assert_eq!(security["with"]["catalog"], "asvs-5.0");
+    // The security agent reviews under two models when a child defines both.
+    assert_eq!(
+        security["agents"][0]["security"]["models"],
+        serde_yaml::from_str::<serde_yaml::Value>("[default, second]").unwrap()
+    );
     let text = String::from_utf8_lossy(&output.stdout);
     assert!(
         text.contains("rio/base") && text.contains("rio/security"),

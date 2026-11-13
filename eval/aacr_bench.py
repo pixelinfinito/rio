@@ -139,14 +139,18 @@ def load_dataset(path):
 
 
 def comments_from_report(report):
-    """Publishable findings and risks, with one primary location per identity.
+    """Publishable findings, risks and security findings, with one primary
+    location per identity.
 
     Rio presents plausible risks to users too. Include them rather than choosing
-    an evidence threshold after seeing annotations. Exclude fixed/pre-existing
-    findings and refuted hypotheses, which are not review comments on this diff.
+    an evidence threshold after seeing annotations. The security step's findings
+    are review comments like the others; a profile without the step has none.
+    Exclude fixed/pre-existing findings and refuted hypotheses, which are not
+    review comments on this diff.
     """
     comments, seen = [], set()
-    for finding in report.get("findings", []) + report.get("risks", []):
+    for finding in (report.get("findings", []) + report.get("risks", [])
+                    + report.get("security", [])):
         if finding.get("state") in {"fixed", "pre-existing"}:
             continue
         if finding.get("evidence_level") == "refuted":
@@ -495,7 +499,7 @@ def run(args):
                     "profile_sha256": sha256(args.out / "profile.yaml"),
                     "resolved_profile_sha256": sha256(args.out / "profile.resolved.yaml"),
                     "concurrency": args.concurrency, "timeout_seconds": args.timeout,
-                    "comment_policy": "findings+risks; exclude fixed/pre-existing/refuted; dedupe by id",
+                    "comment_policy": "findings+risks+security; exclude fixed/pre-existing/refuted; dedupe by id",
                     "reference_comments": sum(len(x["reference_comments"]) for x in instances),
                     "execution": "Configured remote Rio endpoint; no local dependency installs"}
         write_json(manifest_path, manifest)

@@ -1210,6 +1210,22 @@ it("resolves reachable model aliases with the Workflow's and verifier's preceden
   expect(set(profile(models, [agentsStep([], "rio/security@0.2.0")]))).toEqual([
     "security",
   ]);
+  // Every defined alias of a declaration's `models` is called; with none
+  // defined the agent falls back as without the list.
+  expect(
+    set(
+      profile(models, [
+        agentsStep([
+          { correctness: { models: ["default", "fast", "missing"] } },
+        ]),
+      ]),
+    ),
+  ).toEqual(["default", "fast"]);
+  expect(
+    set(
+      profile(models, [agentsStep([{ correctness: { models: ["missing"] } }])]),
+    ),
+  ).toEqual(["correctness", "default"]);
   expect(set(profile(models, [verify], { model: "fast" }))).toEqual(["fast"]);
 });
 

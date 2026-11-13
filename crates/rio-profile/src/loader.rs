@@ -737,6 +737,27 @@ impl ProfileLoader {
                 "verifier alias must differ from the default for one voter".into(),
             );
         }
+        // One voter is independent only of a model it is not: an agent's `models`
+        // review too.
+        if (profile.verify.voters == 1 || profile.verify.risk_voters == Some(1))
+            && profile.models.get(alias).is_some_and(|verifier| {
+                profile
+                    .steps
+                    .iter()
+                    .flat_map(|step| &step.agents)
+                    .flat_map(BTreeMap::values)
+                    .filter_map(|agent| agent["models"].as_array())
+                    .flatten()
+                    .filter_map(Value::as_str)
+                    .any(|reviewing| profile.models.get(reviewing) == Some(verifier))
+            })
+        {
+            add(
+                "/models/verifier",
+                "verifier alias must differ from every model an agent reviews under for one voter"
+                    .into(),
+            );
+        }
         if profile.min_evidence < EvidenceLevel::Plausible {
             add(
                 "/min_evidence",

@@ -301,6 +301,20 @@ export function validateSubmission(value: any): asserts value is Submission {
       value.profile.models[alias] !== value.profile.models.default,
     "single verifier must use a different model",
   );
+  // An agent's `models` review too: one voter is none of them.
+  invariant(
+    (value.profile.verify.voters !== 1 &&
+      value.profile.verify.risk_voters !== 1) ||
+      !value.profile.steps
+        .flatMap((step: any) => step.agents ?? [])
+        .flatMap((agent: any) => Object.values(agent))
+        .flatMap((config: any) => config?.models ?? [])
+        .some(
+          (reviewing: string) =>
+            value.profile.models[reviewing] === value.profile.models[alias],
+        ),
+    "single verifier must use a different model",
+  );
   for (const file of value.changed) {
     safePath(file.path);
     if (file.old_path) safePath(file.old_path);
