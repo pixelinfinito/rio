@@ -1944,10 +1944,7 @@ impl Deployer {
             rio_git::private_directory(&profiles)?;
             let secrets = &self.secrets;
             let profile = if let Some(models) = &self.models {
-                include_str!("../../../modules/profiles/openrouter.yaml")
-                    .replace("name: rio/openrouter", "name: rio-default")
-                    .replace("openrouter/anthropic/claude-sonnet-5.5", &models.default)
-                    .replace("openrouter/openai/gpt-6.1-sol", &models.verifier)
+                model_profile(&models.default, &models.verifier)
             } else if secrets.0.contains_key("OPENROUTER_API_KEY") {
                 "version: 1\nname: rio-default\nextends: rio/openrouter\n".to_owned()
             } else {
@@ -1956,10 +1953,7 @@ impl Deployer {
                 } else {
                     "anthropic/claude-haiku-4-5-20251001"
                 };
-                include_str!("../../../modules/profiles/openrouter.yaml")
-                    .replace("name: rio/openrouter", "name: rio-default")
-                    .replace("openrouter/anthropic/claude-sonnet-5.5", model)
-                    .replace("openrouter/openai/gpt-6.1-sol", model)
+                model_profile(model, model)
             };
             rio_engine::atomic_write(&default_profile, profile.as_bytes())?;
             self.profile_written = true;
@@ -1976,6 +1970,21 @@ impl Deployer {
         Ok(Outcome::Done(
             endpoint.trim_start_matches("https://").into(),
         ))
+    }
+}
+
+/// The built-in model profile as the deployment's default, with its models.
+/// One voter for a risk needs a verifier that is another model than the
+/// agent's, so one model for both keeps every voter.
+fn model_profile(default: &str, verifier: &str) -> String {
+    let profile = include_str!("../../../modules/profiles/openrouter.yaml")
+        .replace("name: rio/openrouter", "name: rio-default")
+        .replace("openrouter/anthropic/claude-sonnet-5.5", default)
+        .replace("openrouter/openai/gpt-6.1-sol", verifier);
+    if default == verifier {
+        profile.replace("risk_voters: 1 }", "risk_voters: 3 }")
+    } else {
+        profile
     }
 }
 
@@ -3530,5 +3539,34 @@ mod tests {
         assert!(error.contains("123"));
         assert!(!error.contains("secret-echo"));
         assert!(!error.contains("local-secret"));
+    }
+    #[test]
+    fn the_default_profile_resolves_with_two_models_and_with_one() {
+        for (default, verifier, risk_voters) in [
+            (
+                "custom-node-anthropic/claude-sonnet-5-5",
+                "custom-node-openai/gpt-6.1-sol",
+                1,
+            ),
+            ("openai/gpt-4.1-mini", "openai/gpt-4.1-mini", 3),
+        ] {
+            let directory = tempfile::tempdir().unwrap();
+            std::fs::write(
+                directory.path().join("default.yaml"),
+                model_profile(default, verifier),
+            )
+            .unwrap();
+            let resolved = rio_profile::ProfileLoader::new(
+                None,
+                directory.path().join("config"),
+                directory.path().into(),
+            )
+            .load(Some("default.yaml"))
+            .unwrap();
+            assert_eq!(resolved.profile.name, "rio-default");
+            assert_eq!(resolved.profile.models["verifier"], verifier);
+            assert_eq!(resolved.profile.verify.voters, 3);
+            assert_eq!(resolved.profile.verify.risk_voters, Some(risk_voters));
+        }
     }
 }

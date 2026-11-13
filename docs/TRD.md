@@ -61,7 +61,7 @@ budget:
 models:
   <alias>: <provider>/<model>      # 'verifier' alias must differ from 'default' in v0.1; v0.2 relaxes this when verify.voters > 1
 posture: critical-only | balanced | thorough   # precision/recall dial, default balanced (see "Posture")
-max_defects: int                   # default 5; posture sets it, an explicit value wins
+max_defects: int                   # default 10; posture sets it, an explicit value wins
 always_human: [glob]               # changed paths that force risk_tier: high and require_human()
 rounds:
   cap: int                         # default 3; rounds posted per PR head lineage before Rio stops posting
@@ -98,7 +98,7 @@ max_lines: int
 | Posture | `min_evidence` | `max_defects` | Severity floor for defects | `plausible` risks rendered |
 | --- | --- | --- | --- | --- |
 | `critical-only` | `reproduced` | 3 | `error` | no |
-| `balanced` (default) | `static_proven` | 5 | `warning` | yes, capped at `max_defects` |
+| `balanced` (default) | `static_proven` | 10 | `warning` | yes, capped at `max_defects` |
 | `thorough` | `plausible` | 15 | `info` | yes, uncapped |
 
 Presets map onto posture plus budget: Quick = `critical-only` + `budget.fast`, Standard = `balanced` + `budget.fast`, Deep (`--deep`) = `thorough` + `budget.deep`. Deterministic findings are never capped by `max_defects`; the cap applies to agent-originated defects after verification, in impact × evidence order, and the footer states how many were held back.

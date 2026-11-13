@@ -253,10 +253,10 @@ fn posture_derives_reserved_policy_and_explicit_resolved_values_win() {
         (
             "balanced",
             EvidenceLevel::StaticProven,
-            5,
+            10,
             Severity::Warning,
             true,
-            Some(5),
+            Some(10),
         ),
         (
             "thorough",
@@ -416,7 +416,7 @@ fn presets_resolve_posture_and_preserve_explicit_caps() {
     let root = tempfile::tempdir().unwrap();
     for (posture, evidence, cap) in [
         (Posture::CriticalOnly, EvidenceLevel::Reproduced, 3),
-        (Posture::Balanced, EvidenceLevel::StaticProven, 5),
+        (Posture::Balanced, EvidenceLevel::StaticProven, 10),
         (Posture::Thorough, EvidenceLevel::Plausible, 15),
     ] {
         let p = loader(root.path())

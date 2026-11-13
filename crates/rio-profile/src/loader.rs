@@ -128,7 +128,7 @@ impl Posture {
     fn defaults(self) -> (EvidenceLevel, u64, Severity, bool) {
         match self {
             Self::CriticalOnly => (EvidenceLevel::Reproduced, 3, Severity::Error, false),
-            Self::Balanced => (EvidenceLevel::StaticProven, 5, Severity::Warning, true),
+            Self::Balanced => (EvidenceLevel::StaticProven, 10, Severity::Warning, true),
             Self::Thorough => (EvidenceLevel::Plausible, 15, Severity::Info, true),
         }
     }
@@ -159,7 +159,7 @@ pub struct PosturePolicy {
 }
 
 fn default_max_defects() -> u64 {
-    5
+    10
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

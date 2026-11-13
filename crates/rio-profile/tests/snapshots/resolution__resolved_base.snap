@@ -150,7 +150,7 @@ fail_on:
 min_evidence: static_proven
 max_lines: 1500
 posture: balanced
-max_defects: 5
+max_defects: 10
 rounds:
   cap: 3
   diff_only_after: 1
@@ -188,7 +188,7 @@ engine_version: 0.1.0
 posture_policy:
   defect_severity_floor: warning
   render_plausible_risks: true
-  plausible_risk_limit: 5
+  plausible_risk_limit: 10
 council_members:
 - name: rio/council-skeptic
   version: 0.1.0

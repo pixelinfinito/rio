@@ -1430,7 +1430,7 @@ fn endpoint_presets_submit_snapshots_and_cache_verification_without_local_comman
                         if posture == "critical-only" {
                             3
                         } else if posture == "balanced" {
-                            5
+                            10
                         } else {
                             15
                         }

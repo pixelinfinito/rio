@@ -12,10 +12,18 @@ models:
 # (the security step runs its own) and all voters together, so it is sized for two
 # agents; the ledger charges actual tokens, and pilots on real repositories cost
 # between USD 0.4 and 2.1 per review.
+#
+# `wall_time` covers the whole review. With up to ten defects and ten risks
+# verified, 12 of 79 reviews of large pull requests ran past eight minutes and the
+# longest took just over fourteen.
 budget:
-  fast: { tokens: 2400000, agents_max: 1, wall_time: 8m, verify_tokens: 320000 }
+  fast: { tokens: 2400000, agents_max: 1, wall_time: 15m, verify_tokens: 320000 }
   deep: { tokens: 4000000, agents_max: 2, wall_time: 15m, verify_tokens: 400000 }
-verify: { voters: 3, quorum: 2 }
+# `risk_voters` of the voters examine a hypothesis the agent classed as a risk.
+# One is enough when the verifier is another model than the agent's: on 116 such
+# hypotheses the second and third voter changed no outcome. A profile with one
+# model for both aliases needs every voter (`risk_voters: 3`).
+verify: { voters: 3, quorum: 2, risk_voters: 1 }
 steps:
   - id: prepare
     uses: rio/prepare@0.1.0

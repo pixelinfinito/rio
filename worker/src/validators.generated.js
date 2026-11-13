@@ -196,7 +196,7 @@ const schema31 = {
       enum: ["critical-only", "balanced", "thorough"],
       default: "balanced",
     },
-    max_defects: { type: "integer", minimum: 1, default: 5 },
+    max_defects: { type: "integer", minimum: 1, default: 10 },
     rounds: {
       type: "object",
       properties: {

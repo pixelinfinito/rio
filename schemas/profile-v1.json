@@ -345,7 +345,7 @@
     "max_defects": {
       "type": "integer",
       "minimum": 1,
-      "default": 5
+      "default": 10
     },
     "rounds": {
       "type": "object",

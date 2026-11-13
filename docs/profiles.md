@@ -113,7 +113,7 @@ Disabled checks have outcome `skipped`, reason `disabled`. Trust allows an unver
 | Posture | Evidence floor | Maximum agent defects | Agent defect severity floor | Plausible agent risks |
 | --- | --- | --- | --- | --- |
 | `critical-only` | `reproduced` | 3 | `error` | Hidden |
-| `balanced` | `static_proven` | 5 | `warning` | Up to `max_defects` |
+| `balanced` | `static_proven` | 10 | `warning` | Up to `max_defects` |
 | `thorough` | `plausible` | 15 | `info` | Uncapped |
 
 Explicit values in the merged document, including inherited values, win over posture defaults. `max_defects` must be positive. `rounds` defaults to `{cap: 3, diff_only_after: 1}`; `cap` must be positive and `diff_only_after` must be nonnegative and less than `cap`. Resolved profiles store these values and `posture_policy` (the derived `defect_severity_floor`, `render_plausible_risks`, and nullable `plausible_risk_limit`), so policy changes affect the review id.
@@ -169,6 +169,8 @@ classed as a `risk` (a hazard it could not settle, or an improvement): such a
 hypothesis is never reported as a defect, and its quorum is `quorum` or
 `risk_voters`, whichever is smaller. It defaults to `voters`, may not exceed it,
 and `risk_voters: 1` falls under the same single-voter independence rule.
+`rio/openrouter`, whose verifier is another model than its agent's, sets
+`risk_voters: 1`; a child profile restores the full panel with `risk_voters: 3`.
 Both budget modes accept `verify_tokens`. Each voter's entire two-turn allowance
 is 320,000 tokens unless overridden, whatever the review token budget. Agent tokens
 are the active review token budget divided by `agents_max`. Resolution records the
