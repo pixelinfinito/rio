@@ -95356,6 +95356,12 @@ const schema58 = {
       description:
         "Replay agent hypotheses for unchanged hunks from the agent result cache; the verifier always runs",
     },
+    second_look: {
+      type: "boolean",
+      default: true,
+      description:
+        "Ask an agent whose manifest takes a second look for what its first pass left out, once, in the same conversation",
+    },
   },
 };
 function validate36(
@@ -95379,7 +95385,7 @@ function validate36(
   }
   if (data && typeof data == "object" && !Array.isArray(data)) {
     for (const key0 in data) {
-      if (!(key0 === "cache")) {
+      if (!(key0 === "cache" || key0 === "second_look")) {
         const err0 = {
           instancePath,
           schemaPath: "#/additionalProperties",
@@ -95412,8 +95418,25 @@ function validate36(
         errors++;
       }
     }
+    if (data.second_look !== undefined) {
+      if (typeof data.second_look !== "boolean") {
+        const err2 = {
+          instancePath: instancePath + "/second_look",
+          schemaPath: "#/properties/second_look/type",
+          keyword: "type",
+          params: { type: "boolean" },
+          message: "must be boolean",
+        };
+        if (vErrors === null) {
+          vErrors = [err2];
+        } else {
+          vErrors.push(err2);
+        }
+        errors++;
+      }
+    }
   } else {
-    const err2 = {
+    const err3 = {
       instancePath,
       schemaPath: "#/type",
       keyword: "type",
@@ -95421,9 +95444,9 @@ function validate36(
       message: "must be object",
     };
     if (vErrors === null) {
-      vErrors = [err2];
+      vErrors = [err3];
     } else {
-      vErrors.push(err2);
+      vErrors.push(err3);
     }
     errors++;
   }

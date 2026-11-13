@@ -6,6 +6,7 @@ import {
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import { parse } from "yaml";
 import resolvedBase from "../../crates/rio-profile/tests/snapshots/resolution__resolved_base.snap?raw";
+import { SECOND_LOOK } from "../src/prompt";
 import { Store } from "../src/storage";
 import { NO_CONSUMER } from "../src/validation";
 import { allMigrations, submission } from "./fixtures";
@@ -64,7 +65,9 @@ async function review(run: Run) {
       )?.[1];
       let result: unknown = [];
       let raw: string | undefined;
-      if (agent) {
+      // The second look of an agent adds nothing here.
+      if (last === SECOND_LOOK) calls.push("second-look");
+      else if (agent) {
         prompts[agent] = first;
         latest[agent] = last;
         const turns = run.turns?.[agent],

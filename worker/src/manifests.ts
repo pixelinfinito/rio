@@ -12,5 +12,6 @@ export const agents: Record<
     run: boolean;
     available: boolean;
     contracts?: boolean;
+    second_look?: boolean;
   }
 > = { correctness, contracts, tests, performance, verifier, security };

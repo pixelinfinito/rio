@@ -1,7 +1,8 @@
 {
-  "version": 2,
+  "version": 3,
   "name": "correctness",
   "run": true,
   "available": true,
-  "independent": true
+  "independent": true,
+  "second_look": true
 }

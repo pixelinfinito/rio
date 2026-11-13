@@ -325,6 +325,19 @@
           },
           "read_ratio": null
         },
+        "second-look": {
+          "calls": 1,
+          "calls_reporting_cache": 0,
+          "unverified_calls": 0,
+          "input_tokens": 80,
+          "cache_read_input_tokens": null,
+          "cache_write_input_tokens": null,
+          "output_tokens": 50,
+          "cost_usd_by_source": {
+            "unknown": null
+          },
+          "read_ratio": null
+        },
         "verify-blind": {
           "calls": 3,
           "calls_reporting_cache": 0,

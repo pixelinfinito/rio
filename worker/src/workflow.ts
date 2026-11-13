@@ -35,7 +35,7 @@ import {
   settledUsage,
 } from "./gateway";
 import { promptCacheReport, selfHostedCache } from "./usage";
-import { generationPrompt, redactPartitions } from "./prompt";
+import { generationPrompt, redactPartitions, SECOND_LOOK } from "./prompt";
 /** The provider identity of self-hosted council members' partition. */
 const SELF_HOSTED = "self-hosted/runner";
 import {
@@ -1608,6 +1608,9 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             continue;
           }
           const config = declaration?.[agent] ?? {};
+          const secondLook =
+            agents[agent]?.second_look === true &&
+            s.with.second_look !== false;
           const model =
             submission.profile.models[config.model ?? agent] ??
             submission.profile.models.default;
@@ -1683,7 +1686,12 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                             (agentPrompts as Record<string, string>)[agent] ??
                             "",
                           model,
-                          options: config,
+                          // A review without the second look keys its own
+                          // entries: it holds fewer hypotheses a hunk.
+                          options:
+                            agents[agent]?.second_look && !secondLook
+                              ? { ...config, second_look: false }
+                              : config,
                           engine: this.env.RIO_VERSION,
                           graphs,
                           guidance: submission.owner_guidance,
@@ -1854,39 +1862,51 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             step.do(`agent-finished-${s.id}-${agent}`, () =>
               store.event(id, "agent:finished", { agent, hypotheses: count }),
             );
+          // One conversation and one allowance: a second look continues them.
+          const conversation: Parameters<typeof converse>[0] = {
+            gateway,
+            ledger,
+            actor: `${s.id}-${agent}`,
+            phase: "generation",
+            model,
+            allowance: { remaining: agentTokens },
+            messages: [{ role: "user", content: prompt }],
+            dispatch: tools.dispatch.bind(tools),
+            call,
+            record,
+            cancelled: () => store.cancelled(id),
+            cache: {
+              classes: promptConfig.cache,
+              key: promptCacheKey(load.tenant, id, "generation"),
+            },
+            redact: [partition],
+            compaction: enabled(promptConfig, "compaction"),
+            // A security result without its lists is asked for again, within
+            // the conversation's repair limits, before the agent fails.
+            ...(agent === "security"
+              ? {
+                  validateResult: (value: any) => {
+                    invariant(securityResult(value), SECURITY_RESULT);
+                    return value;
+                  },
+                  resultShape:
+                    'The result is {"hypotheses":[...],"assessed":[...],"unassessed":[...]}: all three lists are required, and a list with no entries is [].',
+                }
+              : {}),
+          };
+          // Generation agents sometimes wrap their array the way the security
+          // agent must ({"hypotheses": [...]}); the wrapper is accepted.
+          const unwrapped = (value: any) =>
+            agent !== "security" &&
+            value &&
+            typeof value === "object" &&
+            !Array.isArray(value) &&
+            Array.isArray(value.hypotheses)
+              ? value.hypotheses
+              : value;
           let output: any;
           try {
-            output = await converse({
-              gateway,
-              ledger,
-              actor: `${s.id}-${agent}`,
-              phase: "generation",
-              model,
-              allowance: { remaining: agentTokens },
-              messages: [{ role: "user", content: prompt }],
-              dispatch: tools.dispatch.bind(tools),
-              call,
-              record,
-              cancelled: () => store.cancelled(id),
-              cache: {
-                classes: promptConfig.cache,
-                key: promptCacheKey(load.tenant, id, "generation"),
-              },
-              redact: [partition],
-              compaction: enabled(promptConfig, "compaction"),
-              // A security result without its lists is asked for again, within
-              // the conversation's repair limits, before the agent fails.
-              ...(agent === "security"
-                ? {
-                    validateResult: (value: any) => {
-                      invariant(securityResult(value), SECURITY_RESULT);
-                      return value;
-                    },
-                    resultShape:
-                      'The result is {"hypotheses":[...],"assessed":[...],"unassessed":[...]}: all three lists are required, and a list with no entries is [].',
-                  }
-                : {}),
-            });
+            output = unwrapped(await converse(conversation));
           } catch (error) {
             const message = error instanceof Error ? error.message : "";
             if (/cancel/.test(message)) throw error;
@@ -1924,16 +1944,6 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               }
             }
           }
-          // Generation agents sometimes wrap their array the way the security
-          // agent must ({"hypotheses": [...]}); the wrapper is accepted.
-          if (
-            agent !== "security" &&
-            output &&
-            typeof output === "object" &&
-            !Array.isArray(output) &&
-            Array.isArray(output.hypotheses)
-          )
-            output = output.hypotheses;
           // A result of the wrong shape fails this agent only, like a failed
           // conversation: the review stays partial with a note and the other
           // agents' hypotheses still reach the verifier.
@@ -1959,6 +1969,33 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               })),
             };
           }
+          // The second look: the agent is asked once more, with its first result
+          // before it, for what that pass left out. A second look that fails
+          // leaves the first pass as the agent's result, and the report says so.
+          let passes = true;
+          if (secondLook && Array.isArray(output)) {
+            conversation.messages.push({ role: "user", content: SECOND_LOOK });
+            try {
+              const more = unwrapped(
+                await converse({ ...conversation, phase: "second-look" }),
+              );
+              invariant(Array.isArray(more), "expected hypothesis array");
+              // Both passes share the limit of one agent result.
+              output = [
+                ...output,
+                ...more.slice(0, Math.max(0, 100 - output.length)),
+              ];
+            } catch (error) {
+              const message = error instanceof Error ? error.message : "";
+              passes = false;
+              // A review stopped during the second look keeps what the first
+              // pass raised; the next step is where it ends.
+              if (!/cancel/.test(message))
+                report.footer.notes.push(
+                  `${agent} agent's second look failed: ${redact(message).slice(0, 200)}; the review holds its first pass.`,
+                );
+            }
+          }
           let assessedByAgent: unknown = [],
             unassessedByAgent: unknown = [];
           if (agent === "security") {
@@ -1971,6 +2008,11 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             clampAgentOutput(output),
           );
           rejected.push(...checked.rejected);
+          // A hypothesis the agent states twice, word for word, is one.
+          const stated = new Set<string>();
+          checked.accepted = checked.accepted.filter((h) =>
+            stated.has(h.id) ? false : (stated.add(h.id), true),
+          );
           const screened = screenHypotheses(agent, checked.accepted, {
             catalogItems: new Set(applicable.map((i) => i.id)),
           });
@@ -1982,12 +2024,12 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           }
           await progress.raised(`${s.id}-${agent}`, screened.accepted);
           await finished(screened.accepted.length);
-          // Only a run that completed within budget populates the cache. The
-          // entries are written a chunk per step, each a few packs, so no step
-          // nears the platform's request limit however large the change; the
-          // cache only saves later model calls, so a store that fails leaves
-          // the review as it is and says so.
-          if (caching && misses.length) {
+          // Only a run that completed within budget, both passes of it,
+          // populates the cache. The entries are written a chunk per step,
+          // each a few packs, so no step nears the platform's request limit
+          // however large the change; the cache only saves later model calls,
+          // so a store that fails leaves the review as it is and says so.
+          if (caching && misses.length && passes) {
             const entries = [...slice(keyed, misses, screened.accepted)];
             try {
               const tokens = await step.do(

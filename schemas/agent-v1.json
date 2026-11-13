@@ -30,6 +30,10 @@
     "contracts": {
       "description": "Selected by triage's public_contracts signal and given the contract inventory.",
       "type": "boolean"
+    },
+    "second_look": {
+      "description": "After its result, the agent is asked once, in the same conversation, for what its first pass over the change left out.",
+      "type": "boolean"
     }
   },
   "required": [

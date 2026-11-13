@@ -7,6 +7,11 @@
         "type": "boolean",
         "default": true,
         "description": "Replay agent hypotheses for unchanged hunks from the agent result cache; the verifier always runs"
+      },
+      "second_look": {
+        "type": "boolean",
+        "default": true,
+        "description": "Ask an agent whose manifest takes a second look for what its first pass left out, once, in the same conversation"
       }
     }
   },

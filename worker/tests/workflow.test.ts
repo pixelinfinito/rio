@@ -11,6 +11,7 @@ import { finishJob } from "../src/jobs";
 import { CANCEL_GRACE_MS, reconcile, sweepReviews } from "../src/reconcile";
 import { CANCELLED_NOTE, changedCode, renderDiff } from "../src/workflow";
 import { LARGE, MemorySnapshot } from "../src/snapshot";
+import { SECOND_LOOK } from "../src/prompt";
 import { Requests, SEARCH_REFUSED } from "../src/requests";
 import { hash, validateHypotheses, validateReport } from "../src/validation";
 import { allMigrations, hypothesis, snapshot, submission } from "./fixtures";
@@ -181,7 +182,9 @@ it.each([false, true])(
           expect(text, object.key).not.toContain("repository_data");
         }
       }
-      expect(requests).toHaveLength(7);
+      // The agent's two passes (its second look repeats the hypothesis, which
+      // stays one), then a blind and a disclosed turn of each voter.
+      expect(requests).toHaveLength(8);
       // Progress for the live screen: each agent starts and finishes, then
       // verification counts the hypotheses it checked.
       const events = (
@@ -368,6 +371,7 @@ const budgeted = async (
       .bind(id)
       .all<{ status: string }>();
     return {
+      id,
       row,
       report,
       bodies,
@@ -426,7 +430,7 @@ it("leaves the votes a spent request budget did not cover incomplete, and keeps 
       },
       AGENTS_AND_VERIFY,
     );
-    // The generation call, and no voter's.
+    // The generation call, and neither the agent's second look nor a voter's.
     expect(bodies.filter(generation)).toHaveLength(1);
     expect(bodies).toHaveLength(1);
     expect([row.status, report.status]).toEqual(["complete", "incomplete"]);
@@ -435,11 +439,12 @@ it("leaves the votes a spent request budget did not cover incomplete, and keeps 
     expect(report.findings).toEqual([]);
     expect(report.footer.notes).toEqual(
       expect.arrayContaining([
+        "correctness agent's second look failed: review request budget exhausted; the review holds its first pass.",
         "3 verifier votes did not complete; inspect the vote audit. Missing votes do not reduce quorum.",
-        spentNote("3 model turns were"),
+        spentNote("4 model turns were"),
       ]),
     );
-    expect(report.agent_audit.requests.stopped).toBe(3);
+    expect(report.agent_audit.requests.stopped).toBe(4);
   } finally {
     spent.mockRestore();
   }
@@ -486,6 +491,79 @@ it("answers a search the request budget no longer covers with a refusal, and rep
   } finally {
     full.mockRestore();
   }
+}, 60000);
+
+// The second look: one more turn in the agent's conversation, after its result.
+const secondLook = (body: any) => body.messages.at(-1).content === SECOND_LOOK;
+const second = {
+  ...hypothesis,
+  id: "h2",
+  rule_id: "correctness/null-input",
+  message: "a() is called without its argument",
+  trigger: "a(undefined)",
+};
+it("asks the correctness agent for a second look in its conversation, and verifies what both passes raised", async () => {
+  const { id, report, bodies, votes } = await budgeted(
+    "second-look",
+    (body) =>
+      secondLook(body)
+        ? { result: [second, hypothesis] }
+        : { result: generation(body) ? [hypothesis] : [] },
+    AGENTS_AND_VERIFY,
+  );
+  const passes = bodies.filter(generation);
+  expect(passes).toHaveLength(2);
+  // The second request is the first, the agent's result and the question.
+  expect(passes[1].messages.slice(0, -2)).toEqual(passes[0].messages);
+  expect(passes[1].messages.at(-2)).toEqual({
+    role: "assistant",
+    content: JSON.stringify({ result: [hypothesis] }),
+  });
+  expect(secondLook(passes[1])).toBe(true);
+  // Three voters each for the two hypotheses; the repeated one is not a third.
+  expect(votes).toHaveLength(6);
+  expect(
+    report.footer.notes.filter((n: string) => n.includes("second look")),
+  ).toEqual([]);
+  const phases = await runtime.DB.prepare(
+    "SELECT phase FROM usage WHERE review_id=? AND actor='agents-correctness' ORDER BY rowid",
+  )
+    .bind(id)
+    .all<{ phase: string }>();
+  expect(phases.results.map((u) => u.phase)).toEqual([
+    "generation",
+    "second-look",
+  ]);
+}, 60000);
+it("keeps the first pass when the second look fails, and says so", async () => {
+  const { report, bodies, votes } = await budgeted(
+    "second-look-failed",
+    (body) =>
+      secondLook(body)
+        ? { result: "nothing more" }
+        : { result: generation(body) ? [hypothesis] : [] },
+    AGENTS_AND_VERIFY,
+  );
+  expect(bodies.filter(generation)).toHaveLength(2);
+  expect(votes).toHaveLength(3);
+  expect(report.footer.notes).toContain(
+    "correctness agent's second look failed: expected hypothesis array; the review holds its first pass.",
+  );
+  expect(
+    report.footer.notes.some((n: string) => n.includes("agent failed")),
+  ).toBe(false);
+}, 60000);
+it("takes no second look when the agents step turns it off", async () => {
+  const { bodies, votes } = await budgeted(
+    "second-look-off",
+    (body) => ({ result: generation(body) ? [hypothesis] : [] }),
+    [
+      { ...AGENTS_AND_VERIFY[0], with: { second_look: false } },
+      AGENTS_AND_VERIFY[1],
+    ],
+  );
+  expect(bodies.filter(generation)).toHaveLength(1);
+  expect(votes).toHaveLength(3);
 }, 60000);
 
 it("resumes an isolated runner job using an attempt-specific event", async () => {

@@ -63,6 +63,7 @@ steps:
   parallel: false
   with:
     cache: true
+    second_look: true
 - id: security
   uses: rio/security@0.2.0
   needs:
