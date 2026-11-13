@@ -13,12 +13,14 @@ models:
 # agents; the ledger charges actual tokens, and pilots on real repositories cost
 # between USD 0.4 and 2.1 per review.
 #
-# `wall_time` covers the whole review. With up to ten defects and ten risks
-# verified, 12 of 79 reviews of large pull requests ran past eight minutes and the
-# longest took just over fourteen.
+# `wall_time` covers the whole review and is a backstop, not the usual duration:
+# with up to ten defects and ten risks verified, half of 79 reviews of large pull
+# requests took under five minutes, 12 ran past eight and the longest took just
+# over fourteen; a repeat of that one ran past fifteen. A review the wall cuts
+# reports what it had verified and lists the rest as unverified.
 budget:
-  fast: { tokens: 2400000, agents_max: 1, wall_time: 15m, verify_tokens: 320000 }
-  deep: { tokens: 4000000, agents_max: 2, wall_time: 15m, verify_tokens: 400000 }
+  fast: { tokens: 2400000, agents_max: 1, wall_time: 25m, verify_tokens: 320000 }
+  deep: { tokens: 4000000, agents_max: 2, wall_time: 25m, verify_tokens: 400000 }
 # `risk_voters` of the voters examine a hypothesis the agent classed as a risk.
 # One is enough when the verifier is another model than the agent's: on 116 such
 # hypotheses the second and third voter changed no outcome. A profile with one
