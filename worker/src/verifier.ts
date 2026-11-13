@@ -152,11 +152,25 @@ export async function blindBlocks(o: VerifyOptions): Promise<string> {
   // Only location is copied; no title, trigger, proposed impact, rationale, or id.
   return `${dataBlock("location", { path: location.path, symbol_path: location.symbol_path })}\n${dataBlock("selected code and direct callers", versions)}\n${dataBlock("intent", filteredLines(o.intent.split("\n")))}\n${guidanceBlock(o.guidance, [location.path])}`;
 }
+/**
+ * The voters and quorum of one hypothesis. A hypothesis its agent classed as a
+ * risk is never reported as a defect, whatever its voters find, so a profile
+ * may have fewer of them examine it (`verify.risk_voters`).
+ */
+export function panelOf(
+  verify: Profile["verify"],
+  hypothesis: Pick<Hypothesis, "category">,
+): { voters: number; quorum: number } {
+  const voters =
+    hypothesis.category === "risk"
+      ? Math.min(verify.risk_voters ?? verify.voters, verify.voters)
+      : verify.voters;
+  return { voters, quorum: Math.min(verify.quorum, voters) };
+}
 export async function verifyHypothesis(
   o: VerifyOptions,
 ): Promise<{ verified: Verified; votes: Vote[] }> {
-  const voters = o.profile.verify.voters,
-    quorum = o.profile.verify.quorum;
+  const { voters, quorum } = panelOf(o.profile.verify, o.hypothesis);
   const alias =
     o.profile.verify.model ??
     (o.profile.models.verifier ? "verifier" : "default");

@@ -206,6 +206,9 @@ pub struct Verify {
     pub quorum: u32,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub model: Option<String>,
+    /// Voters for a hypothesis its agent classed as a risk; `voters` when absent.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub risk_voters: Option<u32>,
 }
 impl Default for Verify {
     fn default() -> Self {
@@ -213,6 +216,7 @@ impl Default for Verify {
             voters: 3,
             quorum: 2,
             model: None,
+            risk_voters: None,
         }
     }
 }
@@ -712,7 +716,17 @@ impl ProfileLoader {
         if profile.verify.model.is_some() && !profile.models.contains_key(alias) {
             add("/verify/model", "unknown model alias".into());
         }
-        if profile.verify.voters == 1
+        if profile
+            .verify
+            .risk_voters
+            .is_some_and(|voters| voters > profile.verify.voters)
+        {
+            add(
+                "/verify/risk_voters",
+                "risk_voters must not exceed voters".into(),
+            );
+        }
+        if (profile.verify.voters == 1 || profile.verify.risk_voters == Some(1))
             && profile
                 .models
                 .get("default")

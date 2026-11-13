@@ -418,18 +418,23 @@ export class ProviderGateway implements Gateway {
       capability,
       anthropic,
     );
+    // Stop sequences go only to Claude models: they are the ones that slip into
+    // the markup a stop ends, and other routes may refuse the parameter.
+    const stop = request.stop?.length && /claude/i.test(model) && request.stop;
     const body = anthropic
       ? {
           model,
           system,
           messages,
           max_tokens: request.max_tokens,
+          ...(stop ? { stop_sequences: stop } : {}),
         }
       : {
           model,
           messages: [{ role: "system", content: system }, ...messages],
           max_tokens: request.max_tokens,
           response_format: { type: "json_object" },
+          ...(stop ? { stop } : {}),
           ...(provider === "openrouter"
             ? { provider: { require_parameters: true } }
             : {}),
@@ -556,8 +561,8 @@ export function parseModelOutput(content: string): any {
   } catch {
     /* Ambiguous/malformed documents still fail below. */
   }
-  // Only a single explicitly labeled JSON block is accepted. Narrative, XML tool
-  // imitations and other code blocks are never interpreted as tool calls/evidence.
+  // Only a single explicitly labeled JSON block is accepted. Narrative and other
+  // code blocks are never interpreted as tool calls or evidence.
   const blocks = [...content.matchAll(/```json\s*\n([\s\S]*?)\n```/gi)];
   if (blocks.length === 1) {
     try {
@@ -566,7 +571,7 @@ export function parseModelOutput(content: string): any {
       /* Report malformed below. */
     }
   }
-  const request = trailingToolsRequest(content);
+  const request = trailingToolsRequest(content) ?? nativeToolsRequest(content);
   if (request) return request;
   throw new Error("malformed model output");
 }
@@ -599,9 +604,9 @@ function objectAt(
 /**
  * A model that slips into its native tool syntax often follows the leaked
  * markup with the protocol's own tools request. That request is taken when it
- * is the one protocol document in the reply and ends it. The markup before it
- * is skipped, never read as tool calls, and a result is never taken this way:
- * findings stated after text the host has not parsed stay discarded.
+ * is the one protocol document in the reply and ends it, in place of the markup
+ * before it. A result is never taken this way: findings stated after text the
+ * host has not parsed stay discarded.
  */
 function trailingToolsRequest(content: string): unknown {
   const text = content.trim().replace(/\s*```$/, "");
@@ -639,6 +644,89 @@ function trailingToolsRequest(content: string): unknown {
       : undefined;
   }
   return undefined;
+}
+/** Arguments the tools take as numbers; native markup carries every value as text. */
+const NUMERIC_ARGS = new Set(["line_start", "line_end", "hops", "max_nodes"]);
+/**
+ * Ends a reply after its first batch of native tool calls. A model that has
+ * slipped into its native syntax otherwise goes on to repeat the batch or to
+ * write the results itself, up to the output limit. Neither sequence can occur
+ * in a protocol document: JSON has no line break inside a string.
+ */
+const NATIVE_CALL_STOPS = ["</invoke>\n\n", "</invoke>\n</invoke>"];
+/**
+ * A reply that opens with the model's native tool syntax is the tools request
+ * its leading calls state: the same calls, with the same arguments, that the
+ * protocol document would have carried, and the host runs them under the same
+ * permissions. Asking again instead cost a model call each time, in a third of
+ * all generation turns. Only the unbroken run of calls that opens the reply is
+ * read. What follows it (a repeated batch, results the model made up, prose, a
+ * call cut off by the output limit) is dropped, and the conversation keeps the
+ * request as a protocol document, never the markup. A reply that opens with
+ * anything else may be quoting repository content and is still refused.
+ */
+function nativeToolsRequest(content: string): unknown {
+  const text = content.trim().replace(/^<function_calls>\s*/, "");
+  const tools: { name: string; args: unknown }[] = [];
+  const seen = new Set<string>();
+  const invoke = /\s*<invoke name="([A-Za-z_]{1,64})">\s*/y;
+  const parameter = /<parameter name="([A-Za-z_]{1,64})">/y;
+  for (let at = 0; ;) {
+    invoke.lastIndex = at;
+    const call = invoke.exec(text);
+    if (!call) break;
+    const values: Record<string, string> = {};
+    let next = invoke.lastIndex;
+    for (;;) {
+      parameter.lastIndex = next;
+      const named = parameter.exec(text);
+      if (!named) break;
+      const end = text.indexOf("</parameter>", parameter.lastIndex);
+      // A value the reply does not close was cut off: its call is not run.
+      if (end === -1) return tools.length ? { tools } : undefined;
+      values[named[1]] = text.slice(parameter.lastIndex, end);
+      next = end + "</parameter>".length;
+      while (/\s/.test(text[next] ?? "")) next++;
+    }
+    // A stop sequence takes the closing tag of the last call with it.
+    const closed = text.startsWith("</invoke>", next);
+    if ((!closed && next < text.length) || !Object.keys(values).length) break;
+    const args = nativeArgs(values);
+    const key = JSON.stringify([call[1], args]);
+    if (!seen.has(key)) tools.push({ name: call[1], args });
+    seen.add(key);
+    if (!closed) break;
+    at = next + "</invoke>".length;
+  }
+  return tools.length ? { tools } : undefined;
+}
+/** Tool arguments from the text values of one native call. */
+function nativeArgs(values: Record<string, string>): unknown {
+  const names = Object.keys(values);
+  // Some replies put the protocol's whole `args` object in one parameter.
+  if (names.length === 1 && names[0] === "args") {
+    const whole = objectAt(values.args.trim(), 0);
+    if (
+      whole &&
+      whole.end === values.args.trim().length &&
+      whole.value !== null &&
+      typeof whole.value === "object" &&
+      !Array.isArray(whole.value)
+    )
+      return whole.value;
+  }
+  const args: Record<string, unknown> = {};
+  for (const name of names) {
+    const value = values[name];
+    if (NUMERIC_ARGS.has(name) && /^\s*\d{1,9}\s*$/.test(value))
+      args[name] = Number(value);
+    else if (name === "command" && value.trim().startsWith("[")) {
+      const argv = objectAt(value.trim(), 0);
+      args[name] =
+        argv && argv.end === value.trim().length ? argv.value : value;
+    } else args[name] = value;
+  }
+  return args;
 }
 /**
  * Host-authored corrections after replies that are not the protocol: a model that
@@ -726,6 +814,7 @@ export async function converse(options: {
         messages: o.messages,
         system,
         max_tokens: output,
+        stop: NATIVE_CALL_STOPS,
         signal: AbortSignal.timeout(Math.min(MODEL_CALL_MS, remainingMs)),
         ...(o.cache ? { cache: { ...o.cache, tail: true } } : {}),
         ...(o.redact?.length ? { redact: o.redact } : {}),
@@ -752,9 +841,9 @@ export async function converse(options: {
     const total = response.input_tokens + response.output_tokens;
     o.allowance.remaining -= total;
     invariant(o.allowance.remaining >= 0, "provider exceeded token allowance");
-    // Models answer in their native tool syntax, or with no tools and no result,
-    // despite the protocol. The host asks once more for the JSON document; the raw
-    // output stays in the audit and is never interpreted as tool calls or evidence.
+    // Models answer with prose, or with no tools and no result, despite the
+    // protocol. The host asks once more for the JSON document; the raw output
+    // stays in the audit and is never interpreted as tool calls or evidence.
     const repair = (error: unknown, resultSchema = false) => {
       if (
         consecutiveRepairs >= MAX_CONSECUTIVE_REPAIRS ||

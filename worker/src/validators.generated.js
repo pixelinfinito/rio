@@ -213,6 +213,12 @@ const schema31 = {
         voters: { type: "integer", minimum: 1, default: 3 },
         quorum: { type: "integer", minimum: 1 },
         model: { type: "string", minLength: 1 },
+        risk_voters: {
+          description:
+            "Voters for a hypothesis its agent classed as a risk. Defaults to voters.",
+          type: "integer",
+          minimum: 1,
+        },
       },
       additionalProperties: false,
     },
@@ -3127,7 +3133,8 @@ function validate20(
           if (!(
             key15 === "voters" ||
             key15 === "quorum" ||
-            key15 === "model"
+            key15 === "model" ||
+            key15 === "risk_voters"
           )) {
             const err137 = {
               instancePath: instancePath + "/verify",
@@ -3248,8 +3255,44 @@ function validate20(
             errors++;
           }
         }
+        if (data71.risk_voters !== undefined) {
+          let data75 = data71.risk_voters;
+          if (!(typeof data75 == "number" && !(data75 % 1) && !isNaN(data75))) {
+            const err144 = {
+              instancePath: instancePath + "/verify/risk_voters",
+              schemaPath: "#/properties/verify/properties/risk_voters/type",
+              keyword: "type",
+              params: { type: "integer" },
+              message: "must be integer",
+            };
+            if (vErrors === null) {
+              vErrors = [err144];
+            } else {
+              vErrors.push(err144);
+            }
+            errors++;
+          }
+          if (typeof data75 == "number") {
+            if (data75 < 1 || isNaN(data75)) {
+              const err145 = {
+                instancePath: instancePath + "/verify/risk_voters",
+                schemaPath:
+                  "#/properties/verify/properties/risk_voters/minimum",
+                keyword: "minimum",
+                params: { comparison: ">=", limit: 1 },
+                message: "must be >= 1",
+              };
+              if (vErrors === null) {
+                vErrors = [err145];
+              } else {
+                vErrors.push(err145);
+              }
+              errors++;
+            }
+          }
+        }
       } else {
-        const err144 = {
+        const err146 = {
           instancePath: instancePath + "/verify",
           schemaPath: "#/properties/verify/type",
           keyword: "type",
@@ -3257,17 +3300,17 @@ function validate20(
           message: "must be object",
         };
         if (vErrors === null) {
-          vErrors = [err144];
+          vErrors = [err146];
         } else {
-          vErrors.push(err144);
+          vErrors.push(err146);
         }
         errors++;
       }
     }
     if (data.council !== undefined) {
-      let data75 = data.council;
-      if (data75 && typeof data75 == "object" && !Array.isArray(data75)) {
-        for (const key16 in data75) {
+      let data76 = data.council;
+      if (data76 && typeof data76 == "object" && !Array.isArray(data76)) {
+        for (const key16 in data76) {
           if (!(
             key16 === "members" ||
             key16 === "max_findings" ||
@@ -3277,7 +3320,7 @@ function validate20(
             key16 === "timeout" ||
             key16 === "vendors_allowed"
           )) {
-            const err145 = {
+            const err147 = {
               instancePath: instancePath + "/council",
               schemaPath: "#/properties/council/additionalProperties",
               keyword: "additionalProperties",
@@ -3285,18 +3328,18 @@ function validate20(
               message: "must NOT have additional properties",
             };
             if (vErrors === null) {
-              vErrors = [err145];
+              vErrors = [err147];
             } else {
-              vErrors.push(err145);
+              vErrors.push(err147);
             }
             errors++;
           }
         }
-        if (data75.members !== undefined) {
-          let data76 = data75.members;
-          if (Array.isArray(data76)) {
-            if (data76.length > 9) {
-              const err146 = {
+        if (data76.members !== undefined) {
+          let data77 = data76.members;
+          if (Array.isArray(data77)) {
+            if (data77.length > 9) {
+              const err148 = {
                 instancePath: instancePath + "/council/members",
                 schemaPath: "#/properties/council/properties/members/maxItems",
                 keyword: "maxItems",
@@ -3304,14 +3347,14 @@ function validate20(
                 message: "must NOT have more than 9 items",
               };
               if (vErrors === null) {
-                vErrors = [err146];
+                vErrors = [err148];
               } else {
-                vErrors.push(err146);
+                vErrors.push(err148);
               }
               errors++;
             }
-            if (data76.length < 1) {
-              const err147 = {
+            if (data77.length < 1) {
+              const err149 = {
                 instancePath: instancePath + "/council/members",
                 schemaPath: "#/properties/council/properties/members/minItems",
                 keyword: "minItems",
@@ -3319,22 +3362,22 @@ function validate20(
                 message: "must NOT have fewer than 1 items",
               };
               if (vErrors === null) {
-                vErrors = [err147];
+                vErrors = [err149];
               } else {
-                vErrors.push(err147);
+                vErrors.push(err149);
               }
               errors++;
             }
-            const len10 = data76.length;
+            const len10 = data77.length;
             for (let i14 = 0; i14 < len10; i14++) {
-              let data77 = data76[i14];
+              let data78 = data77[i14];
               if (
-                data77 &&
-                typeof data77 == "object" &&
-                !Array.isArray(data77)
+                data78 &&
+                typeof data78 == "object" &&
+                !Array.isArray(data78)
               ) {
-                if (data77.uses === undefined) {
-                  const err148 = {
+                if (data78.uses === undefined) {
+                  const err150 = {
                     instancePath: instancePath + "/council/members/" + i14,
                     schemaPath:
                       "#/properties/council/properties/members/items/required",
@@ -3343,13 +3386,13 @@ function validate20(
                     message: "must have required property '" + "uses" + "'",
                   };
                   if (vErrors === null) {
-                    vErrors = [err148];
+                    vErrors = [err150];
                   } else {
-                    vErrors.push(err148);
+                    vErrors.push(err150);
                   }
                   errors++;
                 }
-                for (const key17 in data77) {
+                for (const key17 in data78) {
                   if (!(
                     key17 === "uses" ||
                     key17 === "provider" ||
@@ -3357,7 +3400,7 @@ function validate20(
                     key17 === "family" ||
                     key17 === "self_hosted"
                   )) {
-                    const err149 = {
+                    const err151 = {
                       instancePath: instancePath + "/council/members/" + i14,
                       schemaPath:
                         "#/properties/council/properties/members/items/additionalProperties",
@@ -3366,18 +3409,18 @@ function validate20(
                       message: "must NOT have additional properties",
                     };
                     if (vErrors === null) {
-                      vErrors = [err149];
+                      vErrors = [err151];
                     } else {
-                      vErrors.push(err149);
+                      vErrors.push(err151);
                     }
                     errors++;
                   }
                 }
-                if (data77.uses !== undefined) {
-                  let data78 = data77.uses;
-                  if (typeof data78 === "string") {
-                    if (!pattern12.test(data78)) {
-                      const err150 = {
+                if (data78.uses !== undefined) {
+                  let data79 = data78.uses;
+                  if (typeof data79 === "string") {
+                    if (!pattern12.test(data79)) {
+                      const err152 = {
                         instancePath:
                           instancePath + "/council/members/" + i14 + "/uses",
                         schemaPath:
@@ -3393,14 +3436,14 @@ function validate20(
                           '"',
                       };
                       if (vErrors === null) {
-                        vErrors = [err150];
+                        vErrors = [err152];
                       } else {
-                        vErrors.push(err150);
+                        vErrors.push(err152);
                       }
                       errors++;
                     }
                   } else {
-                    const err151 = {
+                    const err153 = {
                       instancePath:
                         instancePath + "/council/members/" + i14 + "/uses",
                       schemaPath:
@@ -3410,18 +3453,18 @@ function validate20(
                       message: "must be string",
                     };
                     if (vErrors === null) {
-                      vErrors = [err151];
+                      vErrors = [err153];
                     } else {
-                      vErrors.push(err151);
+                      vErrors.push(err153);
                     }
                     errors++;
                   }
                 }
-                if (data77.provider !== undefined) {
-                  let data79 = data77.provider;
-                  if (typeof data79 === "string") {
-                    if (!pattern13.test(data79)) {
-                      const err152 = {
+                if (data78.provider !== undefined) {
+                  let data80 = data78.provider;
+                  if (typeof data80 === "string") {
+                    if (!pattern13.test(data80)) {
+                      const err154 = {
                         instancePath:
                           instancePath +
                           "/council/members/" +
@@ -3435,44 +3478,6 @@ function validate20(
                           'must match pattern "' + "^[a-z][a-z0-9-]*$" + '"',
                       };
                       if (vErrors === null) {
-                        vErrors = [err152];
-                      } else {
-                        vErrors.push(err152);
-                      }
-                      errors++;
-                    }
-                  } else {
-                    const err153 = {
-                      instancePath:
-                        instancePath + "/council/members/" + i14 + "/provider",
-                      schemaPath:
-                        "#/properties/council/properties/members/items/properties/provider/type",
-                      keyword: "type",
-                      params: { type: "string" },
-                      message: "must be string",
-                    };
-                    if (vErrors === null) {
-                      vErrors = [err153];
-                    } else {
-                      vErrors.push(err153);
-                    }
-                    errors++;
-                  }
-                }
-                if (data77.model !== undefined) {
-                  let data80 = data77.model;
-                  if (typeof data80 === "string") {
-                    if (func2(data80) < 1) {
-                      const err154 = {
-                        instancePath:
-                          instancePath + "/council/members/" + i14 + "/model",
-                        schemaPath:
-                          "#/properties/council/properties/members/items/properties/model/minLength",
-                        keyword: "minLength",
-                        params: { limit: 1 },
-                        message: "must NOT have fewer than 1 characters",
-                      };
-                      if (vErrors === null) {
                         vErrors = [err154];
                       } else {
                         vErrors.push(err154);
@@ -3482,9 +3487,9 @@ function validate20(
                   } else {
                     const err155 = {
                       instancePath:
-                        instancePath + "/council/members/" + i14 + "/model",
+                        instancePath + "/council/members/" + i14 + "/provider",
                       schemaPath:
-                        "#/properties/council/properties/members/items/properties/model/type",
+                        "#/properties/council/properties/members/items/properties/provider/type",
                       keyword: "type",
                       params: { type: "string" },
                       message: "must be string",
@@ -3497,19 +3502,18 @@ function validate20(
                     errors++;
                   }
                 }
-                if (data77.family !== undefined) {
-                  let data81 = data77.family;
+                if (data78.model !== undefined) {
+                  let data81 = data78.model;
                   if (typeof data81 === "string") {
-                    if (!pattern13.test(data81)) {
+                    if (func2(data81) < 1) {
                       const err156 = {
                         instancePath:
-                          instancePath + "/council/members/" + i14 + "/family",
+                          instancePath + "/council/members/" + i14 + "/model",
                         schemaPath:
-                          "#/properties/council/properties/members/items/properties/family/pattern",
-                        keyword: "pattern",
-                        params: { pattern: "^[a-z][a-z0-9-]*$" },
-                        message:
-                          'must match pattern "' + "^[a-z][a-z0-9-]*$" + '"',
+                          "#/properties/council/properties/members/items/properties/model/minLength",
+                        keyword: "minLength",
+                        params: { limit: 1 },
+                        message: "must NOT have fewer than 1 characters",
                       };
                       if (vErrors === null) {
                         vErrors = [err156];
@@ -3521,9 +3525,9 @@ function validate20(
                   } else {
                     const err157 = {
                       instancePath:
-                        instancePath + "/council/members/" + i14 + "/family",
+                        instancePath + "/council/members/" + i14 + "/model",
                       schemaPath:
-                        "#/properties/council/properties/members/items/properties/family/type",
+                        "#/properties/council/properties/members/items/properties/model/type",
                       keyword: "type",
                       params: { type: "string" },
                       message: "must be string",
@@ -3536,9 +3540,48 @@ function validate20(
                     errors++;
                   }
                 }
-                if (data77.self_hosted !== undefined) {
-                  if (typeof data77.self_hosted !== "boolean") {
-                    const err158 = {
+                if (data78.family !== undefined) {
+                  let data82 = data78.family;
+                  if (typeof data82 === "string") {
+                    if (!pattern13.test(data82)) {
+                      const err158 = {
+                        instancePath:
+                          instancePath + "/council/members/" + i14 + "/family",
+                        schemaPath:
+                          "#/properties/council/properties/members/items/properties/family/pattern",
+                        keyword: "pattern",
+                        params: { pattern: "^[a-z][a-z0-9-]*$" },
+                        message:
+                          'must match pattern "' + "^[a-z][a-z0-9-]*$" + '"',
+                      };
+                      if (vErrors === null) {
+                        vErrors = [err158];
+                      } else {
+                        vErrors.push(err158);
+                      }
+                      errors++;
+                    }
+                  } else {
+                    const err159 = {
+                      instancePath:
+                        instancePath + "/council/members/" + i14 + "/family",
+                      schemaPath:
+                        "#/properties/council/properties/members/items/properties/family/type",
+                      keyword: "type",
+                      params: { type: "string" },
+                      message: "must be string",
+                    };
+                    if (vErrors === null) {
+                      vErrors = [err159];
+                    } else {
+                      vErrors.push(err159);
+                    }
+                    errors++;
+                  }
+                }
+                if (data78.self_hosted !== undefined) {
+                  if (typeof data78.self_hosted !== "boolean") {
+                    const err160 = {
                       instancePath:
                         instancePath +
                         "/council/members/" +
@@ -3551,15 +3594,15 @@ function validate20(
                       message: "must be boolean",
                     };
                     if (vErrors === null) {
-                      vErrors = [err158];
+                      vErrors = [err160];
                     } else {
-                      vErrors.push(err158);
+                      vErrors.push(err160);
                     }
                     errors++;
                   }
                 }
               } else {
-                const err159 = {
+                const err161 = {
                   instancePath: instancePath + "/council/members/" + i14,
                   schemaPath:
                     "#/properties/council/properties/members/items/type",
@@ -3568,15 +3611,15 @@ function validate20(
                   message: "must be object",
                 };
                 if (vErrors === null) {
-                  vErrors = [err159];
+                  vErrors = [err161];
                 } else {
-                  vErrors.push(err159);
+                  vErrors.push(err161);
                 }
                 errors++;
               }
             }
           } else {
-            const err160 = {
+            const err162 = {
               instancePath: instancePath + "/council/members",
               schemaPath: "#/properties/council/properties/members/type",
               keyword: "type",
@@ -3584,56 +3627,19 @@ function validate20(
               message: "must be array",
             };
             if (vErrors === null) {
-              vErrors = [err160];
+              vErrors = [err162];
             } else {
-              vErrors.push(err160);
+              vErrors.push(err162);
             }
             errors++;
           }
         }
-        if (data75.max_findings !== undefined) {
-          let data83 = data75.max_findings;
-          if (!(typeof data83 == "number" && !(data83 % 1) && !isNaN(data83))) {
-            const err161 = {
-              instancePath: instancePath + "/council/max_findings",
-              schemaPath: "#/properties/council/properties/max_findings/type",
-              keyword: "type",
-              params: { type: "integer" },
-              message: "must be integer",
-            };
-            if (vErrors === null) {
-              vErrors = [err161];
-            } else {
-              vErrors.push(err161);
-            }
-            errors++;
-          }
-          if (typeof data83 == "number") {
-            if (data83 < 1 || isNaN(data83)) {
-              const err162 = {
-                instancePath: instancePath + "/council/max_findings",
-                schemaPath:
-                  "#/properties/council/properties/max_findings/minimum",
-                keyword: "minimum",
-                params: { comparison: ">=", limit: 1 },
-                message: "must be >= 1",
-              };
-              if (vErrors === null) {
-                vErrors = [err162];
-              } else {
-                vErrors.push(err162);
-              }
-              errors++;
-            }
-          }
-        }
-        if (data75.max_experiments !== undefined) {
-          let data84 = data75.max_experiments;
+        if (data76.max_findings !== undefined) {
+          let data84 = data76.max_findings;
           if (!(typeof data84 == "number" && !(data84 % 1) && !isNaN(data84))) {
             const err163 = {
-              instancePath: instancePath + "/council/max_experiments",
-              schemaPath:
-                "#/properties/council/properties/max_experiments/type",
+              instancePath: instancePath + "/council/max_findings",
+              schemaPath: "#/properties/council/properties/max_findings/type",
               keyword: "type",
               params: { type: "integer" },
               message: "must be integer",
@@ -3646,14 +3652,14 @@ function validate20(
             errors++;
           }
           if (typeof data84 == "number") {
-            if (data84 < 0 || isNaN(data84)) {
+            if (data84 < 1 || isNaN(data84)) {
               const err164 = {
-                instancePath: instancePath + "/council/max_experiments",
+                instancePath: instancePath + "/council/max_findings",
                 schemaPath:
-                  "#/properties/council/properties/max_experiments/minimum",
+                  "#/properties/council/properties/max_findings/minimum",
                 keyword: "minimum",
-                params: { comparison: ">=", limit: 0 },
-                message: "must be >= 0",
+                params: { comparison: ">=", limit: 1 },
+                message: "must be >= 1",
               };
               if (vErrors === null) {
                 vErrors = [err164];
@@ -3664,12 +3670,13 @@ function validate20(
             }
           }
         }
-        if (data75.max_rounds !== undefined) {
-          let data85 = data75.max_rounds;
+        if (data76.max_experiments !== undefined) {
+          let data85 = data76.max_experiments;
           if (!(typeof data85 == "number" && !(data85 % 1) && !isNaN(data85))) {
             const err165 = {
-              instancePath: instancePath + "/council/max_rounds",
-              schemaPath: "#/properties/council/properties/max_rounds/type",
+              instancePath: instancePath + "/council/max_experiments",
+              schemaPath:
+                "#/properties/council/properties/max_experiments/type",
               keyword: "type",
               params: { type: "integer" },
               message: "must be integer",
@@ -3682,14 +3689,14 @@ function validate20(
             errors++;
           }
           if (typeof data85 == "number") {
-            if (data85 > 2 || isNaN(data85)) {
+            if (data85 < 0 || isNaN(data85)) {
               const err166 = {
-                instancePath: instancePath + "/council/max_rounds",
+                instancePath: instancePath + "/council/max_experiments",
                 schemaPath:
-                  "#/properties/council/properties/max_rounds/maximum",
-                keyword: "maximum",
-                params: { comparison: "<=", limit: 2 },
-                message: "must be <= 2",
+                  "#/properties/council/properties/max_experiments/minimum",
+                keyword: "minimum",
+                params: { comparison: ">=", limit: 0 },
+                message: "must be >= 0",
               };
               if (vErrors === null) {
                 vErrors = [err166];
@@ -3698,47 +3705,47 @@ function validate20(
               }
               errors++;
             }
-            if (data85 < 1 || isNaN(data85)) {
-              const err167 = {
-                instancePath: instancePath + "/council/max_rounds",
-                schemaPath:
-                  "#/properties/council/properties/max_rounds/minimum",
-                keyword: "minimum",
-                params: { comparison: ">=", limit: 1 },
-                message: "must be >= 1",
-              };
-              if (vErrors === null) {
-                vErrors = [err167];
-              } else {
-                vErrors.push(err167);
-              }
-              errors++;
-            }
           }
         }
-        if (data75.min_members !== undefined) {
-          let data86 = data75.min_members;
+        if (data76.max_rounds !== undefined) {
+          let data86 = data76.max_rounds;
           if (!(typeof data86 == "number" && !(data86 % 1) && !isNaN(data86))) {
-            const err168 = {
-              instancePath: instancePath + "/council/min_members",
-              schemaPath: "#/properties/council/properties/min_members/type",
+            const err167 = {
+              instancePath: instancePath + "/council/max_rounds",
+              schemaPath: "#/properties/council/properties/max_rounds/type",
               keyword: "type",
               params: { type: "integer" },
               message: "must be integer",
             };
             if (vErrors === null) {
-              vErrors = [err168];
+              vErrors = [err167];
             } else {
-              vErrors.push(err168);
+              vErrors.push(err167);
             }
             errors++;
           }
           if (typeof data86 == "number") {
+            if (data86 > 2 || isNaN(data86)) {
+              const err168 = {
+                instancePath: instancePath + "/council/max_rounds",
+                schemaPath:
+                  "#/properties/council/properties/max_rounds/maximum",
+                keyword: "maximum",
+                params: { comparison: "<=", limit: 2 },
+                message: "must be <= 2",
+              };
+              if (vErrors === null) {
+                vErrors = [err168];
+              } else {
+                vErrors.push(err168);
+              }
+              errors++;
+            }
             if (data86 < 1 || isNaN(data86)) {
               const err169 = {
-                instancePath: instancePath + "/council/min_members",
+                instancePath: instancePath + "/council/max_rounds",
                 schemaPath:
-                  "#/properties/council/properties/min_members/minimum",
+                  "#/properties/council/properties/max_rounds/minimum",
                 keyword: "minimum",
                 params: { comparison: ">=", limit: 1 },
                 message: "must be >= 1",
@@ -3752,11 +3759,47 @@ function validate20(
             }
           }
         }
-        if (data75.timeout !== undefined) {
-          let data87 = data75.timeout;
-          if (typeof data87 === "string") {
-            if (!pattern4.test(data87)) {
-              const err170 = {
+        if (data76.min_members !== undefined) {
+          let data87 = data76.min_members;
+          if (!(typeof data87 == "number" && !(data87 % 1) && !isNaN(data87))) {
+            const err170 = {
+              instancePath: instancePath + "/council/min_members",
+              schemaPath: "#/properties/council/properties/min_members/type",
+              keyword: "type",
+              params: { type: "integer" },
+              message: "must be integer",
+            };
+            if (vErrors === null) {
+              vErrors = [err170];
+            } else {
+              vErrors.push(err170);
+            }
+            errors++;
+          }
+          if (typeof data87 == "number") {
+            if (data87 < 1 || isNaN(data87)) {
+              const err171 = {
+                instancePath: instancePath + "/council/min_members",
+                schemaPath:
+                  "#/properties/council/properties/min_members/minimum",
+                keyword: "minimum",
+                params: { comparison: ">=", limit: 1 },
+                message: "must be >= 1",
+              };
+              if (vErrors === null) {
+                vErrors = [err171];
+              } else {
+                vErrors.push(err171);
+              }
+              errors++;
+            }
+          }
+        }
+        if (data76.timeout !== undefined) {
+          let data88 = data76.timeout;
+          if (typeof data88 === "string") {
+            if (!pattern4.test(data88)) {
+              const err172 = {
                 instancePath: instancePath + "/council/timeout",
                 schemaPath: "#/properties/council/properties/timeout/pattern",
                 keyword: "pattern",
@@ -3767,14 +3810,14 @@ function validate20(
                   '"',
               };
               if (vErrors === null) {
-                vErrors = [err170];
+                vErrors = [err172];
               } else {
-                vErrors.push(err170);
+                vErrors.push(err172);
               }
               errors++;
             }
           } else {
-            const err171 = {
+            const err173 = {
               instancePath: instancePath + "/council/timeout",
               schemaPath: "#/properties/council/properties/timeout/type",
               keyword: "type",
@@ -3782,22 +3825,22 @@ function validate20(
               message: "must be string",
             };
             if (vErrors === null) {
-              vErrors = [err171];
+              vErrors = [err173];
             } else {
-              vErrors.push(err171);
+              vErrors.push(err173);
             }
             errors++;
           }
         }
-        if (data75.vendors_allowed !== undefined) {
-          let data88 = data75.vendors_allowed;
-          if (Array.isArray(data88)) {
-            const len11 = data88.length;
+        if (data76.vendors_allowed !== undefined) {
+          let data89 = data76.vendors_allowed;
+          if (Array.isArray(data89)) {
+            const len11 = data89.length;
             for (let i15 = 0; i15 < len11; i15++) {
-              let data89 = data88[i15];
-              if (typeof data89 === "string") {
-                if (!pattern13.test(data89)) {
-                  const err172 = {
+              let data90 = data89[i15];
+              if (typeof data90 === "string") {
+                if (!pattern13.test(data90)) {
+                  const err174 = {
                     instancePath:
                       instancePath + "/council/vendors_allowed/" + i15,
                     schemaPath:
@@ -3807,14 +3850,14 @@ function validate20(
                     message: 'must match pattern "' + "^[a-z][a-z0-9-]*$" + '"',
                   };
                   if (vErrors === null) {
-                    vErrors = [err172];
+                    vErrors = [err174];
                   } else {
-                    vErrors.push(err172);
+                    vErrors.push(err174);
                   }
                   errors++;
                 }
               } else {
-                const err173 = {
+                const err175 = {
                   instancePath:
                     instancePath + "/council/vendors_allowed/" + i15,
                   schemaPath:
@@ -3824,25 +3867,25 @@ function validate20(
                   message: "must be string",
                 };
                 if (vErrors === null) {
-                  vErrors = [err173];
+                  vErrors = [err175];
                 } else {
-                  vErrors.push(err173);
+                  vErrors.push(err175);
                 }
                 errors++;
               }
             }
-            let i16 = data88.length;
+            let i16 = data89.length;
             let j4;
             if (i16 > 1) {
               const indices1 = {};
               for (; i16--;) {
-                let item1 = data88[i16];
+                let item1 = data89[i16];
                 if (typeof item1 !== "string") {
                   continue;
                 }
                 if (typeof indices1[item1] == "number") {
                   j4 = indices1[item1];
-                  const err174 = {
+                  const err176 = {
                     instancePath: instancePath + "/council/vendors_allowed",
                     schemaPath:
                       "#/properties/council/properties/vendors_allowed/uniqueItems",
@@ -3856,9 +3899,9 @@ function validate20(
                       " are identical)",
                   };
                   if (vErrors === null) {
-                    vErrors = [err174];
+                    vErrors = [err176];
                   } else {
-                    vErrors.push(err174);
+                    vErrors.push(err176);
                   }
                   errors++;
                   break;
@@ -3867,7 +3910,7 @@ function validate20(
               }
             }
           } else {
-            const err175 = {
+            const err177 = {
               instancePath: instancePath + "/council/vendors_allowed",
               schemaPath:
                 "#/properties/council/properties/vendors_allowed/type",
@@ -3876,15 +3919,15 @@ function validate20(
               message: "must be array",
             };
             if (vErrors === null) {
-              vErrors = [err175];
+              vErrors = [err177];
             } else {
-              vErrors.push(err175);
+              vErrors.push(err177);
             }
             errors++;
           }
         }
       } else {
-        const err176 = {
+        const err178 = {
           instancePath: instancePath + "/council",
           schemaPath: "#/properties/council/type",
           keyword: "type",
@@ -3892,15 +3935,15 @@ function validate20(
           message: "must be object",
         };
         if (vErrors === null) {
-          vErrors = [err176];
+          vErrors = [err178];
         } else {
-          vErrors.push(err176);
+          vErrors.push(err178);
         }
         errors++;
       }
     }
   } else {
-    const err177 = {
+    const err179 = {
       instancePath,
       schemaPath: "#/type",
       keyword: "type",
@@ -3908,9 +3951,9 @@ function validate20(
       message: "must be object",
     };
     if (vErrors === null) {
-      vErrors = [err177];
+      vErrors = [err179];
     } else {
-      vErrors.push(err177);
+      vErrors.push(err179);
     }
     errors++;
   }

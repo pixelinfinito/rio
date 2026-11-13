@@ -366,6 +366,19 @@ fn verifier_defaults_budgets_aliases_and_guardrails() {
         ("verify: {voters: 2, quorum: 3}", false),
         ("verify: {model: absent}", false),
         ("verify: {voters: 0}", false),
+        // Risks may be verified by fewer voters, under the one-voter rule.
+        ("verify: {risk_voters: 1}", true),
+        ("verify: {risk_voters: 3}", true),
+        ("verify: {risk_voters: 4}", false),
+        ("verify: {risk_voters: 0}", false),
+        (
+            "verify: {risk_voters: 2}\nmodels: {default: openai/a, verifier: openai/a}",
+            true,
+        ),
+        (
+            "verify: {risk_voters: 1}\nmodels: {default: openai/a, verifier: openai/a}",
+            false,
+        ),
         ("budget: {fast: {verify_tokens: 0}}", false),
     ] {
         write(

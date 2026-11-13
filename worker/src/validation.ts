@@ -291,7 +291,13 @@ export function validateSubmission(value: any): asserts value is Submission {
     "unknown verifier alias",
   );
   invariant(
-    value.profile.verify.voters !== 1 ||
+    value.profile.verify.risk_voters === undefined ||
+      value.profile.verify.risk_voters <= value.profile.verify.voters,
+    "invalid quorum",
+  );
+  invariant(
+    (value.profile.verify.voters !== 1 &&
+      value.profile.verify.risk_voters !== 1) ||
       value.profile.models[alias] !== value.profile.models.default,
     "single verifier must use a different model",
   );

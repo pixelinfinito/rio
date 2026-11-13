@@ -203,7 +203,7 @@ The resolved profile, including the chain, the pinned versions of every referenc
 - **THEN** the review id differs from the previous run
 
 ### Requirement: Verification settings
-Profiles SHALL accept optional `verify: { voters, quorum, model }`. Defaults SHALL be three voters, quorum two, and the `verifier` model alias when present, otherwise `default`. Voters and quorum SHALL be positive integers with quorum no greater than voters. An omitted quorum for one voter SHALL resolve to one. An explicit model alias SHALL resolve through `models`.
+Profiles SHALL accept optional `verify: { voters, quorum, model, risk_voters }`. Defaults SHALL be three voters, quorum two, and the `verifier` model alias when present, otherwise `default`. Voters and quorum SHALL be positive integers with quorum no greater than voters. An omitted quorum for one voter SHALL resolve to one. An explicit model alias SHALL resolve through `models`. `risk_voters` SHALL be a positive integer no greater than voters, SHALL default to voters, and when it is one the resolved verification model SHALL differ from `models.default`, as for one voter.
 
 #### Scenario: Legacy profile remains valid
 - **WHEN** a profile valid in v0.1 omits `verify`
@@ -216,6 +216,14 @@ Profiles SHALL accept optional `verify: { voters, quorum, model }`. Defaults SHA
 #### Scenario: Impossible quorum rejected
 - **WHEN** a profile sets `verify: { voters: 2, quorum: 3 }`
 - **THEN** validation rejects the quorum with its configuration location
+
+#### Scenario: Fewer voters for risks
+- **WHEN** a profile with a distinct verifier model declares `verify: { risk_voters: 1 }`
+- **THEN** it is valid and keeps three voters and quorum two for every other hypothesis
+
+#### Scenario: Risk voters above voters rejected
+- **WHEN** a profile sets `verify: { voters: 3, risk_voters: 4 }`
+- **THEN** validation rejects `risk_voters` with its configuration location
 
 #### Scenario: Explicit model takes precedence
 - **WHEN** `verify.model` names an existing alias in a profile also defining `models.verifier`

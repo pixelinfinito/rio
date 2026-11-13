@@ -38,6 +38,10 @@
         "response_format": {
           "type": "json_object"
         },
+        "stop": [
+          "</invoke>\n\n",
+          "</invoke>\n</invoke>"
+        ],
         "provider": {
           "require_parameters": true
         }
@@ -97,6 +101,10 @@
         "response_format": {
           "type": "json_object"
         },
+        "stop": [
+          "</invoke>\n\n",
+          "</invoke>\n</invoke>"
+        ],
         "provider": {
           "require_parameters": true
         }
@@ -164,6 +172,10 @@
         "response_format": {
           "type": "json_object"
         },
+        "stop": [
+          "</invoke>\n\n",
+          "</invoke>\n</invoke>"
+        ],
         "provider": {
           "require_parameters": true
         }
@@ -239,6 +251,10 @@
         "response_format": {
           "type": "json_object"
         },
+        "stop": [
+          "</invoke>\n\n",
+          "</invoke>\n</invoke>"
+        ],
         "provider": {
           "require_parameters": true
         }
@@ -284,6 +300,10 @@
         "response_format": {
           "type": "json_object"
         },
+        "stop": [
+          "</invoke>\n\n",
+          "</invoke>\n</invoke>"
+        ],
         "provider": {
           "require_parameters": true
         }
@@ -343,6 +363,10 @@
         "response_format": {
           "type": "json_object"
         },
+        "stop": [
+          "</invoke>\n\n",
+          "</invoke>\n</invoke>"
+        ],
         "provider": {
           "require_parameters": true
         }

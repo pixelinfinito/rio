@@ -389,6 +389,11 @@
         "model": {
           "type": "string",
           "minLength": 1
+        },
+        "risk_voters": {
+          "description": "Voters for a hypothesis its agent classed as a risk. Defaults to voters.",
+          "type": "integer",
+          "minimum": 1
         }
       },
       "additionalProperties": false

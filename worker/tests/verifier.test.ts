@@ -1,12 +1,23 @@
 import { describe, it, expect } from "vitest";
 import { aggregate, blindMatch, evidenceLevel } from "../src/quorum";
-import { validateHypotheses, validateReport } from "../src/validation";
+import {
+  validateHypotheses,
+  validateReport,
+  validateSubmission,
+  validateVerification,
+} from "../src/validation";
 import historicalComplete from "../../crates/rio-core/tests/fixtures/complete.json";
 import historicalIncomplete from "../../crates/rio-core/tests/fixtures/incomplete.json";
 import historicalPartial from "../../crates/rio-core/tests/fixtures/partial.json";
 import historicalNoChanges from "../../crates/rio-core/tests/fixtures/no_changes.json";
 import historicalError from "../../crates/rio-core/tests/fixtures/error.json";
-import { CONTEXT_BYTES, SYMBOL_LINES, blindContext, verifyHypothesis } from "../src/verifier";
+import {
+  CONTEXT_BYTES,
+  SYMBOL_LINES,
+  blindContext,
+  panelOf,
+  verifyHypothesis,
+} from "../src/verifier";
 import {
   Tools,
   dataBlock,
@@ -497,6 +508,94 @@ describe("quorum", () => {
     expect(
       ledger.usage.filter((u) => u.phase.startsWith("verify")),
     ).toHaveLength(6);
+  });
+  it("gives a risk hypothesis the profile's risk voters and every other the full quorum", async () => {
+    const complete: Gateway["complete"] = async (request) => ({
+      content: JSON.stringify({
+        result: request.messages.some((m) =>
+          m.content.includes("Verify this hypothesis."),
+        )
+          ? { evidence_level: "plausible", evidence: [] }
+          : [],
+      }),
+      input_tokens: 20,
+      output_tokens: 10,
+      cost_usd: 0.0001,
+    });
+    const verify = async (
+      settings: Partial<typeof profile.verify>,
+      category: "risk" | "defect" | "security",
+    ) => {
+      const ledger = new MemoryLedger();
+      const result = await verifyHypothesis({
+        profile: { ...profile, verify: { ...profile.verify, ...settings } },
+        hypothesis: { ...hypothesis, category },
+        intent: "",
+        guidance: [],
+        snapshot,
+        context: { snapshot, head: graphs.head, executions: {}, guidance: [] },
+        gateway: { complete },
+        ledger,
+        tools: () => new Tools(snapshot, graphs, undefined),
+        verifyTokens: 10000,
+        save: async () => {},
+      });
+      validateVerification(result.verified.verification);
+      return {
+        calls: ledger.usage.length,
+        votes: result.votes.map((v) => v.voter),
+        level: result.verified.evidence_level,
+        ...result.verified.verification,
+      };
+    };
+    // One voter settles a risk; its record states one voter, not three.
+    expect(await verify({ risk_voters: 1 }, "risk")).toEqual({
+      calls: 2,
+      votes: [0],
+      level: "plausible",
+      voters: 1,
+      agreeing: 1,
+      blind_match: ["none"],
+      split: false,
+    });
+    // The quorum of a risk is never more than its voters.
+    expect(await verify({ risk_voters: 2, quorum: 3 }, "risk")).toMatchObject({
+      calls: 4,
+      voters: 2,
+      agreeing: 2,
+      split: false,
+    });
+    for (const category of ["defect", "security"] as const)
+      expect(await verify({ risk_voters: 1 }, category)).toMatchObject({
+        calls: 6,
+        votes: [0, 1, 2],
+        voters: 3,
+        agreeing: 3,
+      });
+    // Without the setting a risk keeps the profile's voters.
+    expect(await verify({}, "risk")).toMatchObject({ calls: 6, voters: 3 });
+    expect(panelOf({ voters: 2, quorum: 2, risk_voters: 5 }, hypothesis)).toEqual(
+      { voters: 2, quorum: 2 },
+    );
+    expect(
+      panelOf({ voters: 2, quorum: 2, risk_voters: 5 }, { category: "risk" }),
+    ).toEqual({ voters: 2, quorum: 2 });
+  });
+  it("accepts fewer risk voters only within the voters and the one-voter rule", () => {
+    const submit = (verify: object, models = profile.models) => () =>
+      validateSubmission({
+        ...submission(),
+        profile: { ...profile, models, verify },
+      });
+    expect(submit({ voters: 3, quorum: 2, risk_voters: 1 })).not.toThrow();
+    expect(submit({ voters: 3, quorum: 2, risk_voters: 3 })).not.toThrow();
+    expect(submit({ voters: 3, quorum: 2, risk_voters: 4 })).toThrow();
+    expect(submit({ voters: 3, quorum: 2, risk_voters: 0 })).toThrow();
+    const same = { default: "openai/test", verifier: "openai/test" };
+    expect(submit({ voters: 3, quorum: 2, risk_voters: 2 }, same)).not.toThrow();
+    expect(submit({ voters: 3, quorum: 2, risk_voters: 1 }, same)).toThrow(
+      "single verifier must use a different model",
+    );
   });
   it("records cancelled, malformed and exhausted voters without reducing quorum", async () => {
     for (const error of [

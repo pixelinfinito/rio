@@ -259,7 +259,13 @@ export interface Profile {
   models: Record<string, string>;
   steps: Step[];
   budget: { fast: Budget; deep?: Budget };
-  verify: { voters: number; quorum: number; model?: string };
+  verify: {
+    voters: number;
+    quorum: number;
+    model?: string;
+    // Voters for a hypothesis its agent classed as a risk; `voters` when absent.
+    risk_voters?: number;
+  };
   posture: "critical-only" | "balanced" | "thorough";
   min_evidence: Evidence;
   max_defects: number;
@@ -418,6 +424,8 @@ export interface ModelRequest {
   }[];
   system: Content;
   max_tokens: number;
+  // Sequences that end the reply; sent only on routes known to take them.
+  stop?: string[];
   signal?: AbortSignal;
   // Prompt-cache hints (design D9): enabled hint classes, the OpenAI cache key,
   // and whether the last message is a conversation tail worth marking.

@@ -32,7 +32,11 @@
             ]
           }
         ],
-        "max_tokens": 16384
+        "max_tokens": 16384,
+        "stop_sequences": [
+          "</invoke>\n\n",
+          "</invoke>\n</invoke>"
+        ]
       }
     },
     {
@@ -83,7 +87,11 @@
             ]
           }
         ],
-        "max_tokens": 16384
+        "max_tokens": 16384,
+        "stop_sequences": [
+          "</invoke>\n\n",
+          "</invoke>\n</invoke>"
+        ]
       }
     },
     {
@@ -142,7 +150,11 @@
             ]
           }
         ],
-        "max_tokens": 16384
+        "max_tokens": 16384,
+        "stop_sequences": [
+          "</invoke>\n\n",
+          "</invoke>\n</invoke>"
+        ]
       }
     },
     {
@@ -209,7 +221,11 @@
             ]
           }
         ],
-        "max_tokens": 16384
+        "max_tokens": 16384,
+        "stop_sequences": [
+          "</invoke>\n\n",
+          "</invoke>\n</invoke>"
+        ]
       }
     }
   ],
@@ -246,7 +262,11 @@
             ]
           }
         ],
-        "max_tokens": 16384
+        "max_tokens": 16384,
+        "stop_sequences": [
+          "</invoke>\n\n",
+          "</invoke>\n</invoke>"
+        ]
       }
     },
     {
@@ -297,7 +317,11 @@
             ]
           }
         ],
-        "max_tokens": 16384
+        "max_tokens": 16384,
+        "stop_sequences": [
+          "</invoke>\n\n",
+          "</invoke>\n</invoke>"
+        ]
       }
     }
   ],

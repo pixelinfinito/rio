@@ -64,6 +64,7 @@ Profiles describe a review. Machine settings such as the cache path and parallel
 | `verify.voters` | `integer` | no |
 | `verify.quorum` | `integer` | no |
 | `verify.model` | `string` | no |
+| `verify.risk_voters` | `integer` | no |
 | `council` | `object` | no |
 | `council.members` | `array` | no |
 | `council.members[].uses` | `string` | yes |
@@ -163,6 +164,11 @@ Step `rules` contain syntax-validated expressions/actions, and step `agents` hol
 one voter. `verify.model` resolves an explicit model alias, then falls back to
 `verifier` if present, otherwise `default`. Single-voter independence compares
 actual provider/model values, so another alias for the default cannot bypass it.
+`verify.risk_voters` sets how many of the voters examine a hypothesis its agent
+classed as a `risk` (a hazard it could not settle, or an improvement): such a
+hypothesis is never reported as a defect, and its quorum is `quorum` or
+`risk_voters`, whichever is smaller. It defaults to `voters`, may not exceed it,
+and `risk_voters: 1` falls under the same single-voter independence rule.
 Both budget modes accept `verify_tokens`. Each voter's entire two-turn allowance
 is 320,000 tokens unless overridden, whatever the review token budget. Agent tokens
 are the active review token budget divided by `agents_max`. Resolution records the

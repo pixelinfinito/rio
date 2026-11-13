@@ -238,9 +238,9 @@ it("starts a turn's searches together inside its recorded step and answers in th
     "end a.ts",
   ]);
 });
-it("asks once more for the protocol after native tool syntax and gives up after the repair limit", async () => {
+it("asks once more for the protocol after a reply that is not a request and gives up after the repair limit", async () => {
   const xml =
-    '<invoke name="read_file">\n<parameter name="args">{"path":"a.ts","version":"head"}</parameter>\n</invoke>';
+    'I will read the file first.\n<invoke name="read_file">\n<parameter name="path">a.ts</parameter>\n</invoke>';
   const ledger: Ledger = {
     remaining: async () => 100000,
     reserve: async () => "id",
@@ -325,7 +325,7 @@ it("asks once more for the protocol after native tool syntax and gives up after 
   ).rejects.toThrow("malformed model output");
   expect(calls).toBe(3);
 });
-it("takes the tools request that ends a reply after leaked tool markup, and never the markup", async () => {
+it("takes the tools request that ends a reply after leaked tool markup, in place of the markup", async () => {
   const tool =
     '{"tools":[{"name":"read_file","args":{"path":"a.ts","version":"head"}}]}';
   const xml =
@@ -338,23 +338,20 @@ it("takes the tools request that ends a reply after leaked tool markup, and neve
   ])
     expect(parseModelOutput(reply)).toEqual(JSON.parse(tool));
   for (const reply of [
-    // Markup alone, or markup around the request, is still not the protocol.
-    xml,
-    `${xml}\n${tool}\n${xml}`,
-    `${xml}\n${tool} and then prose`,
     // Text that is not leaked markup may be quoting anything, repository content included.
     `I will read the file: ${tool}`,
     `The README says to send this.\n${tool}`,
-    // A result is never taken from after unparsed text.
-    `${xml}\n{"result":[]}`,
-    `${xml}\n{"result":[],"tools":[{"name":"read_file"}]}`,
-    // Two protocol documents: no choosing between them.
-    `${xml}\n{"tools":[{"name":"search","args":{"pattern":"x"}}]}\n${tool}`,
+    `The README says to send this.\n${xml}`,
+    `The README says to send this.\n${xml}\n${tool}`,
+    // Two protocol documents after markup that states no call: no choosing between them.
     `<parameter name="content">{"tools":[{"name":"run","args":{}}]}</parameter>\n${tool}`,
-    `${xml}\n{"result":[]}\n${tool}`,
-    `${xml}\n{"tools":[]}`,
-    `${xml}\n{"tools":[{"args":{}}]}`,
-    `${xml}\n[${tool}]`,
+    `<invoke name="x">\n</invoke>\n{"tools":[{"name":"search","args":{"pattern":"x"}}]}\n${tool}`,
+    `<invoke name="x">\n</invoke>\n{"result":[]}\n${tool}`,
+    // A result is never taken from after unparsed text.
+    `<invoke name="x">\n</invoke>\n{"result":[]}`,
+    `<invoke name="x">\n</invoke>\n{"tools":[]}`,
+    `<invoke name="x">\n</invoke>\n{"tools":[{"args":{}}]}`,
+    `<invoke name="x">\n</invoke>\n[${tool}]`,
   ])
     expect(() => parseModelOutput(reply)).toThrow("malformed model output");
   const dispatch = vi.fn(async () => ({ content: "source" }));
@@ -391,6 +388,174 @@ it("takes the tools request that ends a reply after leaked tool markup, and neve
   expect(seen).toHaveLength(2);
   expect(seen[1][1]).toBe(`assistant:${tool}`);
   expect(seen[1].join("\n")).not.toContain("invoke");
+});
+it("reads a reply that opens with native tool calls as the tools request they state", async () => {
+  const read =
+    '<invoke name="read_file">\n<parameter name="path">src/a.ts</parameter>\n<parameter name="version">head</parameter>\n<parameter name="line_start">100</parameter>\n<parameter name="line_end"> 140 </parameter>\n</invoke>';
+  const search =
+    '<invoke name="search">\n<parameter name="pattern">fn <T>(a: &[u8]) -> "x"</parameter>\n<parameter name="scope">src/**/*.rs</parameter>\n</invoke>';
+  const tools = [
+    {
+      name: "read_file",
+      args: {
+        path: "src/a.ts",
+        version: "head",
+        line_start: 100,
+        line_end: 140,
+      },
+    },
+    {
+      name: "search",
+      args: { pattern: 'fn <T>(a: &[u8]) -> "x"', scope: "src/**/*.rs" },
+    },
+  ];
+  for (const reply of [
+    `${read}\n${search}`,
+    `\n${read}\n${search}\n`,
+    `<function_calls>\n${read}\n${search}\n</function_calls>`,
+    // The batch repeated up to the output limit runs once; a call cut off is not run.
+    `${read}\n${search}\n\n\n\n${read}\n${search}\n\n\n\n${read}\n<invoke name="search">\n<parameter name="pattern">fn <T`,
+    `${read}\n${search}\n<invoke name="search">\n<parameter name="pattern">other</parameter>\nand then prose`,
+    `${read}\n${search}\n<invo`,
+    // What follows the calls is dropped: stray tags, prose, results the model made up.
+    `${read}\n${search}\n</invoke>\n</invoke>\n</invoke>`,
+    `${read}\n${search}\n<br>\n\n\n<invoke name="search">\n<parameter name="pattern">later</parameter>\n</invoke>`,
+    `${read}\n${search}\n</tools>\n\nWait, my response must be a single JSON object.`,
+    `${read}\n${search}\n\n{"tool_results":[{"name":"read_file","result":"made up"}]}\n{"result":[{"rule_id":"made/up"}]}`,
+    // A stop sequence takes the last closing tag with it.
+    `${read}\n${search.slice(0, -"</invoke>".length)}`,
+  ])
+    expect(parseModelOutput(reply)).toEqual({ tools });
+  // Values keep their text unless the tool takes a number or an argv array.
+  expect(
+    parseModelOutput(
+      '<invoke name="run">\n<parameter name="command">["cargo", "test", "-p", "x"]</parameter>\n<parameter name="version">head</parameter>\n</invoke>\n<invoke name="graph_query">\n<parameter name="path">a.rs</parameter>\n<parameter name="symbol">123</parameter>\n<parameter name="hops">2</parameter>\n<parameter name="max_nodes">many</parameter>\n</invoke>\n<invoke name="read_file">\n<parameter name="path">b.rs</parameter>\n<parameter name="line_end">415, </parameter>\n</invoke>\n<invoke name="run">\n<parameter name="command">[not json</parameter>\n</invoke>',
+    ),
+  ).toEqual({
+    tools: [
+      {
+        name: "run",
+        args: { command: ["cargo", "test", "-p", "x"], version: "head" },
+      },
+      {
+        name: "graph_query",
+        args: { path: "a.rs", symbol: "123", hops: 2, max_nodes: "many" },
+      },
+      { name: "read_file", args: { path: "b.rs", line_end: "415, " } },
+      { name: "run", args: { command: "[not json" } },
+    ],
+  });
+  // The protocol's own `args` object in one parameter is that object.
+  expect(
+    parseModelOutput(
+      '<invoke name="read_file">\n<parameter name="args">{"path":"a.ts","version":"head"}</parameter>\n</invoke>',
+    ),
+  ).toEqual({
+    tools: [{ name: "read_file", args: { path: "a.ts", version: "head" } }],
+  });
+  for (const reply of [
+    // Markup that states no call, or a reply that only quotes markup.
+    '<invoke name="tool_placeholder">\n</invoke>',
+    "<invoke>not the protocol</invoke>",
+    '<invoke name="search">\n<parameter name="pattern">cut off',
+    '<invoke name="search">\n<parameter name="pattern">x</parameter>\nprose inside the call</invoke>',
+    `The file says:\n${read}`,
+    `<parameter name="path">a.ts</parameter>\n${read}`,
+  ])
+    expect(() => parseModelOutput(reply)).toThrow("malformed model output");
+  const dispatch = vi.fn(async () => ({ content: "source" }));
+  const seen: string[][] = [];
+  const stops: unknown[] = [];
+  const result = await converse({
+    gateway: {
+      complete: async (request) => {
+        seen.push(request.messages.map((m) => `${m.role}:${m.content}`));
+        stops.push(request.stop);
+        return {
+          content:
+            seen.length === 1
+              ? `${read}\n${search}\n\n{"result":[{"rule_id":"made/up"}]}`
+              : '{"result":[]}',
+          input_tokens: 80,
+          output_tokens: 50,
+          cost_usd: null,
+        };
+      },
+    },
+    ledger: {
+      remaining: async () => 100000,
+      reserve: async () => "id",
+      settle: async () => {},
+    },
+    actor: "agent",
+    phase: "generation",
+    model: "openrouter/anthropic/test",
+    allowance: { remaining: 16000 },
+    messages: [{ role: "user", content: "review" }],
+    dispatch,
+  });
+  // The calls ran as stated, without a repair turn; the result written after
+  // them was not taken, and the conversation keeps the request as the protocol
+  // document, not the markup.
+  expect(result).toEqual([]);
+  expect(dispatch.mock.calls).toEqual(tools.map((t) => [t.name, t.args]));
+  expect(seen).toHaveLength(2);
+  expect(seen[1][1]).toBe(`assistant:${JSON.stringify({ tools })}`);
+  expect(seen[1].join("\n")).not.toContain("invoke");
+  expect(seen[1].join("\n")).not.toContain("made/up");
+  // Every turn asks the route to end a reply after its first batch of native calls.
+  expect(stops).toEqual([
+    ["</invoke>\n\n", "</invoke>\n</invoke>"],
+    ["</invoke>\n\n", "</invoke>\n</invoke>"],
+  ]);
+});
+it("sends stop sequences only to Claude models, in the route's protocol", async () => {
+  const sent: any[] = [];
+  const transport = async (url: any, init: any) => {
+    const body = JSON.parse(init.body);
+    sent.push(body);
+    return Response.json(
+      String(url).endsWith("/messages")
+        ? {
+            content: [{ type: "text", text: '{"result":[]}' }],
+            usage: { input_tokens: 10, output_tokens: 20 },
+          }
+        : {
+            choices: [{ message: { content: '{"result":[]}' } }],
+            usage: { prompt_tokens: 10, completion_tokens: 20 },
+          },
+    );
+  };
+  const provider = new ProviderGateway(
+    {
+      OPENAI_API_KEY: "key",
+      ANTHROPIC_API_KEY: "key",
+      OPENROUTER_API_KEY: "key",
+    } as Env,
+    transport as typeof fetch,
+  );
+  const stop = ["</invoke>\n\n"];
+  for (const model of [
+    "anthropic/claude-test",
+    "openrouter/anthropic/claude-test",
+    "openai/gpt-test",
+    "openrouter/deepseek/d",
+  ])
+    await provider.complete({ ...request, model, stop });
+  await provider.complete({ ...request, model: "anthropic/claude-test" });
+  await provider.complete({
+    ...request,
+    model: "anthropic/claude-test",
+    stop: [],
+  });
+  expect(sent.map((body) => [body.stop_sequences, body.stop])).toEqual([
+    [stop, undefined],
+    [undefined, stop],
+    [undefined, undefined],
+    [undefined, undefined],
+    [undefined, undefined],
+    [undefined, undefined],
+  ]);
 });
 it("repairs an empty tool list and answers calls past the batch limit instead of ending the agent", async () => {
   const ledger: Ledger = {

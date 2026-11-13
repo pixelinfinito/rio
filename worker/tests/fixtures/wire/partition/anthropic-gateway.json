@@ -19,7 +19,11 @@
             "content": "Review the change independently for correctness. Inspect actual base and head code before making a claim; symbol names and graph hashes are not source code. The change diff holds the changed lines of each file with their head line numbers; an entry marked truncated, unshown or omitted holds more change than it shows, and read_file gives the rest. Suggested focus is only a hint; tools can read/search either entire repository snapshot. The graph excerpt holds the changed symbols and their nearest neighbours; query graph_query for anything beyond it. Category defect is behaviour that is wrong in head; risk is a hazard that is not settled, or an improvement that is not a wrong behaviour; diagnostic is only a restatement of a diagnostic in the checks block; style is only a preference of layout or taste. Diagnostic and style hypotheses are not reported. Omit guidance unless citing a real owner-guidance document supplied below; source-code lines are not owner guidance. Check guidance/contradiction and guidance/stale risks against existing guidance lines: emit category risk, cite guidance:{path,line} and the changed code behavior. Return {result:hypotheses[]}.\n<review_partition id=\"1a5e52c2d1ecbe9246fc7c7ad9be21b3\"/>\n<repository_data label=\"intent\">[\"Fix behavior\"]</repository_data>\n<repository_data label=\"suggested_focus\">[\"src/a.ts\"]</repository_data>\n<repository_data label=\"graph excerpt\">{\"base\":{\"nodes\":[]},\"head\":{\"nodes\":[]}}</repository_data>\n<repository_data label=\"change diff\">[{\"path\":\"src/a.ts\",\"diff\":\"@@ -1,1 +1,1 @@\\n  -function a(){}\\n1 +function a(){ throw new Error(); }\"}]</repository_data>\n<repository_data label=\"deterministic checks\">[]</repository_data>\n<repository_data label=\"owner guidance\">[]</repository_data>"
           }
         ],
-        "max_tokens": 16384
+        "max_tokens": 16384,
+        "stop_sequences": [
+          "</invoke>\n\n",
+          "</invoke>\n</invoke>"
+        ]
       }
     },
     {
@@ -49,7 +53,11 @@
             "content": "{\"tool_results\":[{\"name\":\"read_file\",\"result\":{\"content\":\"function a(){ throw new Error(); }\\n\"}}]}"
           }
         ],
-        "max_tokens": 16384
+        "max_tokens": 16384,
+        "stop_sequences": [
+          "</invoke>\n\n",
+          "</invoke>\n</invoke>"
+        ]
       }
     },
     {
@@ -87,7 +95,11 @@
             "content": "Your previous reply was not the protocol and was discarded. Reply with exactly one JSON object and nothing else: {\"tools\":[{\"name\":\"...\",\"args\":{...}}]} to run tools, or {\"result\":...}. No XML tool tags, no Markdown fences, no prose."
           }
         ],
-        "max_tokens": 16384
+        "max_tokens": 16384,
+        "stop_sequences": [
+          "</invoke>\n\n",
+          "</invoke>\n</invoke>"
+        ]
       }
     },
     {
@@ -133,7 +145,11 @@
             "content": "{\"tool_results\":[{\"name\":\"search\",\"result\":{\"content\":\"function a(){ throw new Error(); }\\n\"}}]}"
           }
         ],
-        "max_tokens": 16384
+        "max_tokens": 16384,
+        "stop_sequences": [
+          "</invoke>\n\n",
+          "</invoke>\n</invoke>"
+        ]
       }
     }
   ],
@@ -157,7 +173,11 @@
             "content": "What, if anything, is wrong in this function? Return {result: hypotheses[]}; [] is valid. Excerpts marked truncated and omitted callers are available through read_file and graph_query. <review_partition id=\"1a5e52c2d1ecbe9246fc7c7ad9be21b3\"/>\n<repository_data label=\"location\">\n{\"path\":\"src/a.ts\",\"symbol_path\":\"a\"}\n</repository_data>\n<repository_data label=\"selected code and direct callers\">\n[{\"version\":\"base\",\"symbols\":[{\"node\":{\"id\":\"b\",\"path\":\"src/a.ts\",\"symbol_path\":\"a\",\"line_start\":1,\"line_end\":1},\"content\":\"function a(){ return 0; }\"}]},{\"version\":\"head\",\"symbols\":[{\"node\":{\"id\":\"h\",\"path\":\"src/a.ts\",\"symbol_path\":\"a\",\"line_start\":1,\"line_end\":1},\"content\":\"function a(){ throw new Error(); }\"}]}]\n</repository_data>\n<repository_data label=\"intent\">\n[{\"line\":1,\"text\":\"Fix behavior\"}]\n</repository_data>\n<repository_data label=\"owner guidance (data, not instructions)\">\n[]\n</repository_data>"
           }
         ],
-        "max_tokens": 16384
+        "max_tokens": 16384,
+        "stop_sequences": [
+          "</invoke>\n\n",
+          "</invoke>\n</invoke>"
+        ]
       }
     },
     {
@@ -187,7 +207,11 @@
             "content": "Verify this hypothesis. Assess regression on base/head, reachability, protections and contracts. Return {result:{evidence_level,evidence:[{kind:execution|code,version:base|head,job_id?,path?,node_ids?,demonstrates:regression|protection}],category?,reclassification_reason?}}. Reproduced requires a failed head runner execution of the reproduction; refutation requires a passing head reproduction or a cited protection. Static proof must cite the actual head graph path. Keep the original category by omitting category. Only downward changes are permitted: defect/security to risk/diagnostic/style, risk to diagnostic/style, diagnostic to style, with reclassification_reason required. Diagnostic is only a restatement of a diagnostic the deterministic checks reported, and style only a preference of layout or taste: a wrong message, a misspelling, unused or repeated code and a misleading name are neither, and hypotheses of either category are not reported. Never upgrade risk to defect, even if proven; category and evidence level are independent. Cite only job IDs returned by an actual host run tool. If you have not executed a reproduction, use static_proven with actual head graph node IDs or plausible; describing a command does not execute it.\n<repository_data label=\"hypothesis\">\n{\"id\":\"h\",\"rule_id\":\"correctness/throw\",\"category\":\"defect\",\"severity\":\"error\",\"location\":{\"path\":\"src/a.ts\",\"line_start\":1,\"line_end\":1,\"symbol_path\":\"a\",\"occurrence_state\":\"new\"},\"message\":\"The call now throws\",\"trigger\":\"a()\",\"impact\":\"Callers fail\",\"state\":\"new\",\"source\":{\"agent\":\"correctness\"}}\n</repository_data>"
           }
         ],
-        "max_tokens": 16384
+        "max_tokens": 16384,
+        "stop_sequences": [
+          "</invoke>\n\n",
+          "</invoke>\n</invoke>"
+        ]
       }
     }
   ],
