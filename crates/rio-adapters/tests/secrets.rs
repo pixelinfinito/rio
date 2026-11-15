@@ -345,3 +345,21 @@ fn real_credentials_and_placeholder_substrings_are_kept_even_in_test_files() {
     let token = cases()[1].1.clone();
     assert!(!redact(&format!("token = '<{token}>'")).contains(&token));
 }
+
+#[test]
+fn dummy_key_bodies_and_prose_are_redacted_but_not_reported() {
+    let reported = |head: &str| {
+        let changes = changes("", head);
+        scan_secrets(&diff(&changes, &[]).unwrap(), &changes.head)
+            .unwrap()
+            .len()
+    };
+    for head in [
+        "keyed.extend(b\"-----BEGIN PRIVATE KEY-----\\nAAAA\\n-----END PRIVATE KEY-----\\n\");\n",
+        "\"secret-key\": \"A key used to encrypt and decrypt messages in symmetric cryptography.\",\n",
+    ] {
+        assert_eq!(reported(head), 0, "{head}");
+        assert!(redact(head).contains("[REDACTED]"), "{head}");
+    }
+    assert_eq!(reported("token = \"correct-horse-9fK2xQ7vLm3Zp8Rt\"\n"), 1);
+}

@@ -149,6 +149,30 @@ fn placeholder_connection(value: &str) -> bool {
         )
 }
 
+/// Whether a match is worth reporting as a finding. Redaction stays wider:
+/// hiding a dummy value costs nothing, reporting one costs the reader's trust.
+/// A private key needs a body long and varied enough to be key material; a high-entropy value made of words is prose, such as a
+/// schema description of a `secret-key` field.
+pub fn plausible_secret(pattern: &str, value: &str) -> bool {
+    match pattern {
+        "private-key" => {
+            let body = value
+                .split("-----")
+                .nth(2)
+                .unwrap_or_default()
+                .replace("\\n", "")
+                .replace("\\r", "");
+            let body = body
+                .bytes()
+                .filter(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'+' | b'/'))
+                .collect::<Vec<_>>();
+            body.len() >= 16 && body.iter().collect::<std::collections::BTreeSet<_>>().len() >= 4
+        }
+        "high-entropy" => value.split_whitespace().count() < 3,
+        _ => true,
+    }
+}
+
 pub fn secret_matches(content: &str) -> Vec<SecretMatch<'_>> {
     secret_matches_for_path(content, "")
 }
