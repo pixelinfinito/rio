@@ -31,4 +31,9 @@ CodeRabbit reported authenticated status but rejected review startup with `reaut
 
 ## Publication
 
-The user initialized the Wiki with a placeholder Home. First publication explicitly adopts only `Home.md`; the publisher preserves unrelated pages and never force-pushes. Publication source/Wiki commits and HTTP verification results will be appended after delivery.
+The user initialized the Wiki with a placeholder Home. First publication explicitly adopts only `Home.md`; the publisher preserves unrelated pages and never force-pushes. Publication completed and public HTTP verification passed.
+
+- Published source: `c773cde4e53c931250ee6fd115db2f0f331bb662`.
+- Wiki commit: `1765394e810fff3a8096dd32b89d6fa9636632d6`.
+- Verified Home, EN/pt-BR Start, Hosting and GitHub pages (HTTP 200), bilingual sidebar/language links, English and accented Portuguese heading IDs, and two representative PNG assets (HTTP 200 and valid PNG signatures).
+- [English](https://github.com/pixelinfinito/rio/wiki/EN-Start) · [Português (Brasil)](https://github.com/pixelinfinito/rio/wiki/PT-BR-Start).
