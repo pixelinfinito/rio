@@ -45,27 +45,27 @@ Gerado de `schemas/profile-v1.json`. `*` indica obrigatório. `extra=false` reje
 | `extends` | `string; minLength=1` |
 | `budget` | `object; extra=false` |
 | `budget.fast` | `object; extra=false` |
-| `budget.fast.wall_time` | `string; pattern="^([0-9]+(\\.[0-9]+)?)(ms/s/m/h/d)$"` |
+| `budget.fast.wall_time` | `string; pattern="^([0-9]+(\\.[0-9]+)?)(ms\|s\|m\|h\|d)$"` |
 | `budget.fast.tokens` | `integer; minimum=1` |
 | `budget.fast.agents_max` | `integer; minimum=1` |
 | `budget.fast.verify_tokens` | `integer; minimum=1` |
 | `budget.fast.qa` | `object; extra=false` |
-| `budget.fast.qa.wall` | `string; pattern="^[1-9][0-9]*(ms/s/m/h)$"` |
-| `budget.fast.qa.cell_wall` | `string; pattern="^[1-9][0-9]*(ms/s/m/h)$"` |
+| `budget.fast.qa.wall` | `string; pattern="^[1-9][0-9]*(ms\|s\|m\|h)$"` |
+| `budget.fast.qa.cell_wall` | `string; pattern="^[1-9][0-9]*(ms\|s\|m\|h)$"` |
 | `budget.fast.qa.tokens` | `integer; minimum=1` |
 | `budget.fast.qa.evidence_bytes` | `integer; minimum=1` |
-| `budget.fast.qa.replay_wall` | `string; pattern="^[1-9][0-9]*(ms/s/m/h)$"` |
+| `budget.fast.qa.replay_wall` | `string; pattern="^[1-9][0-9]*(ms\|s\|m\|h)$"` |
 | `budget.deep` | `object; extra=false` |
-| `budget.deep.wall_time` | `string; pattern="^([0-9]+(\\.[0-9]+)?)(ms/s/m/h/d)$"` |
+| `budget.deep.wall_time` | `string; pattern="^([0-9]+(\\.[0-9]+)?)(ms\|s\|m\|h\|d)$"` |
 | `budget.deep.tokens` | `integer; minimum=1` |
 | `budget.deep.agents_max` | `integer; minimum=1` |
 | `budget.deep.verify_tokens` | `integer; minimum=1` |
 | `budget.deep.qa` | `object; extra=false` |
-| `budget.deep.qa.wall` | `string; pattern="^[1-9][0-9]*(ms/s/m/h)$"` |
-| `budget.deep.qa.cell_wall` | `string; pattern="^[1-9][0-9]*(ms/s/m/h)$"` |
+| `budget.deep.qa.wall` | `string; pattern="^[1-9][0-9]*(ms\|s\|m\|h)$"` |
+| `budget.deep.qa.cell_wall` | `string; pattern="^[1-9][0-9]*(ms\|s\|m\|h)$"` |
 | `budget.deep.qa.tokens` | `integer; minimum=1` |
 | `budget.deep.qa.evidence_bytes` | `integer; minimum=1` |
-| `budget.deep.qa.replay_wall` | `string; pattern="^[1-9][0-9]*(ms/s/m/h)$"` |
+| `budget.deep.qa.replay_wall` | `string; pattern="^[1-9][0-9]*(ms\|s\|m\|h)$"` |
 | `models` | `object` |
 | `steps` | `array` |
 | `steps[].id` | `string *; minLength=1` |
@@ -117,7 +117,7 @@ Gerado de `schemas/profile-v1.json`. `*` indica obrigatório. `extra=false` reje
 | `council.max_experiments` | `integer; default=2; minimum=0` |
 | `council.max_rounds` | `integer; default=2; minimum=1; maximum=2` |
 | `council.min_members` | `integer; default=3; minimum=1` |
-| `council.timeout` | `string; default="90s"; pattern="^([0-9]+(\\.[0-9]+)?)(ms/s/m/h/d)$"` |
+| `council.timeout` | `string; default="90s"; pattern="^([0-9]+(\\.[0-9]+)?)(ms\|s\|m\|h\|d)$"` |
 | `council.vendors_allowed` | `array; default=[]; uniqueItems=true` |
 | `council.vendors_allowed[]` | `string` |
 
@@ -134,17 +134,17 @@ Gerado de `schemas/qa-config-v1.json`. `*` indica obrigatório. `extra=false` re
 | `version` | `value *; const=1` |
 | `app` | `object *; extra=false` |
 | `app.packaging` | `enum *; enum=["image","static","vendored"]` |
-| `app.dockerfile` | `string; pattern="^(?!/)(?![A-Za-z]:)(?!.*(?:^//)\\.\\.(?://$))(?!.*\\\\).+$"; minLength=1` |
-| `app.directory` | `string; pattern="^(?!/)(?![A-Za-z]:)(?!.*(?:^//)\\.\\.(?://$))(?!.*\\\\).+$"; minLength=1` |
+| `app.dockerfile` | `string; pattern="^(?!/)(?![A-Za-z]:)(?!.*(?:^\|/)\\.\\.(?:/\|$))(?!.*\\\\).+$"; minLength=1` |
+| `app.directory` | `string; pattern="^(?!/)(?![A-Za-z]:)(?!.*(?:^\|/)\\.\\.(?:/\|$))(?!.*\\\\).+$"; minLength=1` |
 | `app.start` | `string; minLength=1` |
 | `app.url` | `string *; pattern="^https?://[^ ]+$"` |
 | `app.ready` | `object *; extra=false` |
 | `app.ready.path` | `string *; minLength=1` |
 | `app.ready.status` | `integer *; minimum=100; maximum=599` |
-| `app.ready.timeout` | `value; oneOf=[{"type":"integer","minimum":1},{"type":"string","pattern":"^[1-9][0-9]*(ms/s/m/h)$"}]` |
+| `app.ready.timeout` | `value; oneOf=[{"type":"integer","minimum":1},{"type":"string","pattern":"^[1-9][0-9]*(ms\|s\|m\|h)$"}]` |
 | `app.env` | `object` |
 | `app.seed` | `string; minLength=1` |
-| `app.workdir` | `string; pattern="^(?!/)(?![A-Za-z]:)(?!.*(?:^//)\\.\\.(?://$))(?!.*\\\\).+$"; minLength=1` |
+| `app.workdir` | `string; pattern="^(?!/)(?![A-Za-z]:)(?!.*(?:^\|/)\\.\\.(?:/\|$))(?!.*\\\\).+$"; minLength=1` |
 | `app.routes_from` | `value; oneOf=[{"type":"object","properties":{"convention":{"enum":["next-app","next-pages","sveltekit","remix","nuxt","astro","none"]}},"required":["convention"],"additionalProperties":false},{"type":"object","properties":{"map":{"type":"array","items":{"type":"object","properties":{"glob":{"type":"string","minLength":1},"route":{"type":"string","minLength":1}},"required":["glob","route"],"additionalProperties":false},"minItems":1}},"required":["map"],"additionalProperties":false}]` |
 | `personas` | `array *; minItems=1` |
 | `personas[].name` | `string *; pattern="^[a-z][a-z0-9-]*$"` |
@@ -175,10 +175,10 @@ Gerado de `schemas/qa-config-v1.json`. `*` indica obrigatório. `extra=false` re
 | `evidence.video` | `boolean` |
 | `evidence.retention_days` | `integer; minimum=1` |
 | `seed` | `object; extra=false` |
-| `seed.manifest` | `string; pattern="^(?!/)(?![A-Za-z]:)(?!.*(?:^//)\\.\\.(?://$))(?!.*\\\\).+$"; minLength=1` |
+| `seed.manifest` | `string; pattern="^(?!/)(?![A-Za-z]:)(?!.*(?:^\|/)\\.\\.(?:/\|$))(?!.*\\\\).+$"; minLength=1` |
 | `seed.migrations` | `array; minItems=0; uniqueItems=true` |
 | `seed.migrations[]` | `string` |
-| `seed.max_size` | `value; oneOf=[{"type":"integer","minimum":1},{"type":"string","pattern":"^[1-9][0-9]* ?(B/KiB/MiB/GiB)$"}]` |
+| `seed.max_size` | `value; oneOf=[{"type":"integer","minimum":1},{"type":"string","pattern":"^[1-9][0-9]* ?(B\|KiB\|MiB\|GiB)$"}]` |
 | `seed.fallback_rebuild` | `boolean` |
 | `seed.cache_version` | `value; oneOf=[{"type":"string","minLength":1},{"type":"integer","minimum":0}]` |
 
@@ -231,7 +231,7 @@ Gerado de `schemas/journey-v1.json`. `*` indica obrigatório. `extra=false` reje
 | `sync_reason` | `string; minLength=1` |
 | `goal` | `string; minLength=1` |
 | `guidance_refs` | `array; minItems=0` |
-| `guidance_refs[].path` | `string *; pattern="^(?!/)(?![A-Za-z]:)(?!.*(?:^//)\\.\\.(?://$))(?!.*\\\\).+$"; minLength=1` |
+| `guidance_refs[].path` | `string *; pattern="^(?!/)(?![A-Za-z]:)(?!.*(?:^\|/)\\.\\.(?:/\|$))(?!.*\\\\).+$"; minLength=1` |
 | `guidance_refs[].hash` | `string *; pattern="^[a-f0-9]{64}$"` |
 | `guidance_refs[].start_line` | `integer *; minimum=1` |
 | `guidance_refs[].end_line` | `integer *; minimum=1` |
@@ -259,7 +259,7 @@ Gerado de `schemas/qa-seed-v1.json`. `*` indica obrigatório. `extra=false` reje
 | `datastores[].restore` | `string; minLength=1` |
 | `steps` | `array *; minItems=0` |
 | `steps[].command` | `string; minLength=1` |
-| `steps[].file` | `string; pattern="^(?!/)(?![A-Za-z]:)(?!.*(?:^//)\\.\\.(?://$))(?!.*\\\\).+$"; minLength=1` |
+| `steps[].file` | `string; pattern="^(?!/)(?![A-Za-z]:)(?!.*(?:^\|/)\\.\\.(?:/\|$))(?!.*\\\\).+$"; minLength=1` |
 | `steps[].applies_to` | `array *; minItems=1; uniqueItems=true` |
 | `steps[].applies_to[]` | `string` |
 | `users` | `array *; minItems=0` |
@@ -281,7 +281,7 @@ Gerado de `schemas/qa-fixtures-v1.json`. `*` indica obrigatório. `extra=false` 
 | `version` | `value *; const=1` |
 | `files` | `array; minItems=0` |
 | `files[].name` | `string *; pattern="^[a-z][a-z0-9-]*$"` |
-| `files[].path` | `string; pattern="^\\.rio/qa/fixtures/files/(?!.*(?:^//)\\.\\.(?://$))[^\\\\]+$"` |
+| `files[].path` | `string; pattern="^\\.rio/qa/fixtures/files/(?!.*(?:^\|/)\\.\\.(?:/\|$))[^\\\\]+$"` |
 | `files[].generate` | `object; extra=false` |
 | `files[].generate.kind` | `enum *; enum=["image","pdf","csv","json","text","binary"]` |
 | `files[].generate.size` | `integer; minimum=1` |
@@ -294,7 +294,7 @@ Gerado de `schemas/qa-fixtures-v1.json`. `*` indica obrigatório. `extra=false` 
 | `services[].env` | `object *` |
 | `services[].claims` | `array; minItems=0; uniqueItems=true` |
 | `services[].claims[]` | `string` |
-| `services[].recordings` | `string; pattern="^(?!/)(?![A-Za-z]:)(?!.*(?:^//)\\.\\.(?://$))(?!.*\\\\).+$"; minLength=1` |
+| `services[].recordings` | `string; pattern="^(?!/)(?![A-Za-z]:)(?!.*(?:^\|/)\\.\\.(?:/\|$))(?!.*\\\\).+$"; minLength=1` |
 | `services[].behaviors` | `array; minItems=0; uniqueItems=true` |
 | `services[].behaviors[]` | `string` |
 | `services[].default_behavior` | `string; pattern="^[a-z][a-z0-9-]*$"` |
