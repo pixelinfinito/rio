@@ -152,11 +152,25 @@ export async function blindBlocks(o: VerifyOptions): Promise<string> {
   // Only location is copied; no title, trigger, proposed impact, rationale, or id.
   return `${dataBlock("location", { path: location.path, symbol_path: location.symbol_path })}\n${dataBlock("selected code and direct callers", versions)}\n${dataBlock("intent", filteredLines(o.intent.split("\n")))}\n${guidanceBlock(o.guidance, [location.path])}`;
 }
+/**
+ * The voters and quorum of one hypothesis. A hypothesis its agent classed as a
+ * risk is never reported as a defect, whatever its voters find, so a profile
+ * may have fewer of them examine it (`verify.risk_voters`).
+ */
+export function panelOf(
+  verify: Profile["verify"],
+  hypothesis: Pick<Hypothesis, "category">,
+): { voters: number; quorum: number } {
+  const voters =
+    hypothesis.category === "risk"
+      ? Math.min(verify.risk_voters ?? verify.voters, verify.voters)
+      : verify.voters;
+  return { voters, quorum: Math.min(verify.quorum, voters) };
+}
 export async function verifyHypothesis(
   o: VerifyOptions,
 ): Promise<{ verified: Verified; votes: Vote[] }> {
-  const voters = o.profile.verify.voters,
-    quorum = o.profile.verify.quorum;
+  const { voters, quorum } = panelOf(o.profile.verify, o.hypothesis);
   const alias =
     o.profile.verify.model ??
     (o.profile.models.verifier ? "verifier" : "default");
@@ -206,7 +220,7 @@ export async function verifyHypothesis(
           await o.save(vote);
           const disclosure = (single: boolean) => ({
             role: "user" as const,
-            content: `Verify this hypothesis. Assess regression on base/head, reachability, protections and contracts. Return {result:{evidence_level,evidence:[{kind:execution|code,version:base|head,job_id?,path?,node_ids?,demonstrates:regression|protection}],category?,reclassification_reason?}}. Reproduced requires a failed head runner execution of the reproduction; refutation requires a passing head reproduction or a cited protection. Static proof must cite the actual head graph path. Keep the original category by omitting category. Only downward changes are permitted: defect/security to risk/diagnostic/style, risk to diagnostic/style, diagnostic to style, with reclassification_reason required. Never upgrade risk to defect, even if proven; category and evidence level are independent. Cite only job IDs returned by an actual host run tool. If you have not executed a reproduction, use static_proven with actual head graph node IDs or plausible; describing a command does not execute it.${o.hypothesis.rule_id.startsWith("contracts/") ? CONTRACT_VERIFICATION : ""}\n${single ? `${VOTE_SCHEMA}\n` : ""}${dataBlock("hypothesis", o.hypothesis)}`,
+            content: `Verify this hypothesis. Assess regression on base/head, reachability, protections and contracts. Return {result:{evidence_level,evidence:[{kind:execution|code,version:base|head,job_id?,path?,node_ids?,demonstrates:regression|protection}],category?,reclassification_reason?}}. Reproduced requires a failed head runner execution of the reproduction; refutation requires a passing head reproduction or a cited protection. Static proof must cite the actual head graph path. Keep the original category by omitting category. Only downward changes are permitted: defect/security to risk/diagnostic/style, risk to diagnostic/style, diagnostic to style, with reclassification_reason required. Diagnostic is only a restatement of a diagnostic the deterministic checks reported, and style only a preference of layout or taste: a wrong message, a misspelling, unused or repeated code and a misleading name are neither, and hypotheses of either category are not reported. Never upgrade risk to defect, even if proven; category and evidence level are independent. Cite only job IDs returned by an actual host run tool. If you have not executed a reproduction, use static_proven with actual head graph node IDs or plausible; describing a command does not execute it.${o.hypothesis.rule_id.startsWith("contracts/") ? CONTRACT_VERIFICATION : ""}\n${single ? `${VOTE_SCHEMA}\n` : ""}${dataBlock("hypothesis", o.hypothesis)}`,
           });
           // `verifier-system` keeps the blind system prompt only while the
           // disclosed turn, which then also carries the hypothesis schema, fits
@@ -306,7 +320,7 @@ export async function verifyHypothesis(
             .map((ref) =>
               ref.kind === "execution"
                 ? `execution:${ref.version}:${ref.job_id}`
-                : `code:${ref.version}:${ref.path}:${ref.node_ids!.join(",")}`,
+                : `code:${ref.version}:${ref.path}:${(ref.node_ids ?? []).join(",")}`,
             ),
         ),
     ),

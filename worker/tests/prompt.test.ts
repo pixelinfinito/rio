@@ -33,7 +33,7 @@ const blocks = (agent: string, instructions = ""): GenerationInputs => ({
   intent: '<repository_data label="intent">["x"]</repository_data>',
   focus: '<repository_data label="suggested_focus">["a.ts"]</repository_data>',
   graph: '<repository_data label="graph excerpt">{}</repository_data>',
-  changed: '<repository_data label="changed code excerpts">[]</repository_data>',
+  changed: '<repository_data label="change diff">[]</repository_data>',
   checks: '<repository_data label="deterministic checks">[]</repository_data>',
   data: "",
   guidance: '<repository_data label="owner guidance">[]</repository_data>',

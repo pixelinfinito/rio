@@ -5,7 +5,7 @@ import { requestsOf, type Requests } from "./requests";
 export const LIMITS = {
   paths: 300000,
   file: 64 * 1024 * 1024,
-  distinct: 1024 * 1024 * 1024,
+  distinct: 1536 * 1024 * 1024,
   request: 8 * 1024 * 1024,
 };
 export const SYMLINK = 0o120000;

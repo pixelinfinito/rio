@@ -2,7 +2,7 @@ version: 1
 name: rio/openrouter
 extends: rio/base
 models:
-  default: openrouter/anthropic/claude-sonnet-5.5
+  default: openrouter/anthropic/claude-opus-5.5
   verifier: openrouter/openai/gpt-6.1-sol
 # Every model turn resends the whole conversation, and the gateway bounds each call
 # by its UTF-8 bytes (about three times the token count for code). An agent review
@@ -12,10 +12,25 @@ models:
 # (the security step runs its own) and all voters together, so it is sized for two
 # agents; the ledger charges actual tokens, and pilots on real repositories cost
 # between USD 0.4 and 2.1 per review.
+#
+# `wall_time` covers the whole review and is a backstop, not the usual duration:
+# with up to ten defects and ten risks verified, half of 79 reviews of large pull
+# requests took under five minutes, 12 ran past eight and the longest took just
+# over fourteen; a repeat of that one ran past fifteen. A review the wall cuts
+# reports what it had verified and lists the rest as unverified.
+#
+# A change longer than one prompt is reviewed in up to eight parts (`parts` on the
+# agents step), one conversation each. On 47 pull requests of one repository that
+# took 130M input tokens in all, up to 34 minutes for a review, and the longest
+# reviews are the ones in eight parts: `tokens` and `wall_time` are sized for them.
 budget:
-  fast: { tokens: 2400000, agents_max: 1, wall_time: 8m, verify_tokens: 320000 }
-  deep: { tokens: 4000000, agents_max: 2, wall_time: 15m, verify_tokens: 400000 }
-verify: { voters: 3, quorum: 2 }
+  fast: { tokens: 12000000, agents_max: 1, wall_time: 40m, verify_tokens: 320000 }
+  deep: { tokens: 12000000, agents_max: 2, wall_time: 40m, verify_tokens: 400000 }
+# `risk_voters` of the voters examine a hypothesis the agent classed as a risk.
+# One is enough when the verifier is another model than the agent's: on 116 such
+# hypotheses the second and third voter changed no outcome. A profile with one
+# model for both aliases needs every voter (`risk_voters: 3`).
+verify: { voters: 3, quorum: 2, risk_voters: 1 }
 steps:
   - id: prepare
     uses: rio/prepare@0.1.0
@@ -44,6 +59,7 @@ steps:
   - id: agents
     uses: rio/agents@0.1.0
     needs: [triage]
+    with: { parts: 8 }
     agents:
       - correctness: { model: default }
   - id: security

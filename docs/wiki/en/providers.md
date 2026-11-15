@@ -10,7 +10,7 @@ An online endpoint and provider credentials. Selected code/evidence can be sent 
 
 ## Steps
 
-Start with `rio profile show rio/openrouter` or `rio profile show rio/anthropic` to inspect model aliases. After supplying the corresponding key during setup, use `rio review --profile rio/openrouter --preset standard`. Inspect the resolved profile: `rio/base` contains no model routes.
+Start with `rio profile show rio/openrouter` or `rio profile show rio/anthropic` to inspect model aliases. After supplying the corresponding key during setup, use `rio review --profile rio/openrouter --preset standard`. Inspect the resolved profile: `rio/base` contains no model routes. `rio/openrouter` reviews with Anthropic Opus 5.5 and verifies with OpenAI GPT-6.1 Sol, and reviews a change longer than one prompt in up to eight parts. Choose other models during [setup](hosting.md), or override the `default` and `verifier` aliases under `models` in a child profile.
 
 For a custom endpoint, register it during init:
 

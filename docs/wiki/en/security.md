@@ -15,7 +15,7 @@ rio profile show rio/security
 rio review --profile rio/security
 ```
 
-The `rio/security` step is disabled in `rio/base`. Its built-in security profile uses thorough posture and `asvs-5.0`; the step also supports `owasp-top10-2025`. These are catalog IDs, not arbitrary file paths. When customizing a profile's steps, preserve every desired step and verification dependency.
+The `rio/security` step is disabled in `rio/base`. Its built-in security profile uses thorough posture and `asvs-5.0`; the step also supports `owasp-top10-2025`. These are catalog IDs, not arbitrary file paths. Its security agent is declared with `models: [default, second]`: a child profile that defines a `second` model alias gets the change reviewed for security under both, and what both raise is verified once; without it, one review runs under `default`. Pick two vendors for `default` and `second`. When customizing a profile's steps, preserve every desired step and verification dependency.
 
 Read the security section's assessed, unassessed and not-applicable catalog items. A trace explains source, intermediate steps and sink; missing protection is not automatically a reproduced exploit. Severity and evidence answer different questions.
 

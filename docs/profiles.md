@@ -66,6 +66,7 @@ Profiles describe a review. Machine settings such as the cache path and parallel
 | `verify.voters` | `integer` | no |
 | `verify.quorum` | `integer` | no |
 | `verify.model` | `string` | no |
+| `verify.risk_voters` | `integer` | no |
 | `council` | `object` | no |
 | `council.members` | `array` | no |
 | `council.members[].uses` | `string` | yes |
@@ -96,7 +97,7 @@ Steps need unique `id` values. `needs` names existing steps and must form a DAG.
 
 | Module | Options | Local behavior |
 | --- | --- | --- |
-| `rio/prepare` | `exclude: [glob, ...]` | Detection, exclusions and size notes |
+| `rio/prepare` | `exclude: [glob, ...]`, `omit: [glob, ...]` | Detection, exclusions and size notes. `exclude` keeps matching paths out of the reviewed change; they stay in the snapshot for tools and checks to read. `omit` removes matching paths from both trees before anything else: they are not uploaded, read, built or reviewed, and do not count toward the snapshot limits. In a glob `*` stays within one directory and `**` crosses them (`design/exports/**`). Omit only what no check needs; vendored dependencies an offline build reads must stay. |
 | `rio/checks` | `typecheck`, `lint`, `secrets`, `coverage`, `dependencies`, `baseline` (all default true); `trust_installed_dependencies` (default false) | Bounded deterministic checks and baseline comparison |
 | `rio/graph` | `hops: 2`, `max_nodes: 2000` | Base/head/delta graph and impact summary |
 | `rio/report` | `class_threshold` (default 3); `proposal_threshold` (integer of at least 1, default 3; dismissals that yield a suppression proposal) | Suppressions, policy, summary and persistence |
@@ -114,8 +115,10 @@ Disabled checks have outcome `skipped`, reason `disabled`. Trust allows an unver
 | Posture | Evidence floor | Maximum agent defects | Agent defect severity floor | Plausible agent risks |
 | --- | --- | --- | --- | --- |
 | `critical-only` | `reproduced` | 3 | `error` | Hidden |
-| `balanced` | `static_proven` | 5 | `warning` | Up to `max_defects` |
+| `balanced` | `static_proven` | 10 | `warning` | Up to `max_defects` |
 | `thorough` | `plausible` | 15 | `info` | Uncapped |
+
+`max_defects` caps only the findings the verifier left `plausible`: a finding it proved or reproduced is always shown. A `plausible` finding that no completed vote supported (its votes failed or ran out of budget) is held back whatever the cap. A change the correctness agent reviewed in parts gets half the cap again for each part after the first (10, 15, 20, up to 45 at 8 parts for the default).
 
 Explicit values in the merged document, including inherited values, win over posture defaults. `max_defects` must be positive. `rounds` defaults to `{cap: 3, diff_only_after: 1}`; `cap` must be positive and `diff_only_after` must be nonnegative and less than `cap`. Resolved profiles store these values and `posture_policy` (the derived `defect_severity_floor`, `render_plausible_risks`, and nullable `plausible_risk_limit`), so policy changes affect the review id.
 
@@ -159,12 +162,39 @@ Path globs, rule globs and exact finding IDs suppress grouped findings, includin
 
 Step `rules` contain syntax-validated expressions/actions, and step `agents` hold endpoint agent declarations. Predicates and boolean operators are validated even in local mode. `publish` accepts `never`, `ask` or `auto`; local mode never publishes. Without an endpoint these declarations remain deferred. See [Cloudflare setup](cloudflare.md).
 
+An agent declaration names the model alias the agent runs under (`model`), or up to four aliases it reviews the same code under, once each (`models`):
+
+```yaml
+models:
+  default: anthropic/claude-opus-5-5
+  second: openai/gpt-6-astra
+  verifier: openai/gpt-6.1-sol
+steps:
+  - id: agents
+    uses: rio/agents
+    agents:
+      - correctness: { models: [default, second] }
+```
+
+The reviews run at the same time, each allowed the agent's share of the token budget (`tokens / agents_max`). The review's `tokens` still bound everything together, and two models raise more hypotheses for the verifier to examine, so a profile that adds a model usually needs a larger `tokens` and `wall_time`. What they raise is combined before verification, in the order of the list: a hypothesis is dropped when an earlier model of the list raised the same issue (the same file, overlapping lines, the same catalog item, and three in ten of the shorter statement's words shared), so an issue two models found is verified and reported once, in the first model's words. Two hypotheses of one model are never combined. `agent_audit.raised_under` in the report names, per hypothesis id, the aliases that raised it. A model whose review fails leaves a partial report with what the other raised.
+
+An alias in `models` that the profile does not define is skipped, and so is one that names a model already in the list; with none defined the agent reviews once as without the list. A built-in profile can therefore name a second model that only some children define. The declaration works the same for the security step's `security` agent, whose catalog coverage counts an item as assessed when either review assessed it.
+
 ## Verifier quorum and presets
 
 `verify: { voters: 3, quorum: 2 }` is the default. Omitted quorum becomes one for
 one voter. `verify.model` resolves an explicit model alias, then falls back to
 `verifier` if present, otherwise `default`. Single-voter independence compares
 actual provider/model values, so another alias for the default cannot bypass it.
+`verify.risk_voters` sets how many of the voters examine a hypothesis its agent
+classed as a `risk` (a hazard it could not settle, or an improvement): such a
+hypothesis is never reported as a defect, and its quorum is `quorum` or
+`risk_voters`, whichever is smaller. It defaults to `voters`, may not exceed it,
+and `risk_voters: 1` falls under the same single-voter independence rule.
+Where one voter settles a hypothesis, the verifier also has to differ from every
+model an agent's `models` list resolves to.
+`rio/openrouter`, whose verifier is another model than its agent's, sets
+`risk_voters: 1`; a child profile restores the full panel with `risk_voters: 3`.
 Both budget modes accept `verify_tokens`. Each voter's entire two-turn allowance
 is 320,000 tokens unless overridden, whatever the review token budget. Agent tokens
 are the active review token budget divided by `agents_max`. Resolution records the
@@ -222,6 +252,10 @@ security review. On fork pull requests the agent is static-only.
 The built-in `rio/security` community profile extends `rio/base` and only enables
 the step with `posture: thorough` and `catalog: asvs-5.0`; every other base setting
 is unchanged. Select it with `--profile rio/security` or `extends: rio/security`.
+Its security agent is declared with `models: [default, second]`: a child that
+defines a `second` model alias gets the change reviewed for security under both
+models (see [Rules and agents](#rules-and-agents)), and one that does not gets one
+review under `default`.
 
 ## Council
 

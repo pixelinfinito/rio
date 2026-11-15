@@ -63,7 +63,9 @@ Para um perfil hospedado, parta das etapas resolvidas e preserve as etapas de mo
 
 `rio profile show` mostra a herança aplicada e as versões dos módulos fixadas. A validação retorna 0 quando válida e 2 com caminhos YAML nos erros. Ela pode avisar que etapas de modelos serão adiadas localmente sem rejeitar um perfil válido.
 
-`fail_on.incomplete: false` muda a política de saída por análise incompleta; `suppress` aceita caminho/regra/ID exato; `publish` controla never/ask/auto. A postura ajusta evidência/severidade/quantidade dos agentes: critical-only, balanced ou thorough. [Limites](budgets.md) controla recursos; a [referência de módulos](modules.md) explica opções de etapas. Os campos gerados do schema documentam as chaves suportadas.
+`fail_on.incomplete: false` muda a política de saída por análise incompleta; `suppress` aceita caminho/regra/ID exato; `publish` controla never/ask/auto. A postura ajusta evidência/severidade/quantidade dos agentes: critical-only, balanced ou thorough. `max_defects` (10 em balanced) limita só os achados que o verificador deixou plausíveis: um achado provado ou reproduzido sempre aparece, um plausível que nenhum voto concluído apoiou é retido, e uma alteração revisada em partes ganha metade do limite a mais para cada parte após a primeira. [Limites](budgets.md) controla recursos; a [referência de módulos](modules.md) explica opções de etapas. Os campos gerados do schema documentam as chaves suportadas.
+
+`rio/prepare` aceita dois tipos de glob de caminho. `exclude` deixa os caminhos fora da alteração revisada, mas ferramentas e verificações ainda podem lê-los. `omit` os remove das duas árvores antes de tudo: não são enviados, compilados nem revisados e não contam para o limite de 1,5 GiB do snapshot. Omita só o que nenhuma verificação usa, como exportações grandes de design (`design/exports/**`); mantenha dependências vendorizadas que uma compilação offline lê.
 
 ## Solução de problemas
 

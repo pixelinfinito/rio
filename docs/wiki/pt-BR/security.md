@@ -15,7 +15,7 @@ rio profile show rio/security
 rio review --profile rio/security
 ```
 
-A etapa `rio/security` é desativada em `rio/base`. O perfil de segurança integrado usa postura thorough e `asvs-5.0`; a etapa também aceita `owasp-top10-2025`. São IDs de catálogo, não caminhos arbitrários. Ao personalizar a lista de etapas, preserve todas as desejadas e suas dependências de verificação.
+A etapa `rio/security` é desativada em `rio/base`. O perfil de segurança integrado usa postura thorough e `asvs-5.0`; a etapa também aceita `owasp-top10-2025`. São IDs de catálogo, não caminhos arbitrários. O agente de segurança é declarado com `models: [default, second]`: um perfil filho que define o alias `second` recebe a revisão de segurança com os dois modelos, e o que ambos levantam é verificado uma vez; sem ele, uma revisão roda com `default`. Escolha fornecedores diferentes para `default` e `second`. Ao personalizar a lista de etapas, preserve todas as desejadas e suas dependências de verificação.
 
 Leia os itens avaliados, não avaliados e não aplicáveis. Um rastreamento explica origem, passos intermediários e destino; proteção ausente não significa automaticamente exploração reproduzida. Severidade e evidência respondem perguntas diferentes.
 

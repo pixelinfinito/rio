@@ -32,6 +32,8 @@ Save as a profile, run `rio profile validate PATH`, and inspect it with `rio pro
 
 Reports expose usage, cache reads/writes, price provenance and incomplete work. Missing cost data does not mean zero cost. These limits are ceilings, not expected spend. The schema has no `cost_usd` budget field; control time/tokens/agents and inspect measured cost.
 
+`rio/openrouter` allows 12,000,000 tokens and 40 minutes per review in both modes, sized for a large change reviewed in eight parts; most reviews use far less, but the largest can take over half an hour. Its verifier is a different model from its reviewer, so one vote examines each risk (`verify.risk_voters: 1`); a child profile restores the full panel with `risk_voters: 3`, and needs it when one model does both.
+
 Built-in QA sets fast review tokens to 500,000 and per-voter tokens to 60,000; deep uses 1,000,000 and 120,000. Screenshots consume vision tokens. General resolved defaults and explicit profile overrides can differ; use `profile show` for your installed version.
 
 ## Troubleshooting

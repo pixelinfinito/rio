@@ -7,6 +7,13 @@ extends: rio/base
 # repeated. The council's members stay placeholders until `rio init` writes the
 # repository's council allowlist, which is the opt-in; the profile allows the
 # vendors Rio knows.
+#
+# The security agent reviews under two models, `default` and `second`, and what
+# both raise is verified once. The profile defines neither: the child that adds
+# `models` and `budget` for a deployment picks them, and a child that defines no
+# `second` gets one review under `default`. Pick models of two vendors for
+# `default` and `second`; the verifier has to be a third model when one voter
+# settles a hypothesis.
 steps:
   - id: prepare
     uses: rio/prepare@0.1.0
@@ -40,6 +47,8 @@ steps:
     uses: rio/security@0.2.0
     needs: [triage]
     with: { enabled: true, posture: thorough, catalog: asvs-5.0 }
+    agents:
+      - security: { models: [default, second] }
   - id: qa
     uses: rio/qa@0.1.0
     needs: [graph]

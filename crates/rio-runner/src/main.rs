@@ -797,7 +797,7 @@ async fn run_docker(
         .kill_on_drop(true)
         .spawn()?;
     let mut input = child.stdin.take().context("missing Docker stdin")?;
-    // Stream the archive straight into Docker; it can approach 1 GiB.
+    // Stream the archive straight into Docker; it can approach 1.5 GiB.
     let mut writer = tokio::spawn(async move {
         input.write_all(&prefix).await?;
         while let Some(chunk) = response.chunk().await.context(ArchiveUnavailable)? {

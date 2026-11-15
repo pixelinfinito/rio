@@ -1,0 +1,64 @@
+[
+ {
+  "row": 17,
+  "text": "  reviews   openrouter/anthropic/claude-opus-5.5                  │ DB · ARTIFACTS · REVIEWS · MIGRATIONS               ",
+  "reason": "the provider's default models are two editable fields (reviews, verifies) instead of one line of text; rio init lets the user name them",
+  "bg": false
+ },
+ {
+  "row": 18,
+  "text": "  verifies  openrouter/openai/gpt-6.1-sol                         │ JOBS · SANDBOX                                      ",
+  "reason": "the provider's default models are two editable fields (reviews, verifies) instead of one line of text; rio init lets the user name them",
+  "bg": false
+ },
+ {
+  "row": 19,
+  "text": "                                                                  │                                                     ",
+  "reason": "one row lower than the design: the model fields take two rows where the design has one"
+ },
+ {
+  "row": 20,
+  "text": "  CREDENTIALS                                                     │ TOKEN SCOPES · cf auth scopes                       ",
+  "reason": "one row lower than the design: the model fields take two rows where the design has one"
+ },
+ {
+  "row": 21,
+  "text": "  (•) OS keychain       default                                   │ ✓ account read                                      ",
+  "reason": "one row lower than the design: the model fields take two rows where the design has one"
+ },
+ {
+  "row": 22,
+  "text": "  ( ) file · 0600       headless hosts                            │ ✓ Workers Scripts · Durable Objects                 ",
+  "reason": "one row lower than the design: the model fields take two rows where the design has one"
+ },
+ {
+  "row": 23,
+  "text": "                                                                  │ ✓ D1 · R2 · Queues · Workflows edit                 ",
+  "reason": "one row lower than the design: the model fields take two rows where the design has one"
+ },
+ {
+  "row": 24,
+  "text": "  WORKERS.DEV                                                     │ ✓ AI Gateway · Containers / registry                ",
+  "reason": "one row lower than the design: the model fields take two rows where the design has one"
+ },
+ {
+  "row": 25,
+  "text": "  pixel-labs.workers.dev  existing subdomain · reused             │ ✓ account API tokens                                ",
+  "reason": "one row lower than the design: the model fields take two rows where the design has one"
+ },
+ {
+  "row": 26,
+  "text": "                                                                  │                                                     ",
+  "reason": "one row lower than the design: the model fields take two rows where the design has one"
+ },
+ {
+  "row": 27,
+  "text": "  ENDPOINT                                                        │ SAVED TO                                            ",
+  "reason": "one row lower than the design: the model fields take two rows where the design has one"
+ },
+ {
+  "row": 28,
+  "text": "  https://rio.pixel-labs.workers.dev                              │ ~/.config/rio/config.toml                           ",
+  "reason": "one row lower than the design: the model fields take two rows where the design has one"
+ }
+]

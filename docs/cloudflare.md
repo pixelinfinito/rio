@@ -165,12 +165,19 @@ Optional Worker variables: `OPENAI_BASE_URL` for an OpenAI-compatible HTTPS API
 provider/model to `{ "input": USD_PER_MILLION, "output": USD_PER_MILLION }`.
 OpenRouter charges use its reported usage cost; other unknown prices are reported as null rather than fabricated zero cost.
 
-The built-in `rio/openrouter` profile uses `anthropic/claude-sonnet-5.5` for generation and
-`openai/gpt-6.1-sol` for verification, both through OpenRouter. Override
-these aliases in a child profile to select other OpenRouter models. The requested
-Sonnet 5.5 and GPT-6.1 Sol identifiers were verified against OpenRouter's model
-catalog on 2026-11-06; GPT-6.1 Sol also supports structured text outputs in
+The built-in `rio/openrouter` profile uses `anthropic/claude-opus-5.5` for generation and
+`openai/gpt-6.1-sol` for verification, both through OpenRouter, and reviews a change
+longer than one prompt in up to eight parts. Both identifiers were checked against
+OpenRouter's model catalog on 2026-11-15; GPT-6.1 Sol also supports structured text outputs in
 [its official model documentation](https://developers.openai.com/api/docs/models/gpt-6.1-sol).
+
+`rio init` asks which models the personal default profile uses: the form has a
+`reviews` and a `verifies` field under the provider, and the terminal prompts ask
+for the reviewing and the verifying model. Each starts at the provider's default and
+takes a model route as profiles write it (`PROVIDER/MODEL`). Non-interactively, pass
+`--default-model` and `--verifier-model`. The choice applies when the profile is
+first written; an existing `profiles/default.yaml` is never overwritten, so edit its
+`models` to change them later.
 
 ## Custom endpoints through AI Gateway
 
@@ -388,9 +395,14 @@ new contents. No endpoint component holds a whole tree in memory: steps and tool
 read files on demand, and runners receive a streamed archive.
 
 Limits, checked by the CLI before uploading anything and enforced by the endpoint:
-300,000 paths per tree, 64 MiB per file, 1 GiB of distinct content across both
+300,000 paths per tree, 64 MiB per file, 1.5 GiB of distinct content across both
 trees, and 8 MiB per request body. The CLI error names the exceeded limit, the
 measured value and, for the file limit, the path.
+
+A runner stores a file that is the same in both trees once (the base tree's file
+is a hard link to the head's), so both trees of a repository take about the room
+of one. `rio/prepare`'s `omit` globs keep paths out of the snapshot altogether;
+see [profiles](profiles.md).
 
 A content is identified by the lowercase hex BLAKE3 hash of its bytes (a symbolic
 link's content is its target). All routes need `reviews:write`.

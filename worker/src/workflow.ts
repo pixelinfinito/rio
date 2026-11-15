@@ -28,7 +28,12 @@ import type {
 import { Store, D1Ledger } from "./storage";
 import { DEFAULT_TOKENS } from "./budget";
 import { Progress } from "./progress";
-import { ProviderGateway, converse, settledUsage } from "./gateway";
+import {
+  HISTORY_BYTES,
+  ProviderGateway,
+  converse,
+  settledUsage,
+} from "./gateway";
 import { promptCacheReport, selfHostedCache } from "./usage";
 import { generationPrompt, redactPartitions } from "./prompt";
 /** The provider identity of self-hosted council members' partition. */
@@ -59,6 +64,12 @@ import {
   type Rejection,
   validateHypothesesLenient,
 } from "./validation";
+import {
+  combineCoverage,
+  combineRaised,
+  reviewModels,
+  type ReviewModel,
+} from "./combine";
 import agentPrompts from "./agent-prompts.json";
 import { agents } from "./manifests";
 import {
@@ -102,12 +113,7 @@ import {
 } from "./council-audit";
 import memberWeights from "./member-weights.json";
 import { pullOf } from "./pulls";
-import {
-  createJob,
-  createModelJob,
-  stopRunners,
-  withdrawIdle,
-} from "./jobs";
+import { createJob, createModelJob, stopRunners, withdrawIdle } from "./jobs";
 import { needs, transferMs } from "./archive";
 import { createQaJob } from "./qa-jobs";
 import { qaReport, qaRecords, compareQaResults, qaUsage } from "./qa-results";
@@ -135,6 +141,7 @@ import { announceReview, settleAnnouncement } from "./announce";
 import {
   changeHunks,
   ContextMemo,
+  diffHunks,
   context as cacheContext,
   expire,
   hunkHash,
@@ -176,52 +183,174 @@ export interface WorkflowParams {
   review_id: string;
   snapshot_key: string;
 }
+/** Hypotheses verified at once, each with its own voters, while tokens allow. */
+const VERIFIED_TOGETHER = 3;
+/** Characters of diff an agent's first message holds, over all changed files. */
+export const CHANGE_PROMPT_CHARS = 60_000;
+/** Changed files read for an agent's prompt; the files after them are named. */
+export const CHANGE_PROMPT_FILES = 200;
+// A diff cut shorter than this says too little: the file is named instead.
+const SHORTEST_CUT = 600;
+const CONTEXT_LINES = 3;
+const LONGEST_LINE = 400;
+
 /**
- * The first lines of each changed file, in both versions, for an agent's
- * prompt. A file too large to hold is named with its size and not read: the
- * excerpt is 80 lines, and the agent runs beside others in one isolate.
+ * One file's change as a diff: its hunks with three lines of context, removed
+ * lines marked `-`, added lines `+`, and the head line number before every
+ * line the head has.
+ */
+export function renderDiff(before: string | null, after: string | null) {
+  const split = (text: string | null) =>
+    text === null ? [] : text.replace(/\n$/, "").split("\n");
+  const a = split(before),
+    b = split(after);
+  const width = String(b.length).length;
+  const clip = (line: string) =>
+    line.length > LONGEST_LINE ? `${line.slice(0, LONGEST_LINE)}…` : line;
+  const head = (n: number, mark: string) =>
+    `${String(n).padStart(width)} ${mark}${clip(b[n - 1])}`;
+  const hunks = diffHunks("", "", before, after);
+  const out: string[] = [];
+  // The last head line written.
+  let shown = 0;
+  hunks.forEach((h, i) => {
+    const from = Math.max(shown + 1, h.head.start - CONTEXT_LINES);
+    if (i === 0 || from > shown + 1)
+      out.push(
+        `@@ -${h.base.start},${h.base.count} +${h.head.start},${h.head.count} @@`,
+      );
+    for (let n = from; n < h.head.start; n++) out.push(head(n, " "));
+    for (let k = 0; k < h.base.count; k++)
+      out.push(`${" ".repeat(width)} -${clip(a[h.base.start - 1 + k])}`);
+    for (let k = 0; k < h.head.count; k++)
+      out.push(head(h.head.start + k, "+"));
+    shown = h.head.start + h.head.count - 1;
+    const until = Math.min(
+      b.length,
+      shown + CONTEXT_LINES,
+      i + 1 < hunks.length ? hunks[i + 1].head.start - 1 : Infinity,
+    );
+    for (let n = shown + 1; n <= until; n++) out.push(head(n, " "));
+    shown = Math.max(shown, until);
+  });
+  return out.join("\n");
+}
+
+/**
+ * The change itself for an agent's prompt: every changed file's diff, within
+ * a character budget shared so that short diffs are whole and the longest are
+ * cut alike. A cut diff says so, and a file whose share would say too little,
+ * or that comes after the files read, is named as unshown: the agent reads
+ * those with its tools. A file too large to hold is named with its size and
+ * not read; the agent runs beside others in one isolate.
  */
 export async function changedCode(
   changed: Submission["changed"],
   snapshot: SnapshotReader,
+  budget = CHANGE_PROMPT_CHARS,
 ) {
-  const previews: any[] = [];
-  let remaining = 16000;
-  for (const file of changed) {
-    const preview: any = { path: file.path };
-    for (const version of ["base", "head"] as const) {
-      const path =
-        version === "base" ? (file.old_path ?? file.path) : file.path;
-      const entry = await snapshot[version].stat(path);
-      if (!entry) {
-        preview[version] = null;
-        continue;
-      }
-      if (entry.size > LARGE) {
-        preview[version] = { omitted: true, bytes: entry.size };
-        continue;
-      }
-      const held = fileOf(entry, await snapshot[version].read(entry));
-      if (held.encoding === "base64") preview[version] = { binary: true };
-      else {
-        const content = held.content
-          .split("\n")
-          .slice(0, 80)
-          .join("\n")
-          .slice(0, 4000);
-        preview[version] = {
-          line_start: 1,
-          content,
-          truncated: content !== held.content,
-        };
-      }
+  const files: any[] = [];
+  const diffs: { file: any; diff: string }[] = [];
+  for (const [index, file] of changed.entries()) {
+    const shown: any = { path: file.path };
+    files.push(shown);
+    if (index >= CHANGE_PROMPT_FILES) {
+      shown.unshown = true;
+      continue;
     }
-    const size = JSON.stringify(preview).length;
-    if (size > remaining) break;
-    previews.push(preview);
-    remaining -= size;
+    const old = file.old_path ?? file.path;
+    if (old !== file.path) shown.old_path = old;
+    const entries = {
+      base: await snapshot.base.stat(old),
+      head: await snapshot.head.stat(file.path),
+    };
+    const large = Math.max(entries.base?.size ?? 0, entries.head?.size ?? 0);
+    if (large > LARGE) {
+      shown.omitted = true;
+      shown.bytes = large;
+      continue;
+    }
+    const texts: Record<"base" | "head", string | null> = {
+      base: null,
+      head: null,
+    };
+    for (const version of ["base", "head"] as const) {
+      const entry = entries[version];
+      if (!entry) continue;
+      const held = fileOf(entry, await snapshot[version].read(entry));
+      if (held.encoding === "base64") shown.binary = true;
+      else texts[version] = held.content;
+    }
+    if (shown.binary) continue;
+    if (!entries.base) shown.change = "added";
+    else if (!entries.head) shown.change = "deleted";
+    // No diff of one file is read past the whole budget.
+    diffs.push({
+      file: shown,
+      diff: renderDiff(texts.base, texts.head).slice(0, budget + 1),
+    });
   }
-  return previews;
+  let remaining = budget;
+  const shortestFirst = [...diffs].sort(
+    (x, y) => x.diff.length - y.diff.length,
+  );
+  for (const [i, { file, diff }] of shortestFirst.entries()) {
+    const share = Math.floor(remaining / (shortestFirst.length - i));
+    if (diff.length <= share) file.diff = diff;
+    else if (share < SHORTEST_CUT) {
+      delete file.change;
+      file.unshown = true;
+      continue;
+    } else {
+      const cut = diff.slice(0, share);
+      file.diff = cut.slice(0, Math.max(cut.lastIndexOf("\n"), 0));
+      file.truncated = true;
+    }
+    remaining -= file.diff.length;
+  }
+  return files;
+}
+/** The most parts a change is reviewed in, whatever a profile asks for. */
+export const MOST_PARTS = 8;
+/**
+ * A change whose diff is longer than one prompt holds, as parts for the agent
+ * to review one conversation each: runs of files in the change's order, of
+ * about equal diff length, as many as the diff fills prompts, at most `most`.
+ * A change one prompt holds, or of one file, has no parts.
+ */
+export async function changeParts(
+  changed: Submission["changed"],
+  snapshot: SnapshotReader,
+  budget: number,
+  most: number,
+): Promise<string[][]> {
+  if (most < 2 || changed.length < 2) return [];
+  // A file the prompt only names still costs the agent a read.
+  const sizes = (
+    await changedCode(changed, snapshot, Number.MAX_SAFE_INTEGER)
+  ).map((f) => Math.min(budget, Math.max(SHORTEST_CUT, f.diff?.length ?? 0)));
+  const total = sizes.reduce((a, b) => a + b, 0);
+  const count = Math.min(most, MOST_PARTS, Math.ceil(total / budget));
+  if (count < 2) return [];
+  const parts: string[][] = [[]];
+  let held = 0,
+    left = total;
+  changed.forEach((file, i) => {
+    const part = parts[parts.length - 1];
+    // A part is full at an equal share of what the parts after it still hold.
+    if (
+      part.length &&
+      parts.length < count &&
+      held + sizes[i] / 2 > left / (count - parts.length + 1)
+    ) {
+      left -= held;
+      held = 0;
+      parts.push([]);
+    }
+    parts[parts.length - 1].push(file.path);
+    held += sizes[i];
+  });
+  return parts.length > 1 ? parts : [];
 }
 /** Paths whose content or mode differ between two trees, by manifest hash. */
 async function differing(before: TreeReader, after: TreeReader) {
@@ -336,6 +465,47 @@ const OPEN = "(status IN ('queued','running','cancelled') OR report_key=?)";
 export const CANCELLED_NOTE = "Review cancelled before it finished.";
 /** Cache entries written per store step: four packs. */
 const CACHE_STORE_CHUNK = 4 * PACK_ENTRIES;
+/** The review's token or wall budget refusing a model call. */
+const BUDGET_REFUSAL = /^(review )?(token|wall) budget exhausted$/;
+/**
+ * The action of a model call's step: the reply is stored under `key` and the
+ * key is the step's result. A failure of the call itself is final, because it
+ * repeats or its tokens were charged. An attempt after the first is therefore
+ * the platform's doing, which at times fails an attempt whose call was answered
+ * and whose reply is stored: that reply is the step's result, and no model is
+ * asked again.
+ */
+export function modelStep(
+  store: Store,
+  requests: Requests,
+  key: string,
+  action: () => Promise<ModelResponse>,
+) {
+  return async (context?: {
+    attempt?: number;
+  }): Promise<string | { refused: string }> => {
+    if (context?.attempt !== 1 && (await store.has(key))) return key;
+    // Refused while the review can still report what it has. The refusal is
+    // the step's result, so it is counted once and a later run of this code
+    // meets it again.
+    if (requests.exhausted) {
+      requests.count(1, "stopped");
+      return "";
+    }
+    requests.count();
+    let result: ModelResponse;
+    try {
+      result = await action();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      // A budget of the review refuses a call before anything is sent. That
+      // is the step's result too: a failed step is a fault, and this is none.
+      if (BUDGET_REFUSAL.test(message)) return { refused: message };
+      throw new NonRetryableError(message);
+    }
+    return store.put(key, result);
+  };
+}
 export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
   // What this run asks of the database and the bucket is counted: `this.env`
   // is the metered environment.
@@ -447,6 +617,9 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
     // not complete, and whether the report already holds the consolidated
     // findings; the stopped path reads both.
     const settled = new Map<string, number>();
+    // Parts the correctness agent reviewed the change in; scales the cap on
+    // unverified findings.
+    let reviewedParts = 1;
     let consolidated = false;
     const progress = new Progress(store, id);
     const ledger = new D1Ledger(this.env, id),
@@ -475,6 +648,9 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
     // Agent audit: why agents ran or were skipped, and screened-out hypotheses.
     const skippedAgents: Record<string, string> = {};
     const rejected: Rejection[] = [];
+    // The models that raised each hypothesis, where an agent reviewed under
+    // more than one.
+    const raisedUnder = new Map<string, string[]>();
     const catalogOf = new Map<string, string>();
     let coverage: SecurityCoverage | undefined;
     // Agent result cache use; reported when the agents step ran.
@@ -493,26 +669,27 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
     let promptConfig: PromptSettings = { cache: [], layout: [] };
     let partitions!: Partitions;
     const call = async (name: string, action: () => Promise<ModelResponse>) => {
-      const key = await step.do(
-        `model-${name}`,
-        // Longer than the call itself (`MODEL_CALL_MS`) and its bookkeeping.
-        { retries: { limit: 0, delay: "1 second" }, timeout: "4 minutes" },
-        async () => {
-          // Refused while the review can still report what it has. The
-          // refusal is the step's result, so it is counted once and a later
-          // run of this code meets it again.
-          if (requests.exhausted) {
-            requests.count(1, "stopped");
-            return "";
-          }
-          requests.count();
-          const result = await action();
-          const key = `reviews/${id}/models/${name}.json`;
-          await store.put(key, result);
-          return key;
-        },
-      );
+      const key = await step
+        .do(
+          `model-${name}`,
+          // Longer than the call itself (`MODEL_CALL_MS`) and its bookkeeping.
+          // The one retry is for an attempt the platform failed.
+          { retries: { limit: 1, delay: "1 second" }, timeout: "4 minutes" },
+          modelStep(
+            store,
+            requests,
+            `reviews/${id}/models/${name}.json`,
+            action,
+          ),
+        )
+        .catch((error) => {
+          // A non-retryable step error carries its class name in the message.
+          throw error instanceof Error
+            ? new Error(error.message.replace(/^NonRetryableError: /, ""))
+            : error;
+        });
       invariant(key, REQUESTS_EXHAUSTED);
+      if (typeof key !== "string") throw new Error(key.refused);
       return store.get<ModelResponse>(key);
     };
     // The snapshot tool calls of one model turn (see `converse`). The action
@@ -839,7 +1016,10 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               output_tokens,
               cost_usd: 0,
               cost_source: "self-hosted",
-              ...selfHostedCache(input_tokens, result.artifact.cached_input_tokens),
+              ...selfHostedCache(
+                input_tokens,
+                result.artifact.cached_input_tokens,
+              ),
               model: member.model,
             });
           const usage = known
@@ -850,10 +1030,9 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             key: await store.put(
               `reviews/${id}/council/responses/${name}.json`,
               {
-                content: redactPartitions(
-                  String(result.artifact.content),
-                  [partitions.for(SELF_HOSTED)],
-                ),
+                content: redactPartitions(String(result.artifact.content), [
+                  partitions.for(SELF_HOSTED),
+                ]),
                 ...usage,
                 cost_usd: 0,
               },
@@ -1049,12 +1228,16 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                             messages: [
                               {
                                 role: "user",
-                                content: request.parts?.content ?? request.content,
+                                content:
+                                  request.parts?.content ?? request.content,
                               },
                             ],
                             max_tokens: COUNCIL_OUTPUT_TOKENS,
                             signal: AbortSignal.timeout(remaining),
-                            cache: { classes: promptConfig.cache, key: request.key },
+                            cache: {
+                              classes: promptConfig.cache,
+                              key: request.key,
+                            },
                             redact: [partitions.for(routeOf(member))],
                           });
                           await ledger.settle(reservation, {
@@ -1446,50 +1629,58 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           selected.length && !unchanged
             ? await step.do(`analysis-${s.id}`, () =>
                 holding(async () => {
-                const contents = await changedContents(
-                  reviewed.changed,
-                  reviewed.snapshot,
-                );
-                const entries = await inventory({
-                  changed: reviewed.changed,
-                  contents,
-                  graphs,
-                  hops: graphHops,
-                  read: (version, path) =>
-                    textOf(reviewed.snapshot[version], path),
-                  scan: (version) => textFiles(reviewed.snapshot[version]),
-                });
-                const manifests: [string, string][] = [];
-                for (const path of manifestPaths(reviewed.changed))
-                  for (const version of ["head", "base"] as const) {
-                    const text = await textOf(reviewed.snapshot[version], path);
-                    if (text !== null) {
-                      manifests.push([path, text]);
-                      break;
+                  const contents = await changedContents(
+                    reviewed.changed,
+                    reviewed.snapshot,
+                  );
+                  const entries = await inventory({
+                    changed: reviewed.changed,
+                    contents,
+                    graphs,
+                    hops: graphHops,
+                    read: (version, path) =>
+                      textOf(reviewed.snapshot[version], path),
+                    scan: (version) => textFiles(reviewed.snapshot[version]),
+                  });
+                  const manifests: [string, string][] = [];
+                  for (const path of manifestPaths(reviewed.changed))
+                    for (const version of ["head", "base"] as const) {
+                      const text = await textOf(
+                        reviewed.snapshot[version],
+                        path,
+                      );
+                      if (text !== null) {
+                        manifests.push([path, text]);
+                        break;
+                      }
                     }
-                  }
-                const context = changeContext({
-                  changed: reviewed.changed,
-                  contents,
-                  frameworks: frameworks(manifests, reviewed.changed),
-                  node_kinds: touchedKinds(entries, reviewed.changed, contents),
-                  sensitive_paths: triageOptions.sensitive_paths ?? [],
-                });
-                const catalogName = security
-                  ? (s.with.catalog ?? "owasp-top10-2025")
-                  : null;
-                const items = catalogName
-                  ? applicability(catalogName, context).applicable
-                  : [];
-                return {
-                  inventory: entries,
-                  context,
-                  trace: catalogName
-                    ? traceInputs(items, reviewed.changed, contents, graphs)
-                    : null,
-                  omitted: contents.omitted,
-                };
-              }))
+                  const context = changeContext({
+                    changed: reviewed.changed,
+                    contents,
+                    frameworks: frameworks(manifests, reviewed.changed),
+                    node_kinds: touchedKinds(
+                      entries,
+                      reviewed.changed,
+                      contents,
+                    ),
+                    sensitive_paths: triageOptions.sensitive_paths ?? [],
+                  });
+                  const catalogName = security
+                    ? (s.with.catalog ?? "owasp-top10-2025")
+                    : null;
+                  const items = catalogName
+                    ? applicability(catalogName, context).applicable
+                    : [];
+                  return {
+                    inventory: entries,
+                    context,
+                    trace: catalogName
+                      ? traceInputs(items, reviewed.changed, contents, graphs)
+                      : null,
+                    omitted: contents.omitted,
+                  };
+                }),
+              )
             : null;
         if (analysis)
           unread(
@@ -1522,189 +1713,14 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             continue;
           }
           const config = declaration?.[agent] ?? {};
-          const model =
-            submission.profile.models[config.model ?? agent] ??
-            submission.profile.models.default;
-          invariant(model, "no default model configured");
-          // The agent result cache: per hunk, never for fork reviews, the
-          // security step (its output is catalog coverage) or `cache: false`.
-          const caching =
-            module === "rio/agents" &&
-            !submission.fork &&
-            s.with.cache !== false;
-          let keyed: Keyed[] = [],
-            misses: number[] = [];
-          let scope = reviewed;
-          // The cache only saves model calls: a lookup that cannot finish
-          // (a CPU limit repeats on every retry) runs the agent uncached.
-          let found:
-            { keys: Keyed[]; hits: Record<number, CacheEntry> } | undefined;
-          // A cache step is retried once: an error that repeats (a platform
-          // limit does) must not hold the review.
-          const bounded = {
-            retries: { limit: 1, delay: "5 seconds" as const },
-            timeout: "5 minutes" as const,
-          };
-          if (caching) {
-            // The files of the hunks in the order they are read, fetched a
-            // window at a time; the symbols around a hunk that lie in other
-            // files are read when asked for.
-            const reading = (files: { path: string; old_path?: string }[]) => {
-              const sorted = [...files].sort((a, b) =>
-                a.path.localeCompare(b.path),
-              );
-              return prefetched(reviewed.snapshot, {
-                base: sorted.map((f) => f.old_path ?? f.path),
-                head: sorted.map((f) => f.path),
-              });
-            };
-            try {
-              // The change's hunks, then their keys and hits in chunks: each
-              // chunk is its own step, so its CPU limit bounds one chunk.
-              const hunksKey = await step.do(
-                `cache-hunks-${s.id}-${agent}`,
-                bounded,
-                async () =>
-                  store.put(
-                    `reviews/${id}/cache/${s.id}-${agent}-hunks.json`,
-                    await changeHunks(
-                      reviewed.changed,
-                      reading(reviewed.changed),
-                    ),
-                  ),
-              );
-              const hunks = await store.get<Hunk[]>(hunksKey);
-              const all: typeof found = { keys: [], hits: {} };
-              for (let start = 0; start < hunks.length; start += CACHE_CHUNK) {
-                const chunk = start / CACHE_CHUNK;
-                const chunkKey = await step.do(
-                  `cache-lookup-${s.id}-${agent}-${chunk}`,
-                  bounded,
-                  async () => {
-                    const keys: Keyed[] = [];
-                    const memo = new ContextMemo();
-                    const part = hunks.slice(start, start + CACHE_CHUNK);
-                    const read = reading(part);
-                    for (const hunk of part)
-                      keys.push({
-                        hunk,
-                        hunk_hash: hunkHash(hunk),
-                        ...(await cacheContext(hunk, {
-                          agent,
-                          layout: promptConfig.layout,
-                          manifest_version: agents[agent]?.version ?? 0,
-                          prompt:
-                            (agentPrompts as Record<string, string>)[agent] ??
-                            "",
-                          model,
-                          options: config,
-                          engine: this.env.RIO_VERSION,
-                          graphs,
-                          guidance: submission.owner_guidance,
-                          read,
-                          base_graph: !diffOnly,
-                          memo,
-                        })),
-                      });
-                    const hits = await lookup(this.env, load.tenant, keys);
-                    return store.put(
-                      `reviews/${id}/cache/${s.id}-${agent}-${chunk}.json`,
-                      {
-                        keys: keys.map((k) => ({
-                          ...k,
-                          hunk: { ...k.hunk, text: "" },
-                        })),
-                        hits,
-                      },
-                    );
-                  },
-                );
-                const part =
-                  await store.get<NonNullable<typeof found>>(chunkKey);
-                for (const [i, entry] of Object.entries(part.hits))
-                  all.hits[start + Number(i)] = entry;
-                all.keys.push(...part.keys);
-              }
-              found = all;
-            } catch (error) {
-              report.footer.notes.push(
-                `Agent result cache skipped for ${agent}: ${redact(error instanceof Error ? error.message : String(error)).slice(0, 120)}`,
-              );
-            }
-          }
-          if (found) {
-            keyed = found.keys;
-            cacheStats ??= { lookups: 0, hits: 0, tokens_saved_estimate: 0 };
-            cacheStats.lookups += keyed.length;
-            for (const entry of Object.values(found.hits)) {
-              cacheStats.hits++;
-              cacheStats.tokens_saved_estimate += entry.tokens;
-              for (const h of entry.hypotheses) {
-                if (hypotheses.some((x) => x.id === h.id)) continue;
-                hypotheses.push({ ...h, source: { agent, cached: true } });
-                if (h.catalog_item) catalogOf.set(h.id, h.catalog_item);
-              }
-            }
-            await progress.raised(
-              `${s.id}-${agent}-cached`,
-              hypotheses.filter(
-                (h) => h.source?.agent === agent && h.source.cached,
-              ),
-            );
-            misses = keyed.flatMap((_, i) => (i in found.hits ? [] : [i]));
-            // Every hunk was a hit: no model call for this agent.
-            if (keyed.length && !misses.length) continue;
-            if (misses.length < keyed.length) {
-              const paths = new Set(misses.map((i) => keyed[i].hunk.path));
-              scope = {
-                ...reviewed,
-                changed: reviewed.changed.filter((f) => paths.has(f.path)),
-                focus: [...paths],
-              };
-            }
-          }
-          let serial = 0;
-          const tools = new Tools(
-            snapshot,
-            graphs,
-            runAllowed(
-              agent,
-              submission.fork,
-              config.run ??
-                (Array.isArray(config.tools)
-                  ? config.tools.includes("run")
-                  : undefined),
-            )
-              ? (cmd, v) =>
-                  execute(`${s.id}-${agent}-${serial++}`, "run", cmd, v)
-              : undefined,
-            2,
-            2000,
-            Array.isArray(config.tools) ? config.tools : undefined,
-          );
-          const roundContext = diffOnly
-            ? `\nThis is round ${lineage!.round} of a review lineage. Review ONLY the incremental change between the previously reviewed head and the new head shown below (base is the previously reviewed head); do not re-derive earlier findings, which are listed with their current states for context.\n${dataBlock(
-                "previous round findings",
-                lineage!.prior
-                  .filter((p) => p.status !== "fixed")
-                  .map((p) => ({
-                    id: p.id,
-                    rule_id: p.finding.rule_id,
-                    category: p.finding.category,
-                    message: p.finding.message,
-                    location: p.finding.location,
-                    status: p.status,
-                    ...(p.author_response
-                      ? { author_response: p.author_response.reason }
-                      : {}),
-                  })),
-              )}`
-            : "";
-          const intent = diffOnly
-            ? (lineage!.intent ?? submission.intent)
-            : submission.intent;
+          // An agent declared with `models` reviews the same code once under
+          // each, at the same time and each with an agent's share of the
+          // tokens; what the reviews raise is combined below.
+          const models = reviewModels(agent, config, submission.profile.models);
+          invariant(models.length, "no default model configured");
+          const several = models.length > 1;
           // Agent instructions are Rio's own; repository data stays in data blocks.
-          let instructions =
+          const instructions =
             (agentPrompts as Record<string, string>)[agent] ?? "";
           let agentData = "";
           let catalogName: string | null = null;
@@ -1737,213 +1753,502 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               })),
             })}\n${dataBlock("taint map", analysis!.trace)}`;
           }
-          const partition = partitions.for(model);
-          const prompt = generationPrompt({
-            agent,
-            instructions,
-            round: roundContext,
-            intent: dataBlock("intent", filteredLines(intent.split("\n"))),
-            focus: dataBlock("suggested_focus", scope.focus),
-            graph: dataBlock("graph excerpt", promptGraph(graphs)),
-            changed: dataBlock(
-              "changed code excerpts",
-              await changedCode(scope.changed, reviewed.snapshot),
-            ),
-            checks: dataBlock("deterministic checks", report.checks),
-            data: agentData,
-            guidance: guidanceBlock(submission.owner_guidance, reviewed.focus),
-            partition,
-            order: enabled(promptConfig, "agent-order"),
-          });
-          await step.do(`agent-started-${s.id}-${agent}`, () =>
-            store.event(id, "agent:started", { agent }),
+          // A change longer than one prompt holds is reviewed in parts when
+          // the step asks for it: one conversation per part, at the same time.
+          const diffBudget = Math.min(
+            CHANGE_PROMPT_CHARS,
+            Math.floor(agentTokens / 8),
           );
-          const finished = (count: number) =>
-            step.do(`agent-finished-${s.id}-${agent}`, () =>
-              store.event(id, "agent:finished", { agent, hypotheses: count }),
+          const parts =
+            module === "rio/agents" &&
+            agent === "correctness" &&
+            Number(s.with.parts ?? 1) > 1
+              ? await step.do(`parts-${s.id}-${agent}`, () =>
+                  holding(() =>
+                    changeParts(
+                      reviewed.changed,
+                      reviewed.snapshot,
+                      diffBudget,
+                      Number(s.with.parts),
+                    ),
+                  ),
+                )
+              : [];
+          if (parts.length) reviewedParts = parts.length;
+          if (parts.length)
+            report.footer.notes.push(
+              `The ${agent} agent reviewed this change in ${parts.length} parts.`,
             );
-          let output: any;
-          try {
-            output = await converse({
-              gateway,
-              ledger,
-              actor: `${s.id}-${agent}`,
-              phase: "generation",
-              model,
-              allowance: { remaining: agentTokens },
-              messages: [{ role: "user", content: prompt }],
-              dispatch: tools.dispatch.bind(tools),
-              call,
-              record,
-              cancelled: () => store.cancelled(id),
-              cache: {
-                classes: promptConfig.cache,
-                key: promptCacheKey(load.tenant, id, "generation"),
-              },
-              redact: [partition],
-              compaction: enabled(promptConfig, "compaction"),
-              // A security result without its lists is asked for again, within
-              // the conversation's repair limits, before the agent fails.
-              ...(agent === "security"
-                ? {
-                    validateResult: (value: any) => {
-                      invariant(securityResult(value), SECURITY_RESULT);
-                      return value;
+          const reviewUnder = async ({
+            alias,
+            model,
+            part,
+          }: ReviewModel & { part?: number }) => {
+            // Steps, records and usage of a review carry the model's alias when
+            // the agent has several, and the part when the change has several.
+            const of = part === undefined ? "" : `-p${part + 1}`;
+            const label = `${several ? `${agent}-${alias}` : agent}${of}`;
+            const who = `${agent} agent${several ? ` (${alias})` : ""}${
+              part === undefined ? "" : ` (part ${part + 1})`
+            }`;
+            const review = {
+              alias,
+              hypotheses: [] as Hypothesis[],
+              rejected: [] as Rejection[],
+              notes: [] as string[],
+              partial: false,
+              generated: false,
+              coverage: undefined as SecurityCoverage | undefined,
+            };
+            // The agent result cache: per hunk, never for fork reviews, the
+            // security step (its output is catalog coverage) or `cache: false`.
+            // A part's review is not cached: a cache entry holds everything
+            // one conversation raised on the whole change.
+            const caching =
+              module === "rio/agents" &&
+              !submission.fork &&
+              part === undefined &&
+              s.with.cache !== false;
+            let keyed: Keyed[] = [],
+              misses: number[] = [];
+            let scope = reviewed;
+            let others = "";
+            if (part !== undefined) {
+              const mine = new Set(parts[part]);
+              scope = {
+                ...reviewed,
+                changed: reviewed.changed.filter((f) => mine.has(f.path)),
+                focus: reviewed.focus.filter((path) => mine.has(path)),
+              };
+              others = `\nThis change is large and is reviewed in ${parts.length} parts by reviewers working at the same time. You review part ${part + 1}: the files of the "change diff" block. Raise hypotheses only in those files. The block below names the files of the other parts: read one where a concern in your part depends on it, and do not review it.\n${dataBlock(
+                "files of the other parts",
+                reviewed.changed
+                  .filter((f) => !mine.has(f.path))
+                  .slice(0, 400)
+                  .map((f) => f.path),
+              )}`;
+            }
+            // The cache only saves model calls: a lookup that cannot finish
+            // (a CPU limit repeats on every retry) runs the agent uncached.
+            let found:
+              { keys: Keyed[]; hits: Record<number, CacheEntry> } | undefined;
+            // A cache step is retried once: an error that repeats (a platform
+            // limit does) must not hold the review.
+            const bounded = {
+              retries: { limit: 1, delay: "5 seconds" as const },
+              timeout: "5 minutes" as const,
+            };
+            if (caching) {
+              // The files of the hunks in the order they are read, fetched a
+              // window at a time; the symbols around a hunk that lie in other
+              // files are read when asked for.
+              const reading = (
+                files: { path: string; old_path?: string }[],
+              ) => {
+                const sorted = [...files].sort((a, b) =>
+                  a.path.localeCompare(b.path),
+                );
+                return prefetched(reviewed.snapshot, {
+                  base: sorted.map((f) => f.old_path ?? f.path),
+                  head: sorted.map((f) => f.path),
+                });
+              };
+              try {
+                // The change's hunks, then their keys and hits in chunks: each
+                // chunk is its own step, so its CPU limit bounds one chunk.
+                const hunksKey = await step.do(
+                  `cache-hunks-${s.id}-${label}`,
+                  bounded,
+                  async () =>
+                    store.put(
+                      `reviews/${id}/cache/${s.id}-${label}-hunks.json`,
+                      await changeHunks(
+                        reviewed.changed,
+                        reading(reviewed.changed),
+                      ),
+                    ),
+                );
+                const hunks = await store.get<Hunk[]>(hunksKey);
+                const all: typeof found = { keys: [], hits: {} };
+                for (
+                  let start = 0;
+                  start < hunks.length;
+                  start += CACHE_CHUNK
+                ) {
+                  const chunk = start / CACHE_CHUNK;
+                  const chunkKey = await step.do(
+                    `cache-lookup-${s.id}-${label}-${chunk}`,
+                    bounded,
+                    async () => {
+                      const keys: Keyed[] = [];
+                      const memo = new ContextMemo();
+                      const part = hunks.slice(start, start + CACHE_CHUNK);
+                      const read = reading(part);
+                      for (const hunk of part)
+                        keys.push({
+                          hunk,
+                          hunk_hash: hunkHash(hunk),
+                          ...(await cacheContext(hunk, {
+                            agent,
+                            layout: promptConfig.layout,
+                            manifest_version: agents[agent]?.version ?? 0,
+                            prompt:
+                              (agentPrompts as Record<string, string>)[agent] ??
+                              "",
+                            model,
+                            options: config,
+                            engine: this.env.RIO_VERSION,
+                            graphs,
+                            guidance: submission.owner_guidance,
+                            read,
+                            base_graph: !diffOnly,
+                            memo,
+                          })),
+                        });
+                      const hits = await lookup(this.env, load.tenant, keys);
+                      return store.put(
+                        `reviews/${id}/cache/${s.id}-${label}-${chunk}.json`,
+                        {
+                          keys: keys.map((k) => ({
+                            ...k,
+                            hunk: { ...k.hunk, text: "" },
+                          })),
+                          hits,
+                        },
+                      );
                     },
-                    resultShape:
-                      'The result is {"hypotheses":[...],"assessed":[...],"unassessed":[...]}: all three lists are required, and a list with no entries is [].',
-                  }
-                : {}),
-            });
-          } catch (error) {
-            const message = error instanceof Error ? error.message : "";
-            if (/cancel/.test(message)) throw error;
-            const budget = /budget exhausted|turn limit exhausted/.test(
-              message,
+                  );
+                  const part =
+                    await store.get<NonNullable<typeof found>>(chunkKey);
+                  for (const [i, entry] of Object.entries(part.hits))
+                    all.hits[start + Number(i)] = entry;
+                  all.keys.push(...part.keys);
+                }
+                found = all;
+              } catch (error) {
+                review.notes.push(
+                  `Agent result cache skipped for ${label}: ${redact(error instanceof Error ? error.message : String(error)).slice(0, 120)}`,
+                );
+              }
+            }
+            if (found) {
+              keyed = found.keys;
+              cacheStats ??= { lookups: 0, hits: 0, tokens_saved_estimate: 0 };
+              cacheStats.lookups += keyed.length;
+              for (const entry of Object.values(found.hits)) {
+                cacheStats.hits++;
+                cacheStats.tokens_saved_estimate += entry.tokens;
+                for (const h of entry.hypotheses) {
+                  if (review.hypotheses.some((x) => x.id === h.id)) continue;
+                  review.hypotheses.push({
+                    ...h,
+                    source: { agent, cached: true },
+                  });
+                }
+              }
+              await progress.raised(`${s.id}-${label}-cached`, [
+                ...review.hypotheses,
+              ]);
+              misses = keyed.flatMap((_, i) => (i in found.hits ? [] : [i]));
+              // Every hunk was a hit: no model call for this agent.
+              if (keyed.length && !misses.length) return review;
+              if (misses.length < keyed.length) {
+                const paths = new Set(misses.map((i) => keyed[i].hunk.path));
+                scope = {
+                  ...reviewed,
+                  changed: reviewed.changed.filter((f) => paths.has(f.path)),
+                  focus: [...paths],
+                };
+              }
+            }
+            let serial = 0;
+            const tools = new Tools(
+              snapshot,
+              graphs,
+              runAllowed(
+                agent,
+                submission.fork,
+                config.run ??
+                  (Array.isArray(config.tools)
+                    ? config.tools.includes("run")
+                    : undefined),
+              )
+                ? (cmd, v) =>
+                    execute(`${s.id}-${label}-${serial++}`, "run", cmd, v)
+                : undefined,
+              2,
+              2000,
+              Array.isArray(config.tools) ? config.tools : undefined,
             );
-            if (agent === "security") {
-              // An exhausted budget or a failed conversation leaves the items
-              // unassessed, never passed.
+            const roundContext = diffOnly
+              ? `\nThis is round ${lineage!.round} of a review lineage. Review ONLY the incremental change between the previously reviewed head and the new head shown below (base is the previously reviewed head); do not re-derive earlier findings, which are listed with their current states for context.\n${dataBlock(
+                  "previous round findings",
+                  lineage!.prior
+                    .filter((p) => p.status !== "fixed")
+                    .map((p) => ({
+                      id: p.id,
+                      rule_id: p.finding.rule_id,
+                      category: p.finding.category,
+                      message: p.finding.message,
+                      location: p.finding.location,
+                      status: p.status,
+                      ...(p.author_response
+                        ? { author_response: p.author_response.reason }
+                        : {}),
+                    })),
+                )}`
+              : "";
+            const intent = diffOnly
+              ? (lineage!.intent ?? submission.intent)
+              : submission.intent;
+            const partition = partitions.for(model);
+            const prompt = generationPrompt({
+              agent,
+              instructions,
+              round: roundContext + others,
+              intent: dataBlock("intent", filteredLines(intent.split("\n"))),
+              focus: dataBlock("suggested_focus", scope.focus),
+              graph: dataBlock("graph excerpt", promptGraph(graphs)),
+              changed: dataBlock(
+                "change diff",
+                // Every turn sends the first message again: the diff takes no
+                // more than an eighth of the agent's tokens.
+                await changedCode(scope.changed, reviewed.snapshot, diffBudget),
+              ),
+              checks: dataBlock("deterministic checks", report.checks),
+              data: agentData,
+              guidance: guidanceBlock(
+                submission.owner_guidance,
+                reviewed.focus,
+              ),
+              partition,
+              order: enabled(promptConfig, "agent-order"),
+            });
+            const named = several ? { agent, model: alias } : { agent };
+            await step.do(`agent-started-${s.id}-${label}`, () =>
+              store.event(id, "agent:started", named),
+            );
+            const finished = (count: number) =>
+              step.do(`agent-finished-${s.id}-${label}`, () =>
+                store.event(id, "agent:finished", {
+                  ...named,
+                  hypotheses: count,
+                }),
+              );
+            let output: any;
+            try {
+              output = await converse({
+                gateway,
+                ledger,
+                actor: `${s.id}-${label}`,
+                phase: "generation",
+                model,
+                allowance: { remaining: agentTokens },
+                messages: [{ role: "user", content: prompt }],
+                dispatch: tools.dispatch.bind(tools),
+                call,
+                record,
+                cancelled: () => store.cancelled(id),
+                cache: {
+                  classes: promptConfig.cache,
+                  key: promptCacheKey(load.tenant, id, "generation"),
+                },
+                redact: [partition],
+                compaction: enabled(promptConfig, "compaction"),
+                // A security result without its lists is asked for again, within
+                // the conversation's repair limits, before the agent fails.
+                ...(agent === "security"
+                  ? {
+                      validateResult: (value: any) => {
+                        invariant(securityResult(value), SECURITY_RESULT);
+                        return value;
+                      },
+                      resultShape:
+                        'The result is {"hypotheses":[...],"assessed":[...],"unassessed":[...]}: all three lists are required, and a list with no entries is [].',
+                    }
+                  : {}),
+              });
+            } catch (error) {
+              const message = error instanceof Error ? error.message : "";
+              if (/cancel/.test(message)) throw error;
+              const budget = /budget exhausted|turn limit exhausted/.test(
+                message,
+              );
+              if (agent === "security") {
+                // An exhausted budget or a failed conversation leaves the items
+                // unassessed, never passed.
+                output = {
+                  hypotheses: [],
+                  assessed: [],
+                  unassessed: applicable.map((i) => ({
+                    item: i.id,
+                    reason: budget ? "budget" : "tools_unavailable",
+                  })),
+                };
+              }
+              // The request budget is the platform's, not the profile's: its
+              // end is told as a failure for the security agent too.
+              if (
+                agent !== "security" ||
+                !budget ||
+                message.includes(REQUESTS_EXHAUSTED)
+              ) {
+                // One agent's failure ends only that agent; the others' work and
+                // the deterministic results stay in a partial report.
+                review.partial = true;
+                review.notes.push(
+                  `${who} failed: ${redact(message).slice(0, 200)}; its findings are missing from this review.`,
+                );
+                if (agent !== "security") {
+                  await finished(0);
+                  return review;
+                }
+              }
+            }
+            // Generation agents sometimes wrap their array the way the security
+            // agent must ({"hypotheses": [...]}); the wrapper is accepted.
+            if (
+              agent !== "security" &&
+              output &&
+              typeof output === "object" &&
+              !Array.isArray(output) &&
+              Array.isArray(output.hypotheses)
+            )
+              output = output.hypotheses;
+            // A result of the wrong shape fails this agent only, like a failed
+            // conversation: the review stays partial with a note and the other
+            // agents' hypotheses still reach the verifier.
+            const shaped =
+              agent === "security"
+                ? securityResult(output)
+                : Array.isArray(output);
+            if (!shaped) {
+              review.partial = true;
+              review.notes.push(
+                `${who} failed: ${agent === "security" ? SECURITY_RESULT : "expected hypothesis array"}; its findings are missing from this review.`,
+              );
+              if (agent !== "security") {
+                await finished(0);
+                return review;
+              }
               output = {
                 hypotheses: [],
                 assessed: [],
                 unassessed: applicable.map((i) => ({
                   item: i.id,
-                  reason: budget ? "budget" : "tools_unavailable",
+                  reason: "tools_unavailable",
                 })),
               };
             }
-            // The request budget is the platform's, not the profile's: its
-            // end is told as a failure for the security agent too.
-            if (
-              agent !== "security" ||
-              !budget ||
-              message.includes(REQUESTS_EXHAUSTED)
-            ) {
-              // One agent's failure ends only that agent; the others' work and
-              // the deterministic results stay in a partial report.
-              report.status = "partial";
-              report.footer.notes.push(
-                `${agent} agent failed: ${redact(message).slice(0, 200)}; its findings are missing from this review.`,
-              );
-              if (agent !== "security") {
-                await finished(0);
-                continue;
+            let assessedByAgent: unknown = [],
+              unassessedByAgent: unknown = [];
+            if (agent === "security") {
+              assessedByAgent = output.assessed;
+              unassessedByAgent = output.unassessed;
+              output = output.hypotheses;
+            }
+            const checked = validateHypothesesLenient(
+              agent,
+              clampAgentOutput(output),
+            );
+            review.rejected.push(...checked.rejected);
+            const screened = screenHypotheses(agent, checked.accepted, {
+              catalogItems: new Set(applicable.map((i) => i.id)),
+            });
+            review.rejected.push(...screened.rejected);
+            for (const h of screened.accepted) {
+              h.source = { agent };
+              if (!review.hypotheses.some((x) => x.id === h.id))
+                review.hypotheses.push(h);
+            }
+            review.generated = true;
+            await progress.raised(`${s.id}-${label}`, screened.accepted);
+            await finished(screened.accepted.length);
+            // Only a run that completed within budget populates the cache. The
+            // entries are written a chunk per step, each a few packs, so no step
+            // nears the platform's request limit however large the change; the
+            // cache only saves later model calls, so a store that fails leaves
+            // the review as it is and says so.
+            if (caching && misses.length) {
+              const entries = [...slice(keyed, misses, screened.accepted)];
+              try {
+                const tokens = await step.do(
+                  `cache-tokens-${s.id}-${label}`,
+                  bounded,
+                  async () =>
+                    (
+                      await this.env.DB.prepare(
+                        "SELECT COALESCE(SUM(COALESCE(input_tokens,0)+COALESCE(output_tokens,0)),0) AS tokens FROM usage WHERE review_id=? AND actor=?",
+                      )
+                        .bind(id, `${s.id}-${label}`)
+                        .first<{ tokens: number }>()
+                    )?.tokens ?? 0,
+                );
+                const share = Math.floor(tokens / misses.length);
+                for (
+                  let start = 0;
+                  start < entries.length;
+                  start += CACHE_STORE_CHUNK
+                )
+                  await step.do(
+                    `cache-store-${s.id}-${label}-${start / CACHE_STORE_CHUNK}`,
+                    bounded,
+                    () =>
+                      storeEntries(
+                        this.env,
+                        load.tenant,
+                        agent,
+                        keyed,
+                        entries.slice(start, start + CACHE_STORE_CHUNK),
+                        share,
+                      ),
+                  );
+              } catch (error) {
+                review.notes.push(
+                  `Agent result cache not updated for ${label}: ${redact(error instanceof Error ? error.message : String(error)).slice(0, 120)}`,
+                );
               }
             }
-          }
-          // Generation agents sometimes wrap their array the way the security
-          // agent must ({"hypotheses": [...]}); the wrapper is accepted.
-          if (
-            agent !== "security" &&
-            output &&
-            typeof output === "object" &&
-            !Array.isArray(output) &&
-            Array.isArray(output.hypotheses)
-          )
-            output = output.hypotheses;
-          // A result of the wrong shape fails this agent only, like a failed
-          // conversation: the review stays partial with a note and the other
-          // agents' hypotheses still reach the verifier.
-          const shaped =
-            agent === "security"
-              ? securityResult(output)
-              : Array.isArray(output);
-          if (!shaped) {
-            report.status = "partial";
-            report.footer.notes.push(
-              `${agent} agent failed: ${agent === "security" ? SECURITY_RESULT : "expected hypothesis array"}; its findings are missing from this review.`,
-            );
-            if (agent !== "security") {
-              await finished(0);
-              continue;
-            }
-            output = {
-              hypotheses: [],
-              assessed: [],
-              unassessed: applicable.map((i) => ({
-                item: i.id,
-                reason: "tools_unavailable",
-              })),
-            };
-          }
-          let assessedByAgent: unknown = [],
-            unassessedByAgent: unknown = [];
-          if (agent === "security") {
-            assessedByAgent = output.assessed;
-            unassessedByAgent = output.unassessed;
-            output = output.hypotheses;
-          }
-          const checked = validateHypothesesLenient(
-            agent,
-            clampAgentOutput(output),
+            if (agent === "security")
+              review.coverage = securityCoverage(
+                coverage!,
+                applicable,
+                screened.accepted,
+                assessedByAgent,
+                unassessedByAgent,
+              );
+            return review;
+          };
+          // A review that is cancelled ends the step; any other failure is
+          // the review's own and is in its notes.
+          const ended = await Promise.allSettled(
+            (parts.length
+              ? models.flatMap((m) => parts.map((_, part) => ({ ...m, part })))
+              : models
+            ).map(reviewUnder),
           );
-          rejected.push(...checked.rejected);
-          const screened = screenHypotheses(agent, checked.accepted, {
-            catalogItems: new Set(applicable.map((i) => i.id)),
-          });
-          rejected.push(...screened.rejected);
-          for (const h of screened.accepted) {
-            h.source = { agent };
-            if (!hypotheses.some((x) => x.id === h.id)) hypotheses.push(h);
+          const thrown = ended.find((r) => r.status === "rejected");
+          if (thrown) throw thrown.reason;
+          const reviews = ended.flatMap((r) =>
+            r.status === "fulfilled" ? [r.value] : [],
+          );
+          for (const review of reviews) {
+            if (review.partial) report.status = "partial";
+            report.footer.notes.push(...review.notes);
+            rejected.push(...review.rejected);
+          }
+          // Two models often raise the same issue: it is verified once.
+          for (const h of combineRaised(
+            hypotheses,
+            reviews,
+            several ? raisedUnder : undefined,
+          ))
             if (h.catalog_item) catalogOf.set(h.id, h.catalog_item);
-          }
-          await progress.raised(`${s.id}-${agent}`, screened.accepted);
-          await finished(screened.accepted.length);
-          // Only a run that completed within budget populates the cache. The
-          // entries are written a chunk per step, each a few packs, so no step
-          // nears the platform's request limit however large the change; the
-          // cache only saves later model calls, so a store that fails leaves
-          // the review as it is and says so.
-          if (caching && misses.length) {
-            const entries = [...slice(keyed, misses, screened.accepted)];
-            try {
-              const tokens = await step.do(
-                `cache-tokens-${s.id}-${agent}`,
-                bounded,
-                async () =>
-                  (
-                    await this.env.DB.prepare(
-                      "SELECT COALESCE(SUM(COALESCE(input_tokens,0)+COALESCE(output_tokens,0)),0) AS tokens FROM usage WHERE review_id=? AND actor=?",
-                    )
-                      .bind(id, `${s.id}-${agent}`)
-                      .first<{ tokens: number }>()
-                  )?.tokens ?? 0,
-              );
-              const share = Math.floor(tokens / misses.length);
-              for (
-                let start = 0;
-                start < entries.length;
-                start += CACHE_STORE_CHUNK
-              )
-                await step.do(
-                  `cache-store-${s.id}-${agent}-${start / CACHE_STORE_CHUNK}`,
-                  bounded,
-                  () =>
-                    storeEntries(
-                      this.env,
-                      load.tenant,
-                      agent,
-                      keyed,
-                      entries.slice(start, start + CACHE_STORE_CHUNK),
-                      share,
-                    ),
-                );
-            } catch (error) {
-              report.footer.notes.push(
-                `Agent result cache not updated for ${agent}: ${redact(error instanceof Error ? error.message : String(error)).slice(0, 120)}`,
-              );
-            }
-          }
-          if (agent === "security")
-            coverage = securityCoverage(
-              coverage!,
-              applicable,
-              screened.accepted,
-              assessedByAgent,
-              unassessedByAgent,
-            );
-          if (agent === "contracts") {
+          const covered = reviews.flatMap((r) =>
+            r.coverage ? [r.coverage] : [],
+          );
+          if (covered.length) coverage = combineCoverage(applicable, covered);
+          if (agent === "contracts" && reviews.some((r) => r.generated)) {
             const unresolved = analysis!.inventory.filter(
               (e: ContractEntry) => e.unresolved.length,
             ).length;
@@ -2097,7 +2402,11 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             not_reverified: reverify.skipped,
           };
         }
-        for (const [index, h] of candidates.entries()) {
+        // Hypotheses are verified a few at a time, each with its own voters,
+        // conversations and steps; `verified` keeps the order they were raised in.
+        const outcomes: Verified[] = [];
+        let done = 0;
+        const verifyOne = async (h: Hypothesis, index: number) => {
           const key = `reviews/${id}/hypotheses/${h.id}.json`;
           await store.put(key, h);
           await this.env.DB.prepare(
@@ -2153,7 +2462,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                 .run();
             },
           });
-          verified.push(result.verified);
+          outcomes[index] = result.verified;
           // Votes missing once the review has stopped were cut short by the stop.
           const missing = result.votes.filter(
             (v) => v.status !== "completed",
@@ -2172,12 +2481,36 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               evidence_level: result.verified.evidence_level,
             }),
           );
+          const count = ++done;
           await step.do(`verify-progress-${s.id}-${h.id}`, () =>
             store.event(id, "verify:progress", {
-              done: index + 1,
+              done: count,
               total: candidates.length,
             }),
           );
+        };
+        try {
+          for (let from = 0; from < candidates.length;) {
+            // Every voter's call reserves its whole conversation, up to the
+            // size where one is compacted, until the call returns: only as
+            // many hypotheses start together as the review's tokens cover.
+            const room = Math.floor(
+              (await ledger.remaining()) /
+                (submission.profile.verify.voters * HISTORY_BYTES),
+            );
+            const together = Math.max(1, Math.min(VERIFIED_TOGETHER, room));
+            const batch = await Promise.allSettled(
+              candidates
+                .slice(from, from + together)
+                .map((h, i) => verifyOne(h, from + i)),
+            );
+            const failed = batch.find((r) => r.status === "rejected");
+            if (failed) throw failed.reason;
+            from += together;
+          }
+        } finally {
+          // A sparse list where a verification did not end: `filter` skips the gaps.
+          verified.push(...outcomes.filter(() => true));
         }
       }
       if (module === "rio/council" && s.with.enabled === true)
@@ -2203,6 +2536,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         classThreshold: submission.profile.steps.find((s) =>
           s.uses.startsWith("rio/report@"),
         )?.with?.class_threshold,
+        parts: reviewedParts,
       });
       target.findings.push(...findings.defects);
       target.risks.push(...findings.risks);
@@ -2239,6 +2573,9 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           ? { agents_skipped: skippedAgents }
           : {}),
         ...(rejected.length ? { rejected } : {}),
+        ...(raisedUnder.size
+          ? { raised_under: Object.fromEntries(raisedUnder) }
+          : {}),
       };
       if (coverage) {
         // Assessed items name the reported findings that cite them.
@@ -2684,7 +3021,8 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             const at = verified.findIndex(
               (v) => v.hypothesis.id === entry.verified.hypothesis.id,
             );
-            if (at !== -1 && settled.has(entry.verified.hypothesis.id)) continue;
+            if (at !== -1 && settled.has(entry.verified.hypothesis.id))
+              continue;
             if (at === -1) verified.push(entry.verified);
             else verified[at] = entry.verified;
             settled.set(entry.verified.hypothesis.id, entry.incomplete);

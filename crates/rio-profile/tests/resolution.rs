@@ -253,10 +253,10 @@ fn posture_derives_reserved_policy_and_explicit_resolved_values_win() {
         (
             "balanced",
             EvidenceLevel::StaticProven,
-            5,
+            10,
             Severity::Warning,
             true,
-            Some(5),
+            Some(10),
         ),
         (
             "thorough",
@@ -366,7 +366,50 @@ fn verifier_defaults_budgets_aliases_and_guardrails() {
         ("verify: {voters: 2, quorum: 3}", false),
         ("verify: {model: absent}", false),
         ("verify: {voters: 0}", false),
+        // Risks may be verified by fewer voters, under the one-voter rule.
+        ("verify: {risk_voters: 1}", true),
+        ("verify: {risk_voters: 3}", true),
+        ("verify: {risk_voters: 4}", false),
+        ("verify: {risk_voters: 0}", false),
+        (
+            "verify: {risk_voters: 2}\nmodels: {default: openai/a, verifier: openai/a}",
+            true,
+        ),
+        (
+            "verify: {risk_voters: 1}\nmodels: {default: openai/a, verifier: openai/a}",
+            false,
+        ),
         ("budget: {fast: {verify_tokens: 0}}", false),
+        // An agent may review under several models; one voter is none of them,
+        // and an alias the profile does not define is not a model.
+        (
+            "steps: [{id: agents, uses: rio/agents, agents: [{correctness: {models: [default, second]}}]}, {id: verify, uses: rio/verify, needs: [agents]}]\nmodels: {second: openai/c}\nverify: {risk_voters: 1}",
+            true,
+        ),
+        (
+            "steps: [{id: agents, uses: rio/agents, agents: [{correctness: {models: [default, second]}}]}, {id: verify, uses: rio/verify, needs: [agents]}]\nmodels: {second: openai/b}\nverify: {risk_voters: 1}",
+            false,
+        ),
+        (
+            "steps: [{id: agents, uses: rio/agents, agents: [{correctness: {models: [default, second]}}]}, {id: verify, uses: rio/verify, needs: [agents]}]\nmodels: {second: openai/b}",
+            true,
+        ),
+        (
+            "steps: [{id: agents, uses: rio/agents, agents: [{correctness: {models: [default, second]}}]}, {id: verify, uses: rio/verify, needs: [agents]}]\nverify: {risk_voters: 1}",
+            true,
+        ),
+        (
+            "steps: [{id: agents, uses: rio/agents, agents: [{correctness: {run: true}}]}, {id: verify, uses: rio/verify, needs: [agents]}]",
+            false,
+        ),
+        (
+            "steps: [{id: agents, uses: rio/agents, agents: [{correctness: {models: []}}]}, {id: verify, uses: rio/verify, needs: [agents]}]",
+            false,
+        ),
+        (
+            "steps: [{id: agents, uses: rio/agents, agents: [{correctness: {models: [default, default]}}]}, {id: verify, uses: rio/verify, needs: [agents]}]",
+            false,
+        ),
     ] {
         write(
             root.path(),
@@ -403,7 +446,7 @@ fn presets_resolve_posture_and_preserve_explicit_caps() {
     let root = tempfile::tempdir().unwrap();
     for (posture, evidence, cap) in [
         (Posture::CriticalOnly, EvidenceLevel::Reproduced, 3),
-        (Posture::Balanced, EvidenceLevel::StaticProven, 5),
+        (Posture::Balanced, EvidenceLevel::StaticProven, 10),
         (Posture::Thorough, EvidenceLevel::Plausible, 15),
     ] {
         let p = loader(root.path())

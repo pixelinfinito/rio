@@ -64,6 +64,9 @@ export class Store {
     );
     return key;
   }
+  async has(key: string): Promise<boolean> {
+    return !!(await this.env.ARTIFACTS.head(key));
+  }
   async get<T>(key: string): Promise<T> {
     const value = await this.env.ARTIFACTS.get(key);
     invariant(value, "artifact not found");

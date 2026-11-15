@@ -3,7 +3,7 @@
 Security agent execution requires hosted AI configuration. Secrets scanning also runs locally. Security profiles may enable council; vendors and credentials need separate opt-in. Source/evidence can reach configured providers.
 
 ## run
-`rio review --profile rio/security` selects the security profile; inspect it first with `rio profile show rio/security`. The rio/security step uses catalog owasp-top10-2025 or asvs-5.0. rio/security built-in uses thorough posture and ASVS; rio/base includes the step disabled. Copy all desired steps if customizing the list.
+`rio review --profile rio/security` selects the security profile; inspect it first with `rio profile show rio/security`. The rio/security step uses catalog owasp-top10-2025 or asvs-5.0. rio/security built-in uses thorough posture and ASVS, and declares its security agent with models: [default, second] (a child defining a second alias gets two security reviews, verified once; otherwise one under default); rio/base includes the step disabled. Copy all desired steps if customizing the list.
 
 ## findings
 Reports show assessed, unassessed and not-applicable catalog items, with security findings and evidence. Trace roles identify source, intermediary steps and sink; a missing guard is distinct from proof of exploitation. Review severity and evidence_level separately. A plausible issue is not a reproduced exploit, and a catalog review is not a certification.

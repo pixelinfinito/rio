@@ -78,7 +78,7 @@ print(json.dumps(out))'''
                 self.assertEqual(result['exit_code'], 0, result['stderr'])
                 self.assertEqual(json.loads(result['stdout']), {name: [hashlib.sha256(content).hexdigest(), mode] for name, content, mode in members})
 
-    def test_files_both_trees_share_arrive_once_and_are_copied(self):
+    def test_files_both_trees_share_arrive_once_and_are_linked(self):
         program = '''import hashlib, json, os, stat
 out = {}
 for version in ("base", "head"):
@@ -86,8 +86,8 @@ for version in ("base", "head"):
         for name in names:
             path = os.path.join(directory, name)
             info = os.lstat(path)
-            assert stat.S_ISREG(info.st_mode) and info.st_nlink == 1
-            out[os.path.relpath(path, "..")] = [hashlib.sha256(open(path, "rb").read()).hexdigest(), stat.S_IMODE(info.st_mode)]
+            assert stat.S_ISREG(info.st_mode)
+            out[os.path.relpath(path, "..")] = [hashlib.sha256(open(path, "rb").read()).hexdigest(), stat.S_IMODE(info.st_mode), info.st_nlink]
 print(json.dumps(out))'''
         job = self.job(['/usr/bin/python3', '-c', program], needs=('base', 'head'))
         job['limits']['output_bytes'] = 1048576
@@ -104,10 +104,10 @@ print(json.dumps(out))'''
         self.assertEqual(result['exit_code'], 0, result['stderr'])
         digest = lambda content: hashlib.sha256(content).hexdigest()
         self.assertEqual(json.loads(result['stdout']), {
-            'head/tool.sh': [digest(tool), 0o755], 'head/src/ünïcödé ✓.txt': [digest(text), 0o644], 'head/deep/er/empty': [digest(b''), 0o644],
-            'head/changed.txt': [digest(b'new\n'), 0o644], 'head/added.txt': [digest(b'added\n'), 0o644],
-            'base/tool.sh': [digest(tool), 0o755], 'base/src/ünïcödé ✓.txt': [digest(text), 0o644], 'base/deep/er/empty': [digest(b''), 0o644],
-            'base/changed.txt': [digest(b'old\n'), 0o644], 'base/removed.txt': [digest(b'removed\n'), 0o644],
+            'head/tool.sh': [digest(tool), 0o755, 2], 'head/src/ünïcödé ✓.txt': [digest(text), 0o644, 2], 'head/deep/er/empty': [digest(b''), 0o644, 2],
+            'head/changed.txt': [digest(b'new\n'), 0o644, 1], 'head/added.txt': [digest(b'added\n'), 0o644, 1],
+            'base/tool.sh': [digest(tool), 0o755, 2], 'base/src/ünïcödé ✓.txt': [digest(text), 0o644, 2], 'base/deep/er/empty': [digest(b''), 0o644, 2],
+            'base/changed.txt': [digest(b'old\n'), 0o644, 1], 'base/removed.txt': [digest(b'removed\n'), 0o644, 1],
         })
         self.assertGreaterEqual(result['timing']['extract_ms'], 0)
         self.assertGreaterEqual(result['timing']['command_ms'], 0)

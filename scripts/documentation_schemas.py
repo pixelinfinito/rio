@@ -41,7 +41,8 @@ def generate(root=ROOT,check=False):
             body=f'## {heading}\n\n'+('Generated from ' if locale=='en' else 'Gerado de ')+f'`{path}`. '
             body+=('`*` means required. `extra=false` rejects unknown keys. Semantic validation still applies.\n\n' if locale=='en' else '`*` indica obrigatório. `extra=false` rejeita chaves desconhecidas. A validação semântica também se aplica.\n\n')
             body+='| '+('Field | Type / constraints' if locale=='en' else 'Campo | Tipo / restrições')+' |\n| --- | --- |\n'
-            body+='\n'.join(f'| `{key}` | `{value.replace("|","/")}` |' for key,value in rows)
+            # A cell's pipe is escaped, not replaced: `(ms|s|m)` must read as the schema has it.
+            body+='\n'.join('| `'+key+'` | `'+value.replace('|','\\|')+'` |' for key,value in rows)
             page=f'docs/wiki/{locale}/modules.md'
             outputs[page]=replace_generated(outputs.get(page,(root/page).read_text()),name+'-schema',body)
         chunks=[];current=[];size=0

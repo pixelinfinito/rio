@@ -49,7 +49,7 @@ Choices persist under `[deployment]` in user `config.toml`; credentials use the 
 
 Check cf profile/account and enabled services for deployment errors. Docker errors during Sandbox setup concern image transfer; self-hosted setup has a different requirement. A locked/unavailable keychain needs unlocking or an explicitly chosen file store. Rotate provider keys through private environment/secret files, then deploy. `--secrets-file` contains private JSON, not a repository file.
 
-`--default-model` and `--verifier-model` choose model routes. The base profile has no models, so a successful endpoint deployment alone does not make every profile an AI profile. [Providers](providers.md) covers custom routes.
+Setup asks which models review and verify: the form has `reviews` and `verifies` fields under the provider, and `--no-tui` asks for the reviewing and the verifying model. Each starts at the provider's default and takes a route as profiles write it (`PROVIDER/MODEL`). In scripted setup, `--default-model` and `--verifier-model` choose them. The choice is written when the personal default profile is first created; an existing `profiles/default.yaml` is never overwritten, so edit its `models` to change them later. The base profile has no models, so a successful endpoint deployment alone does not make every profile an AI profile. [Providers](providers.md) covers custom routes.
 
 ## Next steps
 

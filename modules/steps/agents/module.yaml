@@ -5,4 +5,4 @@ description: Agents the review artifacts
 local: false
 inputs: ["snapshot", "findings", "graph", "plan"]
 outputs: ["hypotheses"]
-schema: {"type": "object", "additionalProperties": false, "properties": {"cache": {"type": "boolean", "default": true, "description": "Replay agent hypotheses for unchanged hunks from the agent result cache; the verifier always runs"}}}
+schema: {"type": "object", "additionalProperties": false, "properties": {"cache": {"type": "boolean", "default": true, "description": "Replay agent hypotheses for unchanged hunks from the agent result cache; the verifier always runs"}, "parts": {"type": "integer", "minimum": 1, "maximum": 8, "default": 1, "description": "Review a change longer than one prompt holds in up to this many parts, one correctness conversation per part at the same time; each part has an agent's share of the tokens and its result is not cached"}}}

@@ -128,7 +128,7 @@ impl Posture {
     fn defaults(self) -> (EvidenceLevel, u64, Severity, bool) {
         match self {
             Self::CriticalOnly => (EvidenceLevel::Reproduced, 3, Severity::Error, false),
-            Self::Balanced => (EvidenceLevel::StaticProven, 5, Severity::Warning, true),
+            Self::Balanced => (EvidenceLevel::StaticProven, 10, Severity::Warning, true),
             Self::Thorough => (EvidenceLevel::Plausible, 15, Severity::Info, true),
         }
     }
@@ -159,7 +159,7 @@ pub struct PosturePolicy {
 }
 
 fn default_max_defects() -> u64 {
-    5
+    10
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -206,6 +206,9 @@ pub struct Verify {
     pub quorum: u32,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub model: Option<String>,
+    /// Voters for a hypothesis its agent classed as a risk; `voters` when absent.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub risk_voters: Option<u32>,
 }
 impl Default for Verify {
     fn default() -> Self {
@@ -213,6 +216,7 @@ impl Default for Verify {
             voters: 3,
             quorum: 2,
             model: None,
+            risk_voters: None,
         }
     }
 }
@@ -712,7 +716,17 @@ impl ProfileLoader {
         if profile.verify.model.is_some() && !profile.models.contains_key(alias) {
             add("/verify/model", "unknown model alias".into());
         }
-        if profile.verify.voters == 1
+        if profile
+            .verify
+            .risk_voters
+            .is_some_and(|voters| voters > profile.verify.voters)
+        {
+            add(
+                "/verify/risk_voters",
+                "risk_voters must not exceed voters".into(),
+            );
+        }
+        if (profile.verify.voters == 1 || profile.verify.risk_voters == Some(1))
             && profile
                 .models
                 .get("default")
@@ -721,6 +735,27 @@ impl ProfileLoader {
             add(
                 "/models/verifier",
                 "verifier alias must differ from the default for one voter".into(),
+            );
+        }
+        // One voter is independent only of a model it is not: an agent's `models`
+        // review too.
+        if (profile.verify.voters == 1 || profile.verify.risk_voters == Some(1))
+            && profile.models.get(alias).is_some_and(|verifier| {
+                profile
+                    .steps
+                    .iter()
+                    .flat_map(|step| &step.agents)
+                    .flat_map(BTreeMap::values)
+                    .filter_map(|agent| agent["models"].as_array())
+                    .flatten()
+                    .filter_map(Value::as_str)
+                    .any(|reviewing| profile.models.get(reviewing) == Some(verifier))
+            })
+        {
+            add(
+                "/models/verifier",
+                "verifier alias must differ from every model an agent reviews under for one voter"
+                    .into(),
             );
         }
         if profile.min_evidence < EvidenceLevel::Plausible {

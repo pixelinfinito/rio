@@ -7,11 +7,15 @@ Verify agent hypotheses through independent, bounded passes whose conclusions ar
 ## Requirements
 
 ### Requirement: Independent voters
-For each hypothesis, verification SHALL run the resolved number of voters independently using the resolved verifier model. Voters SHALL NOT receive another voter's outputs or the generating agent's reasoning. Hypotheses and voter outputs SHALL remain available for audit. Board reads and writes SHALL be no-ops and SHALL NOT coordinate agents or voters.
+For each hypothesis, verification SHALL run the resolved number of voters independently using the resolved verifier model. A hypothesis its agent classed as a `risk` SHALL run the resolved `risk_voters` instead, with the smaller of the resolved quorum and that number as its quorum, and its verification record SHALL state the voters it ran. Voters SHALL NOT receive another voter's outputs or the generating agent's reasoning. Hypotheses and voter outputs SHALL remain available for audit. Board reads and writes SHALL be no-ops and SHALL NOT coordinate agents or voters.
 
 #### Scenario: Default fan-out
 - **WHEN** a hypothesis is submitted with default verification settings
 - **THEN** three independent voters examine it with quorum two and no shared conversation state
+
+#### Scenario: One voter for a risk
+- **WHEN** the profile resolves three voters, quorum two and `risk_voters` one, and an agent submits one `risk` and one `defect` hypothesis
+- **THEN** one voter examines the risk and its record shows one of one voters, while three voters examine the defect with quorum two
 
 #### Scenario: Board independence
 - **WHEN** an agent writes a hypothesis through a board tool

@@ -19,10 +19,10 @@ expression: "common::lines(&buf)"
   MODEL PROVIDER                            │ + workers.dev route  rio.pixel-la…
    OpenRouter   OpenAI   Anthropic          │                                   
   key   •••••••••••••••••••••   ✓ echo off  │ BINDINGS                          
-  rio/openrouter: sonnet-5.5 writes, gpt-…  │ DB · ARTIFACTS · REVIEWS · MIGRAT…
-                                            │ JOBS · SANDBOX                    
-  CREDENTIALS                               │                                   
-  (•) OS keychain       default             │ TOKEN SCOPES · cf auth scopes     
+  reviews   …r/anthropic/claude-opus-5.5    │ DB · ARTIFACTS · REVIEWS · MIGRAT…
+  verifies  …enrouter/openai/gpt-6.1-sol    │ JOBS · SANDBOX                    
+                                            │                                   
+  CREDENTIALS                               │ TOKEN SCOPES · cf auth scopes     
    ⏎ deploy    p plan JSON   s save choic…  │                                   
                                             │                                   
  tab section  ↑↓ select  ←→ option  ⏎ deploy  p plan  esc back

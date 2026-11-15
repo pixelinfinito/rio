@@ -1,19 +1,31 @@
 import { describe, it, expect } from "vitest";
 import { aggregate, blindMatch, evidenceLevel } from "../src/quorum";
-import { validateHypotheses, validateReport } from "../src/validation";
+import {
+  validateHypotheses,
+  validateReport,
+  validateSubmission,
+  validateVerification,
+} from "../src/validation";
 import historicalComplete from "../../crates/rio-core/tests/fixtures/complete.json";
 import historicalIncomplete from "../../crates/rio-core/tests/fixtures/incomplete.json";
 import historicalPartial from "../../crates/rio-core/tests/fixtures/partial.json";
 import historicalNoChanges from "../../crates/rio-core/tests/fixtures/no_changes.json";
 import historicalError from "../../crates/rio-core/tests/fixtures/error.json";
-import { CONTEXT_BYTES, SYMBOL_LINES, blindContext, verifyHypothesis } from "../src/verifier";
+import {
+  CONTEXT_BYTES,
+  SYMBOL_LINES,
+  blindContext,
+  panelOf,
+  verifyHypothesis,
+} from "../src/verifier";
 import {
   Tools,
   dataBlock,
   filteredLines,
   guidanceBlock,
   readFile,
-  runAllowed } from "../src/tools";
+  runAllowed,
+} from "../src/tools";
 import { consolidate } from "../src/consolidate";
 import { evaluate, triage } from "../src/triage";
 import { graphs, hypothesis, profile, snapshot, submission } from "./fixtures";
@@ -330,6 +342,37 @@ describe("quorum", () => {
         context,
       ),
     ).toBe("plausible");
+    // A refutation may name a head file by its path alone: a document or a
+    // script has no graph node to cite. A file head does not hold refutes nothing.
+    for (const [path, level] of [
+      ["docs/design.md", "refuted"],
+      ["docs/absent.md", "plausible"],
+    ] as const)
+      expect(
+        evidenceLevel(
+          {
+            evidence_level: "refuted",
+            evidence: [
+              {
+                kind: "code",
+                version: "head",
+                path,
+                demonstrates: "protection",
+              },
+            ],
+          },
+          hypothesis,
+          {
+            ...context,
+            snapshot: {
+              head: {
+                ...context.snapshot.head,
+                "docs/design.md": { mode: 0o100644 },
+              },
+            },
+          },
+        ),
+      ).toBe(level);
     expect(
       evidenceLevel(
         {
@@ -350,7 +393,10 @@ describe("quorum", () => {
     ).toBe("plausible");
   });
   it("bounds the fallback excerpt when no graph node matches the location", async () => {
-    const longFile = Array.from({ length: 5000 }, (_, i) => `line ${i + 1}: ${"y".repeat(60)}`).join("\n");
+    const longFile = Array.from(
+      { length: 5000 },
+      (_, i) => `line ${i + 1}: ${"y".repeat(60)}`,
+    ).join("\n");
     const added = {
       base: {},
       head: { "src/new.ts": { mode: 0o100644, content: longFile } },
@@ -361,30 +407,52 @@ describe("quorum", () => {
       hypothesis: {
         ...hypothesis,
         // A huge line range must not send the whole file.
-        location: { ...hypothesis.location, path: "src/new.ts", symbol_path: "missing", line_start: 1, line_end: 5000 },
+        location: {
+          ...hypothesis.location,
+          path: "src/new.ts",
+          symbol_path: "missing",
+          line_start: 1,
+          line_end: 5000,
+        },
       },
       intent: "Fix behavior",
       guidance: [],
       snapshot: added,
       context: { snapshot: added, head: empty, executions: {}, guidance: [] },
-      gateway: { complete: async () => ({ content: "", input_tokens: 0, output_tokens: 0, cost_usd: null }) },
+      gateway: {
+        complete: async () => ({
+          content: "",
+          input_tokens: 0,
+          output_tokens: 0,
+          cost_usd: null,
+        }),
+      },
       ledger: new MemoryLedger(),
       tools: () => new Tools(added, { base: empty, head: empty }, undefined),
       verifyTokens: 10000,
       save: async () => {},
     } as any);
-    const start = prompt.indexOf('<repository_data label="selected code and direct callers">\n');
+    const start = prompt.indexOf(
+      '<repository_data label="selected code and direct callers">\n',
+    );
     const from = prompt.indexOf("\n", start) + 1;
-    const [base, head] = JSON.parse(prompt.slice(from, prompt.indexOf("\n</repository_data>", from)));
+    const [base, head] = JSON.parse(
+      prompt.slice(from, prompt.indexOf("\n</repository_data>", from)),
+    );
     expect(base.fallback).toBeNull();
     expect(base.fallback_truncated).toBeUndefined();
     expect(head.fallback.length).toBeLessThanOrEqual(CONTEXT_BYTES);
     expect(head.fallback.split("\n").length).toBeLessThanOrEqual(SYMBOL_LINES);
     expect(head.fallback_truncated).toBe(true);
-    expect(new TextEncoder().encode(prompt).length).toBeLessThan(CONTEXT_BYTES + 4096);
+    expect(new TextEncoder().encode(prompt).length).toBeLessThan(
+      CONTEXT_BYTES + 4096,
+    );
   });
   it("bounds the blind context by bytes and lines and points voters at the tools for the rest", async () => {
-    const longFile = Array.from({ length: 2000 }, (_, i) => `line ${i + 1}: ${"x".repeat(40)}`).join("\n");
+    const longFile = Array.from(
+      { length: 2000 },
+      (_, i) => `line ${i + 1}: ${"x".repeat(40)}`,
+    ).join("\n");
     const wide = {
       base: { "src/big.ts": { mode: 0o100644, content: longFile } },
       head: { "src/big.ts": { mode: 0o100644, content: longFile } },
@@ -398,7 +466,13 @@ describe("quorum", () => {
     }));
     const graph = {
       nodes: [
-        { id: "s", path: "src/big.ts", symbol_path: "big", line_start: 1, line_end: 2000 },
+        {
+          id: "s",
+          path: "src/big.ts",
+          symbol_path: "big",
+          line_start: 1,
+          line_end: 2000,
+        },
         ...callers,
       ],
       edges: callers.map((c) => ({ from: c.id, to: "s" })),
@@ -407,27 +481,49 @@ describe("quorum", () => {
       profile,
       hypothesis: {
         ...hypothesis,
-        location: { ...hypothesis.location, path: "src/big.ts", symbol_path: "big" },
+        location: {
+          ...hypothesis.location,
+          path: "src/big.ts",
+          symbol_path: "big",
+        },
       },
       intent: "Fix behavior",
       guidance: [],
       snapshot: wide,
       context: { snapshot: wide, head: graph, executions: {}, guidance: [] },
-      gateway: { complete: async () => ({ content: "", input_tokens: 0, output_tokens: 0, cost_usd: null }) },
+      gateway: {
+        complete: async () => ({
+          content: "",
+          input_tokens: 0,
+          output_tokens: 0,
+          cost_usd: null,
+        }),
+      },
       ledger: new MemoryLedger(),
       tools: () => new Tools(wide, { base: graph, head: graph }, undefined),
       verifyTokens: 10000,
       save: async () => {},
     } as any);
-    expect(new TextEncoder().encode(prompt).length).toBeLessThan(2 * CONTEXT_BYTES + 4096);
-    const start = prompt.indexOf('<repository_data label="selected code and direct callers">\n');
+    expect(new TextEncoder().encode(prompt).length).toBeLessThan(
+      2 * CONTEXT_BYTES + 4096,
+    );
+    const start = prompt.indexOf(
+      '<repository_data label="selected code and direct callers">\n',
+    );
     const from = prompt.indexOf("\n", start) + 1;
-    const versions = JSON.parse(prompt.slice(from, prompt.indexOf("\n</repository_data>", from)));
+    const versions = JSON.parse(
+      prompt.slice(from, prompt.indexOf("\n</repository_data>", from)),
+    );
     for (const version of versions) {
-      const bytes = version.symbols.reduce((n: number, s: any) => n + s.content.length, 0);
+      const bytes = version.symbols.reduce(
+        (n: number, s: any) => n + s.content.length,
+        0,
+      );
       expect(bytes).toBeLessThanOrEqual(CONTEXT_BYTES);
       expect(version.symbols[0].truncated).toBe(true);
-      expect(version.symbols[0].content.split("\n").length).toBeLessThanOrEqual(SYMBOL_LINES);
+      expect(version.symbols[0].content.split("\n").length).toBeLessThanOrEqual(
+        SYMBOL_LINES,
+      );
       expect(version.callers_omitted).toBeGreaterThan(0);
       expect(version.symbols.length + version.callers_omitted).toBe(13);
     }
@@ -497,6 +593,130 @@ describe("quorum", () => {
     expect(
       ledger.usage.filter((u) => u.phase.startsWith("verify")),
     ).toHaveLength(6);
+  });
+  it("gives a risk hypothesis the profile's risk voters and every other the full quorum", async () => {
+    const complete: Gateway["complete"] = async (request) => ({
+      content: JSON.stringify({
+        result: request.messages.some((m) =>
+          m.content.includes("Verify this hypothesis."),
+        )
+          ? { evidence_level: "plausible", evidence: [] }
+          : [],
+      }),
+      input_tokens: 20,
+      output_tokens: 10,
+      cost_usd: 0.0001,
+    });
+    const verify = async (
+      settings: Partial<typeof profile.verify>,
+      category: "risk" | "defect" | "security",
+    ) => {
+      const ledger = new MemoryLedger();
+      const result = await verifyHypothesis({
+        profile: { ...profile, verify: { ...profile.verify, ...settings } },
+        hypothesis: { ...hypothesis, category },
+        intent: "",
+        guidance: [],
+        snapshot,
+        context: { snapshot, head: graphs.head, executions: {}, guidance: [] },
+        gateway: { complete },
+        ledger,
+        tools: () => new Tools(snapshot, graphs, undefined),
+        verifyTokens: 10000,
+        save: async () => {},
+      });
+      validateVerification(result.verified.verification);
+      return {
+        calls: ledger.usage.length,
+        votes: result.votes.map((v) => v.voter),
+        level: result.verified.evidence_level,
+        ...result.verified.verification,
+      };
+    };
+    // One voter settles a risk; its record states one voter, not three.
+    expect(await verify({ risk_voters: 1 }, "risk")).toEqual({
+      calls: 2,
+      votes: [0],
+      level: "plausible",
+      voters: 1,
+      agreeing: 1,
+      blind_match: ["none"],
+      split: false,
+    });
+    // The quorum of a risk is never more than its voters.
+    expect(await verify({ risk_voters: 2, quorum: 3 }, "risk")).toMatchObject({
+      calls: 4,
+      voters: 2,
+      agreeing: 2,
+      split: false,
+    });
+    for (const category of ["defect", "security"] as const)
+      expect(await verify({ risk_voters: 1 }, category)).toMatchObject({
+        calls: 6,
+        votes: [0, 1, 2],
+        voters: 3,
+        agreeing: 3,
+      });
+    // Without the setting a risk keeps the profile's voters.
+    expect(await verify({}, "risk")).toMatchObject({ calls: 6, voters: 3 });
+    expect(
+      panelOf({ voters: 2, quorum: 2, risk_voters: 5 }, hypothesis),
+    ).toEqual({ voters: 2, quorum: 2 });
+    expect(
+      panelOf({ voters: 2, quorum: 2, risk_voters: 5 }, { category: "risk" }),
+    ).toEqual({ voters: 2, quorum: 2 });
+  });
+  it("accepts fewer risk voters only within the voters and the one-voter rule", () => {
+    const submit =
+      (verify: object, models = profile.models) =>
+      () =>
+        validateSubmission({
+          ...submission(),
+          profile: { ...profile, models, verify },
+        });
+    expect(submit({ voters: 3, quorum: 2, risk_voters: 1 })).not.toThrow();
+    expect(submit({ voters: 3, quorum: 2, risk_voters: 3 })).not.toThrow();
+    expect(submit({ voters: 3, quorum: 2, risk_voters: 4 })).toThrow();
+    expect(submit({ voters: 3, quorum: 2, risk_voters: 0 })).toThrow();
+    const same = { default: "openai/test", verifier: "openai/test" };
+    expect(
+      submit({ voters: 3, quorum: 2, risk_voters: 2 }, same),
+    ).not.toThrow();
+    expect(submit({ voters: 3, quorum: 2, risk_voters: 1 }, same)).toThrow(
+      "single verifier must use a different model",
+    );
+    // One voter is none of the models an agent's `models` lists either.
+    const under = (models: Record<string, string>, verify: object) => () => {
+      const s = submission();
+      validateSubmission({
+        ...s,
+        profile: {
+          ...profile,
+          models,
+          verify,
+          steps: [
+            ...s.profile.steps,
+            {
+              id: "more",
+              uses: "rio/agents@0.1.0",
+              needs: [],
+              with: {},
+              agents: [{ correctness: { models: ["default", "second"] } }],
+            },
+            { id: "v", uses: "rio/verify@0.1.0", needs: ["more"], with: {} },
+          ],
+        },
+      });
+    };
+    const second = { ...profile.models, second: profile.models.verifier };
+    const third = { ...profile.models, second: "openai/third" };
+    expect(under(second, { voters: 3, quorum: 2, risk_voters: 1 })).toThrow(
+      "single verifier must use a different model",
+    );
+    expect(under(second, { voters: 3, quorum: 2 })).not.toThrow();
+    expect(
+      under(third, { voters: 3, quorum: 2, risk_voters: 1 }),
+    ).not.toThrow();
   });
   it("records cancelled, malformed and exhausted voters without reducing quorum", async () => {
     for (const error of [
@@ -769,8 +989,50 @@ describe("posture, caps and risk", () => {
       max_defects: 2,
     });
     expect(forward).toEqual(reversed);
-    expect(forward.defects.map((f) => f.id)).toEqual(["a", "b"]);
-    expect(forward.audit.held_back.defects).toHaveLength(1);
+    // Verified findings are all shown, whatever the cap.
+    expect(forward.defects.map((f) => f.id)).toEqual(["a", "b", "z"]);
+    expect(forward.audit.held_back.defects).toHaveLength(0);
+  });
+  it("caps only unverified findings, and raises the cap for a change reviewed in parts", () => {
+    const entries = [
+      ...[0, 1, 2, 3].map((i) =>
+        verified(
+          { ...hypothesis, id: `p${i}`, message: `plausible${i}` },
+          "plausible",
+        ),
+      ),
+      verified({ ...hypothesis, id: "v", category: "risk", severity: "info" }),
+    ];
+    const whole = consolidate(entries, { ...profile, max_defects: 2 });
+    expect(whole.risks.map((f) => f.id)).toEqual(["p0", "p1", "v"]);
+    expect(whole.audit.held_back.risks).toEqual(["plausible2", "plausible3"]);
+    const parts = consolidate(
+      entries,
+      { ...profile, max_defects: 2 },
+      { parts: 2 },
+    );
+    expect(parts.risks.map((f) => f.id)).toEqual(["p0", "p1", "p2", "v"]);
+    expect(parts.audit.held_back.risks).toEqual(["plausible3"]);
+  });
+  it("holds back an unverified finding that no vote supported", () => {
+    const unexamined = {
+      ...verified(
+        { ...hypothesis, id: "u", message: "unexamined" },
+        "plausible",
+      ),
+      verification: {
+        voters: 1,
+        agreeing: 0,
+        blind_match: ["none"] as any,
+        split: true,
+      },
+    };
+    const r = consolidate(
+      [unexamined, verified({ ...hypothesis, id: "p" }, "plausible")],
+      profile,
+    );
+    expect(r.risks.map((f) => f.id)).toEqual(["p"]);
+    expect(r.audit.held_back.risks).toEqual(["unexamined"]);
   });
   it("keeps balanced plausible risks and drops agent diagnostic/style categories", () => {
     const r = consolidate(
@@ -789,12 +1051,15 @@ describe("posture, caps and risk", () => {
     const p = { ...profile, max_defects: 1, suppress: [{ finding: "h0" }] };
     const r = consolidate(
       [0, 1, 2].map((i) =>
-        verified({ ...hypothesis, id: `h${i}`, message: `title${i}` }),
+        verified(
+          { ...hypothesis, id: `h${i}`, message: `title${i}` },
+          "plausible",
+        ),
       ),
       p,
     );
-    expect(r.defects[0].id).toBe("h1");
-    expect(r.audit.held_back.defects).toEqual(["title2"]);
+    expect(r.risks.map((f) => f.id)).toEqual(["h1"]);
+    expect(r.audit.held_back.risks).toEqual(["title2"]);
     expect(r.audit.suppressed).toBe(1);
   });
   it("uses separate security policy and uncapped thorough general risks", () => {

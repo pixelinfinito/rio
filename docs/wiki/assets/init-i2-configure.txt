@@ -15,18 +15,18 @@
   MODEL PROVIDER                                                  │ + workers.dev route  rio.pixel-labs         create  
    OpenRouter   OpenAI   Anthropic                                │                                                     
   key   ••••••••••••••••••••••••••••••           ✓ echo off       │ BINDINGS                                            
-  rio/openrouter: sonnet-5.5 writes, gpt-6.1-sol verifies         │ DB · ARTIFACTS · REVIEWS · MIGRATIONS               
-                                                                  │ JOBS · SANDBOX                                      
-  CREDENTIALS                                                     │                                                     
-  (•) OS keychain       default                                   │ TOKEN SCOPES · cf auth scopes                       
-  ( ) file · 0600       headless hosts                            │ ✓ account read                                      
-                                                                  │ ✓ Workers Scripts · Durable Objects                 
-  WORKERS.DEV                                                     │ ✓ D1 · R2 · Queues · Workflows edit                 
-  pixel-labs.workers.dev  existing subdomain · reused             │ ✓ AI Gateway · Containers / registry                
-                                                                  │ ✓ account API tokens                                
-  ENDPOINT                                                        │                                                     
-  https://rio.pixel-labs.workers.dev                              │ SAVED TO                                            
-                                                                  │ ~/.config/rio/config.toml                           
+  reviews   openrouter/anthropic/claude-opus-5.5                  │ DB · ARTIFACTS · REVIEWS · MIGRATIONS               
+  verifies  openrouter/openai/gpt-6.1-sol                         │ JOBS · SANDBOX                                      
+                                                                  │                                                     
+  CREDENTIALS                                                     │ TOKEN SCOPES · cf auth scopes                       
+  (•) OS keychain       default                                   │ ✓ account read                                      
+  ( ) file · 0600       headless hosts                            │ ✓ Workers Scripts · Durable Objects                 
+                                                                  │ ✓ D1 · R2 · Queues · Workflows edit                 
+  WORKERS.DEV                                                     │ ✓ AI Gateway · Containers / registry                
+  pixel-labs.workers.dev  existing subdomain · reused             │ ✓ account API tokens                                
+                                                                  │                                                     
+  ENDPOINT                                                        │ SAVED TO                                            
+  https://rio.pixel-labs.workers.dev                              │ ~/.config/rio/config.toml                           
                                                                   │ choices only · no secrets · no IDs in repo          
                                                                   │                                                     
                                                                   │                                                     

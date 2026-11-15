@@ -328,8 +328,10 @@ fn configured(theme: Theme) -> App {
         app.update(press(KeyCode::Tab));
     }
     type_text(&mut app, KEY);
-    app.update(press(KeyCode::Tab));
-    app.update(press(KeyCode::Tab));
+    // Past the two model fields and the credential store, back to the account.
+    for _ in 0..4 {
+        app.update(press(KeyCode::Tab));
+    }
     app
 }
 
@@ -579,6 +581,51 @@ fn p_asks_for_the_plan_and_the_plan_value_is_shown() {
 }
 
 #[test]
+fn models_typed_in_the_form_become_rio_init_arguments() {
+    let d = data();
+    let handoff = d.handoff.clone();
+    let mut app = App::new(Box::new(Configure::new(d)), Theme::default());
+    // To the key, then the reviewing model: p and s are text there.
+    for _ in 0..4 {
+        app.update(press(KeyCode::Tab));
+    }
+    type_text(&mut app, KEY);
+    app.update(press(KeyCode::Tab));
+    for _ in 0.."opus-5.5".len() {
+        app.update(press(KeyCode::Backspace));
+    }
+    assert!(type_text(&mut app, "sonnet-5.5").is_empty());
+    app.update(press(KeyCode::Enter));
+    let args = handoff.args();
+    let at = args.iter().position(|a| a == "--default-model").unwrap();
+    assert_eq!(
+        args[at..],
+        [
+            "--default-model",
+            "openrouter/anthropic/claude-sonnet-5.5",
+            "--verifier-model",
+            "openrouter/openai/gpt-6.1-sol",
+        ]
+    );
+    assert_eq!(app.top().title(), "Deploying");
+
+    // A model that is not PROVIDER/MODEL does not deploy.
+    let mut app = App::new(Box::new(Configure::new(data())), Theme::default());
+    for _ in 0..4 {
+        app.update(press(KeyCode::Tab));
+    }
+    type_text(&mut app, KEY);
+    app.update(press(KeyCode::Tab));
+    for _ in 0..60 {
+        app.update(press(KeyCode::Backspace));
+    }
+    type_text(&mut app, "opus");
+    assert!(app.update(press(KeyCode::Enter)).is_empty());
+    assert_eq!(app.top().title(), "Configure");
+    assert!(common::lines(&draw(&app, 120, 40)).contains("PROVIDER/MODEL"));
+}
+
+#[test]
 fn deploy_starts_rio_init_with_the_chosen_options() {
     let d = data();
     let handoff = d.handoff.clone();
@@ -596,6 +643,9 @@ fn deploy_starts_rio_init_with_the_chosen_options() {
     app.update(press(KeyCode::Right));
     app.update(press(KeyCode::Tab));
     assert!(type_text(&mut app, "sk-ant-qp").is_empty());
+    // The models stay the provider's defaults: no model arguments.
+    app.update(press(KeyCode::Tab));
+    app.update(press(KeyCode::Tab));
     app.update(press(KeyCode::Tab));
     app.update(press(KeyCode::Down));
 

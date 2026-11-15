@@ -17,7 +17,8 @@ const MIB: u64 = 1024 * 1024;
 /// Endpoint limits, checked before anything is uploaded.
 pub const MAX_TREE_PATHS: usize = 300_000;
 pub const MAX_FILE_BYTES: u64 = 64 * MIB;
-pub const MAX_CONTENT_BYTES: u64 = 1024 * MIB;
+/// Both trees reach a runner in one archive, within its transfer allowance.
+pub const MAX_CONTENT_BYTES: u64 = 1536 * MIB;
 pub const MAX_BODY_BYTES: usize = 8 * MIB as usize;
 /// Larger contents are uploaded alone, in parts of `MAX_BODY_BYTES`.
 pub const MAX_PACKED_CONTENT: usize = 7 * MIB as usize;
@@ -756,7 +757,7 @@ mod tests {
         assert_eq!(format_bytes(512), "512 B");
         assert_eq!(format_bytes(145 * MIB), "145 MiB");
         assert_eq!(format_bytes(12 * MIB + 300 * 1024), "12.3 MiB");
-        assert_eq!(format_bytes(MAX_CONTENT_BYTES), "1 GiB");
+        assert_eq!(format_bytes(MAX_CONTENT_BYTES), "1.5 GiB");
         assert_eq!(format_count(20_104), "20,104");
         assert_eq!(format_count(1_000_000), "1,000,000");
         assert_eq!(format_count(999), "999");
