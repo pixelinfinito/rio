@@ -1,0 +1,40 @@
+ ▃▅▇▇▇▅▃▃▁▁▁▃ rio  ~/code/web-app · feature/parser-guards                                            ● ready  rio 0.2.0 
+                                                                                                                        
+      ██████                                                                                                            
+    ██████████                rio review local changes before they merge                                                
+  ████      ██████      ██    deterministic checks · impact graph · agents · blind verify                               
+  ██          ████████████    github.com/pixelinfinito/rio · Apache-2.0                                                 
+                  ██████                                                                                                
+                                                                                                                        
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  WHAT TO REVIEW                                                         │ PREFLIGHT · rio doctor                       
+▌ (•) branch vs base  vs merge base of origin/main ▾ 12 files +184 −41   │                                              
+  ( ) working tree    tree + staged + untracked vs HEAD 3 files  +22 −5  │ web/  typescript · pnpm-lock.yaml            
+  ( ) staged          index vs HEAD                       1 file  +4 −1  │  ✓ tsc 5.6                typecheck          
+                                                                         │  ✓ eslint 9.12            lint               
+  PROFILE & DEPTH                                                        │  ✓ vitest 2.1             coverage           
+  profile   rio/openrouter ▾   from .rio/profiles/default.yaml           │  ✓ deps match lockfile                       
+  preset     quick  standard  deep   triage + 5 agents + quorum 3        │                                              
+                                                                         │ api/  python · uv.lock                       
+  OPTIONS                                                                │  ✓ pyright 1.1            typecheck          
+  [x] since-last          continue lineage · next is round 4 of cap 3    │  ✓ ruff 0.7               lint               
+  [ ] offline             no network calls by rio                        │  ✕ pytest missing         coverage skips     
+  [ ] show pre-existing   include findings outside changed hunks         │  ✓ deps match lockfile                       
+                                                                         │                                              
+  CHANGES · 12 FILES                                                     │ machine                                      
+  M  src/parser/header.ts                                       +38 −12  │  ✓ cache .rio/cache · 41 GB free             
+  M  src/parser/body.ts                                          +51 −9  │  ✓ endpoint · paired worker                  
+  A  src/parser/index.ts                                            +44  │  · budget $2.00 · parallelism 4              
+  M  src/router.ts                                                +6 −4  │                                              
+  M  api/handlers/upload.py                                     +27 −10  │                                              
+  A  test/parser.spec.ts                                            +18  │ ▌ 1 warning                                  
+     … 6 more                                                            │ ▌ api/ coverage will be skipped: the         
+                                                                         │ ▌ review completes, marked incomplete        
+  COMMAND                                                                │                                              
+   $ rio review --base origin/main --preset standard                     │                                              
+       --profile rio/openrouter --since-last                             │                                              
+                                                                         │                                              
+                                                                         │                                              
+   ⏎ start review    c copy command   d doctor details                   │                                              
+                                                                         │                                              
+ ↑↓ select  ←→ preset  space toggle  tab section  ⏎ start  c copy cmd  ? help  q quit                                   

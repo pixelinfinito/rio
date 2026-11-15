@@ -198,6 +198,7 @@ pub fn assert_rows(slug: &str, buf: &Buffer, rows: impl IntoIterator<Item = usiz
 
 /// Compare every row.
 pub fn assert_screen(slug: &str, buf: &Buffer) {
+    capture(slug, buf);
     let rows = expected(slug).0.len();
     assert_eq!(buf.area.height as usize, rows, "{slug}: height");
     assert_rows(slug, buf, 0..rows);
@@ -230,4 +231,42 @@ pub fn lines(buf: &Buffer) -> String {
         .map(|row| text(row))
         .collect::<Vec<_>>()
         .join("\n")
+}
+
+/// Optional documentation capture of the actual rendered buffer, never the
+/// design handoff. Enabled only by the explicit capture script.
+fn capture(slug: &str, buf: &Buffer) {
+    let Some(directory) = std::env::var_os("RIO_DOCS_CAPTURE_DIR") else {
+        return;
+    };
+    let directory = PathBuf::from(directory);
+    std::fs::create_dir_all(&directory).unwrap();
+    let rows: Vec<_> = actual(buf)
+        .into_iter()
+        .map(|row| {
+            row.into_iter()
+                .map(|cell| {
+                    serde_json::json!({
+                        "text":cell.symbol,
+                        "fg":cell.fg.map(|t|t.rgb()),
+                        "bg":cell.bg.map(|t|t.rgb()),
+                        "bold":cell.bold
+                    })
+                })
+                .collect::<Vec<_>>()
+        })
+        .collect();
+    std::fs::write(
+        directory.join(format!("{slug}.json")),
+        serde_json::to_vec(&serde_json::json!({
+            "width":buf.area.width,"height":buf.area.height,"cells":rows
+        }))
+        .unwrap(),
+    )
+    .unwrap();
+    std::fs::write(
+        directory.join(format!("{slug}.txt")),
+        format!("{}\n", lines(buf)),
+    )
+    .unwrap();
 }

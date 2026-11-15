@@ -1,0 +1,241 @@
+$ rio profile show rio/base
+# Source: rio/base
+# Chain: rio/base
+version: 1
+name: rio/base
+budget:
+  fast:
+    wall_time: 10m
+    tokens: 2400000
+    agents_max: 3
+    verify_tokens: 320000
+  deep:
+    wall_time: 10m
+    tokens: 4800000
+    agents_max: 5
+    verify_tokens: 320000
+models: {}
+steps:
+- id: prepare
+  uses: rio/prepare@0.1.0
+  needs: []
+  parallel: false
+  with:
+    exclude: []
+- id: checks
+  uses: rio/checks@0.1.0
+  needs:
+  - prepare
+  parallel: true
+  with:
+    baseline: true
+    coverage: true
+    dependencies: true
+    lint: true
+    secrets: true
+    trust_installed_dependencies: false
+    typecheck: true
+- id: graph
+  uses: rio/graph@0.1.0
+  needs:
+  - prepare
+  parallel: true
+  with:
+    hops: 2
+    max_nodes: 2000
+- id: triage
+  uses: rio/triage@0.1.0
+  needs:
+  - checks
+  - graph
+  parallel: false
+  with:
+    dependency_changes: true
+    fan_out_high: 20
+    missing_coverage: true
+    public_contracts: true
+    sensitive_paths: []
+- id: agents
+  uses: rio/agents@0.1.0
+  needs:
+  - triage
+  parallel: false
+  with:
+    cache: true
+- id: security
+  uses: rio/security@0.2.0
+  needs:
+  - triage
+  parallel: false
+  with:
+    catalog: owasp-top10-2025
+    enabled: false
+    fail_on:
+      categories:
+      - security
+      evidence: plausible
+      incomplete: true
+      required_checks: []
+      rules: []
+      states:
+      - new
+      - worsened
+    max_defects: 15
+    posture: thorough
+- id: qa
+  uses: rio/qa@0.1.0
+  needs:
+  - graph
+  parallel: false
+  with:
+    baseline: false
+    enabled: false
+    fail_on:
+      categories:
+      - ux
+      evidence: plausible
+      incomplete: true
+      required_checks: []
+      rules: []
+      states:
+      - new
+      - worsened
+    harness: codex
+    max_defects: 15
+    max_journeys: 12
+    max_recommendations: 5
+    mode: changed
+    rules: {}
+    sandbox: deny
+- id: verify
+  uses: rio/verify@0.1.0
+  needs:
+  - agents
+  - security
+  - qa
+  parallel: false
+  with:
+    run: true
+- id: council
+  uses: rio/council@0.1.0
+  needs:
+  - verify
+  parallel: false
+  with:
+    enabled: false
+- id: report
+  uses: rio/report@0.1.0
+  needs:
+  - checks
+  - graph
+  - council
+  - qa
+  parallel: false
+  with:
+    class_threshold: 3
+    proposal_threshold: 3
+suppress: []
+publish: never
+fail_on:
+  evidence: static_proven
+  categories:
+  - defect
+  states:
+  - new
+  - worsened
+  rules: []
+  incomplete: true
+  required_checks: []
+min_evidence: static_proven
+max_lines: 1500
+posture: balanced
+max_defects: 5
+rounds:
+  cap: 3
+  diff_only_after: 1
+always_human: []
+verify:
+  voters: 3
+  quorum: 2
+council:
+  members:
+  - uses: rio/council-skeptic
+  - uses: rio/council-exploit-author
+  - uses: rio/council-code-owner
+  - uses: rio/council-maintainer
+  - uses: rio/council-tester
+  max_findings: 5
+  max_experiments: 2
+  max_rounds: 2
+  min_members: 3
+  timeout: <time>
+  vendors_allowed: []
+chain:
+- rio/base
+modules:
+  rio/agents: 0.1.0
+  rio/checks: 0.1.0
+  rio/council: 0.1.0
+  rio/graph: 0.1.0
+  rio/prepare: 0.1.0
+  rio/qa: 0.1.0
+  rio/report: 0.1.0
+  rio/security: 0.2.0
+  rio/triage: 0.1.0
+  rio/verify: 0.1.0
+engine_version: 0.1.0
+posture_policy:
+  defect_severity_floor: warning
+  render_plausible_risks: true
+  plausible_risk_limit: 5
+council_members:
+- name: rio/council-skeptic
+  version: 0.1.0
+  role: skeptic
+  context_pack: diff-only
+  provider: placeholder
+  model: placeholder
+  vendor: placeholder
+  family: placeholder
+  weight: 1.0
+  self_hosted: false
+- name: rio/council-exploit-author
+  version: 0.1.0
+  role: exploit-author
+  context_pack: execution
+  provider: placeholder
+  model: placeholder
+  vendor: placeholder
+  family: placeholder
+  weight: 1.2
+  self_hosted: false
+- name: rio/council-code-owner
+  version: 0.1.0
+  role: code-owner
+  context_pack: graph-heavy
+  provider: placeholder
+  model: placeholder
+  vendor: placeholder
+  family: placeholder
+  weight: 1.0
+  self_hosted: false
+- name: rio/council-maintainer
+  version: 0.1.0
+  role: maintainer
+  context_pack: graph-heavy
+  provider: placeholder
+  model: placeholder
+  vendor: placeholder
+  family: placeholder
+  weight: 1.0
+  self_hosted: false
+- name: rio/council-tester
+  version: 0.1.0
+  role: tester
+  context_pack: execution
+  provider: placeholder
+  model: placeholder
+  vendor: placeholder
+  family: placeholder
+  weight: 1.1
+  self_hosted: false

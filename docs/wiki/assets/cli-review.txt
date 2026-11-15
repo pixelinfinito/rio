@@ -1,0 +1,36 @@
+$ rio review --offline --no-tui --ascii
+Running prepare~
+Finished prepare
+Running checks~
+secrets .: passed
+dependencies .: skipped (offline)
+Finished checks
+Running graph~
+Finished graph
+Running report~
+Finished report
+Rio 0.1.0 - incomplete
+Review: <demo-review-id>  Run: <demo-run-id>
+Mode: working-tree  Base: <demo-commit>  Head:
+snapshot:<deterministic-demo-hash>
+Profile: rio/base  Chain: rio/base
+
+Deterministic results
+  secrets . (common, head, changed): passed - <time>
+  dependencies . (common, head, changed): skipped (offline) - <time>
+
+Findings
+No findings were produced. Review incomplete: dependencies .: skipped (offline)
+did not complete.
+
+Footer
+dependencies . head: skipped (offline) - Dependency audit needs api.osv.dev
+triage deferred: no_endpoint
+agents deferred: no_endpoint
+verify deferred: no_endpoint
+council deferred: no_endpoint
+posture, max_defects and rounds are recorded for deferred agent steps;
+deterministic findings are never capped
+Intent inference is deferred: no_endpoint
+Graph references use syntax and text; no language server was used
+Total: <time>

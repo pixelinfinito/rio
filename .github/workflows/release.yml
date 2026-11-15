@@ -122,12 +122,14 @@ jobs:
             version_output=$("$RUNNER_TEMP/rio-install/rio.exe" --version)
             printf '%s\n' "$version_output"
             test "$version_output" = "rio $RIO_BUILD_VERSION $RIO_RELEASE_TARGET $RIO_BUILD_COMMIT"
+            python scripts/smoke-docs.py "$RUNNER_TEMP/rio-install/rio.exe"
             pwsh -NoProfile -File scripts/install.ps1 -InstallDir "$RUNNER_TEMP/rio-install" -Uninstall
           else
             sh scripts/install.sh --version "$RIO_BUILD_VERSION" --install-dir "$RUNNER_TEMP/rio-install"
             version_output=$("$RUNNER_TEMP/rio-install/rio" --version)
             printf '%s\n' "$version_output"
             test "$version_output" = "rio $RIO_BUILD_VERSION $RIO_RELEASE_TARGET $RIO_BUILD_COMMIT"
+            python scripts/smoke-docs.py "$RUNNER_TEMP/rio-install/rio"
             sh scripts/install.sh --install-dir "$RUNNER_TEMP/rio-install" --uninstall
           fi
         # Environment uses a local directory; every installer still checks SHA-256.
@@ -144,6 +146,10 @@ jobs:
             version_output=$(/tmp/rio/rio --version)
             printf "%s\n" "$version_output"
             test "$version_output" = "rio ${RIO_VERSION#v} aarch64-unknown-linux-musl $RIO_BUILD_COMMIT"
+            cd /tmp
+            /tmp/rio/rio docs
+            /tmp/rio/rio docs review
+            /tmp/rio/rio docs profiles --section inheritance --format json
             sh /work/scripts/install.sh --install-dir /tmp/rio --uninstall'
       - uses: actions/attest-build-provenance@v2
         id: attest

@@ -1,5 +1,7 @@
 # Finding history, suppression proposals, SARIF and the agent cache
 
+User guides: [English](https://github.com/pixelinfinito/rio/wiki/EN-Feedback) · [Português (Brasil)](https://github.com/pixelinfinito/rio/wiki/PT-BR-Feedback).
+
 These endpoint features are specified by the `finding-history`, `suppression-proposals`, `sarif-output` and `agent-result-cache` capabilities of `openspec/changes/rio-v0-3-core`. All of them work with the CLI and a configured endpoint; none needs the GitHub App. Pull request publication (stage 4) will feed the same registry with `/rio dismiss` answers and name the dismissing pull request.
 
 ## Repository key

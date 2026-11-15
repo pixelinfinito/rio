@@ -1,0 +1,40 @@
+ ▃▅▇▇▇▅▃▃▁▁▁▃ rio  feature/parser-guards → origin/main · standard · round 4                  ✕ exit 1 · complete  2m14s 
+                                                                                                                        
+  Review complete  run 01J9ZK4Q · review 1234567890ab                                                                   
+                                                                                                                        
+  ▌ ✕ Policy failed                                                                                                     
+  ▌ 2 findings match fail_on: new defects with static_proven or stronger evidence                                       
+  ▌ exit code 1       ╔═ export review ══════════════════════════════════════════════════════════╗                      
+                      ║                                                                          ║                      
+  7 findings  3 new  1║  Export review                                                           ║                      
+                      ║  review 1234567890ab · run 01J9ZK4Q · 7 findings                         ║                      
+  CHECKS              ║                                                                          ║                      
+  web/  typecheck   ✓ ║  FORMAT                                                                  ║ed                    
+  web/  lint        ✕ ║ ▌ (•) Markdown   report.md · for PR descriptions and chat                ║                      
+  web/  coverage    ▲ ║   ( ) JSON       report-v1 · schema-validated, for CI                    ║                      
+  api/  typecheck   ✓ ║   ( ) SARIF      SARIF 2.1.0 · for code scanning uploads                 ║                      
+  api/  lint        ✓ ║                                                                          ║                      
+  api/  coverage    - ║  DESTINATION                                                             ║                      
+        secrets     ✓ ║   ./rio-review-parser-guards.md▏                                         ║                      
+                      ║  tab completes paths · existing file asks before overwrite               ║                      
+                      ║                                                                          ║                      
+                      ║  OPTIONS                                                                 ║                      
+                      ║   [x] copy to clipboard (OSC 52)                                         ║                      
+                      ║   [ ] include pre-existing findings                                      ║                      
+                      ║   [ ] open in $EDITOR after saving                                       ║                      
+                      ║                                                                          ║                      
+                      ║  PREVIEW                                                                 ║                      
+                      ║   # Rio 0.2.0 — complete                                                 ║                      
+                      ║   **Policy failed** · 2 findings match `fail_on`                         ║                      
+                      ║   ## Findings (7)                                                        ║                      
+                      ║   - `3a90c2d1` TS2322 string → number — src/a.ts:12                      ║                      
+                      ║                                                                          ║                      
+                      ║  always kept: .rio/cache/1234567890ab/runs/01J9ZK4Q/ (latest)            ║                      
+                      ║                                                                          ║                      
+                      ║   ⏎ save    esc cancel   p full preview                                  ║                      
+                      ║                                                                          ║                      
+                      ╚══════════════════════════════════════════════════════════════════════════╝                      
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+ ↑↓ format  tab field  space toggle  ⏎ save  esc cancel                                                                 
