@@ -346,7 +346,12 @@ export function consolidate(
     let plausible = 0;
     const shown: Finding[] = [];
     for (const f of pools[pool].sort(order))
-      if (f.evidence_level !== "plausible" || plausible++ < limit)
+      if (
+        f.evidence_level !== "plausible" ||
+        // No vote on it completed without refuting it: nobody examined it.
+        ((pool === "security" || f.verification?.agreeing !== 0) &&
+          plausible++ < limit)
+      )
         shown.push(f);
       else audit.held_back[pool].push(f.message);
     pools[pool] = shown;

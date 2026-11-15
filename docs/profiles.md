@@ -116,7 +116,7 @@ Disabled checks have outcome `skipped`, reason `disabled`. Trust allows an unver
 | `balanced` | `static_proven` | 10 | `warning` | Up to `max_defects` |
 | `thorough` | `plausible` | 15 | `info` | Uncapped |
 
-`max_defects` caps only the findings the verifier left `plausible`: a finding it proved or reproduced is always shown. A change the correctness agent reviewed in parts gets half the cap again for each part after the first (10, 15, 20, up to 45 at 8 parts for the default).
+`max_defects` caps only the findings the verifier left `plausible`: a finding it proved or reproduced is always shown. A `plausible` finding that no completed vote supported (its votes failed or ran out of budget) is held back whatever the cap. A change the correctness agent reviewed in parts gets half the cap again for each part after the first (10, 15, 20, up to 45 at 8 parts for the default).
 
 Explicit values in the merged document, including inherited values, win over posture defaults. `max_defects` must be positive. `rounds` defaults to `{cap: 3, diff_only_after: 1}`; `cap` must be positive and `diff_only_after` must be nonnegative and less than `cap`. Resolved profiles store these values and `posture_policy` (the derived `defect_severity_floor`, `render_plausible_risks`, and nullable `plausible_risk_limit`), so policy changes affect the review id.
 

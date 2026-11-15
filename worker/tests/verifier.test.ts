@@ -1014,6 +1014,26 @@ describe("posture, caps and risk", () => {
     expect(parts.risks.map((f) => f.id)).toEqual(["p0", "p1", "p2", "v"]);
     expect(parts.audit.held_back.risks).toEqual(["plausible3"]);
   });
+  it("holds back an unverified finding that no vote supported", () => {
+    const unexamined = {
+      ...verified(
+        { ...hypothesis, id: "u", message: "unexamined" },
+        "plausible",
+      ),
+      verification: {
+        voters: 1,
+        agreeing: 0,
+        blind_match: ["none"] as any,
+        split: true,
+      },
+    };
+    const r = consolidate(
+      [unexamined, verified({ ...hypothesis, id: "p" }, "plausible")],
+      profile,
+    );
+    expect(r.risks.map((f) => f.id)).toEqual(["p"]);
+    expect(r.audit.held_back.risks).toEqual(["unexamined"]);
+  });
   it("keeps balanced plausible risks and drops agent diagnostic/style categories", () => {
     const r = consolidate(
       [
