@@ -386,9 +386,14 @@ new contents. No endpoint component holds a whole tree in memory: steps and tool
 read files on demand, and runners receive a streamed archive.
 
 Limits, checked by the CLI before uploading anything and enforced by the endpoint:
-300,000 paths per tree, 64 MiB per file, 1 GiB of distinct content across both
+300,000 paths per tree, 64 MiB per file, 1.5 GiB of distinct content across both
 trees, and 8 MiB per request body. The CLI error names the exceeded limit, the
 measured value and, for the file limit, the path.
+
+A runner stores a file that is the same in both trees once (the base tree's file
+is a hard link to the head's), so both trees of a repository take about the room
+of one. `rio/prepare`'s `omit` globs keep paths out of the snapshot altogether;
+see [profiles](profiles.md).
 
 A content is identified by the lowercase hex BLAKE3 hash of its bytes (a symbolic
 link's content is its target). All routes need `reviews:write`.

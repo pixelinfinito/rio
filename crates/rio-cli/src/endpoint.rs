@@ -107,6 +107,25 @@ async fn lineage_before(
     copy.save(cache)?;
     Ok(Some(copy))
 }
+/// Applies the profile's `omit` globs to both trees and says what they left out.
+pub fn omit(changes: &mut ChangeSet, profile: &ResolvedProfile) -> Result<()> {
+    let omitted = rio_engine::omit_paths(changes, profile)?;
+    if omitted.paths > 0 {
+        eprintln!(
+            "omitted by the profile: {} paths ({}){}",
+            rio_client::format_count(omitted.paths as u64),
+            rio_client::format_bytes(omitted.bytes),
+            match omitted.changed {
+                0 => String::new(),
+                changed => format!(
+                    "; {} of them changed and are not reviewed",
+                    rio_client::format_count(changed as u64)
+                ),
+            }
+        );
+    }
+    Ok(())
+}
 pub async fn review(
     request: EndpointRequest<'_>,
     cancellation: CancellationToken,

@@ -313,7 +313,7 @@ describe("manifests", () => {
       await error(await sealLines([line("head", "big.bin", 64 * MiB + 1)])),
     ).toMatch(/^snapshot limit exceeded: file size .* for big\.bin/);
     const distinct = Array.from(
-      { length: 17 },
+      { length: 25 },
       (_, i) =>
         json({
           version: "head",
@@ -324,7 +324,7 @@ describe("manifests", () => {
         }) + "\n",
     );
     expect(await error(await sealLines(distinct))).toMatch(
-      /^snapshot limit exceeded: more than 1073741824 bytes of distinct content/,
+      /^snapshot limit exceeded: more than 1610612736 bytes of distinct content/,
     );
     // Every path references a stored (empty) content, so only the limit fails.
     const empty = new Uint8Array();

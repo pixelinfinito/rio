@@ -50,7 +50,8 @@
         "type": "array",
         "items": { "type": "string" },
         "default": []
-      }
+      },
+      "omit": { "type": "array", "items": { "type": "string" }, "default": [] }
     }
   },
   "rio/qa@0.1.0": {

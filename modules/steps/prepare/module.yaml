@@ -5,4 +5,4 @@ description: Prepare the review artifacts
 local: true
 inputs: ["snapshot", "profile"]
 outputs: ["projects", "exclusions"]
-schema: {"type": "object", "additionalProperties": false, "properties": {"exclude": {"type": "array", "items": {"type": "string"}, "default": []}}}
+schema: {"type": "object", "additionalProperties": false, "properties": {"exclude": {"type": "array", "items": {"type": "string"}, "default": []}, "omit": {"type": "array", "items": {"type": "string"}, "default": []}}}

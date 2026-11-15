@@ -29,7 +29,7 @@ The endpoint SHALL verify that every uploaded content matches its declared hash 
 - **THEN** registration is rejected as referencing missing content
 
 ### Requirement: Snapshot limits
-A snapshot SHALL be accepted with up to 300,000 paths per tree, up to 64 MiB per file and up to 1 GiB of distinct content across both trees. The CLI SHALL check these limits before uploading anything and SHALL name the exceeded limit and the measured value; the endpoint SHALL enforce the same limits.
+A snapshot SHALL be accepted with up to 300,000 paths per tree, up to 64 MiB per file and up to 1.5 GiB of distinct content across both trees. The CLI SHALL check these limits before uploading anything and SHALL name the exceeded limit and the measured value; the endpoint SHALL enforce the same limits.
 
 #### Scenario: Large repository accepted
 - **WHEN** a review's base and head trees total 145 MiB of content across 20,000 paths

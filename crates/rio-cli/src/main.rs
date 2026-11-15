@@ -602,7 +602,7 @@ async fn execute_review(args: &ReviewArgs, hooks: Hooks) -> Result<Executed, Rev
         }
         eprintln!("Warning: {warning}");
     }
-    let changes = match select(&repo, args.selection.selection()) {
+    let mut changes = match select(&repo, args.selection.selection()) {
         Ok(changes) => changes,
         Err(error) => {
             let message = format!("{error:#}");
@@ -614,6 +614,10 @@ async fn execute_review(args: &ReviewArgs, hooks: Hooks) -> Result<Executed, Rev
             return Err(ReviewError::new(3, &name, message, Vec::new()));
         }
     };
+    if let Err(error) = endpoint::omit(&mut changes, &profile) {
+        let message = format!("invalid_profile: rio/prepare omit: {error:#}");
+        return Err(ReviewError::new(2, "invalid_profile", message, Vec::new()));
+    }
     let reviewed = changes.clone();
     let remote_request = if !args.offline {
         config

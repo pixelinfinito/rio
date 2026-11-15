@@ -156,8 +156,8 @@ async function* members(
 /**
  * The base tree after the head's, without what the two share: a file whose
  * content and mode equal the head's file of that path is named in a
- * `same/base` member (a JSON array of paths) and the executor copies it from
- * the head tree it just wrote. A change touches a few files of a repository,
+ * `same/base` member (a JSON array of paths) and the executor links it to
+ * the head tree's file it just wrote. A change touches a few files of a repository,
  * so the archive of both trees is about one tree's bytes instead of two.
  */
 async function* baseAfterHead(

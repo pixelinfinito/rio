@@ -96140,6 +96140,7 @@ const schema62 = {
   additionalProperties: false,
   properties: {
     exclude: { type: "array", items: { type: "string" }, default: [] },
+    omit: { type: "array", items: { type: "string" }, default: [] },
   },
 };
 function validate40(
@@ -96163,7 +96164,7 @@ function validate40(
   }
   if (data && typeof data == "object" && !Array.isArray(data)) {
     for (const key0 in data) {
-      if (!(key0 === "exclude")) {
+      if (!(key0 === "exclude" || key0 === "omit")) {
         const err0 = {
           instancePath,
           schemaPath: "#/additionalProperties",
@@ -96216,8 +96217,45 @@ function validate40(
         errors++;
       }
     }
+    if (data.omit !== undefined) {
+      let data2 = data.omit;
+      if (Array.isArray(data2)) {
+        const len1 = data2.length;
+        for (let i1 = 0; i1 < len1; i1++) {
+          if (typeof data2[i1] !== "string") {
+            const err3 = {
+              instancePath: instancePath + "/omit/" + i1,
+              schemaPath: "#/properties/omit/items/type",
+              keyword: "type",
+              params: { type: "string" },
+              message: "must be string",
+            };
+            if (vErrors === null) {
+              vErrors = [err3];
+            } else {
+              vErrors.push(err3);
+            }
+            errors++;
+          }
+        }
+      } else {
+        const err4 = {
+          instancePath: instancePath + "/omit",
+          schemaPath: "#/properties/omit/type",
+          keyword: "type",
+          params: { type: "array" },
+          message: "must be array",
+        };
+        if (vErrors === null) {
+          vErrors = [err4];
+        } else {
+          vErrors.push(err4);
+        }
+        errors++;
+      }
+    }
   } else {
-    const err3 = {
+    const err5 = {
       instancePath,
       schemaPath: "#/type",
       keyword: "type",
@@ -96225,9 +96263,9 @@ function validate40(
       message: "must be object",
     };
     if (vErrors === null) {
-      vErrors = [err3];
+      vErrors = [err5];
     } else {
-      vErrors.push(err3);
+      vErrors.push(err5);
     }
     errors++;
   }

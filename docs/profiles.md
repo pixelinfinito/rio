@@ -95,7 +95,7 @@ Steps need unique `id` values. `needs` names existing steps and must form a DAG.
 
 | Module | Options | Local behavior |
 | --- | --- | --- |
-| `rio/prepare` | `exclude: [glob, ...]` | Detection, exclusions and size notes |
+| `rio/prepare` | `exclude: [glob, ...]`, `omit: [glob, ...]` | Detection, exclusions and size notes. `exclude` keeps matching paths out of the reviewed change; they stay in the snapshot for tools and checks to read. `omit` removes matching paths from both trees before anything else: they are not uploaded, read, built or reviewed, and do not count toward the snapshot limits. In a glob `*` stays within one directory and `**` crosses them (`design/exports/**`). Omit only what no check needs; vendored dependencies an offline build reads must stay. |
 | `rio/checks` | `typecheck`, `lint`, `secrets`, `coverage`, `dependencies`, `baseline` (all default true); `trust_installed_dependencies` (default false) | Bounded deterministic checks and baseline comparison |
 | `rio/graph` | `hops: 2`, `max_nodes: 2000` | Base/head/delta graph and impact summary |
 | `rio/report` | `class_threshold` (default 3); `proposal_threshold` (integer of at least 1, default 3; dismissals that yield a suppression proposal) | Suppressions, policy, summary and persistence |

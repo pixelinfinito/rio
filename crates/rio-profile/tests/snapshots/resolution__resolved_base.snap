@@ -23,6 +23,7 @@ steps:
   parallel: false
   with:
     exclude: []
+    omit: []
 - id: checks
   uses: rio/checks@0.1.0
   needs:

@@ -57,18 +57,30 @@ def write_member(tree, path, source, mode):
         os.fchmod(target.fileno(), mode)
 
 
-def copy_shared(root, version, paths):
-    """Writes the files of `version` that equal the other tree's file of the same path, which
-    the archive carries once. The source is a regular file this executor wrote."""
+def link_shared(root, version, paths):
+    """Gives `version` the files that equal the other tree's file of the same path, which the
+    archive carries once, as hard links: an unchanged file is stored once, so two trees of a
+    large repository take the room of one. The source is a regular file this executor wrote.
+    Only analysis jobs get both trees, and they run Rio's own checks, which read sources; a tool
+    that rewrote an unchanged file in place would change it in both trees."""
     other = VERSIONS[1 - VERSIONS.index(version)]
     assert isinstance(paths, list), 'invalid shared member'
     for path in paths:
         assert isinstance(path, str) and safe_path(path), 'unsafe archive member'
-        descriptor = os.open(root / other / path, os.O_RDONLY | os.O_NOFOLLOW)
-        with os.fdopen(descriptor, 'rb') as source:
-            status = os.fstat(source.fileno())
-            assert stat.S_ISREG(status.st_mode), 'shared member is not a regular file'
-            write_member(root / version, path, source, stat.S_IMODE(status.st_mode))
+        source = root / other / path
+        status = os.lstat(source)
+        if stat.S_ISDIR(status.st_mode):
+            raise IsADirectoryError(path)
+        assert stat.S_ISREG(status.st_mode), 'shared member is not a regular file'
+        # Check every component without following links, as `write_member` does.
+        directory = root / version
+        for part in path.split('/')[:-1]:
+            directory = directory / part
+            if os.path.lexists(directory):
+                assert stat.S_ISDIR(os.lstat(directory).st_mode), 'archive member overlaps a file'
+            else:
+                directory.mkdir()
+        os.link(source, root / version / path, follow_symlinks=False)
 
 
 def extract(stream, root, needs):
@@ -83,7 +95,7 @@ def extract(stream, root, needs):
             version, _, path = member.name.partition('/')
             if version == 'same':
                 assert path in needs and set(needs) == set(VERSIONS) and member.size <= SHARED_LIMIT, 'unsafe archive member'
-                copy_shared(root, path, json.loads(archive.extractfile(member).read()))
+                link_shared(root, path, json.loads(archive.extractfile(member).read()))
                 continue
             assert version in needs and safe_path(path), 'unsafe archive member'
             assert member.mode in (0o644, 0o755), 'unsupported archive member mode'

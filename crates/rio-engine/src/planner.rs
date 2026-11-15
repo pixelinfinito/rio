@@ -81,6 +81,71 @@ pub fn profile_excludes(profile: &ResolvedProfile) -> Vec<String> {
         })
         .unwrap_or_default()
 }
+/// What `rio/prepare`'s `omit` left out of a change's trees.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct Omitted {
+    /// Paths removed, counted once when both trees held them.
+    pub paths: usize,
+    /// Bytes of the removed files, counted once per path.
+    pub bytes: u64,
+    /// Removed paths the change added, deleted or modified: not reviewed.
+    pub changed: usize,
+}
+
+/// Removes the paths matching `rio/prepare`'s `omit` globs from both trees, so
+/// nothing later reads, uploads or builds them. `exclude` only keeps a path out
+/// of the reviewed change; `omit` keeps it out of the snapshot. A glob matches
+/// as `exclude` does: `*` stays within one directory, `**` crosses them.
+pub fn omit_paths(changes: &mut ChangeSet, profile: &ResolvedProfile) -> Result<Omitted> {
+    let globs: Vec<String> = profile
+        .profile
+        .step("rio/prepare")
+        .and_then(|step| step.options["omit"].as_array())
+        .map(|values| {
+            values
+                .iter()
+                .filter_map(serde_json::Value::as_str)
+                .map(str::to_owned)
+                .collect()
+        })
+        .unwrap_or_default();
+    omit_globs(changes, &globs)
+}
+
+/// `omit_paths` for the given globs.
+pub fn omit_globs(changes: &mut ChangeSet, globs: &[String]) -> Result<Omitted> {
+    let mut omitted = Omitted::default();
+    if globs.is_empty() {
+        return Ok(omitted);
+    }
+    let mut set = globset::GlobSetBuilder::new();
+    for glob in globs {
+        set.add(
+            globset::GlobBuilder::new(glob)
+                .literal_separator(true)
+                .build()?,
+        );
+    }
+    let set = set.build()?;
+    let paths: std::collections::BTreeSet<String> = changes
+        .base
+        .keys()
+        .chain(changes.head.keys())
+        .filter(|path| set.is_match(path.as_str()))
+        .cloned()
+        .collect();
+    for path in paths {
+        let base = changes.base.remove(&path);
+        let head = changes.head.remove(&path);
+        omitted.paths += 1;
+        omitted.bytes += head.as_ref().or(base.as_ref()).map_or(0, |e| e.content.len()) as u64;
+        omitted.changed += match (&base, &head) {
+            (Some(base), Some(head)) => usize::from(!base.same_content(head)),
+            _ => 1,
+        };
+    }
+    Ok(omitted)
+}
 fn skip(reason: SkipReason, hint: impl Into<String>) -> CheckOutcome {
     CheckOutcome::Skipped {
         reason,
@@ -612,6 +677,57 @@ fn baseline_readiness(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn omitted_paths_leave_both_trees_and_changed_ones_are_counted() {
+        let entry = |content: &str| rio_git::TreeEntry {
+            mode: 0o100644,
+            object_id: String::new(),
+            content: content.as_bytes().to_vec(),
+        };
+        let tree = |files: &[(&str, &str)]| -> Tree {
+            files
+                .iter()
+                .map(|(path, content)| ((*path).to_owned(), entry(content)))
+                .collect()
+        };
+        let mut changes = ChangeSet {
+            selection: rio_git::Selection::Staged,
+            base_id: "base".into(),
+            head_id: "head".into(),
+            base: tree(&[
+                ("src/lib.rs", "old"),
+                ("vendor/a/src/lib.rs", "same"),
+                ("vendor/b/gone.rs", "gone"),
+                ("design/export/index.html", "12345"),
+                ("design/notes.md", "kept"),
+            ]),
+            head: tree(&[
+                ("src/lib.rs", "new"),
+                ("vendor/a/src/lib.rs", "same"),
+                ("vendor/c/new.rs", "new!"),
+                ("design/export/index.html", "123456"),
+                ("design/notes.md", "kept"),
+            ]),
+        };
+        let untouched = changes.clone();
+        assert_eq!(omit_globs(&mut changes, &[]).unwrap(), Omitted::default());
+        assert_eq!((&changes.base, &changes.head), (&untouched.base, &untouched.head));
+        // `*` stays within one directory: `design/*` leaves `design/export/…`.
+        assert_eq!(
+            omit_globs(&mut changes, &["design/*".into()]).unwrap(),
+            Omitted { paths: 1, bytes: 4, changed: 0 }
+        );
+        let omitted = omit_globs(
+            &mut changes,
+            &["vendor/**".into(), "design/export/**".into()],
+        )
+        .unwrap();
+        assert_eq!(omitted, Omitted { paths: 4, bytes: 4 + 4 + 4 + 6, changed: 3 });
+        assert_eq!(changes.base.keys().collect::<Vec<_>>(), ["src/lib.rs"]);
+        assert_eq!(changes.head.keys().collect::<Vec<_>>(), ["src/lib.rs"]);
+        assert!(omit_globs(&mut changes, &["[".into()]).is_err());
+    }
 
     #[test]
     fn baseline_requires_verified_dependencies_or_a_shared_trusted_environment() {

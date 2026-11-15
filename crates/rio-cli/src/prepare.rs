@@ -97,8 +97,9 @@ pub async fn run(args: PrepareArgs) -> u8 {
 async fn prepare(args: PrepareArgs) -> Result<()> {
     let (base, head) = (commit(&args.base)?, commit(&args.head)?);
     let repo = GixRepo::discover(std::env::current_dir()?)?;
-    let changes = changes(&repo, base, head)?;
+    let mut changes = changes(&repo, base, head)?;
     let profile = rio_engine::base_profile(&changes.base)?;
+    crate::endpoint::omit(&mut changes, &profile)?;
     let snapshot = rio_git::Snapshot::from_changes(&changes);
     let run_id = format!("prepare-{}", &snapshot.key[..16]);
     let prepared = rio_engine::build_submission(
