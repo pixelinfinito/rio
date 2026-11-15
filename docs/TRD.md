@@ -101,7 +101,7 @@ max_lines: int
 | `balanced` (default) | `static_proven` | 10 | `warning` | yes, capped at `max_defects` |
 | `thorough` | `plausible` | 15 | `info` | yes, uncapped |
 
-Presets map onto posture plus budget: Quick = `critical-only` + `budget.fast`, Standard = `balanced` + `budget.fast`, Deep (`--deep`) = `thorough` + `budget.deep`. Deterministic findings are never capped by `max_defects`; the cap applies to agent-originated defects after verification, in impact × evidence order, and the footer states how many were held back.
+Presets map onto posture plus budget: Quick = `critical-only` + `budget.fast`, Standard = `balanced` + `budget.fast`, Deep (`--deep`) = `thorough` + `budget.deep`. Deterministic findings are never capped by `max_defects`; the cap applies after verification, in impact × evidence order, and counts only agent findings the verifier left `plausible`: a proved or reproduced finding is always shown. A change reviewed in parts gets half the cap again for each part after the first. The footer states how many were held back.
 
 Rule expressions are a small, non-Turing-complete language evaluated by `rio-profile`: predicates `touches(glob)`, `adds_dependency()`, `lines_changed > n`, `risk >= level`, `language == x`; actions `enable(agent)`, `disable(agent)`, `budget(fast|deep)`, `require_human()`.
 

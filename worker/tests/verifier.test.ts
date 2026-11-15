@@ -989,8 +989,30 @@ describe("posture, caps and risk", () => {
       max_defects: 2,
     });
     expect(forward).toEqual(reversed);
-    expect(forward.defects.map((f) => f.id)).toEqual(["a", "b"]);
-    expect(forward.audit.held_back.defects).toHaveLength(1);
+    // Verified findings are all shown, whatever the cap.
+    expect(forward.defects.map((f) => f.id)).toEqual(["a", "b", "z"]);
+    expect(forward.audit.held_back.defects).toHaveLength(0);
+  });
+  it("caps only unverified findings, and raises the cap for a change reviewed in parts", () => {
+    const entries = [
+      ...[0, 1, 2, 3].map((i) =>
+        verified(
+          { ...hypothesis, id: `p${i}`, message: `plausible${i}` },
+          "plausible",
+        ),
+      ),
+      verified({ ...hypothesis, id: "v", category: "risk", severity: "info" }),
+    ];
+    const whole = consolidate(entries, { ...profile, max_defects: 2 });
+    expect(whole.risks.map((f) => f.id)).toEqual(["p0", "p1", "v"]);
+    expect(whole.audit.held_back.risks).toEqual(["plausible2", "plausible3"]);
+    const parts = consolidate(
+      entries,
+      { ...profile, max_defects: 2 },
+      { parts: 2 },
+    );
+    expect(parts.risks.map((f) => f.id)).toEqual(["p0", "p1", "p2", "v"]);
+    expect(parts.audit.held_back.risks).toEqual(["plausible3"]);
   });
   it("keeps balanced plausible risks and drops agent diagnostic/style categories", () => {
     const r = consolidate(
@@ -1009,12 +1031,15 @@ describe("posture, caps and risk", () => {
     const p = { ...profile, max_defects: 1, suppress: [{ finding: "h0" }] };
     const r = consolidate(
       [0, 1, 2].map((i) =>
-        verified({ ...hypothesis, id: `h${i}`, message: `title${i}` }),
+        verified(
+          { ...hypothesis, id: `h${i}`, message: `title${i}` },
+          "plausible",
+        ),
       ),
       p,
     );
-    expect(r.defects[0].id).toBe("h1");
-    expect(r.audit.held_back.defects).toEqual(["title2"]);
+    expect(r.risks.map((f) => f.id)).toEqual(["h1"]);
+    expect(r.audit.held_back.risks).toEqual(["title2"]);
     expect(r.audit.suppressed).toBe(1);
   });
   it("uses separate security policy and uncapped thorough general risks", () => {

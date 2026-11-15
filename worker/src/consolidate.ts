@@ -134,6 +134,8 @@ export function policyMatches(f: Finding, policy: FailOn): boolean {
 export interface ConsolidateOptions {
   // Instances above this count merge into one class finding (default 3).
   classThreshold?: number;
+  // Parts the change was reviewed in (default 1).
+  parts?: number;
 }
 export function triggerHash(trigger: string): string {
   return hash(normalizeTrigger(trigger));
@@ -334,12 +336,20 @@ export function consolidate(
           ? 5
           : 15),
   };
+  // A verified finding is always shown. The cap counts only findings the
+  // verifier left plausible, and a change reviewed in parts gets half the cap
+  // again for each further part.
+  const scale = 1 + (Math.max(1, options.parts ?? 1) - 1) / 2;
   for (const pool of ["defects", "risks", "security"] as const) {
-    pools[pool].sort(order);
-    audit.held_back[pool] = pools[pool]
-      .slice(limits[pool])
-      .map((f) => f.message);
-    pools[pool] = pools[pool].slice(0, limits[pool]);
+    const limit =
+      pool === "security" ? limits[pool] : Math.floor(limits[pool] * scale);
+    let plausible = 0;
+    const shown: Finding[] = [];
+    for (const f of pools[pool].sort(order))
+      if (f.evidence_level !== "plausible" || plausible++ < limit)
+        shown.push(f);
+      else audit.held_back[pool].push(f.message);
+    pools[pool] = shown;
   }
   // Councilled findings the floors or caps keep out of the findings lists:
   // their council result is still reported, and `fail_on` never sees them.

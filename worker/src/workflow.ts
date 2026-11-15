@@ -113,12 +113,7 @@ import {
 } from "./council-audit";
 import memberWeights from "./member-weights.json";
 import { pullOf } from "./pulls";
-import {
-  createJob,
-  createModelJob,
-  stopRunners,
-  withdrawIdle,
-} from "./jobs";
+import { createJob, createModelJob, stopRunners, withdrawIdle } from "./jobs";
 import { needs, transferMs } from "./archive";
 import { createQaJob } from "./qa-jobs";
 import { qaReport, qaRecords, compareQaResults, qaUsage } from "./qa-results";
@@ -622,6 +617,9 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
     // not complete, and whether the report already holds the consolidated
     // findings; the stopped path reads both.
     const settled = new Map<string, number>();
+    // Parts the correctness agent reviewed the change in; scales the cap on
+    // unverified findings.
+    let reviewedParts = 1;
     let consolidated = false;
     const progress = new Progress(store, id);
     const ledger = new D1Ledger(this.env, id),
@@ -1018,7 +1016,10 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               output_tokens,
               cost_usd: 0,
               cost_source: "self-hosted",
-              ...selfHostedCache(input_tokens, result.artifact.cached_input_tokens),
+              ...selfHostedCache(
+                input_tokens,
+                result.artifact.cached_input_tokens,
+              ),
               model: member.model,
             });
           const usage = known
@@ -1029,10 +1030,9 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             key: await store.put(
               `reviews/${id}/council/responses/${name}.json`,
               {
-                content: redactPartitions(
-                  String(result.artifact.content),
-                  [partitions.for(SELF_HOSTED)],
-                ),
+                content: redactPartitions(String(result.artifact.content), [
+                  partitions.for(SELF_HOSTED),
+                ]),
                 ...usage,
                 cost_usd: 0,
               },
@@ -1228,12 +1228,16 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                             messages: [
                               {
                                 role: "user",
-                                content: request.parts?.content ?? request.content,
+                                content:
+                                  request.parts?.content ?? request.content,
                               },
                             ],
                             max_tokens: COUNCIL_OUTPUT_TOKENS,
                             signal: AbortSignal.timeout(remaining),
-                            cache: { classes: promptConfig.cache, key: request.key },
+                            cache: {
+                              classes: promptConfig.cache,
+                              key: request.key,
+                            },
                             redact: [partitions.for(routeOf(member))],
                           });
                           await ledger.settle(reservation, {
@@ -1625,50 +1629,58 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           selected.length && !unchanged
             ? await step.do(`analysis-${s.id}`, () =>
                 holding(async () => {
-                const contents = await changedContents(
-                  reviewed.changed,
-                  reviewed.snapshot,
-                );
-                const entries = await inventory({
-                  changed: reviewed.changed,
-                  contents,
-                  graphs,
-                  hops: graphHops,
-                  read: (version, path) =>
-                    textOf(reviewed.snapshot[version], path),
-                  scan: (version) => textFiles(reviewed.snapshot[version]),
-                });
-                const manifests: [string, string][] = [];
-                for (const path of manifestPaths(reviewed.changed))
-                  for (const version of ["head", "base"] as const) {
-                    const text = await textOf(reviewed.snapshot[version], path);
-                    if (text !== null) {
-                      manifests.push([path, text]);
-                      break;
+                  const contents = await changedContents(
+                    reviewed.changed,
+                    reviewed.snapshot,
+                  );
+                  const entries = await inventory({
+                    changed: reviewed.changed,
+                    contents,
+                    graphs,
+                    hops: graphHops,
+                    read: (version, path) =>
+                      textOf(reviewed.snapshot[version], path),
+                    scan: (version) => textFiles(reviewed.snapshot[version]),
+                  });
+                  const manifests: [string, string][] = [];
+                  for (const path of manifestPaths(reviewed.changed))
+                    for (const version of ["head", "base"] as const) {
+                      const text = await textOf(
+                        reviewed.snapshot[version],
+                        path,
+                      );
+                      if (text !== null) {
+                        manifests.push([path, text]);
+                        break;
+                      }
                     }
-                  }
-                const context = changeContext({
-                  changed: reviewed.changed,
-                  contents,
-                  frameworks: frameworks(manifests, reviewed.changed),
-                  node_kinds: touchedKinds(entries, reviewed.changed, contents),
-                  sensitive_paths: triageOptions.sensitive_paths ?? [],
-                });
-                const catalogName = security
-                  ? (s.with.catalog ?? "owasp-top10-2025")
-                  : null;
-                const items = catalogName
-                  ? applicability(catalogName, context).applicable
-                  : [];
-                return {
-                  inventory: entries,
-                  context,
-                  trace: catalogName
-                    ? traceInputs(items, reviewed.changed, contents, graphs)
-                    : null,
-                  omitted: contents.omitted,
-                };
-              }))
+                  const context = changeContext({
+                    changed: reviewed.changed,
+                    contents,
+                    frameworks: frameworks(manifests, reviewed.changed),
+                    node_kinds: touchedKinds(
+                      entries,
+                      reviewed.changed,
+                      contents,
+                    ),
+                    sensitive_paths: triageOptions.sensitive_paths ?? [],
+                  });
+                  const catalogName = security
+                    ? (s.with.catalog ?? "owasp-top10-2025")
+                    : null;
+                  const items = catalogName
+                    ? applicability(catalogName, context).applicable
+                    : [];
+                  return {
+                    inventory: entries,
+                    context,
+                    trace: catalogName
+                      ? traceInputs(items, reviewed.changed, contents, graphs)
+                      : null,
+                    omitted: contents.omitted,
+                  };
+                }),
+              )
             : null;
         if (analysis)
           unread(
@@ -1762,6 +1774,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                   ),
                 )
               : [];
+          if (parts.length) reviewedParts = parts.length;
           if (parts.length)
             report.footer.notes.push(
               `The ${agent} agent reviewed this change in ${parts.length} parts.`,
@@ -2477,7 +2490,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           );
         };
         try {
-          for (let from = 0; from < candidates.length; ) {
+          for (let from = 0; from < candidates.length;) {
             // Every voter's call reserves its whole conversation, up to the
             // size where one is compacted, until the call returns: only as
             // many hypotheses start together as the review's tokens cover.
@@ -2523,6 +2536,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         classThreshold: submission.profile.steps.find((s) =>
           s.uses.startsWith("rio/report@"),
         )?.with?.class_threshold,
+        parts: reviewedParts,
       });
       target.findings.push(...findings.defects);
       target.risks.push(...findings.risks);
@@ -3007,7 +3021,8 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             const at = verified.findIndex(
               (v) => v.hypothesis.id === entry.verified.hypothesis.id,
             );
-            if (at !== -1 && settled.has(entry.verified.hypothesis.id)) continue;
+            if (at !== -1 && settled.has(entry.verified.hypothesis.id))
+              continue;
             if (at === -1) verified.push(entry.verified);
             else verified[at] = entry.verified;
             settled.set(entry.verified.hypothesis.id, entry.incomplete);
