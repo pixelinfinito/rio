@@ -9,7 +9,12 @@ import { Store } from "../src/storage";
 import { Progress } from "../src/progress";
 import { finishJob } from "../src/jobs";
 import { CANCEL_GRACE_MS, reconcile, sweepReviews } from "../src/reconcile";
-import { CANCELLED_NOTE, changedCode, renderDiff } from "../src/workflow";
+import {
+  CANCELLED_NOTE,
+  changedCode,
+  changeParts,
+  renderDiff,
+} from "../src/workflow";
 import { LARGE, MemorySnapshot } from "../src/snapshot";
 import { Requests, SEARCH_REFUSED } from "../src/requests";
 import { hash, validateHypotheses, validateReport } from "../src/validation";
@@ -1006,6 +1011,30 @@ it("shares the prompt's diff budget: short diffs whole, long ones cut alike, the
   expect(tight[2].truncated).toBe(true);
   expect(tight[2].diff.length).toBeGreaterThan(500);
   expect(tight.filter((f) => f.unshown).length).toBe(1);
+});
+
+it("reviews a change longer than one prompt in parts of about equal diff length", async () => {
+  const file = (lines: number, tag: string) => ({
+    mode: 0o100644,
+    content: Array.from({ length: lines }, (_, i) => `${tag} ${i}`).join("\n"),
+  });
+  const names = ["a", "b", "c", "d", "e", "f"];
+  const snapshot = new MemorySnapshot({
+    base: {},
+    head: Object.fromEntries(
+      names.map((n, i) => [`${n}.ts`, file(i === 2 ? 900 : 100, n)]),
+    ),
+  });
+  const changed = names.map((n) => ({ path: `${n}.ts` }));
+  // About 1,000 characters a short file; the long one fills a prompt alone.
+  const parts = await changeParts(changed, snapshot, 3000, 8);
+  expect(parts.flat()).toEqual(changed.map((f) => f.path));
+  expect(parts).toEqual([["a.ts", "b.ts"], ["c.ts"], ["d.ts", "e.ts", "f.ts"]]);
+  // No more parts than asked for, and none when one prompt holds the change.
+  expect((await changeParts(changed, snapshot, 3000, 2)).length).toBe(2);
+  expect(await changeParts(changed, snapshot, 60_000, 8)).toEqual([]);
+  expect(await changeParts(changed, snapshot, 3000, 1)).toEqual([]);
+  expect(await changeParts(changed.slice(2, 3), snapshot, 3000, 8)).toEqual([]);
 });
 
 it("retains reproduced evidence when every blind pass misses, with runner artifacts and risk-selected budget", async () => {

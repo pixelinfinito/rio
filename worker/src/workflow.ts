@@ -315,6 +315,48 @@ export async function changedCode(
   }
   return files;
 }
+/** The most parts a change is reviewed in, whatever a profile asks for. */
+export const MOST_PARTS = 8;
+/**
+ * A change whose diff is longer than one prompt holds, as parts for the agent
+ * to review one conversation each: runs of files in the change's order, of
+ * about equal diff length, as many as the diff fills prompts, at most `most`.
+ * A change one prompt holds, or of one file, has no parts.
+ */
+export async function changeParts(
+  changed: Submission["changed"],
+  snapshot: SnapshotReader,
+  budget: number,
+  most: number,
+): Promise<string[][]> {
+  if (most < 2 || changed.length < 2) return [];
+  // A file the prompt only names still costs the agent a read.
+  const sizes = (
+    await changedCode(changed, snapshot, Number.MAX_SAFE_INTEGER)
+  ).map((f) => Math.min(budget, Math.max(SHORTEST_CUT, f.diff?.length ?? 0)));
+  const total = sizes.reduce((a, b) => a + b, 0);
+  const count = Math.min(most, MOST_PARTS, Math.ceil(total / budget));
+  if (count < 2) return [];
+  const parts: string[][] = [[]];
+  let held = 0,
+    left = total;
+  changed.forEach((file, i) => {
+    const part = parts[parts.length - 1];
+    // A part is full at an equal share of what the parts after it still hold.
+    if (
+      part.length &&
+      parts.length < count &&
+      held + sizes[i] / 2 > left / (count - parts.length + 1)
+    ) {
+      left -= held;
+      held = 0;
+      parts.push([]);
+    }
+    parts[parts.length - 1].push(file.path);
+    held += sizes[i];
+  });
+  return parts.length > 1 ? parts : [];
+}
 /** Paths whose content or mode differ between two trees, by manifest hash. */
 async function differing(before: TreeReader, after: TreeReader) {
   const paths: string[] = [];
@@ -1699,13 +1741,43 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               })),
             })}\n${dataBlock("taint map", analysis!.trace)}`;
           }
-          const reviewUnder = async ({ alias, model }: ReviewModel) => {
+          // A change longer than one prompt holds is reviewed in parts when
+          // the step asks for it: one conversation per part, at the same time.
+          const diffBudget = Math.min(
+            CHANGE_PROMPT_CHARS,
+            Math.floor(agentTokens / 8),
+          );
+          const parts =
+            module === "rio/agents" &&
+            agent === "correctness" &&
+            Number(s.with.parts ?? 1) > 1
+              ? await step.do(`parts-${s.id}-${agent}`, () =>
+                  holding(() =>
+                    changeParts(
+                      reviewed.changed,
+                      reviewed.snapshot,
+                      diffBudget,
+                      Number(s.with.parts),
+                    ),
+                  ),
+                )
+              : [];
+          if (parts.length)
+            report.footer.notes.push(
+              `The ${agent} agent reviewed this change in ${parts.length} parts.`,
+            );
+          const reviewUnder = async ({
+            alias,
+            model,
+            part,
+          }: ReviewModel & { part?: number }) => {
             // Steps, records and usage of a review carry the model's alias when
-            // the agent has several.
-            const label = several ? `${agent}-${alias}` : agent;
-            const who = several
-              ? `${agent} agent (${alias})`
-              : `${agent} agent`;
+            // the agent has several, and the part when the change has several.
+            const of = part === undefined ? "" : `-p${part + 1}`;
+            const label = `${several ? `${agent}-${alias}` : agent}${of}`;
+            const who = `${agent} agent${several ? ` (${alias})` : ""}${
+              part === undefined ? "" : ` (part ${part + 1})`
+            }`;
             const review = {
               alias,
               hypotheses: [] as Hypothesis[],
@@ -1717,13 +1789,32 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             };
             // The agent result cache: per hunk, never for fork reviews, the
             // security step (its output is catalog coverage) or `cache: false`.
+            // A part's review is not cached: a cache entry holds everything
+            // one conversation raised on the whole change.
             const caching =
               module === "rio/agents" &&
               !submission.fork &&
+              part === undefined &&
               s.with.cache !== false;
             let keyed: Keyed[] = [],
               misses: number[] = [];
             let scope = reviewed;
+            let others = "";
+            if (part !== undefined) {
+              const mine = new Set(parts[part]);
+              scope = {
+                ...reviewed,
+                changed: reviewed.changed.filter((f) => mine.has(f.path)),
+                focus: reviewed.focus.filter((path) => mine.has(path)),
+              };
+              others = `\nThis change is large and is reviewed in ${parts.length} parts by reviewers working at the same time. You review part ${part + 1}: the files of the "change diff" block. Raise hypotheses only in those files. The block below names the files of the other parts: read one where a concern in your part depends on it, and do not review it.\n${dataBlock(
+                "files of the other parts",
+                reviewed.changed
+                  .filter((f) => !mine.has(f.path))
+                  .slice(0, 400)
+                  .map((f) => f.path),
+              )}`;
+            }
             // The cache only saves model calls: a lookup that cannot finish
             // (a CPU limit repeats on every retry) runs the agent uncached.
             let found:
@@ -1901,7 +1992,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             const prompt = generationPrompt({
               agent,
               instructions,
-              round: roundContext,
+              round: roundContext + others,
               intent: dataBlock("intent", filteredLines(intent.split("\n"))),
               focus: dataBlock("suggested_focus", scope.focus),
               graph: dataBlock("graph excerpt", promptGraph(graphs)),
@@ -1909,11 +2000,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                 "change diff",
                 // Every turn sends the first message again: the diff takes no
                 // more than an eighth of the agent's tokens.
-                await changedCode(
-                  scope.changed,
-                  reviewed.snapshot,
-                  Math.min(CHANGE_PROMPT_CHARS, Math.floor(agentTokens / 8)),
-                ),
+                await changedCode(scope.changed, reviewed.snapshot, diffBudget),
               ),
               checks: dataBlock("deterministic checks", report.checks),
               data: agentData,
@@ -2121,7 +2208,12 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           };
           // A review that is cancelled ends the step; any other failure is
           // the review's own and is in its notes.
-          const ended = await Promise.allSettled(models.map(reviewUnder));
+          const ended = await Promise.allSettled(
+            (parts.length
+              ? models.flatMap((m) => parts.map((_, part) => ({ ...m, part })))
+              : models
+            ).map(reviewUnder),
+          );
           const thrown = ended.find((r) => r.status === "rejected");
           if (thrown) throw thrown.reason;
           const reviews = ended.flatMap((r) =>

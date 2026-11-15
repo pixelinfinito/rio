@@ -95626,6 +95626,14 @@ const schema58 = {
       description:
         "Replay agent hypotheses for unchanged hunks from the agent result cache; the verifier always runs",
     },
+    parts: {
+      type: "integer",
+      minimum: 1,
+      maximum: 8,
+      default: 1,
+      description:
+        "Review a change longer than one prompt holds in up to this many parts, one correctness conversation per part at the same time; each part has an agent's share of the tokens and its result is not cached",
+    },
   },
 };
 function validate36(
@@ -95649,7 +95657,7 @@ function validate36(
   }
   if (data && typeof data == "object" && !Array.isArray(data)) {
     for (const key0 in data) {
-      if (!(key0 === "cache")) {
+      if (!(key0 === "cache" || key0 === "parts")) {
         const err0 = {
           instancePath,
           schemaPath: "#/additionalProperties",
@@ -95682,8 +95690,58 @@ function validate36(
         errors++;
       }
     }
+    if (data.parts !== undefined) {
+      let data1 = data.parts;
+      if (!(typeof data1 == "number" && !(data1 % 1) && !isNaN(data1))) {
+        const err2 = {
+          instancePath: instancePath + "/parts",
+          schemaPath: "#/properties/parts/type",
+          keyword: "type",
+          params: { type: "integer" },
+          message: "must be integer",
+        };
+        if (vErrors === null) {
+          vErrors = [err2];
+        } else {
+          vErrors.push(err2);
+        }
+        errors++;
+      }
+      if (typeof data1 == "number") {
+        if (data1 > 8 || isNaN(data1)) {
+          const err3 = {
+            instancePath: instancePath + "/parts",
+            schemaPath: "#/properties/parts/maximum",
+            keyword: "maximum",
+            params: { comparison: "<=", limit: 8 },
+            message: "must be <= 8",
+          };
+          if (vErrors === null) {
+            vErrors = [err3];
+          } else {
+            vErrors.push(err3);
+          }
+          errors++;
+        }
+        if (data1 < 1 || isNaN(data1)) {
+          const err4 = {
+            instancePath: instancePath + "/parts",
+            schemaPath: "#/properties/parts/minimum",
+            keyword: "minimum",
+            params: { comparison: ">=", limit: 1 },
+            message: "must be >= 1",
+          };
+          if (vErrors === null) {
+            vErrors = [err4];
+          } else {
+            vErrors.push(err4);
+          }
+          errors++;
+        }
+      }
+    }
   } else {
-    const err2 = {
+    const err5 = {
       instancePath,
       schemaPath: "#/type",
       keyword: "type",
@@ -95691,9 +95749,9 @@ function validate36(
       message: "must be object",
     };
     if (vErrors === null) {
-      vErrors = [err2];
+      vErrors = [err5];
     } else {
-      vErrors.push(err2);
+      vErrors.push(err5);
     }
     errors++;
   }

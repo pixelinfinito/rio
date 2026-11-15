@@ -64,6 +64,7 @@ steps:
   parallel: false
   with:
     cache: true
+    parts: 1
 - id: security
   uses: rio/security@0.2.0
   needs:
