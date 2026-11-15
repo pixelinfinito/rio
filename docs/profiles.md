@@ -1,5 +1,7 @@
 # Profile schema v1
 
+User guides: [English](https://github.com/pixelinfinito/rio/wiki/EN-Profiles) · [Português (Brasil)](https://github.com/pixelinfinito/rio/wiki/PT-BR-Profiles).
+
 Profiles describe a review. Machine settings such as the cache path and parallelism belong in user `config.toml`. The authoritative schema is [`schemas/profile-v1.json`](../schemas/profile-v1.json); this table is generated with `python3 scripts/generate-profile-reference.py`.
 
 <!-- schema:start -->

@@ -19,16 +19,29 @@ fn documented_adapter_manifest_validates() {
     assert!(errors.is_empty(), "{errors:?}");
 }
 
-#[test]
-fn readme_profile_example_is_valid() {
-    let document = include_str!("../../../README.md");
-    let example = document
+/// The Profiles page's YAML example that turns coverage off.
+fn coverage_example(document: &str) -> &str {
+    let examples: Vec<&str> = document
         .split("```yaml\n")
-        .nth(1)
-        .unwrap()
-        .split("```")
-        .next()
-        .unwrap();
+        .skip(1)
+        .map(|block| block.split("```").next().unwrap())
+        .filter(|example| example.contains("coverage:"))
+        .collect();
+    assert_eq!(examples.len(), 1, "expected one coverage example");
+    examples[0]
+}
+
+#[test]
+fn wiki_profile_examples_are_valid() {
+    for document in [
+        include_str!("../../../docs/wiki/en/profiles.md"),
+        include_str!("../../../docs/wiki/pt-BR/profiles.md"),
+    ] {
+        profile_example_disables_coverage(coverage_example(document));
+    }
+}
+
+fn profile_example_disables_coverage(example: &str) {
     let root = tempfile::tempdir().unwrap();
     let path = root.path().join("profile.yaml");
     std::fs::write(&path, example).unwrap();

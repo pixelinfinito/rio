@@ -1,5 +1,7 @@
 # SARIF mapping
 
+User guides: [English](https://github.com/pixelinfinito/rio/wiki/EN-Results) · [Português (Brasil)](https://github.com/pixelinfinito/rio/wiki/PT-BR-Results).
+
 Rio renders a review as a [SARIF 2.1.0](https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html) log so that code-scanning services and editors show the same findings, with the same identities, as the terminal. Two renderers implement this document: `rio-core` for `rio review --format sarif`, and the Worker for `GET /v1/reviews/{id}/report?format=sarif`. Both are tested against the fixtures in [`tests/fixtures/sarif/`](../tests/fixtures/sarif/) (`crates/rio-core/tests/sarif.rs` and `worker/tests/sarif.test.ts`): for the same report and renderer inputs each reproduces `expected.sarif`, so their outputs are byte-identical after canonical key ordering. The Rust test also validates every rendered log against the official OASIS SARIF 2.1.0 schema, vendored in [`tests/fixtures/sarif-schema/`](../tests/fixtures/sarif-schema/). A change to this mapping changes both renderers and the fixtures together. The capability is specified in `openspec/changes/rio-v0-3-core/specs/sarif-output/spec.md` and decision D9 of that change's design.
 
 ## Inputs

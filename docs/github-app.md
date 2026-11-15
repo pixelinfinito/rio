@@ -1,5 +1,7 @@
 # GitHub App
 
+User guides: [English](https://github.com/pixelinfinito/rio/wiki/EN-Github) · [Português (Brasil)](https://github.com/pixelinfinito/rio/wiki/PT-BR-Github).
+
 PR mode connects a Rio endpoint to GitHub through a GitHub App that the endpoint's owner registers once with `rio init`. The app lets the endpoint receive pull request webhooks, read the code of the repositories it is installed on, and post review comments and a check run. This document is the reference for the app's permissions, the registration flow, the secrets it creates, the webhook URL, how a pull request is prepared, reviewed and published, and how to rotate credentials. It describes the design in `openspec/changes/rio-v0-3-core/design.md` (decisions D1 to D7) as implemented by task groups 1 to 3 of that change.
 
 Without the app, the endpoint keeps working for CLI reviews: the webhook route returns 404 and `rio review --pr` exits 2 naming the GitHub App step of `rio init`.

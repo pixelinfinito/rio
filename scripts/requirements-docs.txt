@@ -1,0 +1,5 @@
+# Development only: never needed by the Rio binary or a normal Cargo build.
+Pillow==11.3.0
+tiktoken==0.12.0
+PyYAML==6.0.3
+jsonschema==4.25.1

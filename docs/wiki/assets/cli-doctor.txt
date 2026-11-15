@@ -1,0 +1,97 @@
+$ rio doctor
+Rio doctor
+{
+  "blocking_problems": [],
+  "cache": {
+    "free_space": "<free-space-bytes>",
+    "path": "$DEMO/demo/.rio/cache",
+    "writable": true
+  },
+  "configuration": {
+    "cache": {
+      "dir": "$DEMO/demo/.rio/cache",
+      "max_age": {
+        "nanos": 0,
+        "secs": 2592000
+      },
+      "max_size": 5368709120,
+      "retain_raw_output": true
+    },
+    "config_dir": "$DEMO/config",
+    "endpoint_url": null,
+    "github_app": null,
+    "notices": [],
+    "output_limit": 268435456,
+    "parallelism": 4,
+    "sources": {
+      "cache.dir": "default",
+      "cache.max_age": "default",
+      "cache.max_size": "default",
+      "cache.retain_raw_output": "default",
+      "endpoint.url": "default",
+      "run.output_limit": "default",
+      "run.parallelism": "default"
+    }
+  },
+  "endpoint": null,
+  "head": "<demo-commit>",
+  "plan": {
+    "checks": [
+      {
+        "baseline": false,
+        "baseline_hint": null,
+        "baseline_remap": false,
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "secrets",
+        "language": "common",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [],
+        "tool": null,
+        "workspace_wide": false
+      },
+      {
+        "baseline": false,
+        "baseline_hint": null,
+        "baseline_remap": false,
+        "dependency_hash": null,
+        "dependency_state": null,
+        "kind": "dependencies",
+        "language": "common",
+        "root": ".",
+        "scheduled_as": "changed",
+        "skip": null,
+        "targets": [],
+        "tool": null,
+        "workspace_wide": false
+      }
+    ],
+    "layout": {
+      "dependencies": {},
+      "notes": [],
+      "roots": []
+    },
+    "notes": [],
+    "probes_ran": false,
+    "roots": []
+  },
+  "profile": {
+    "chain": [
+      "rio/base"
+    ],
+    "name": "rio/base",
+    "valid": true
+  },
+  "qa": {
+    "configured": false
+  },
+  "repository": "$DEMO/demo",
+  "warnings": [
+    "rio/base:$.steps[3]: rio/triage is deferred locally: no_endpoint",
+    "rio/base:$.steps[4]: rio/agents is deferred locally: no_endpoint",
+    "rio/base:$.steps[7]: rio/verify is deferred locally: no_endpoint",
+    "rio/base:$.posture: posture, max_defects and rounds are recorded for deferred agent steps; deterministic findings are never capped"
+  ]
+}
