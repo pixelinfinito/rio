@@ -33,13 +33,16 @@ Para apagar deliberadamente evidências hospedadas, execute `rio qa evidence pru
 
 ![Examine o passo falho e artefatos.](../assets/qa-q3-cell-detail.png)
 
-Examine o passo falho e artefatos. Dados demonstrativos; captura da CLI/renderizador TUI atual. [Transcrição textual](../assets/qa-q3-cell-detail.txt).
+Examine o passo falho e artefatos. Dados demonstrativos · renderizador real do Rio · [Transcrição textual](../assets/qa-q3-cell-detail.txt).
 
 ![Separe atrito observado de benefício proposto.](../assets/qa-q4-ux-recommendations.png)
 
-Separe atrito observado de benefício proposto. Dados demonstrativos; captura da CLI/renderizador TUI atual. [Transcrição textual](../assets/qa-q4-ux-recommendations.txt).
+Separe atrito observado de benefício proposto. Dados demonstrativos · renderizador real do Rio · [Transcrição textual](../assets/qa-q4-ux-recommendations.txt).
 
 <!-- commands:start -->
+
+<details>
+<summary>Todas as opções dos comandos</summary>
 
 ## Referência de comandos
 
@@ -54,5 +57,7 @@ Separe atrito observado de benefício proposto. Dados demonstrativos; captura da
 | --- | --- | --- |
 | `--review` | ID da revisão cujas evidências QA hospedadas serão apagadas. | `—` |
 | `--help` | Mostra sintaxe e opções do comando. | `—` |
+
+</details>
 
 <!-- commands:end -->

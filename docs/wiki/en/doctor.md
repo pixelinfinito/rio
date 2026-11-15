@@ -44,9 +44,12 @@ Trusting dependencies cannot override a known mismatch. Trusted diagnostics rema
 
 ![Read readiness warnings before interpreting a review.](../assets/cli-doctor.png)
 
-Read readiness warnings before interpreting a review. Demo data; captured from the current CLI/TUI renderer. [Text transcript](../assets/cli-doctor.txt).
+Read readiness warnings before interpreting a review. Demo data · actual Rio renderer · [Text transcript](../assets/cli-doctor.txt).
 
 <!-- commands:start -->
+
+<details>
+<summary>All command options</summary>
 
 ## Command reference
 
@@ -60,5 +63,7 @@ Read readiness warnings before interpreting a review. Demo data; captured from t
 | `--base` | Compare committed HEAD against the merge base with this ref. | `—` |
 | `--format` | Choose the output format; supported values are listed. | `terminal, json` |
 | `--help` | Show command syntax and supported options. | `—` |
+
+</details>
 
 <!-- commands:end -->

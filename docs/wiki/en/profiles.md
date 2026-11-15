@@ -78,9 +78,12 @@ Unknown modules, cycles in `extends` or `needs`, and unknown options fail valida
 
 ![Inspect the resolved base profile before overriding steps.](../assets/cli-profile.png)
 
-Inspect the resolved base profile before overriding steps. Demo data; captured from the current CLI/TUI renderer. [Text transcript](../assets/cli-profile.txt).
+Inspect the resolved base profile before overriding steps. Demo data · actual Rio renderer · [Text transcript](../assets/cli-profile.txt).
 
 <!-- commands:start -->
+
+<details>
+<summary>All command options</summary>
 
 ## Command reference
 
@@ -98,14 +101,16 @@ Inspect the resolved base profile before overriding steps. Demo data; captured f
 
 | Argument | Meaning | Default / choices |
 | --- | --- | --- |
-| `<reference>` | Profile name/path; omitted validate uses the default profile. | `—` |
+| `<reference>` | Profile name or YAML path to inspect. | `—` |
 | `--raw` | Print authored profile without resolving inheritance. | `false` |
 | `--help` | Show command syntax and supported options. | `—` |
 ### `rio profile validate`
 
 | Argument | Meaning | Default / choices |
 | --- | --- | --- |
-| `<reference>` | Profile name/path; omitted validate uses the default profile. | `—` |
+| `<reference>` | Profile name or YAML path to validate; omit to validate the default profile. | `—` |
 | `--help` | Show command syntax and supported options. | `—` |
+
+</details>
 
 <!-- commands:end -->

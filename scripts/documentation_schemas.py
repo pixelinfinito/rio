@@ -3,7 +3,7 @@
 import json
 from pathlib import Path
 import yaml
-from documentation import ROOT, MANIFEST, replace_generated
+from documentation import ROOT, MANIFEST, replace_generated, slug
 
 def compact(value):
     return json.dumps(value,ensure_ascii=False,separators=(',',':'))
@@ -96,7 +96,11 @@ def generate(root=ROOT,check=False):
     outputs[path]=original+'\n\n## schema-topics\nRead one exact schema topic: '+', '.join(refs)+'.\n'
     for locale in ('en','pt-BR'):
         page=f'docs/wiki/{locale}/reference.md'
-        body='## '+('Schema lookup topics' if locale=='en' else 'Tópicos de campos dos schemas')+'\n\n'+'\n'.join(f'- [{id}]({id}.md)' for id in refs)
+        body='## '+('Complete schema tables' if locale=='en' else 'Tabelas completas dos schemas')+'\n\n'
+        body+='\n'.join(f"- [{en if locale=='en' else pt}](modules.md#{slug(en if locale=='en' else pt)})" for _,en,pt,_ in sets)
+        body+='\n\n<details>\n<summary>'+('Earlier compact lookup pages' if locale=='en' else 'Páginas compactas de consulta anteriores')+'</summary>\n\n'
+        body+=('These existing URLs remain available. Prefer the complete tables above for reading; agents can retrieve small sections with `rio docs`.\n\n' if locale=='en' else 'Os endereços existentes continuam disponíveis. Prefira as tabelas completas acima para leitura; agentes podem consultar seções pequenas com `rio docs`.\n\n')
+        body+='\n'.join(f'- [{id}]({id}.md)' for id in refs)+'\n\n</details>'
         outputs[page]=replace_generated((root/page).read_text(),'schema-topics',body)
     outputs[str(MANIFEST)]=json.dumps(manifest,ensure_ascii=False,indent=2)+'\n'
     for path,text in outputs.items():

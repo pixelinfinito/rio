@@ -38,6 +38,9 @@ For agent instructions, use: “Run `rio docs`, retrieve only relevant topics/se
 
 <!-- commands:start -->
 
+<details>
+<summary>All command options</summary>
+
 ## Command reference
 
 ### `rio docs`
@@ -50,5 +53,7 @@ For agent instructions, use: “Run `rio docs`, retrieve only relevant topics/se
 | `--limit` | Maximum documentation search hits, 1–10; default 5. | `—` |
 | `--format` | Choose the output format; supported values are listed. | `text, json` |
 | `--help` | Show command syntax and supported options. | `—` |
+
+</details>
 
 <!-- commands:end -->

@@ -78,9 +78,12 @@ Módulos desconhecidos, ciclos em `extends` ou `needs` e opções inválidas imp
 
 ![Examine o perfil base resolvido antes de substituir etapas.](../assets/cli-profile.png)
 
-Examine o perfil base resolvido antes de substituir etapas. Dados demonstrativos; captura da CLI/renderizador TUI atual. [Transcrição textual](../assets/cli-profile.txt).
+Examine o perfil base resolvido antes de substituir etapas. Dados demonstrativos · renderizador real do Rio · [Transcrição textual](../assets/cli-profile.txt).
 
 <!-- commands:start -->
+
+<details>
+<summary>Todas as opções dos comandos</summary>
 
 ## Referência de comandos
 
@@ -98,14 +101,16 @@ Examine o perfil base resolvido antes de substituir etapas. Dados demonstrativos
 
 | Argumento | Significado | Padrão / valores |
 | --- | --- | --- |
-| `<reference>` | Nome/caminho do perfil; validate sem argumento usa o padrão. | `—` |
+| `<reference>` | Nome do perfil ou caminho YAML a inspecionar. | `—` |
 | `--raw` | Mostra perfil original sem resolver herança. | `false` |
 | `--help` | Mostra sintaxe e opções do comando. | `—` |
 ### `rio profile validate`
 
 | Argumento | Significado | Padrão / valores |
 | --- | --- | --- |
-| `<reference>` | Nome/caminho do perfil; validate sem argumento usa o padrão. | `—` |
+| `<reference>` | Nome do perfil ou caminho YAML a validar; omita para validar o perfil padrão. | `—` |
 | `--help` | Mostra sintaxe e opções do comando. | `—` |
+
+</details>
 
 <!-- commands:end -->

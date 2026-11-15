@@ -15,15 +15,20 @@ Revisar uma pequena alteração, entender o que foi verificado e decidir o que c
 3. Execute `rio review --no-tui` para saída contínua ou `rio review` para a [interface interativa](tui.md).
 4. Leia os resultados das verificações antes dos achados. Corrija um problema confirmado e execute novamente.
 
-Escolha exatamente uma seleção:
+Escolha uma seleção local ou a revisão hospedada de um PR:
 
 | Comando | O que revisa |
 | --- | --- |
 | `rio review` | Árvore de trabalho, alterações preparadas e arquivos novos não ignorados contra HEAD |
 | `rio review --staged` | Índice contra HEAD; exclui alterações não preparadas |
-| `rio review --base origin/main` | HEAD confirmado contra a base comum; exclui edições locais |
+| `rio review --base origin/main` | Commits do HEAD contra a base comum; exclui edições locais |
+| `rio review --pr 123` | Revisa um PR do GitHub pelo [endpoint e App instalado](github.md) |
 
 Para agentes ou CI, use `rio review --format json > report.json`. `--format md` gera Markdown e `--format sarif` gera dados para análise de código. O progresso vai para stderr. `--profile NOME_OU_CAMINHO` escolhe um [perfil](profiles.md).
+
+![Selecione alterações da árvore de trabalho, preparadas ou da branch e confira as ferramentas.](../assets/review-00-start.png)
+
+Escolha as alterações antes de executar. Dados demonstrativos · [Transcrição textual](../assets/review-00-start.txt).
 
 ## Resultados esperados
 
@@ -46,9 +51,12 @@ O primeiro Ctrl-C preserva um relatório parcial; o segundo encerra os processos
 
 ![Revisão offline real de alteração documental sintética; etapas de modelos são adiadas.](../assets/cli-review.png)
 
-Revisão offline real de alteração documental sintética; etapas de modelos são adiadas. Dados demonstrativos; captura da CLI/renderizador TUI atual. [Transcrição textual](../assets/cli-review.txt).
+Revisão offline real de alteração documental sintética; etapas de modelos são adiadas. Dados demonstrativos · renderizador real do Rio · [Transcrição textual](../assets/cli-review.txt).
 
 <!-- commands:start -->
+
+<details>
+<summary>Todas as opções dos comandos</summary>
 
 ## Referência de comandos
 
@@ -56,8 +64,8 @@ Revisão offline real de alteração documental sintética; etapas de modelos s�
 
 | Argumento | Significado | Padrão / valores |
 | --- | --- | --- |
-| `--staged` | Seleciona somente o índice contra HEAD; conflita com --base. | `false` |
-| `--base` | Compara HEAD confirmado com a base comum desta referência. | `—` |
+| `--staged` | Seleciona somente alterações preparadas (staged) contra HEAD; conflita com --base. | `false` |
+| `--base` | Compara os commits do HEAD com a base comum desta referência. | `—` |
 | `--profile` | Seleciona perfil nomeado ou caminho YAML explícito. | `—` |
 | `--format` | Escolhe formato de saída; valores suportados são listados. | `terminal, json, md, sarif` |
 | `--offline` | Desativa rede do Rio; subprocessos não são isolados da rede. | `false` |
@@ -66,7 +74,7 @@ Revisão offline real de alteração documental sintética; etapas de modelos s�
 | `--no-tui` | Usa saída contínua ou perguntas no terminal em vez da TUI. | `false` |
 | `--show-pre-existing` | Inclui achados preexistentes da base na saída. | `false` |
 | `--show-remembered` | Lista dispensas lembradas separadamente sem mudar política de saída. | `false` |
-| `--pr` | Número do PR na revisão ou URL do incidente na avaliação. | `—` |
+| `--pr` | Número do pull request do GitHub; exige endpoint e GitHub App instalado. | `—` |
 | `--deep` | Usa preset deep; conflita com --preset. | `false` |
 | `--preset` | Seleciona profundidade; exige endpoint online. | `quick, standard, deep` |
 | `--fork` | Marca submissão local hospedada como fork; endpoint valida metadados de PR. | `false` |
@@ -75,5 +83,7 @@ Revisão offline real de alteração documental sintética; etapas de modelos s�
 | `--since-last` | Continua a linhagem da branch no endpoint. | `false` |
 | `--reset-lineage` | Inicia nova geração da linhagem; exige --since-last. | `false` |
 | `--help` | Mostra sintaxe e opções do comando. | `—` |
+
+</details>
 
 <!-- commands:end -->

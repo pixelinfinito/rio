@@ -9,7 +9,7 @@
  POLICY  publish: ask         │                                            │ db.orders.get(id) with no owner check.     
  ask   preview, then y/N      │ SUMMARY · one per lineage                  │                                            
  auto  posts without asking   │   ~ edit comment #2189   never a 2nd       │ Evidence  exp-1: head 200, base 404        
- never check run only         │   + c90b3d1a db/raw.ts   not in diff       │ Council   reproduced · partial 4/5         
+ never no publication         │   + c90b3d1a db/raw.ts   not in diff       │ Council   reproduced · partial 4/5         
 ────────────────────────────┌─ Publish to pixelinfinito/rio#142? ──────────────────────────┐                            
  CHECK RUN  rio/review      │                                                              │iss a7f3 <reason>           
  ◇ neutral                  │   3 inline comments   2 new · 1 edited in place              │ intentional ·              

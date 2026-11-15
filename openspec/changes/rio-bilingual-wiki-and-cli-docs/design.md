@@ -33,7 +33,7 @@ Preserve existing technical references and inbound links. Add navigation links t
 
 ### 2. Navigation starts with user goals
 
-`Home` offers English / Português (Brasil), a one-paragraph explanation of Rio, and five entry paths: first local review; AI review; review a PR with a team; browser QA; configure/tune Rio. Each localized start page links directly to these paths. Use a compact bilingual `_Sidebar` linking each language's start, guides, reference, and troubleshooting indexes; GitHub Wiki has one global sidebar. Each page has a language switch to the equivalent page, local table of contents when needed, breadcrumb/category link, and next/related steps.
+`Home` renders the authored English start page, with a prominent switch to its pt-BR counterpart. Both landing pages show a real findings TUI screenshot, a plain explanation of local/AI/browser workflows, first commands, and five entry paths: first local review; AI review; review a PR with a team; browser QA; configure/tune Rio. Each localized start page links directly to these paths. Use a bilingual `_Sidebar` with localized labels from validated manifest metadata, direct links to installation/review/TUI/results/hosting/PR/QA/profiles, and the guide/reference/troubleshooting indexes; GitHub Wiki has one global sidebar. Each page has a language switch to the equivalent page, local table of contents when needed, breadcrumb/category link, and next/related steps.
 
 Publish flat, unique Wiki page names (`EN-First-Review`, `PT-BR-First-Review`, etc.) generated from stable IDs, with translated display titles. Local source links are resolved into Wiki page links by the renderer and checked after rendering. Assets are published with the Wiki and linked through its supported asset URLs; no links depend on a developer checkout or a mutable source branch.
 
@@ -124,3 +124,5 @@ The first implementation includes actual publication and verification of landing
 3. Add the embedded command and its schema/tests; include standalone binary smoke checks on supported platforms. Record payload and token measurements.
 4. Render and validate the Wiki staging artifact, review navigation and bilingual journeys, then publish it and verify the remote pages/assets.
 5. Update README/reference entry links and maintenance/release checklists. Roll back a problematic publication through Git; the CLI addition can be reverted independently without changing existing commands or cached data.
+
+The usability follow-up preserves all published page URLs. Home shares the start topic’s authored content and freshness/asset validation instead of hard-coded prose. Human schema navigation points to complete tables, keeping bounded agent chunks out of the primary reading path. Command tables collapse below the guide and use command-specific descriptions where flag names overlap. Correct the TUI’s misleading `never` label to reflect existing endpoint behavior, then regenerate captures.

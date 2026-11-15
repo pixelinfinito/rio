@@ -39,9 +39,12 @@ A short or ambiguous ID must be expanded. An endpoint error does not justify cha
 
 ![Inspect prior responses and finding lifecycle.](../assets/team-p3-finding-history.png)
 
-Inspect prior responses and finding lifecycle. Demo data; captured from the current CLI/TUI renderer. [Text transcript](../assets/team-p3-finding-history.txt).
+Inspect prior responses and finding lifecycle. Demo data · actual Rio renderer · [Text transcript](../assets/team-p3-finding-history.txt).
 
 <!-- commands:start -->
+
+<details>
+<summary>All command options</summary>
 
 ## Command reference
 
@@ -49,9 +52,9 @@ Inspect prior responses and finding lifecycle. Demo data; captured from the curr
 
 | Argument | Meaning | Default / choices |
 | --- | --- | --- |
-| `<id>` | Finding prefix (at least 8 characters) or proposal ID, as appropriate. | `—` |
+| `<id>` | Unambiguous finding ID prefix, at least 8 characters. | `—` |
 | `--dismiss` | Record fixed, wrong, intentional, irrelevant or style feedback. | `—` |
-| `--note` | Attach an explanation to feedback or proposal rejection. | `—` |
+| `--note` | Explanation to attach to finding feedback. | `—` |
 | `--help` | Show command syntax and supported options. | `—` |
 ### `rio findings`
 
@@ -62,5 +65,7 @@ Inspect prior responses and finding lifecycle. Demo data; captured from the curr
 | `--since` | Filter updates at or after this RFC3339 timestamp. | `—` |
 | `--format` | Choose the output format; supported values are listed. | `terminal, json` |
 | `--help` | Show command syntax and supported options. | `—` |
+
+</details>
 
 <!-- commands:end -->

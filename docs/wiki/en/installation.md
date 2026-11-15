@@ -52,9 +52,9 @@ Remove with `sh install.sh --uninstall` or `.\install.ps1 -Uninstall`; personal 
 
 ![Confirm the installed version, target and commit.](../assets/cli-version.png)
 
-Confirm the installed version, target and commit. Demo data; captured from the current CLI/TUI renderer. [Text transcript](../assets/cli-version.txt).
+Confirm the installed version, target and commit. Demo data · actual Rio renderer · [Text transcript](../assets/cli-version.txt).
 
 ![Top-level help lists the available workflows.](../assets/cli-help.png)
 
-Top-level help lists the available workflows. Demo data; captured from the current CLI/TUI renderer. [Text transcript](../assets/cli-help.txt).
+Top-level help lists the available workflows. Demo data · actual Rio renderer · [Text transcript](../assets/cli-help.txt).
 

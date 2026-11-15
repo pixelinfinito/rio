@@ -42,17 +42,17 @@ Use `rio review --no-tui` or `RIO_TUI=0` for streaming. Use `--ascii`/`RIO_ASCII
 
 ![Choose the change set and profile.](../assets/review-00-start.png)
 
-Choose the change set and profile. Demo data; captured from the current CLI/TUI renderer. [Text transcript](../assets/review-00-start.txt).
+Choose the change set and profile. Demo data · actual Rio renderer · [Text transcript](../assets/review-00-start.txt).
 
 ![Follow live checks and model progress.](../assets/review-01-live-review.png)
 
-Follow live checks and model progress. Demo data; captured from the current CLI/TUI renderer. [Text transcript](../assets/review-01-live-review.txt).
+Follow live checks and model progress. Demo data · actual Rio renderer · [Text transcript](../assets/review-01-live-review.txt).
 
 ![Connect each finding to its hunk and evidence.](../assets/review-02-findings.png)
 
-Connect each finding to its hunk and evidence. Demo data; captured from the current CLI/TUI renderer. [Text transcript](../assets/review-02-findings.txt).
+Connect each finding to its hunk and evidence. Demo data · actual Rio renderer · [Text transcript](../assets/review-02-findings.txt).
 
 ![Choose a report export format.](../assets/review-05-summary-export.png)
 
-Choose a report export format. Demo data; captured from the current CLI/TUI renderer. [Text transcript](../assets/review-05-summary-export.txt).
+Choose a report export format. Demo data · actual Rio renderer · [Text transcript](../assets/review-05-summary-export.txt).
 

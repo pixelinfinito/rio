@@ -1,5 +1,7 @@
 # Review pull requests with your team
 
+**Automatic reviews:** after setup, the GitHub App reviews eligible PR opening/push events. **On demand from your terminal:** run `rio review --pr 123` to review a specific PR. Both use the endpoint and the repository’s publication policy.
+
 ## Outcome
 
 Run hosted PR reviews and publish findings according to an explicit repository policy.
@@ -36,9 +38,8 @@ Inspect `report.publication` for reason/counts/URLs. Exit 5 means publication fa
 
 ## Screenshots
 
-The current preview fixture still labels `never` as “check run only”; the endpoint actually posts neither comments nor checks for that policy. Follow the policy behavior above.
 
 ![Review what will be published before confirming.](../assets/team-p2-publish-preview.png)
 
-Review what will be published before confirming. Demo data; captured from the current CLI/TUI renderer. [Text transcript](../assets/team-p2-publish-preview.txt).
+Review what will be published before confirming. Demo data · actual Rio renderer · [Text transcript](../assets/team-p2-publish-preview.txt).
 

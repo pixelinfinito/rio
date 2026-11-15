@@ -31,6 +31,9 @@ A binary installed outside the Rio source needs `RIO_EVAL_DIR`; a similarly name
 
 <!-- commands:start -->
 
+<details>
+<summary>All command options</summary>
+
 ## Command reference
 
 ### `rio eval`
@@ -48,9 +51,11 @@ A binary installed outside the Rio source needs `RIO_EVAL_DIR`; a similarly name
 
 | Argument | Meaning | Default / choices |
 | --- | --- | --- |
-| `<pr>` | Pull request number for review, or incident PR URL in eval. | `—` |
+| `<pr>` | URL of the incident pull request to import into the evaluation corpus. | `—` |
 | `<fix_pr>` | URL of the pull request that fixed the incident. | `—` |
 | `<args>` | Forward remaining arguments to the evaluation harness. | `—` |
 | `--help` | Show command syntax and supported options. | `—` |
+
+</details>
 
 <!-- commands:end -->

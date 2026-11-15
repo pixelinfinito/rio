@@ -37,5 +37,5 @@ Confira habilitação da etapa, rota de modelo, catálogo e dependências de ver
 
 ![Leia rastreamento e evidências do conselho juntos.](../assets/team-p1-security-council.png)
 
-Leia rastreamento e evidências do conselho juntos. Dados demonstrativos; captura da CLI/renderizador TUI atual. [Transcrição textual](../assets/team-p1-security-council.txt).
+Leia rastreamento e evidências do conselho juntos. Dados demonstrativos · renderizador real do Rio · [Transcrição textual](../assets/team-p1-security-council.txt).
 

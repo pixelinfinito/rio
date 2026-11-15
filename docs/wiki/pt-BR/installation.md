@@ -52,9 +52,9 @@ Remova com `sh install.sh --uninstall` ou `.\install.ps1 -Uninstall`; a configur
 
 ![Confira versão, plataforma e commit instalados.](../assets/cli-version.png)
 
-Confira versão, plataforma e commit instalados. Dados demonstrativos; captura da CLI/renderizador TUI atual. [Transcrição textual](../assets/cli-version.txt).
+Confira versão, plataforma e commit instalados. Dados demonstrativos · renderizador real do Rio · [Transcrição textual](../assets/cli-version.txt).
 
 ![A ajuda inicial lista os fluxos disponíveis.](../assets/cli-help.png)
 
-A ajuda inicial lista os fluxos disponíveis. Dados demonstrativos; captura da CLI/renderizador TUI atual. [Transcrição textual](../assets/cli-help.txt).
+A ajuda inicial lista os fluxos disponíveis. Dados demonstrativos · renderizador real do Rio · [Transcrição textual](../assets/cli-help.txt).
 

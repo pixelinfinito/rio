@@ -58,3 +58,10 @@
 - [x] 7.5 Perform end-to-end content acceptance for the five primary paths in English and pt-BR, including screenshots and failure recovery. Record outcomes, verify full coverage/parity and generated Wiki links, and fix unclear instructions before publication.
 - [x] 7.6 Run `cargo fmt --all --check`, `cargo clippy --workspace --all-targets --locked`, relevant `rio-cli`/`rio-tui` tests, documentation checks, and `openspec validate rio-bilingual-wiki-and-cli-docs --strict`. Verify normal CI regression checks and record concrete results without claiming unavailable hosted/platform checks passed.
 - [x] 7.7 Publish the reviewed Wiki artifact to `pixelinfinito/rio.wiki.git` and verify remote Home, EN/pt-BR indexes, sidebar, language switching, and representative images/anchors. Record source and Wiki commit IDs and published URLs; if credentials or initialization block publication, report the blocker and leave this task incomplete.
+
+## 8. Wiki usability review follow-up
+
+- [x] 8.1 Replace Home with validated authored EN/pt-BR landing content: prominent real TUI captures, local/staged/branch/PR commands, accurate prerequisites and clear next steps. Preserve existing URLs.
+- [x] 8.2 Improve localized sidebar/breadcrumbs, reference lookup, guide descriptions, schema navigation and collapsible command tables; use command-specific option descriptions.
+- [x] 8.3 Correct the actual TUI never-policy label and refresh its rendering expectations/captures; clarify version tags and polish both languages.
+- [ ] 8.4 Validate content, rendering, source/translation freshness, focused tests and embedded budgets; push the updated PR, republish and verify public Home/navigation/images.

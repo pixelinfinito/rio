@@ -37,6 +37,9 @@ Use `app.test` for app/service-double HTTP URLs. Blocked hosts, TLS pinning and 
 
 <!-- commands:start -->
 
+<details>
+<summary>All command options</summary>
+
 ## Command reference
 
 ### `rio qa fixtures`
@@ -58,7 +61,7 @@ Use `app.test` for app/service-double HTTP URLs. Blocked hosts, TLS pinning and 
 
 | Argument | Meaning | Default / choices |
 | --- | --- | --- |
-| `--force` | Explicitly rebuild seed or replace validated journeys, depending on command. | `false` |
+| `--force` | Rebuild and validate seed snapshots even when a matching cached seed exists. | `false` |
 | `--help` | Show command syntax and supported options. | `—` |
 ### `rio qa seed export`
 
@@ -78,5 +81,7 @@ Use `app.test` for app/service-double HTTP URLs. Blocked hosts, TLS pinning and 
 | --- | --- | --- |
 | `--image` | Inspect this provisioned app image for seed status. | `—` |
 | `--help` | Show command syntax and supported options. | `—` |
+
+</details>
 
 <!-- commands:end -->

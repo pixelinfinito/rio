@@ -41,8 +41,8 @@
       ],
       "kind": "guide",
       "translation_review": {
-        "en": "91ac180f65682261a1b4bc1dbb79a22ca73b8a586eae76d77afb36ea6870cfa9",
-        "pt-BR": "1ed4619bdcdea7dc350ae1e78e144796e0aacf5efb682d1d0907f23bb441dcf5"
+        "en": "d060f449aef43f3ac4dace448ac27f9619e605741b949646dc890140ded83247",
+        "pt-BR": "28339e5d39dc01bbfc50c14508bec2664d242250d171858a15923bfa84fdcbf4"
       },
       "source_review": "ff08b07fcee3b0f963b83c763d657a51e63648b261d1fd21315354244a9b0f2a"
     },
@@ -78,12 +78,13 @@
       },
       "availability": "implemented; see release status",
       "screenshots": [
-        "cli-review"
+        "cli-review",
+        "review-00-start"
       ],
       "kind": "guide",
       "translation_review": {
-        "en": "8a8200ac80e27bd42b2e76282df106f142179553166932b9b19daa1fe1a25746",
-        "pt-BR": "d790f4f722ffbc87fa101bb9639a229713ec3cfb1e3d19a39a00c453698f97f4"
+        "en": "87811c3bfeab2a63be2975f5e19e9c309b307da11f5d1cbec8c8ad9c36d68bea",
+        "pt-BR": "206111ee9d5f325bd6e4525072ae3815e1114e6814cd2374bc6377d502d633d3"
       },
       "source_review": "2749551d7c48f850296d83574fdecd4bf10dcd024bb6c687906351d562f32b63"
     },
@@ -119,8 +120,8 @@
       ],
       "kind": "guide",
       "translation_review": {
-        "en": "93272e024a59457d571638e0c84d6231f2f83e6a0dd5657dcad96778e3eed0f1",
-        "pt-BR": "cc6cc31f3c9bec51433d0fc0434c7831576f7b472431cd4947f8dcd7764768a1"
+        "en": "b522ed68c9b1c1bc5866b40eb66687690b66d1223270ce17628b858e567fe195",
+        "pt-BR": "603dbb801e6718cd427325d9218a982d47786435ef8fc92214e1ba4da2ab9cd2"
       },
       "source_review": "eca98ec6c44833274040fa6aa226bb670f4201960d6f63e19fb8fb4cda53d261"
     },
@@ -193,8 +194,8 @@
       ],
       "kind": "guide",
       "translation_review": {
-        "en": "2ff183b161d8009047219020be74bad0827c7a680cf795227ad90adccc457d55",
-        "pt-BR": "339e2421bf4c57f78ea19759eaf8c9d0fd38fc2b453d1a6aec2dc9b5247d2a64"
+        "en": "cb0095f27922e7688134aa2bbe18969efef11b589eb2b9d3fef5224e947b395e",
+        "pt-BR": "82e201e9c222b7e8bced0c50ec0a1fe564888d5db3db40d3816fd99905c825d2"
       },
       "source_review": "e5aee02fcfa6daaadba3e20c513aa61cc47df1536730408fbd3ac2a99354c722"
     },
@@ -236,8 +237,8 @@
       ],
       "kind": "guide",
       "translation_review": {
-        "en": "fca53366709bb2e103dafc9b1e778ab12d8310f3a6c28516c1bf4e6c8c9a6345",
-        "pt-BR": "9cc810640335d48ee9b6fba9bb112f87a628cc8bff5c712e8c34dd352f8b60af"
+        "en": "75680a979eab377aa830cefdf566d4a775bd00e5cd87c7932387e9a42817d4ac",
+        "pt-BR": "778fcd3288248ce53b6635c300277224ed47c6bd60c58ae4b4c8ad972c2f7146"
       },
       "source_review": "dd5cad388c528fef1860cd08d2abf89f58b43592f5da1a9308026445c6f5131c"
     },
@@ -311,8 +312,8 @@
       ],
       "kind": "guide",
       "translation_review": {
-        "en": "41f930a72b43b7cee3675d9d9530a837fbd22c22ffacc4f1a757740206e1efb8",
-        "pt-BR": "5709bb407e4fbbb978b84307ed8c6746c57c46d4772da2f17fef2772a0f23e70"
+        "en": "a996d4d6931112f6f66cf2eb0816db0c04e96fa0fd965b4dfb2c915142457deb",
+        "pt-BR": "8edc520934016dd41feec966944690034fe5d8ae57a71cb81d8662fbca8230e9"
       },
       "source_review": "1c2a9c6193b7288a356e3120cc2e042f918130f616bb14fd9b926e9b0e270a95"
     },
@@ -421,8 +422,8 @@
       ],
       "kind": "guide",
       "translation_review": {
-        "en": "f19ca066fb46ee792cf2d5afffbb44446ba0c20332572a351a62d7c2a9027eda",
-        "pt-BR": "c607dfefe4785cabf011169ec9a6ce85d94c1bdf561f3b4d27a800ae9d42d0d2"
+        "en": "ccd606afdbbd00faa61cf5b81067de433670ba90d949d669c747efb3ae091127",
+        "pt-BR": "0089db12a6d34261405616e5b82a212def58c77ffc5b7b9699c6ce9e70847341"
       },
       "source_review": "60169ed36ada6aeee381bff370752b7ff637394b076ee7a5403afdd0968ac2a0"
     },
@@ -460,8 +461,8 @@
       ],
       "kind": "guide",
       "translation_review": {
-        "en": "10793e84908b524a679ac2e18805d66b325e25361639c4a9be70aaa64a2d90f8",
-        "pt-BR": "8a49c74dbb6f1219f98d35839c8871fb96e8fe96af0e05060d282fe3ecdd9f4f"
+        "en": "cdcacf0755178345a4cf503b2e8ca97189291021254441e1dc3b18bf15f4b38a",
+        "pt-BR": "2fed445d0b28a5f7e0bc1706c7774d89baff406b6f26ead98e3b1eab7af7d652"
       },
       "source_review": "b970dec186c65d237d1476f80fde60baa2a6cf4758b73d40f10d6427bd84c43c"
     },
@@ -501,8 +502,8 @@
       ],
       "kind": "guide",
       "translation_review": {
-        "en": "d0be9a7450b389f81f476452357eed715e9e061866a3718f136d1a8028952aa0",
-        "pt-BR": "c43bd61f41978181c97d2a078a887ae6bb886df73d6f3624df4b89170712aef6"
+        "en": "329649f8ae821e35d7edcc26b8a38d3ffb0772809bcbcc842ed8a74907c9afa8",
+        "pt-BR": "af18369ec885495cbf4c6b7bdfc99647477bd9b546cc0c8cfff78497d0d48fa1"
       },
       "source_review": "748909eff627e2bac8fdcbd365e184a9e1baf17f5464ee7e06f33835a1425b25"
     },
@@ -539,8 +540,8 @@
       ],
       "kind": "guide",
       "translation_review": {
-        "en": "68851ae56473762c067b3b54cea384c13c2dfc5b0312d78269933a089754bb36",
-        "pt-BR": "ed42170ffb48fe89e6c81599a5f9ca5ca592ad163afd80f3ea55a6f567e223c0"
+        "en": "4276cb10c045b3caede1b24f383ed2cc706035b4946e9ef6f782ee234e9efac4",
+        "pt-BR": "d4245cdb7517e0672e40c9fcb5b0e010ce803cf0c0be7a779745fdbb4ed772db"
       },
       "source_review": "979155352b7c9b47902191768a20aeaf2fcf1842234172d2a843ddbe46da354c"
     },
@@ -624,8 +625,8 @@
       ],
       "kind": "guide",
       "translation_review": {
-        "en": "a1487d354e8a4897b59a5f53ad1ccba75eca9a30ca7bef2fc8369a99449d1050",
-        "pt-BR": "0e8b070261312d25e8f446df3517935bd435b5298e95cd0998376a4b04e946a0"
+        "en": "14424bb4fd89ab0694f86d3fd4f0ece4b78497b0397a90cc5a994efe5aef659b",
+        "pt-BR": "5bf7394351f4828dfa7399556ea2429a55a43a3b976939ac2d2370079caba270"
       },
       "source_review": "6cb4aec88adad841cdb32b9bb88c00736b1b1ed13d3406de9448666ed75fecc1"
     },
@@ -660,8 +661,8 @@
       "screenshots": [],
       "kind": "guide",
       "translation_review": {
-        "en": "8e19dc27a7c14f77b168944a42c0f138035b1230afc605a3c0d72bedd035045d",
-        "pt-BR": "055dbca02a840bcac87c0bb6364f1dc98b47222b1c6443810b4433750b0846af"
+        "en": "2f4d1f4f21908175851d1f90b70746604e4cdce63a417e7749a87c58b439f758",
+        "pt-BR": "a74ff0ce020b16abf8bb2cc3f24d856ba1d12fc70ff58a4b240f267cd2ed5ef7"
       },
       "source_review": "5441fb24c2aa5595ffd9e9500a01201e5fb943b5607aa0da99fa8b1b68b0262a"
     },
@@ -703,8 +704,8 @@
       "screenshots": [],
       "kind": "guide",
       "translation_review": {
-        "en": "a17a9ba566717f5c55ec5a64edffc1b4a1577a7c3c931e74e3c8d8488eebd9eb",
-        "pt-BR": "f7a025f11e45c7bcd5a5a6c4b04125d062d2b229e8300abf77112d32348874cc"
+        "en": "14326e569d5edd22e919b979480e4d5cafa8630f1f943992cfb677dcf1232880",
+        "pt-BR": "1459e19519349d96c6468d8b359960152fbaabe990809e197db760017bff8bbb"
       },
       "source_review": "5d9e58f7cb08ec2d16cdc7181c630448a6a2439be2694d81db74300d88d3cb33"
     },
@@ -744,8 +745,8 @@
       ],
       "kind": "guide",
       "translation_review": {
-        "en": "a0760efd82f0555abc63233c3796f8cf513db3aca7359e1e1162732beac3ba45",
-        "pt-BR": "da58abd572986f40c46891523aab8b901d87541ff3d892610e5dff805718e855"
+        "en": "38d97bc3331923aafe0a0373d280891da11c608a0383c9ce52fe334cb408b28a",
+        "pt-BR": "09f98746b06efaa1bee9343bd4b6946dcc370b5eb3bbcff020cbf76e824c662d"
       },
       "source_review": "6cb4aec88adad841cdb32b9bb88c00736b1b1ed13d3406de9448666ed75fecc1"
     },
@@ -853,8 +854,8 @@
       "screenshots": [],
       "kind": "guide",
       "translation_review": {
-        "en": "118fed702679baf174ccdcf7fb350aa41769ff9405519006acbd8963e252df54",
-        "pt-BR": "bb16b4b0cb32d6bbd84b9ad5b8d92de3c0a2f1ca1cfc4121c8ce25ceb01ed4de"
+        "en": "356b78c7404e652fcc4397745654db7759f895d7a6c141f2b8f15a7f829cee88",
+        "pt-BR": "721a7a6f81eada5e707bb1f9ae890815092e611f055a06a38814bc85fe846ac3"
       },
       "source_review": "463204ccf80d38ffdecfdc5bc042972a209fb041f747494efbe2540923f40979"
     },
@@ -888,8 +889,8 @@
       "screenshots": [],
       "kind": "guide",
       "translation_review": {
-        "en": "2475f0c83ef04a9c72b4615b0fe9b9f622f73ceb77f84431511b9f7d93217916",
-        "pt-BR": "3597965f06f9251a3245c5b447f14222260120a94e2aff1c1d7be237137af6e7"
+        "en": "4b2984a0042b501fee85e40bcbe3faaf3466c9a13066c6a7e04b73d258cfc906",
+        "pt-BR": "6b1fd75d67b07307d613d34a32c984fc702920e07a1c9984cb9c2011067609d7"
       },
       "source_review": "fcf745928ab33da63f89f0e900c2c49b4919f0f1d7eab362a0b3fcc8f87e2a9d"
     },
@@ -947,11 +948,14 @@
         "pt-BR": "docs/wiki/pt-BR/start.md"
       },
       "availability": "documentation",
-      "screenshots": [],
-      "kind": "reference",
+      "screenshots": [
+        "review-02-findings",
+        "review-00-start"
+      ],
+      "kind": "landing",
       "translation_review": {
-        "en": "df66fe7278c1b80d32e00dd982c19169b2f923b4a1cd6093707e102e1584bd83",
-        "pt-BR": "2227989583f5a927f84174a273b468c3df922ba314c2aa1f6449354ec53dfbe9"
+        "en": "d8e21480fdc59772fa0312bb2d0194a0ab48f074bbd2cdfd79bbdef47bf4377d",
+        "pt-BR": "e807d3584f8846d48c7cdc056eb28a416190c5a27a1978ce236f23abefe43f24"
       },
       "source_review": "f12da1c25e60a8a85f306614ef671fcc3764920d56bbefea23a3dc28c11c2770"
     },
@@ -1022,8 +1026,8 @@
       "screenshots": [],
       "kind": "reference",
       "translation_review": {
-        "en": "1e5acc8959f2892cc57ebfbfbe3127a29fef4d7c0c50ad8038dec283318446e6",
-        "pt-BR": "770f9ad069490cbaae82d81f2bb47ceee07c2b2f59729eed2cdc2b4fbaeb63b1"
+        "en": "51aeffdc17ffc81dc7a0a0000861d64328041dfb462c83b9961a20986cb3b1a3",
+        "pt-BR": "90cc83977ad78b32df37d9091a00cec6ca889f6b2d2a41ae03c5c8d08274058d"
       },
       "source_review": "f12da1c25e60a8a85f306614ef671fcc3764920d56bbefea23a3dc28c11c2770"
     },
@@ -1048,8 +1052,8 @@
       "screenshots": [],
       "kind": "reference",
       "translation_review": {
-        "en": "bcdea5863414421999d911dde2af75e6b1ff48cd08b48dff9d32d565001006dd",
-        "pt-BR": "0bf9fc30ecb69b80fb5a3706b61921730ccb377b85b42a34dd7cb81f7d4b0a53"
+        "en": "7b606b8629d1ffe8285b3faad3fab96cc9720dc636e97f8f205e35121db6996d",
+        "pt-BR": "72ff3499e18b6e4b5b3753117f7e82137e62489cc7132bdb109763eb012f916b"
       },
       "source_review": "f12da1c25e60a8a85f306614ef671fcc3764920d56bbefea23a3dc28c11c2770"
     },
@@ -1264,8 +1268,8 @@
       "screenshots": [],
       "kind": "reference",
       "translation_review": {
-        "en": "bee7c9b66d125ec5bafbd93c66f642463eb1bfcc6658d80877cd8e8d2ff4ae4d",
-        "pt-BR": "c758b2b2220916893130b808429308d16c02a99153d8a6179f285bedf3419c91"
+        "en": "296e827f6f93fdbc4252930ebfebc103a1d5cb73d62a0df352e375e6e84177ad",
+        "pt-BR": "dbca8999fe9455f6f622fc4e7ea1b3346c0630aafd167a9e01358b6d37d68691"
       },
       "source_review": "f12da1c25e60a8a85f306614ef671fcc3764920d56bbefea23a3dc28c11c2770"
     },
@@ -1300,6 +1304,93 @@
         "pt-BR": "1b51dba57d5c2d7e4d8329fea2b485b046b83877ae1703dca52655f3e04faca1"
       },
       "source_review": "9a93d24cca8a0384282a11b009b3c12e149414acd6655b6ab5ecc98398d227ef"
+    }
+  ],
+  "landing_topic": "start",
+  "sidebar": [
+    {
+      "topic": "start",
+      "labels": {
+        "en": "Home",
+        "pt-BR": "Início"
+      }
+    },
+    {
+      "topic": "installation",
+      "labels": {
+        "en": "Install Rio",
+        "pt-BR": "Instale o Rio"
+      }
+    },
+    {
+      "topic": "review",
+      "labels": {
+        "en": "Review local changes",
+        "pt-BR": "Revise alterações locais"
+      }
+    },
+    {
+      "topic": "tui",
+      "labels": {
+        "en": "Terminal UI",
+        "pt-BR": "Interface do terminal"
+      }
+    },
+    {
+      "topic": "results",
+      "labels": {
+        "en": "Understand results",
+        "pt-BR": "Entenda os resultados"
+      }
+    },
+    {
+      "topic": "hosting",
+      "labels": {
+        "en": "Add AI review",
+        "pt-BR": "Adicione revisão por IA"
+      }
+    },
+    {
+      "topic": "github",
+      "labels": {
+        "en": "Pull requests",
+        "pt-BR": "Pull requests"
+      }
+    },
+    {
+      "topic": "qa",
+      "labels": {
+        "en": "Browser QA",
+        "pt-BR": "QA no navegador"
+      }
+    },
+    {
+      "topic": "profiles",
+      "labels": {
+        "en": "Profiles and checks",
+        "pt-BR": "Perfis e verificações"
+      }
+    },
+    {
+      "topic": "guides",
+      "labels": {
+        "en": "All guides",
+        "pt-BR": "Todos os guias"
+      }
+    },
+    {
+      "topic": "reference",
+      "labels": {
+        "en": "Commands and settings",
+        "pt-BR": "Comandos e configurações"
+      }
+    },
+    {
+      "topic": "troubleshooting",
+      "labels": {
+        "en": "Troubleshooting",
+        "pt-BR": "Solução de problemas"
+      }
     }
   ]
 }

@@ -1,5 +1,7 @@
 # Revise pull requests com a equipe
 
+**Revisões automáticas:** após a configuração, o GitHub App revisa eventos elegíveis de abertura/push de PRs. **Sob demanda pelo terminal:** execute `rio review --pr 123` para revisar um PR específico. Ambos usam o endpoint e a política de publicação do repositório.
+
 ## Objetivo
 
 Executar revisões hospedadas de PRs e publicar achados conforme uma política explícita do repositório.
@@ -36,9 +38,8 @@ Inspecione `report.publication` para motivo/contagens/URLs. Saída 5 significa f
 
 ## Capturas de tela
 
-A fixture atual da prévia ainda descreve `never` como “check run only”; o endpoint não publica comentários nem verificações nessa política. Siga o comportamento explicado acima.
 
 ![Examine o que será publicado antes de confirmar.](../assets/team-p2-publish-preview.png)
 
-Examine o que será publicado antes de confirmar. Dados demonstrativos; captura da CLI/renderizador TUI atual. [Transcrição textual](../assets/team-p2-publish-preview.txt).
+Examine o que será publicado antes de confirmar. Dados demonstrativos · renderizador real do Rio · [Transcrição textual](../assets/team-p2-publish-preview.txt).
 

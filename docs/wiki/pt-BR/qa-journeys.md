@@ -50,6 +50,9 @@ Ciclo de dependências ou divergência de viewports é erro de contrato, não fa
 
 <!-- commands:start -->
 
+<details>
+<summary>Todas as opções dos comandos</summary>
+
 ## Referência de comandos
 
 ### `rio qa sync`
@@ -57,8 +60,10 @@ Ciclo de dependências ou divergência de viewports é erro de contrato, não fa
 | Argumento | Significado | Padrão / valores |
 | --- | --- | --- |
 | `--check` | Informa cobertura desatualizada sem gravar propostas. | `false` |
-| `--staged` | Seleciona somente o índice contra HEAD; conflita com --base. | `false` |
-| `--base` | Compara HEAD confirmado com a base comum desta referência. | `—` |
+| `--staged` | Seleciona somente alterações preparadas (staged) contra HEAD; conflita com --base. | `false` |
+| `--base` | Compara os commits do HEAD com a base comum desta referência. | `—` |
 | `--help` | Mostra sintaxe e opções do comando. | `—` |
+
+</details>
 
 <!-- commands:end -->

@@ -15,15 +15,20 @@ Review a small change, understand what Rio checked, and decide what to fix. A Cl
 3. Run `rio review --no-tui` for streaming output, or `rio review` for the [interactive UI](tui.md).
 4. Read check outcomes before interpreting findings. Fix a confirmed problem and rerun.
 
-Choose exactly one selection:
+Choose a local selection or a hosted PR review:
 
 | Command | What it reviews |
 | --- | --- |
 | `rio review` | Working tree, staged changes and untracked nonignored files against HEAD |
 | `rio review --staged` | Index against HEAD; excludes unstaged edits |
 | `rio review --base origin/main` | Committed HEAD against the merge base; excludes local edits |
+| `rio review --pr 123` | Review a GitHub PR through your [endpoint and installed App](github.md) |
 
 For an agent or CI, use `rio review --format json > report.json`. `--format md` produces Markdown and `--format sarif` produces code-scanning output. Progress goes to stderr. `--profile NAME_OR_PATH` selects a [profile](profiles.md).
+
+![Select working-tree, staged or branch changes and check tool readiness.](../assets/review-00-start.png)
+
+Choose your changes before running. Demo data · [Text transcript](../assets/review-00-start.txt).
 
 ## Expected results
 
@@ -46,9 +51,12 @@ First Ctrl-C preserves a partial report; a second kills remaining processes and 
 
 ![A real offline review of a synthetic documentation change; model steps are deferred.](../assets/cli-review.png)
 
-A real offline review of a synthetic documentation change; model steps are deferred. Demo data; captured from the current CLI/TUI renderer. [Text transcript](../assets/cli-review.txt).
+A real offline review of a synthetic documentation change; model steps are deferred. Demo data · actual Rio renderer · [Text transcript](../assets/cli-review.txt).
 
 <!-- commands:start -->
+
+<details>
+<summary>All command options</summary>
 
 ## Command reference
 
@@ -66,7 +74,7 @@ A real offline review of a synthetic documentation change; model steps are defer
 | `--no-tui` | Use streaming output or terminal prompts instead of the TUI. | `false` |
 | `--show-pre-existing` | Include baseline/pre-existing findings in output. | `false` |
 | `--show-remembered` | List remembered dismissals separately without changing exit policy. | `false` |
-| `--pr` | Pull request number for review, or incident PR URL in eval. | `—` |
+| `--pr` | GitHub pull request number; requires an endpoint and installed GitHub App. | `—` |
 | `--deep` | Use the deep preset; conflicts with --preset. | `false` |
 | `--preset` | Select review depth; requires an online endpoint. | `quick, standard, deep` |
 | `--fork` | Mark this local hosted submission as fork-related; endpoint validates PR metadata. | `false` |
@@ -75,5 +83,7 @@ A real offline review of a synthetic documentation change; model steps are defer
 | `--since-last` | Continue the current branch lineage at the endpoint. | `false` |
 | `--reset-lineage` | Start a new branch lineage generation; requires --since-last. | `false` |
 | `--help` | Show command syntax and supported options. | `—` |
+
+</details>
 
 <!-- commands:end -->

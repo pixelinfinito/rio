@@ -37,9 +37,12 @@ Proposal IDs differ from finding IDs. Usage/configuration/validation failures ge
 
 ![Inspect proposal evidence before changing the profile.](../assets/team-p4-suppression-proposals.png)
 
-Inspect proposal evidence before changing the profile. Demo data; captured from the current CLI/TUI renderer. [Text transcript](../assets/team-p4-suppression-proposals.txt).
+Inspect proposal evidence before changing the profile. Demo data · actual Rio renderer · [Text transcript](../assets/team-p4-suppression-proposals.txt).
 
 <!-- commands:start -->
+
+<details>
+<summary>All command options</summary>
 
 ## Command reference
 
@@ -59,15 +62,17 @@ Inspect proposal evidence before changing the profile. Demo data; captured from 
 
 | Argument | Meaning | Default / choices |
 | --- | --- | --- |
-| `<id>` | Finding prefix (at least 8 characters) or proposal ID, as appropriate. | `—` |
+| `<id>` | Suppression proposal ID to inspect and apply. | `—` |
 | `--yes` | Apply a suppression proposal without the confirmation prompt. | `false` |
 | `--help` | Show command syntax and supported options. | `—` |
 ### `rio suppressions decline`
 
 | Argument | Meaning | Default / choices |
 | --- | --- | --- |
-| `<id>` | Finding prefix (at least 8 characters) or proposal ID, as appropriate. | `—` |
-| `--note` | Attach an explanation to feedback or proposal rejection. | `—` |
+| `<id>` | Suppression proposal ID to decline with an explanation. | `—` |
+| `--note` | Explanation for declining this suppression proposal. | `—` |
 | `--help` | Show command syntax and supported options. | `—` |
+
+</details>
 
 <!-- commands:end -->

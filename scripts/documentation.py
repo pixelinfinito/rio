@@ -81,6 +81,12 @@ def validate(manifest, root=ROOT, require_pages=True):
     ids=[t['id'] for t in manifest['topics']]
     if len(ids)!=len(set(ids)): errors.append('duplicate topic IDs')
     if manifest.get('locales') != list(LOCALES): errors.append('locales must be en and pt-BR')
+    if manifest.get('landing_topic') not in ids:errors.append('missing landing topic')
+    sidebar=manifest.get('sidebar',[])
+    if not sidebar:errors.append('missing sidebar navigation')
+    for item in sidebar:
+        if item.get('topic') not in ids:errors.append('unknown sidebar topic')
+        if set(item.get('labels',{}))!=set(LOCALES) or not all(item.get('labels',{}).values()):errors.append('missing localized sidebar label')
     for t in manifest['topics']:
         id=t['id']
         if not re.fullmatch('[a-z][a-z0-9-]{0,63}',id) or id in ('list','search'): errors.append(f'{id}: invalid/reserved ID')
@@ -165,7 +171,7 @@ def command_tables(manifest, root=ROOT):
         for locale,path in t['pages'].items():
             if not (root/path).exists():continue
             title='Command reference' if locale=='en' else 'Referência de comandos'
-            rows=[f'## {title}\n']
+            rows=['<details>', '<summary>'+('All command options' if locale=='en' else 'Todas as opções dos comandos')+'</summary>\n',f'## {title}\n']
             for command in commands:
                 rows += [f"### `{command['command']}`\n",'| Argument | Meaning | Default / choices |' if locale=='en' else '| Argumento | Significado | Padrão / valores |','| --- | --- | --- |']
                 for a in command['arguments']:
@@ -175,7 +181,18 @@ def command_tables(manifest, root=ROOT):
                     detail=description[locale]
                     values=', '.join(a['values']) or ', '.join(a['defaults']) or '—'
                     rows.append(f"| `{name}` | {detail.replace('|','/')} | `{values}` |")
+            rows.append('\n</details>')
             out[path]=replace_generated((root/path).read_text(),'commands','\n'.join(rows))
+    coverage={command:t for t in manifest['topics'] for command in t.get('commands',[])}
+    for locale in LOCALES:
+        path=f'docs/wiki/{locale}/reference.md'
+        rows=['## '+('Command lookup' if locale=='en' else 'Consulta de comandos'),'','| '+('Command | Guide / options' if locale=='en' else 'Comando | Guia / opções')+' |','| --- | --- |']
+        for command in inventory:
+            name=command['command'];owner=coverage[name]
+            label=(root/owner['pages'][locale]).read_text().splitlines()[0].removeprefix('# ')
+            target=Path(owner['pages'][locale]).name+'#'+slug(name)
+            rows.append(f'| `{name}` | [{label}]({target}) |')
+        out[path]=replace_generated(out.get(path,(root/path).read_text()),'command-index','\n'.join(rows))
     return out
 
 def generate(manifest,root=ROOT,check=False):
@@ -193,7 +210,7 @@ def render(manifest,destination,root=ROOT):
     destination=Path(destination)
     if destination.exists() and any(destination.iterdir()):raise ValueError('render destination must be empty (use a fresh staging directory)')
     destination.mkdir(parents=True,exist_ok=True)
-    revision=digest(corpus(manifest,root)+''.join(path+digest((root/path).read_bytes()) for t in manifest['topics'] for path in t['pages'].values())+''.join(p.name+digest(p.read_bytes()) for p in sorted((root/'docs/wiki/assets').glob('*')) if p.is_file()))
+    revision=digest(json.dumps({'landing_topic':manifest['landing_topic'],'sidebar':manifest['sidebar']},ensure_ascii=False,sort_keys=True)+corpus(manifest,root)+''.join(path+digest((root/path).read_bytes()) for t in manifest['topics'] for path in t['pages'].values())+''.join(p.name+digest(p.read_bytes()) for p in sorted((root/'docs/wiki/assets').glob('*')) if p.is_file()))
     commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip()
     version=re.search(r'version = "([^"]+)"',(root/'Cargo.toml').read_text())[1]
     names={path:wiki_name(t['id'],locale) for t in manifest['topics'] for locale,path in t['pages'].items()}
@@ -201,8 +218,16 @@ def render(manifest,destination,root=ROOT):
     for t in manifest['topics']:
         for locale,path in t['pages'].items():
             text=(root/path).read_text()
-            other='pt-BR' if locale=='en' else 'en'
-            nav=f"[{'Start' if locale=='en' else 'Início'}]({wiki_name('start',locale)}) · [English]({wiki_name(t['id'],'en')}) · [Português (Brasil)]({wiki_name(t['id'],'pt-BR')})\n\n"
+            landing=t['id']==manifest['landing_topic']
+            navigation=[]
+            if not landing:
+                navigation.append(f"[{'Home' if locale=='en' else 'Início'}]({wiki_name(manifest['landing_topic'],locale)})")
+                category='reference' if t.get('kind')=='reference' else 'guides'
+                if category!=t['id']:
+                    label=('Reference' if locale=='en' else 'Referência') if category=='reference' else ('Guides' if locale=='en' else 'Guias')
+                    navigation.append(f'[{label}]({wiki_name(category,locale)})')
+            navigation.extend(['**English**' if locale=='en' else f"[English]({wiki_name(t['id'],'en')})",'**Português (Brasil)**' if locale=='pt-BR' else f"[Português (Brasil)]({wiki_name(t['id'],'pt-BR')})"])
+            nav=' · '.join(navigation)+'\n\n'
             def link(match):
                 raw=match.group(1);url=urlsplit(raw)
                 if url.scheme or raw.startswith('//'):return match.group(0)
@@ -218,11 +243,11 @@ def render(manifest,destination,root=ROOT):
                 if url.fragment:target+='#'+url.fragment
                 return match.group(0).replace(raw,target)
             text=LINK.sub(link,text)
-            footer=f"\n\n---\nRio `{version}` · {'Source' if locale=='en' else 'Fonte'} `{commit}` · docs `{revision[:12]}`. "
-            footer+=('Describes this source revision; see availability on Start.' if locale=='en' else 'Descreve esta revisão do código; veja a disponibilidade em Início.')+'\n'
+            footer='\n\n---\n'+('Written for' if locale=='en' else 'Documentação para')+f" Rio {version} · ["+('source' if locale=='en' else 'código')+f" {commit[:7]}](https://github.com/pixelinfinito/rio/tree/{commit}). "
+            footer+=('Check your version with' if locale=='en' else 'Confira sua versão com')+f" `rio --version`. Docs `{revision[:12]}`.\n"
             headings=re.findall(r'^## (.+)$',re.sub(r'```.*?```','',text,flags=re.S),re.M)
             toc=''
-            if len(text)>3000 and len(headings)>3:
+            if not landing and len(text)>3000 and len(headings)>3:
                 counts={};entries=[]
                 for heading in headings:
                     anchor=slug(heading);n=counts.get(anchor,0);counts[anchor]=n+1
@@ -230,8 +255,8 @@ def render(manifest,destination,root=ROOT):
                 toc=('On this page' if locale=='en' else 'Nesta página')+':\n\n'+'\n'.join(entries)+'\n\n'
             title,body=text.split('\n',1)
             files[names[path]+'.md']=nav+title+'\n\n'+toc+body.strip()+footer
-    files['Home.md']='# Rio\n\nCode review in your terminal / Revisão de código no terminal.\n\n[English](EN-Start) · [Português (Brasil)](PT-BR-Start)\n\n'+ '\n'.join(f'- [{label}]({wiki_name(id,locale)})' for locale in LOCALES for id,label in [('review','First local review' if locale=='en' else 'Primeira revisão local'),('hosting','AI review' if locale=='en' else 'Revisão com IA'),('github','Pull requests'),('qa','Browser QA' if locale=='en' else 'QA no navegador'),('profiles','Tune Rio' if locale=='en' else 'Ajuste o Rio')])+'\n'
-    files['_Sidebar.md']='[Rio](Home)\n\n'+ '\n\n'.join(f"**{locale}**\n\n"+'\n'.join(f'- [{label}]({wiki_name(id,locale)})' for id,label in [('start','Start' if locale=='en' else 'Início'),('guides','Guides' if locale=='en' else 'Guias'),('reference','Reference' if locale=='en' else 'Referência'),('troubleshooting','Troubleshooting' if locale=='en' else 'Solução de problemas')]) for locale in LOCALES)+'\n'
+    files['Home.md']=files[wiki_name(manifest['landing_topic'],'en')+'.md']
+    files['_Sidebar.md']='[Rio](Home)\n\n'+'\n\n'.join('**'+('English' if locale=='en' else 'Português (Brasil)')+'**\n\n'+'\n'.join(f"- [{item['labels'][locale]}]({wiki_name(item['topic'],locale)})" for item in manifest['sidebar']) for locale in LOCALES)+'\n'
     errors=links_errors(files)
     if errors:raise ValueError('\n'.join(errors))
     for path,data in files.items():(destination/path).write_text(data)

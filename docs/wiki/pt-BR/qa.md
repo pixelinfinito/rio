@@ -65,13 +65,16 @@ Valide antes de iniciar. Confira imagem, prontidão da aplicação e autenticaç
 
 ![Selecione jornadas e examine dependências.](../assets/qa-q1-journeys.png)
 
-Selecione jornadas e examine dependências. Dados demonstrativos; captura da CLI/renderizador TUI atual. [Transcrição textual](../assets/qa-q1-journeys.txt).
+Selecione jornadas e examine dependências. Dados demonstrativos · renderizador real do Rio · [Transcrição textual](../assets/qa-q1-journeys.txt).
 
 ![Acompanhe resultados por viewport e esquema de cor.](../assets/qa-q2-matrix-live.png)
 
-Acompanhe resultados por viewport e esquema de cor. Dados demonstrativos; captura da CLI/renderizador TUI atual. [Transcrição textual](../assets/qa-q2-matrix-live.txt).
+Acompanhe resultados por viewport e esquema de cor. Dados demonstrativos · renderizador real do Rio · [Transcrição textual](../assets/qa-q2-matrix-live.txt).
 
 <!-- commands:start -->
+
+<details>
+<summary>Todas as opções dos comandos</summary>
 
 ## Referência de comandos
 
@@ -79,8 +82,8 @@ Acompanhe resultados por viewport e esquema de cor. Dados demonstrativos; captur
 
 | Argumento | Significado | Padrão / valores |
 | --- | --- | --- |
-| `--staged` | Seleciona somente o índice contra HEAD; conflita com --base. | `false` |
-| `--base` | Compara HEAD confirmado com a base comum desta referência. | `—` |
+| `--staged` | Seleciona somente alterações preparadas (staged) contra HEAD; conflita com --base. | `false` |
+| `--base` | Compara os commits do HEAD com a base comum desta referência. | `—` |
 | `--profile` | Seleciona perfil nomeado ou caminho YAML explícito. | `—` |
 | `--format` | Escolhe formato de saída; valores suportados são listados. | `terminal, json, md, sarif` |
 | `--no-tui` | Usa saída contínua ou perguntas no terminal em vez da TUI. | `false` |
@@ -97,7 +100,7 @@ Acompanhe resultados por viewport e esquema de cor. Dados demonstrativos; captur
 
 | Argumento | Significado | Padrão / valores |
 | --- | --- | --- |
-| `--force` | Reconstrói dados ou substitui jornadas validadas, conforme o comando. | `false` |
+| `--force` | Substitui jornadas versionadas após validar o lote gerado; não aceita contrato de inicialização. | `false` |
 | `--accept-contract` | Aceita o contrato QA proposto e revisado. | `false` |
 | `--help` | Mostra sintaxe e opções do comando. | `—` |
 ### `rio qa validate`
@@ -114,12 +117,14 @@ Acompanhe resultados por viewport e esquema de cor. Dados demonstrativos; captur
 
 | Argumento | Significado | Padrão / valores |
 | --- | --- | --- |
-| `<name>` | Nome de recurso ou jornada, conforme o comando. | `—` |
+| `<name>` | Nome da jornada a inspecionar; omita para mostrar o ambiente QA resolvido. | `—` |
 | `--help` | Mostra sintaxe e opções do comando. | `—` |
 ### `rio qa rules`
 
 | Argumento | Significado | Padrão / valores |
 | --- | --- | --- |
 | `--help` | Mostra sintaxe e opções do comando. | `—` |
+
+</details>
 
 <!-- commands:end -->

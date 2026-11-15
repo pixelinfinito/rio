@@ -39,9 +39,12 @@ Amplie um ID curto ou ambíguo. Erro no endpoint não justifica mudar a polític
 
 ![Inspecione respostas anteriores e ciclo do achado.](../assets/team-p3-finding-history.png)
 
-Inspecione respostas anteriores e ciclo do achado. Dados demonstrativos; captura da CLI/renderizador TUI atual. [Transcrição textual](../assets/team-p3-finding-history.txt).
+Inspecione respostas anteriores e ciclo do achado. Dados demonstrativos · renderizador real do Rio · [Transcrição textual](../assets/team-p3-finding-history.txt).
 
 <!-- commands:start -->
+
+<details>
+<summary>Todas as opções dos comandos</summary>
 
 ## Referência de comandos
 
@@ -49,9 +52,9 @@ Inspecione respostas anteriores e ciclo do achado. Dados demonstrativos; captura
 
 | Argumento | Significado | Padrão / valores |
 | --- | --- | --- |
-| `<id>` | Prefixo de achado (mínimo 8 caracteres) ou ID de proposta, conforme o comando. | `—` |
+| `<id>` | Prefixo inequívoco do ID do achado, com no mínimo 8 caracteres. | `—` |
 | `--dismiss` | Registra resposta fixed, wrong, intentional, irrelevant ou style. | `—` |
-| `--note` | Acrescenta explicação ao feedback ou recusa de proposta. | `—` |
+| `--note` | Explicação a anexar à resposta sobre o achado. | `—` |
 | `--help` | Mostra sintaxe e opções do comando. | `—` |
 ### `rio findings`
 
@@ -62,5 +65,7 @@ Inspecione respostas anteriores e ciclo do achado. Dados demonstrativos; captura
 | `--since` | Filtra atualizações nesta data RFC3339 ou posteriores. | `—` |
 | `--format` | Escolhe formato de saída; valores suportados são listados. | `terminal, json` |
 | `--help` | Mostra sintaxe e opções do comando. | `—` |
+
+</details>
 
 <!-- commands:end -->

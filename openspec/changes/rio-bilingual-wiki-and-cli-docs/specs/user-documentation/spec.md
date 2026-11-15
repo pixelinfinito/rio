@@ -9,6 +9,11 @@ Give Rio users an accessible, complete English and Brazilian Portuguese Wiki tha
 ### Requirement: Bilingual entry and navigation
 The Wiki SHALL provide English and pt-BR entry pages, a language chooser, a grouped sidebar, guide/reference/troubleshooting indexes, and a language switch to each page's equivalent. Every published content page SHALL be reachable from its language's indexes and link to related or next steps.
 
+#### Scenario: Understand Rio from Home
+- **WHEN** a reader opens Home or its Portuguese counterpart
+- **THEN** they see a real TUI screenshot, a plain explanation of local CLI and PR review, commands for working-tree/staged/branch/PR selection, and explicit prerequisites for optional hosted AI and browser QA
+- **AND** the landing content and sidebar participate in localization, link and freshness validation
+
 #### Scenario: Start a first review in Portuguese
 - **WHEN** a reader selects Português (Brasil) from Home
 - **THEN** they can reach the first local review guide directly from the localized start page and continue through Portuguese prerequisites, instructions, and result explanations

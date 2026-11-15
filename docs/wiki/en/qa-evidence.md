@@ -33,13 +33,16 @@ To delete hosted evidence deliberately, run `rio qa evidence prune --review REVI
 
 ![Inspect the failing step and available artifacts.](../assets/qa-q3-cell-detail.png)
 
-Inspect the failing step and available artifacts. Demo data; captured from the current CLI/TUI renderer. [Text transcript](../assets/qa-q3-cell-detail.txt).
+Inspect the failing step and available artifacts. Demo data · actual Rio renderer · [Text transcript](../assets/qa-q3-cell-detail.txt).
 
 ![Separate observed friction from a proposed benefit.](../assets/qa-q4-ux-recommendations.png)
 
-Separate observed friction from a proposed benefit. Demo data; captured from the current CLI/TUI renderer. [Text transcript](../assets/qa-q4-ux-recommendations.txt).
+Separate observed friction from a proposed benefit. Demo data · actual Rio renderer · [Text transcript](../assets/qa-q4-ux-recommendations.txt).
 
 <!-- commands:start -->
+
+<details>
+<summary>All command options</summary>
 
 ## Command reference
 
@@ -54,5 +57,7 @@ Separate observed friction from a proposed benefit. Demo data; captured from the
 | --- | --- | --- |
 | `--review` | Review ID whose hosted QA evidence will be deleted. | `—` |
 | `--help` | Show command syntax and supported options. | `—` |
+
+</details>
 
 <!-- commands:end -->

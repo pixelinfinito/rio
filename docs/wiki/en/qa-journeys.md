@@ -50,6 +50,9 @@ A dependency-cycle or viewport mismatch is a contract error, not a browser failu
 
 <!-- commands:start -->
 
+<details>
+<summary>All command options</summary>
+
 ## Command reference
 
 ### `rio qa sync`
@@ -60,5 +63,7 @@ A dependency-cycle or viewport mismatch is a contract error, not a browser failu
 | `--staged` | Select only the index against HEAD; conflicts with --base. | `false` |
 | `--base` | Compare committed HEAD against the merge base with this ref. | `—` |
 | `--help` | Show command syntax and supported options. | `—` |
+
+</details>
 
 <!-- commands:end -->

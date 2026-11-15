@@ -37,3 +37,13 @@ The user initialized the Wiki with a placeholder Home. First publication explici
 - Wiki commit: `1765394e810fff3a8096dd32b89d6fa9636632d6`.
 - Verified Home, EN/pt-BR Start, Hosting and GitHub pages (HTTP 200), bilingual sidebar/language links, English and accented Portuguese heading IDs, and two representative PNG assets (HTTP 200 and valid PNG signatures).
 - [English](https://github.com/pixelinfinito/rio/wiki/EN-Start) · [Português (Brasil)](https://github.com/pixelinfinito/rio/wiki/PT-BR-Start).
+
+## Usability review follow-up
+
+Applied the user's accepted Opus review: Home now renders the reviewed English start source with a prominent findings screenshot and Portuguese counterpart. Both pages explain local CLI review first, list working-tree/staged/branch/PR commands, and distinguish optional AI/browser setup. The sidebar has localized task links. Reference now provides command/file/environment/exit-code lookup; full command tables collapse in guides, and ambiguous flags have command-specific descriptions. Human schema navigation points to complete tables; previous compact-page URLs remain accessible. Published URLs are preserved.
+
+Corrected the real TUI `never` policy label to `no publication`, updated the documented rendering deviation and recaptured actual screens. The old explanatory caveat was removed. Local runner build examples now use the explicitly explained `local` image tag, avoiding an unrelated release number.
+
+Follow-up validation: 18 documentation/publisher tests, 24 team-renderer tests, 21 capture-fixture tests and 5 embedded-doc integration tests passed. Format and Clippy for both affected crates/all targets passed; strict OpenSpec, schema drift, source/rendered links and translation/capture freshness passed. All 292 measured outputs remain within their byte/token budgets (71,016-byte embedded payload). Terminal transcript trailing spaces intentionally preserve the rendered cell grid.
+
+Publication commit and public verification results are recorded after the update is delivered.

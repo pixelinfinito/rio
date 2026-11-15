@@ -1,5 +1,7 @@
 # Adicione revisão por IA: conecte ou implante
 
+Hospede o backend do Rio na sua conta Cloudflare ou conecte ao endpoint da equipe para acrescentar revisores de IA e verificação independente às revisões pela CLI. As [verificações locais](review.md) funcionam sem essa configuração.
+
 ## Objetivo
 
 Adicionar revisão por modelos e verificação independente usando infraestrutura na sua própria conta.
@@ -29,12 +31,12 @@ Use `rio deploy --dry-run` para inspecionar o plano offline sem alterações. `r
 
 ### Inicie um runner próprio
 
-Em um host Linux confiável com Docker, obtenha o código da versão correspondente do Rio e forneça `RIO_RUNNER_SECRET` (o `RUNNER_SECRET` do endpoint) pelo ambiente privado. Execute:
+Em um host Linux confiável com Docker, obtenha o código da versão correspondente do Rio e forneça `RIO_RUNNER_SECRET` (o `RUNNER_SECRET` do endpoint) pelo ambiente privado. A tag `local` abaixo identifica a imagem compilada desse código; não é uma versão distribuída. Execute:
 
 ```sh
-docker build -f worker/Dockerfile -t rio-runner:0.3.0 .
+docker build -f worker/Dockerfile -t rio-runner:local .
 RIO_ENDPOINT_URL=https://rio.YOUR-SUBDOMAIN.workers.dev \
-  cargo run --locked -p rio-runner -- serve --image rio-runner:0.3.0
+  cargo run --locked -p rio-runner -- serve --image rio-runner:local
 ```
 
 Mantenha o processo de consulta ativo com seu gerenciador de serviços. Não monte o socket Docker, workspace do host ou credenciais nos contêineres de análise. O host Docker é confiável; dedique-o à execução de código de projetos não confiáveis.
@@ -58,13 +60,16 @@ Confira perfil/conta do cf e serviços habilitados. Erros de Docker no Sandbox p
 
 ![Escolha implantação ou conexão a endpoint existente.](../assets/init-i1-choose-mode.png)
 
-Escolha implantação ou conexão a endpoint existente. Dados demonstrativos; captura da CLI/renderizador TUI atual. [Transcrição textual](../assets/init-i1-choose-mode.txt).
+Escolha implantação ou conexão a endpoint existente. Dados demonstrativos · renderizador real do Rio · [Transcrição textual](../assets/init-i1-choose-mode.txt).
 
 ![A implantação mostra etapa atual e alterações de recursos.](../assets/init-i3-deploying.png)
 
-A implantação mostra etapa atual e alterações de recursos. Dados demonstrativos; captura da CLI/renderizador TUI atual. [Transcrição textual](../assets/init-i3-deploying.txt).
+A implantação mostra etapa atual e alterações de recursos. Dados demonstrativos · renderizador real do Rio · [Transcrição textual](../assets/init-i3-deploying.txt).
 
 <!-- commands:start -->
+
+<details>
+<summary>Todas as opções dos comandos</summary>
 
 ## Referência de comandos
 
@@ -77,10 +82,10 @@ A implantação mostra etapa atual e alterações de recursos. Dados demonstrati
 | `--github-app` | Registra o GitHub App após implantação. | `false` |
 | `--github-org` | Registra o App sob esta organização. | `—` |
 | `--replace-private-key` | Lê PEM do GitHub App e atualiza o segredo no endpoint. | `—` |
-| `--no-tui` | Usa saída contínua ou perguntas no terminal em vez da TUI. | `false` |
+| `--no-tui` | Usa perguntas no terminal em vez da tela interativa de configuração. | `false` |
 | `--from` | Reutiliza escolhas de um arquivo pessoal de configuração. | `—` |
 | `--account` | ID da conta Cloudflare para implantação. | `—` |
-| `--name` | Nome de recurso ou jornada, conforme o comando. | `—` |
+| `--name` | Prefixo de nomes dos recursos Cloudflare desta implantação. | `—` |
 | `--cf-profile` | Seleciona o perfil de autenticação cf. | `—` |
 | `--runner` | Escolhe Cloudflare Sandbox ou execução em runner próprio. | `sandbox, self-hosted` |
 | `--runner-image` | Usa esta imagem pareada do runner. | `—` |
@@ -100,7 +105,7 @@ A implantação mostra etapa atual e alterações de recursos. Dados demonstrati
 | --- | --- | --- |
 | `--from` | Reutiliza escolhas de um arquivo pessoal de configuração. | `—` |
 | `--account` | ID da conta Cloudflare para implantação. | `—` |
-| `--name` | Nome de recurso ou jornada, conforme o comando. | `—` |
+| `--name` | Prefixo de nomes dos recursos Cloudflare desta implantação. | `—` |
 | `--cf-profile` | Seleciona o perfil de autenticação cf. | `—` |
 | `--runner` | Escolhe Cloudflare Sandbox ou execução em runner próprio. | `sandbox, self-hosted` |
 | `--runner-image` | Usa esta imagem pareada do runner. | `—` |
@@ -114,5 +119,7 @@ A implantação mostra etapa atual e alterações de recursos. Dados demonstrati
 | `--council-vendor` | Adere a fornecedor do conselho como FORNECEDOR:FAMILIA:ROTA; repetível. | `—` |
 | `--no-council` | Pula configuração opcional do conselho. | `false` |
 | `--help` | Mostra sintaxe e opções do comando. | `—` |
+
+</details>
 
 <!-- commands:end -->

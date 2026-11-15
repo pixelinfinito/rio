@@ -44,9 +44,12 @@ Confiar nas dependências não supera uma divergência conhecida. Diagnósticos 
 
 ![Leia avisos de preparação antes de interpretar a revisão.](../assets/cli-doctor.png)
 
-Leia avisos de preparação antes de interpretar a revisão. Dados demonstrativos; captura da CLI/renderizador TUI atual. [Transcrição textual](../assets/cli-doctor.txt).
+Leia avisos de preparação antes de interpretar a revisão. Dados demonstrativos · renderizador real do Rio · [Transcrição textual](../assets/cli-doctor.txt).
 
 <!-- commands:start -->
+
+<details>
+<summary>Todas as opções dos comandos</summary>
 
 ## Referência de comandos
 
@@ -56,9 +59,11 @@ Leia avisos de preparação antes de interpretar a revisão. Dados demonstrativo
 | --- | --- | --- |
 | `--rotate` | Rotaciona o segredo do webhook do GitHub App; altera dados. | `false` |
 | `--all-roots` | Inspeciona todas as raízes, inclusive não alteradas. | `false` |
-| `--staged` | Seleciona somente o índice contra HEAD; conflita com --base. | `false` |
-| `--base` | Compara HEAD confirmado com a base comum desta referência. | `—` |
+| `--staged` | Seleciona somente alterações preparadas (staged) contra HEAD; conflita com --base. | `false` |
+| `--base` | Compara os commits do HEAD com a base comum desta referência. | `—` |
 | `--format` | Escolhe formato de saída; valores suportados são listados. | `terminal, json` |
 | `--help` | Mostra sintaxe e opções do comando. | `—` |
+
+</details>
 
 <!-- commands:end -->

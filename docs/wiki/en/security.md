@@ -37,5 +37,5 @@ Check profile enablement, model route, catalog ID and verification dependencies.
 
 ![Read the trace and council evidence together.](../assets/team-p1-security-council.png)
 
-Read the trace and council evidence together. Demo data; captured from the current CLI/TUI renderer. [Text transcript](../assets/team-p1-security-council.txt).
+Read the trace and council evidence together. Demo data · actual Rio renderer · [Text transcript](../assets/team-p1-security-council.txt).
 

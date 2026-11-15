@@ -31,6 +31,9 @@ Executável fora do código precisa de `RIO_EVAL_DIR`; diretório homônimo sem 
 
 <!-- commands:start -->
 
+<details>
+<summary>Todas as opções dos comandos</summary>
+
 ## Referência de comandos
 
 ### `rio eval`
@@ -48,9 +51,11 @@ Executável fora do código precisa de `RIO_EVAL_DIR`; diretório homônimo sem 
 
 | Argumento | Significado | Padrão / valores |
 | --- | --- | --- |
-| `<pr>` | Número do PR na revisão ou URL do incidente na avaliação. | `—` |
+| `<pr>` | URL do pull request do incidente a importar para o conjunto de avaliação. | `—` |
 | `<fix_pr>` | URL do pull request que corrigiu o incidente. | `—` |
 | `<args>` | Encaminha argumentos restantes à ferramenta de avaliação. | `—` |
 | `--help` | Mostra sintaxe e opções do comando. | `—` |
+
+</details>
 
 <!-- commands:end -->

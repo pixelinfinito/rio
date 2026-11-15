@@ -1,11 +1,11 @@
 # Maintain and publish the documentation
 
-The main Rio repository owns these pages; the Wiki is generated output. Update both languages and the compact English agent topic when behavior changes. Never edit generated command/schema tables by hand.
+The main Rio repository owns these pages; the Wiki is generated output. Home uses the authored English `start.md`; its Portuguese counterpart is `pt-BR/start.md`. Both go through the same translation and asset checks. Sidebar labels and destinations live in the manifest. Update both languages and the compact English agent topic when behavior changes. Never edit generated command/schema tables by hand.
 
 ## Local workflow
 
 1. Edit `docs/wiki/en/TOPIC.md`, `docs/wiki/pt-BR/TOPIC.md` and `docs/agent/TOPIC.md` as applicable. Keep commands/keys unchanged across translations.
-2. Update `docs/documentation-manifest.json`: source paths, coverage, related topics, screenshots and availability. Public command options need entries in `docs/argument-descriptions.json` in both languages.
+2. Update `docs/documentation-manifest.json`: source paths, coverage, related topics, screenshots and availability. Public command options need entries in `docs/argument-descriptions.json` in both languages. Use `COMMAND ARGUMENT_ID` keys when a flag has different meanings in different commands.
 3. Install development tools: `python3 -m venv .venv`; `.venv/bin/pip install -r scripts/requirements-docs.txt`. These are never runtime dependencies of Rio.
 4. Export parser facts: `RIO_DOCS_INVENTORY="$PWD/docs/command-inventory.json" cargo test -p rio-cli --bin rio docs_inventory::export_documentation_inventory -- --ignored`.
 5. Run `.venv/bin/python scripts/documentation_schemas.py`, then `python3 scripts/documentation.py generate`.

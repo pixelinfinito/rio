@@ -38,6 +38,9 @@ Para orientar agentes, use: “Execute `rio docs`, consulte somente tópicos/se�
 
 <!-- commands:start -->
 
+<details>
+<summary>Todas as opções dos comandos</summary>
+
 ## Referência de comandos
 
 ### `rio docs`
@@ -50,5 +53,7 @@ Para orientar agentes, use: “Execute `rio docs`, consulte somente tópicos/se�
 | `--limit` | Máximo de resultados na busca documental, 1–10; padrão 5. | `—` |
 | `--format` | Escolhe formato de saída; valores suportados são listados. | `text, json` |
 | `--help` | Mostra sintaxe e opções do comando. | `—` |
+
+</details>
 
 <!-- commands:end -->

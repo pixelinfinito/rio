@@ -444,7 +444,7 @@ impl PublishScreen {
         for (y, p, text) in [
             (9, PublishPolicy::Ask, " ask   preview, then y/N"),
             (10, PublishPolicy::Auto, " auto  posts without asking"),
-            (11, PublishPolicy::Never, " never check run only"),
+            (11, PublishPolicy::Never, " never no publication"),
         ] {
             let tone = if p == policy { Token::Fg } else { Token::Faint };
             pane.put(c, y, &[run(text, tone, Token::Bg)]);

@@ -1,5 +1,7 @@
 # Add AI review: connect or deploy
 
+Host Rio’s backend in your own Cloudflare account, or connect to your team’s endpoint, to add AI reviewers and independent verification to CLI reviews. [Local checks](review.md) work without this setup.
+
 ## Outcome
 
 Add model review and independent verification using infrastructure in your own account.
@@ -29,12 +31,12 @@ Use `rio deploy --dry-run` to inspect the offline plan without mutation. `rio in
 
 ### Start a self-hosted runner
 
-On a trusted Linux Docker host, check out the matching Rio source and supply `RIO_RUNNER_SECRET` (the endpoint’s `RUNNER_SECRET`) through a private environment. Then run:
+On a trusted Linux Docker host, check out the matching Rio source and supply `RIO_RUNNER_SECRET` (the endpoint’s `RUNNER_SECRET`) through a private environment. The `local` tag below names the image you build from that checkout; it is not a release version. Then run:
 
 ```sh
-docker build -f worker/Dockerfile -t rio-runner:0.3.0 .
+docker build -f worker/Dockerfile -t rio-runner:local .
 RIO_ENDPOINT_URL=https://rio.YOUR-SUBDOMAIN.workers.dev \
-  cargo run --locked -p rio-runner -- serve --image rio-runner:0.3.0
+  cargo run --locked -p rio-runner -- serve --image rio-runner:local
 ```
 
 Keep this polling process running under your service manager. Do not mount the Docker socket, host workspace or credentials into analysis containers. The Docker host is trusted; dedicate it to running untrusted project code.
@@ -58,13 +60,16 @@ Check cf profile/account and enabled services for deployment errors. Docker erro
 
 ![Choose deployment or connection to an existing endpoint.](../assets/init-i1-choose-mode.png)
 
-Choose deployment or connection to an existing endpoint. Demo data; captured from the current CLI/TUI renderer. [Text transcript](../assets/init-i1-choose-mode.txt).
+Choose deployment or connection to an existing endpoint. Demo data · actual Rio renderer · [Text transcript](../assets/init-i1-choose-mode.txt).
 
 ![Deployment exposes its current step and resource changes.](../assets/init-i3-deploying.png)
 
-Deployment exposes its current step and resource changes. Demo data; captured from the current CLI/TUI renderer. [Text transcript](../assets/init-i3-deploying.txt).
+Deployment exposes its current step and resource changes. Demo data · actual Rio renderer · [Text transcript](../assets/init-i3-deploying.txt).
 
 <!-- commands:start -->
+
+<details>
+<summary>All command options</summary>
 
 ## Command reference
 
@@ -77,10 +82,10 @@ Deployment exposes its current step and resource changes. Demo data; captured fr
 | `--github-app` | Register the GitHub App after deployment. | `false` |
 | `--github-org` | Own the registered App under this organization. | `—` |
 | `--replace-private-key` | Read a downloaded GitHub App PEM and update its endpoint secret. | `—` |
-| `--no-tui` | Use streaming output or terminal prompts instead of the TUI. | `false` |
+| `--no-tui` | Use terminal setup prompts instead of the interactive setup screen. | `false` |
 | `--from` | Replay deployment choices from a saved user config file. | `—` |
 | `--account` | Cloudflare account ID for deployment. | `—` |
-| `--name` | Resource name or journey name, depending on command. | `—` |
+| `--name` | Cloudflare resource-name prefix for this deployment. | `—` |
 | `--cf-profile` | Select the cf authentication profile. | `—` |
 | `--runner` | Choose Cloudflare Sandbox or self-hosted execution. | `sandbox, self-hosted` |
 | `--runner-image` | Use this paired runner image. | `—` |
@@ -100,7 +105,7 @@ Deployment exposes its current step and resource changes. Demo data; captured fr
 | --- | --- | --- |
 | `--from` | Replay deployment choices from a saved user config file. | `—` |
 | `--account` | Cloudflare account ID for deployment. | `—` |
-| `--name` | Resource name or journey name, depending on command. | `—` |
+| `--name` | Cloudflare resource-name prefix for this deployment. | `—` |
 | `--cf-profile` | Select the cf authentication profile. | `—` |
 | `--runner` | Choose Cloudflare Sandbox or self-hosted execution. | `sandbox, self-hosted` |
 | `--runner-image` | Use this paired runner image. | `—` |
@@ -114,5 +119,7 @@ Deployment exposes its current step and resource changes. Demo data; captured fr
 | `--council-vendor` | Opt in a council vendor as VENDOR:FAMILY:ROUTE; repeatable. | `—` |
 | `--no-council` | Skip optional council setup. | `false` |
 | `--help` | Show command syntax and supported options. | `—` |
+
+</details>
 
 <!-- commands:end -->

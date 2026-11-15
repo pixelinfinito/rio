@@ -6,6 +6,7 @@ Rio's functionality has outgrown a long README and scattered technical reference
 
 ## What Changes
 
+- Lead Home with authored, validated bilingual landing content: a real TUI screenshot, clear local CLI/staged/branch/PR commands, and direct task navigation.
 - Publish a complete GitHub Wiki in English and Brazilian Portuguese, with a language chooser, matched page navigation, task-oriented guides, searchable reference indexes, troubleshooting, a glossary, and clear local/hosted/platform prerequisites.
 - Cover the public CLI and its nested commands, installation and upgrades, deterministic and AI review, TUI controls, profiles and configuration, providers and budgets, security and council, GitHub integration, finding history and suppressions, browser QA, reports, CI, cache/privacy, and evaluation tooling.
 - Add accessible screenshots of the running CLI and actual TUI renderer, using reproducible sanitized fixtures, translated captions, text equivalents, and capture/version metadata. Existing design mockups are not evidence of shipped behavior.

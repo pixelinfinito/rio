@@ -21,7 +21,7 @@
   },
   "base": {
     "en": "Compare committed HEAD against the merge base with this ref.",
-    "pt-BR": "Compara HEAD confirmado com a base comum desta referência."
+    "pt-BR": "Compara os commits do HEAD com a base comum desta referência."
   },
   "baseline": {
     "en": "Run QA against base as well as head.",
@@ -79,10 +79,6 @@
     "en": "URL of the pull request that fixed the incident.",
     "pt-BR": "URL do pull request que corrigiu o incidente."
   },
-  "force": {
-    "en": "Explicitly rebuild seed or replace validated journeys, depending on command.",
-    "pt-BR": "Reconstrói dados ou substitui jornadas validadas, conforme o comando."
-  },
   "fork": {
     "en": "Mark this local hosted submission as fork-related; endpoint validates PR metadata.",
     "pt-BR": "Marca submissão local hospedada como fork; endpoint valida metadados de PR."
@@ -115,10 +111,6 @@
     "en": "Show command syntax and supported options.",
     "pt-BR": "Mostra sintaxe e opções do comando."
   },
-  "id": {
-    "en": "Finding prefix (at least 8 characters) or proposal ID, as appropriate.",
-    "pt-BR": "Prefixo de achado (mínimo 8 caracteres) ou ID de proposta, conforme o comando."
-  },
   "image": {
     "en": "Inspect this provisioned app image for seed status.",
     "pt-BR": "Inspeciona esta imagem provisionada para estado dos dados."
@@ -134,10 +126,6 @@
   "limit": {
     "en": "Maximum documentation search hits, 1–10; default 5.",
     "pt-BR": "Máximo de resultados na busca documental, 1–10; padrão 5."
-  },
-  "name": {
-    "en": "Resource name or journey name, depending on command.",
-    "pt-BR": "Nome de recurso ou jornada, conforme o comando."
   },
   "nightly": {
     "en": "Mark a nightly evaluation run for council triggers.",
@@ -155,17 +143,9 @@
     "en": "Use streaming output or terminal prompts instead of the TUI.",
     "pt-BR": "Usa saída contínua ou perguntas no terminal em vez da TUI."
   },
-  "note": {
-    "en": "Attach an explanation to feedback or proposal rejection.",
-    "pt-BR": "Acrescenta explicação ao feedback ou recusa de proposta."
-  },
   "offline": {
     "en": "Disable Rio network calls; subprocesses are not network-isolated.",
     "pt-BR": "Desativa rede do Rio; subprocessos não são isolados da rede."
-  },
-  "pr": {
-    "en": "Pull request number for review, or incident PR URL in eval.",
-    "pt-BR": "Número do PR na revisão ou URL do incidente na avaliação."
   },
   "preset": {
     "en": "Select review depth; requires an online endpoint.",
@@ -186,10 +166,6 @@
   "raw": {
     "en": "Print authored profile without resolving inheritance.",
     "pt-BR": "Mostra perfil original sem resolver herança."
-  },
-  "reference": {
-    "en": "Profile name/path; omitted validate uses the default profile.",
-    "pt-BR": "Nome/caminho do perfil; validate sem argumento usa o padrão."
   },
   "replace_private_key": {
     "en": "Read a downloaded GitHub App PEM and update its endpoint secret.",
@@ -245,7 +221,7 @@
   },
   "staged": {
     "en": "Select only the index against HEAD; conflicts with --base.",
-    "pt-BR": "Seleciona somente o índice contra HEAD; conflita com --base."
+    "pt-BR": "Seleciona somente alterações preparadas (staged) contra HEAD; conflita com --base."
   },
   "status": {
     "en": "Filter lifecycle status using the listed accepted values.",
@@ -274,5 +250,65 @@
   "yes": {
     "en": "Apply a suppression proposal without the confirmation prompt.",
     "pt-BR": "Aplica proposta de supressão sem perguntar confirmação."
+  },
+  "rio review pr": {
+    "en": "GitHub pull request number; requires an endpoint and installed GitHub App.",
+    "pt-BR": "Número do pull request do GitHub; exige endpoint e GitHub App instalado."
+  },
+  "rio eval import-incident pr": {
+    "en": "URL of the incident pull request to import into the evaluation corpus.",
+    "pt-BR": "URL do pull request do incidente a importar para o conjunto de avaliação."
+  },
+  "rio init name": {
+    "en": "Cloudflare resource-name prefix for this deployment.",
+    "pt-BR": "Prefixo de nomes dos recursos Cloudflare desta implantação."
+  },
+  "rio deploy name": {
+    "en": "Cloudflare resource-name prefix for this deployment.",
+    "pt-BR": "Prefixo de nomes dos recursos Cloudflare desta implantação."
+  },
+  "rio qa show name": {
+    "en": "Journey name to inspect; omit it to show the resolved QA environment.",
+    "pt-BR": "Nome da jornada a inspecionar; omita para mostrar o ambiente QA resolvido."
+  },
+  "rio qa init force": {
+    "en": "Replace existing committed journeys after validating the generated batch; does not accept a launch contract.",
+    "pt-BR": "Substitui jornadas versionadas após validar o lote gerado; não aceita contrato de inicialização."
+  },
+  "rio qa seed build force": {
+    "en": "Rebuild and validate seed snapshots even when a matching cached seed exists.",
+    "pt-BR": "Reconstrói e valida snapshots dos dados iniciais mesmo com cache correspondente."
+  },
+  "rio feedback id": {
+    "en": "Unambiguous finding ID prefix, at least 8 characters.",
+    "pt-BR": "Prefixo inequívoco do ID do achado, com no mínimo 8 caracteres."
+  },
+  "rio suppressions apply id": {
+    "en": "Suppression proposal ID to inspect and apply.",
+    "pt-BR": "ID da proposta de supressão a inspecionar e aplicar."
+  },
+  "rio suppressions decline id": {
+    "en": "Suppression proposal ID to decline with an explanation.",
+    "pt-BR": "ID da proposta de supressão a recusar com uma explicação."
+  },
+  "rio profile show reference": {
+    "en": "Profile name or YAML path to inspect.",
+    "pt-BR": "Nome do perfil ou caminho YAML a inspecionar."
+  },
+  "rio profile validate reference": {
+    "en": "Profile name or YAML path to validate; omit to validate the default profile.",
+    "pt-BR": "Nome do perfil ou caminho YAML a validar; omita para validar o perfil padrão."
+  },
+  "rio feedback note": {
+    "en": "Explanation to attach to finding feedback.",
+    "pt-BR": "Explicação a anexar à resposta sobre o achado."
+  },
+  "rio suppressions decline note": {
+    "en": "Explanation for declining this suppression proposal.",
+    "pt-BR": "Explicação para recusar esta proposta de supressão."
+  },
+  "rio init no_tui": {
+    "en": "Use terminal setup prompts instead of the interactive setup screen.",
+    "pt-BR": "Usa perguntas no terminal em vez da tela interativa de configuração."
   }
 }

@@ -1,5 +1,7 @@
 # Mantenha e publique a documentação
 
+Home usa o `start.md` em inglês; a página correspondente é `pt-BR/start.md`. Ambas passam pelas verificações de tradução e imagens. Rótulos e destinos da barra lateral ficam no manifesto. Em `docs/argument-descriptions.json`, use chaves `COMANDO ID_ARGUMENTO` quando uma opção tem significados diferentes entre comandos.
+
 O repositório principal do Rio é a origem destas páginas; a Wiki é uma saída gerada. Atualize os dois idiomas e o tópico compacto em inglês quando o comportamento mudar. Não edite tabelas geradas de comandos/schemas manualmente.
 
 ## Fluxo local

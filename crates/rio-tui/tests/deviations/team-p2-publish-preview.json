@@ -16,7 +16,7 @@
   },
   {
     "row": 11,
-    "text": " never check run only         │   + c90b3d1a db/raw.ts   not in diff       │ Council   reproduced · partial 4/5         ",
-    "reason": "8-character finding id: taken from the anchor column's padding; no path is cut"
+    "text": " never no publication         │   + c90b3d1a db/raw.ts   not in diff       │ Council   reproduced · partial 4/5         ",
+    "reason": "The never policy publishes no comments or checks, matching endpoint policy; finding IDs use 8 characters."
   }
 ]

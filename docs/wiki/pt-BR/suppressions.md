@@ -37,9 +37,12 @@ IDs de propostas diferem de IDs de achados. Falhas de uso/configuração/valida�
 
 ![Examine evidências antes de alterar o perfil.](../assets/team-p4-suppression-proposals.png)
 
-Examine evidências antes de alterar o perfil. Dados demonstrativos; captura da CLI/renderizador TUI atual. [Transcrição textual](../assets/team-p4-suppression-proposals.txt).
+Examine evidências antes de alterar o perfil. Dados demonstrativos · renderizador real do Rio · [Transcrição textual](../assets/team-p4-suppression-proposals.txt).
 
 <!-- commands:start -->
+
+<details>
+<summary>Todas as opções dos comandos</summary>
 
 ## Referência de comandos
 
@@ -59,15 +62,17 @@ Examine evidências antes de alterar o perfil. Dados demonstrativos; captura da 
 
 | Argumento | Significado | Padrão / valores |
 | --- | --- | --- |
-| `<id>` | Prefixo de achado (mínimo 8 caracteres) ou ID de proposta, conforme o comando. | `—` |
+| `<id>` | ID da proposta de supressão a inspecionar e aplicar. | `—` |
 | `--yes` | Aplica proposta de supressão sem perguntar confirmação. | `false` |
 | `--help` | Mostra sintaxe e opções do comando. | `—` |
 ### `rio suppressions decline`
 
 | Argumento | Significado | Padrão / valores |
 | --- | --- | --- |
-| `<id>` | Prefixo de achado (mínimo 8 caracteres) ou ID de proposta, conforme o comando. | `—` |
-| `--note` | Acrescenta explicação ao feedback ou recusa de proposta. | `—` |
+| `<id>` | ID da proposta de supressão a recusar com uma explicação. | `—` |
+| `--note` | Explicação para recusar esta proposta de supressão. | `—` |
 | `--help` | Mostra sintaxe e opções do comando. | `—` |
+
+</details>
 
 <!-- commands:end -->

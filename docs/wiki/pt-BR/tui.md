@@ -42,17 +42,17 @@ Use `rio review --no-tui` ou `RIO_TUI=0` para saída contínua. Use `--ascii`/`R
 
 ![Escolha a seleção e o perfil.](../assets/review-00-start.png)
 
-Escolha a seleção e o perfil. Dados demonstrativos; captura da CLI/renderizador TUI atual. [Transcrição textual](../assets/review-00-start.txt).
+Escolha a seleção e o perfil. Dados demonstrativos · renderizador real do Rio · [Transcrição textual](../assets/review-00-start.txt).
 
 ![Acompanhe verificações e modelos.](../assets/review-01-live-review.png)
 
-Acompanhe verificações e modelos. Dados demonstrativos; captura da CLI/renderizador TUI atual. [Transcrição textual](../assets/review-01-live-review.txt).
+Acompanhe verificações e modelos. Dados demonstrativos · renderizador real do Rio · [Transcrição textual](../assets/review-01-live-review.txt).
 
 ![Relacione cada achado ao trecho e à evidência.](../assets/review-02-findings.png)
 
-Relacione cada achado ao trecho e à evidência. Dados demonstrativos; captura da CLI/renderizador TUI atual. [Transcrição textual](../assets/review-02-findings.txt).
+Relacione cada achado ao trecho e à evidência. Dados demonstrativos · renderizador real do Rio · [Transcrição textual](../assets/review-02-findings.txt).
 
 ![Escolha um formato de exportação.](../assets/review-05-summary-export.png)
 
-Escolha um formato de exportação. Dados demonstrativos; captura da CLI/renderizador TUI atual. [Transcrição textual](../assets/review-05-summary-export.txt).
+Escolha um formato de exportação. Dados demonstrativos · renderizador real do Rio · [Transcrição textual](../assets/review-05-summary-export.txt).
 

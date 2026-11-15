@@ -37,6 +37,9 @@ Use `app.test` nas URLs HTTP da aplicação e serviços simulados. Hosts bloquea
 
 <!-- commands:start -->
 
+<details>
+<summary>Todas as opções dos comandos</summary>
+
 ## Referência de comandos
 
 ### `rio qa fixtures`
@@ -58,7 +61,7 @@ Use `app.test` nas URLs HTTP da aplicação e serviços simulados. Hosts bloquea
 
 | Argumento | Significado | Padrão / valores |
 | --- | --- | --- |
-| `--force` | Reconstrói dados ou substitui jornadas validadas, conforme o comando. | `false` |
+| `--force` | Reconstrói e valida snapshots dos dados iniciais mesmo com cache correspondente. | `false` |
 | `--help` | Mostra sintaxe e opções do comando. | `—` |
 ### `rio qa seed export`
 
@@ -78,5 +81,7 @@ Use `app.test` nas URLs HTTP da aplicação e serviços simulados. Hosts bloquea
 | --- | --- | --- |
 | `--image` | Inspeciona esta imagem provisionada para estado dos dados. | `—` |
 | `--help` | Mostra sintaxe e opções do comando. | `—` |
+
+</details>
 
 <!-- commands:end -->

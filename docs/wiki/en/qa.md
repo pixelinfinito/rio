@@ -65,13 +65,16 @@ Validate before startup. Check image availability, app readiness and model authe
 
 ![Select journeys and inspect their dependencies.](../assets/qa-q1-journeys.png)
 
-Select journeys and inspect their dependencies. Demo data; captured from the current CLI/TUI renderer. [Text transcript](../assets/qa-q1-journeys.txt).
+Select journeys and inspect their dependencies. Demo data · actual Rio renderer · [Text transcript](../assets/qa-q1-journeys.txt).
 
 ![Follow outcomes by viewport and color scheme.](../assets/qa-q2-matrix-live.png)
 
-Follow outcomes by viewport and color scheme. Demo data; captured from the current CLI/TUI renderer. [Text transcript](../assets/qa-q2-matrix-live.txt).
+Follow outcomes by viewport and color scheme. Demo data · actual Rio renderer · [Text transcript](../assets/qa-q2-matrix-live.txt).
 
 <!-- commands:start -->
+
+<details>
+<summary>All command options</summary>
 
 ## Command reference
 
@@ -97,7 +100,7 @@ Follow outcomes by viewport and color scheme. Demo data; captured from the curre
 
 | Argument | Meaning | Default / choices |
 | --- | --- | --- |
-| `--force` | Explicitly rebuild seed or replace validated journeys, depending on command. | `false` |
+| `--force` | Replace existing committed journeys after validating the generated batch; does not accept a launch contract. | `false` |
 | `--accept-contract` | Accept the reviewed proposed QA launch contract. | `false` |
 | `--help` | Show command syntax and supported options. | `—` |
 ### `rio qa validate`
@@ -114,12 +117,14 @@ Follow outcomes by viewport and color scheme. Demo data; captured from the curre
 
 | Argument | Meaning | Default / choices |
 | --- | --- | --- |
-| `<name>` | Resource name or journey name, depending on command. | `—` |
+| `<name>` | Journey name to inspect; omit it to show the resolved QA environment. | `—` |
 | `--help` | Show command syntax and supported options. | `—` |
 ### `rio qa rules`
 
 | Argument | Meaning | Default / choices |
 | --- | --- | --- |
 | `--help` | Show command syntax and supported options. | `—` |
+
+</details>
 
 <!-- commands:end -->

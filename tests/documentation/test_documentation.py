@@ -53,6 +53,18 @@ class ContentTests(unittest.TestCase):
             self.assertEqual(left,right)
             self.assertIn(b'[Portugu\xc3\xaas (Brasil)](PT-BR-Profiles)',left['EN-Profiles.md'])
             self.assertIn(b'raw.githubusercontent.com/wiki/pixelinfinito/rio/assets/',left['EN-Tui.md'])
+            self.assertEqual(left['Home.md'],left['EN-Start.md'])
+            for page in ['Home.md','PT-BR-Start.md']:
+                for term in [b'review-02-findings.png',b'review-00-start.png',b'rio review --staged',b'rio review --base origin/main',b'rio review --pr 123']:
+                    self.assertIn(term,left[page])
+            self.assertNotIn(b'On this page:',left['Home.md'])
+            self.assertIn(b'**English**',left['_Sidebar.md'])
+            for target in ['EN-Installation','EN-Review','PT-BR-Installation','PT-BR-Review']:
+                self.assertIn(target.encode(),left['_Sidebar.md'])
+            self.assertIn(b'<details>',left['EN-Review.md'])
+            self.assertIn(b'config.toml',left['EN-Reference.md'])
+            self.assertIn(b'rio qa seed export',left['EN-Reference.md'])
+
 
     def test_missing_assets_captions_flags_and_stale_capture_fail(self):
         from unittest.mock import patch
@@ -71,6 +83,22 @@ class ContentTests(unittest.TestCase):
             errors='\n'.join(docs.validate(docs.read_manifest()))
         for term in ['missing/modified png','stale capture source','missing translated screenshot alt','undocumented rio review --staged']:
             self.assertIn(term,errors)
+
+    def test_sidebar_requires_localized_labels_and_valid_targets(self):
+        m=copy.deepcopy(docs.read_manifest())
+        m['sidebar'][0]['labels'].pop('pt-BR')
+        m['sidebar'][0]['topic']='absent'
+        errors=docs.validate(m,require_pages=False)
+        self.assertIn('missing localized sidebar label',errors)
+        self.assertIn('unknown sidebar topic',errors)
+
+    def test_command_specific_descriptions_do_not_mix_different_operations(self):
+        tables=docs.command_tables(docs.read_manifest())
+        self.assertIn('GitHub pull request number;',tables['docs/wiki/en/review.md'])
+        self.assertNotIn('incident PR URL',tables['docs/wiki/en/review.md'])
+        self.assertIn('Journey name to inspect;',tables['docs/wiki/en/qa.md'])
+        self.assertIn('Cloudflare resource-name prefix',tables['docs/wiki/en/hosting.md'])
+        self.assertNotIn('depending on command',''.join(tables.values()))
 
     def test_profiles_and_qa_examples_validate(self):
         import re,yaml,jsonschema
