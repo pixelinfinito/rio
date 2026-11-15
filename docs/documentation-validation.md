@@ -47,3 +47,9 @@ Corrected the real TUI `never` policy label to `no publication`, updated the doc
 Follow-up validation: 18 documentation/publisher tests, 24 team-renderer tests, 21 capture-fixture tests and 5 embedded-doc integration tests passed. Format and Clippy for both affected crates/all targets passed; strict OpenSpec, schema drift, source/rendered links and translation/capture freshness passed. All 292 measured outputs remain within their byte/token budgets (71,016-byte embedded payload). Terminal transcript trailing spaces intentionally preserve the rendered cell grid.
 
 Published source `1428a76f4c6557f404d36b9fd5b4748c7a34250f`; Wiki commit `614af91e7a5f5a252d49eb694a51964647f171f8`. Public HTTP checks passed for Home, EN/pt-BR Start, Reference and Review pages, localized sidebar/switch links, command anchors and expandable option tables. The findings, start-screen and corrected publish-preview PNGs returned HTTP 200 and matched local SHA-256 hashes.
+
+## README introduction follow-up
+
+Replaced the long implementation reference with a product introduction: own your AI review pipeline; an open-source alternative to CodeRabbit and Greptile; local review, optional hosted AI, team workflows and browser QA. Retained the original header image line byte-for-byte, added a star invitation and the existing real TUI screenshot, and linked detailed setup/reference content to both Wiki entry points. The quick start uses a source build because GitHub currently lists no published releases; the evaluation limitation remains linked near the end.
+
+Validated README local paths/anchors and Wiki destinations, checked command syntax without running review/provisioning handlers, exercised the three read-only embedded-doc examples, and passed documentation freshness/render checks and strict OpenSpec validation. This prose-only change required no new runtime tests.

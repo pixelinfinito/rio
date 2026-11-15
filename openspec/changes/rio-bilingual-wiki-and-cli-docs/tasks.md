@@ -65,3 +65,7 @@
 - [x] 8.2 Improve localized sidebar/breadcrumbs, reference lookup, guide descriptions, schema navigation and collapsible command tables; use command-specific option descriptions.
 - [x] 8.3 Correct the actual TUI never-policy label and refresh its rendering expectations/captures; clarify version tags and polish both languages.
 - [x] 8.4 Validate content, rendering, source/translation freshness, focused tests and embedded budgets; push the updated PR, republish and verify public Home/navigation/images.
+
+## 9. Repository introduction
+
+- [x] 9.1 Rewrite README around Rio’s benefits and first review, retain the header image, position it as an open-source alternative to CodeRabbit and Greptile, add a star invitation, and link technical details to the Wiki. Verify image preservation, links, command examples, release availability and documentation freshness.
