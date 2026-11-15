@@ -1,0 +1,40 @@
+ ▃▅▇▇▇▅▃▃▁▁▁▃ rio  feature/parser-guards → origin/main · rio/openrouter · standard        ◐ running · agents 3/5  0m48s 
+                                                        │                                                               
+  PIPELINE                                              │ rio review --base origin/main --preset standard               
+  ✓ prepare             snapshot a41f…c09         0.4s  │ Reviewing feature/parser-guards                               
+  ◐ checks              2 roots                  14.2s  │                                                               
+   ·   web/             typescript                      │ ████████████████████████████████████░░░░░░░░░░░░░░░░░░░░░░░░  
+      · ✓ typecheck     tsc                       1.8s  │ step 5 of 7 · agents                            ~1m20s left   
+      · ✕ lint          eslint · 2 findings       0.9s  │                                                               
+      · ◐ coverage      vitest · running         12.0s  │───────────────────────────────────────────────────────────────
+   ·   api/             python                          │ FINDINGS SO FAR                                               
+      · ✓ typecheck     pyright                   2.3s  │                                                               
+      · ✓ lint          ruff                      0.1s  │ 3 new          1 worsened     1 security     2 pre-existing   
+      · - coverage      skipped: pytest missing         │                                                               
+   · ✓ secrets          0 found                   0.2s  │───────────────────────────────────────────────────────────────
+   · ◐ audit            osv.dev · 3 packages            │ USAGE                                                         
+  ✓ graph               41 nodes · 63 edges       0.7s  │ 141k in · 16k out                              $0.32 / $2.00  
+  ✓ triage              6 hypotheses              3.1s  │ ━━━━━━━━━━──────────────────────────────────────────────────  
+  ◐ agents              3 of 5                          │                                                               
+   · ✓ correctness      2 hypotheses              9.8s  │───────────────────────────────────────────────────────────────
+   · ✓ security         1 hypothesis              7.2s  │ STDERR · TAIL                                                 
+   · ◐ performance      reading graph slice…            │                                                               
+▌  · ◐ tests            vitest job 7…                   │ 00:41 vitest  ✓ parser.spec.ts · 14 tests · 812ms             
+   · ○ contracts        queued                          │ 00:42 eslint  src/queue.ts:17 no-floating-promises            
+  ○ verify              quorum 2 of 3 · waiting         │ 00:44 agents  correctness → 2 hypotheses to verify            
+  ○ report                                              │ 00:45 osv     querybatch 3 packages · cache hit 2             
+                                                        │ 00:46 agents  tests → spawned job 7 (vitest)                  
+                                                        │ 00:47 vitest  ◐ body.spec.ts running…                         
+  hops 2 · max 2000 nodes · tools not network-isolated  │ 00:48 agents  performance → graph slice parseHeader           
+                                                        │                                                               
+                                                        │                                                               
+                                                        │                                                               
+                                                        │                                                               
+                                                        │                                                               
+                                                        │                                                               
+                                                        │                                                               
+                                                        │                                                               
+                                                        │                                                               
+                                                        │ ctrl-c stop · keep partial report  (twice: exit 130)          
+                                                        │                                                               
+ ctrl-c stop  ↑↓ move  ⏎ step log  l full log  f findings  ? help                                                       

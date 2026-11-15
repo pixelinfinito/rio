@@ -1,0 +1,1305 @@
+{
+  "schema_version": 1,
+  "wiki_url": "https://github.com/pixelinfinito/rio/wiki",
+  "locales": [
+    "en",
+    "pt-BR"
+  ],
+  "internal_commands": {
+    "rio prepare": "Runner-only snapshot preparation; intentionally hidden."
+  },
+  "topics": [
+    {
+      "id": "installation",
+      "title": "Install and update",
+      "summary": "Platforms, installation, updates",
+      "related": [
+        "review",
+        "docs"
+      ],
+      "commands": [],
+      "sources": [
+        "scripts/install.sh",
+        "scripts/install.ps1",
+        "rust-toolchain.toml"
+      ],
+      "keywords": [
+        "installation",
+        "platforms,",
+        "installation,",
+        "updates"
+      ],
+      "agent": "docs/agent/installation.md",
+      "pages": {
+        "en": "docs/wiki/en/installation.md",
+        "pt-BR": "docs/wiki/pt-BR/installation.md"
+      },
+      "availability": "implemented; see release status",
+      "screenshots": [
+        "cli-version",
+        "cli-help"
+      ],
+      "kind": "guide",
+      "translation_review": {
+        "en": "91ac180f65682261a1b4bc1dbb79a22ca73b8a586eae76d77afb36ea6870cfa9",
+        "pt-BR": "1ed4619bdcdea7dc350ae1e78e144796e0aacf5efb682d1d0907f23bb441dcf5"
+      },
+      "source_review": "ff08b07fcee3b0f963b83c763d657a51e63648b261d1fd21315354244a9b0f2a"
+    },
+    {
+      "id": "review",
+      "title": "Review changes",
+      "summary": "Select changes and run checks",
+      "related": [
+        "doctor",
+        "results",
+        "profiles",
+        "github",
+        "tui"
+      ],
+      "commands": [
+        "rio review"
+      ],
+      "sources": [
+        "crates/rio-cli/src/main.rs"
+      ],
+      "keywords": [
+        "review",
+        "select",
+        "changes",
+        "and",
+        "run",
+        "checks"
+      ],
+      "agent": "docs/agent/review.md",
+      "pages": {
+        "en": "docs/wiki/en/review.md",
+        "pt-BR": "docs/wiki/pt-BR/review.md"
+      },
+      "availability": "implemented; see release status",
+      "screenshots": [
+        "cli-review"
+      ],
+      "kind": "guide",
+      "translation_review": {
+        "en": "8a8200ac80e27bd42b2e76282df106f142179553166932b9b19daa1fe1a25746",
+        "pt-BR": "d790f4f722ffbc87fa101bb9639a229713ec3cfb1e3d19a39a00c453698f97f4"
+      },
+      "source_review": "2749551d7c48f850296d83574fdecd4bf10dcd024bb6c687906351d562f32b63"
+    },
+    {
+      "id": "doctor",
+      "title": "Diagnose readiness",
+      "summary": "Tools, dependencies, readiness",
+      "related": [
+        "review",
+        "configuration"
+      ],
+      "commands": [
+        "rio doctor"
+      ],
+      "sources": [
+        "crates/rio-cli/src/main.rs",
+        "crates/rio-cli/src/config.rs"
+      ],
+      "keywords": [
+        "doctor",
+        "tools,",
+        "dependencies,",
+        "readiness"
+      ],
+      "agent": "docs/agent/doctor.md",
+      "pages": {
+        "en": "docs/wiki/en/doctor.md",
+        "pt-BR": "docs/wiki/pt-BR/doctor.md"
+      },
+      "availability": "implemented; see release status",
+      "screenshots": [
+        "cli-doctor"
+      ],
+      "kind": "guide",
+      "translation_review": {
+        "en": "93272e024a59457d571638e0c84d6231f2f83e6a0dd5657dcad96778e3eed0f1",
+        "pt-BR": "cc6cc31f3c9bec51433d0fc0434c7831576f7b472431cd4947f8dcd7764768a1"
+      },
+      "source_review": "eca98ec6c44833274040fa6aa226bb670f4201960d6f63e19fb8fb4cda53d261"
+    },
+    {
+      "id": "results",
+      "title": "Read review results",
+      "summary": "Evidence, exports, exit codes",
+      "related": [
+        "review",
+        "github"
+      ],
+      "commands": [],
+      "sources": [
+        "crates/rio-core/src/lib.rs",
+        "docs/sarif-mapping.md"
+      ],
+      "keywords": [
+        "results",
+        "evidence,",
+        "exports,",
+        "exit",
+        "codes"
+      ],
+      "agent": "docs/agent/results.md",
+      "pages": {
+        "en": "docs/wiki/en/results.md",
+        "pt-BR": "docs/wiki/pt-BR/results.md"
+      },
+      "availability": "implemented; see release status",
+      "screenshots": [],
+      "kind": "guide",
+      "translation_review": {
+        "en": "14e4e09e0886044832e82d446ebafc88797dc535ac2f99b4cf2c88d88285d845",
+        "pt-BR": "a269a1e094036297bf7a8cf8df97f2355fc7597e57255039fbbab4ad12e69b05"
+      },
+      "source_review": "3a8a7a2a954f8f4054f046b6d5ac8bec3252f6771c73b2d277c9e3221b7713d4"
+    },
+    {
+      "id": "tui",
+      "title": "Terminal interface",
+      "summary": "Navigation and interactive controls",
+      "related": [
+        "review",
+        "qa",
+        "github"
+      ],
+      "commands": [],
+      "sources": [
+        "crates/rio-cli/src/tui/mod.rs",
+        "crates/rio-tui/src/app.rs"
+      ],
+      "keywords": [
+        "tui",
+        "navigation",
+        "and",
+        "interactive",
+        "controls"
+      ],
+      "agent": "docs/agent/tui.md",
+      "pages": {
+        "en": "docs/wiki/en/tui.md",
+        "pt-BR": "docs/wiki/pt-BR/tui.md"
+      },
+      "availability": "implemented; see release status",
+      "screenshots": [
+        "review-00-start",
+        "review-01-live-review",
+        "review-02-findings",
+        "review-05-summary-export"
+      ],
+      "kind": "guide",
+      "translation_review": {
+        "en": "2ff183b161d8009047219020be74bad0827c7a680cf795227ad90adccc457d55",
+        "pt-BR": "339e2421bf4c57f78ea19759eaf8c9d0fd38fc2b453d1a6aec2dc9b5247d2a64"
+      },
+      "source_review": "e5aee02fcfa6daaadba3e20c513aa61cc47df1536730408fbd3ac2a99354c722"
+    },
+    {
+      "id": "profiles",
+      "title": "Profiles and policy",
+      "summary": "Inheritance and review adjustments",
+      "related": [
+        "configuration",
+        "modules",
+        "budgets"
+      ],
+      "commands": [
+        "rio profile",
+        "rio profile list",
+        "rio profile show",
+        "rio profile validate"
+      ],
+      "sources": [
+        "crates/rio-profile/src/lib.rs",
+        "schemas/profile-v1.json",
+        "modules/profiles/base.yaml"
+      ],
+      "keywords": [
+        "profiles",
+        "inheritance",
+        "and",
+        "review",
+        "adjustments"
+      ],
+      "agent": "docs/agent/profiles.md",
+      "pages": {
+        "en": "docs/wiki/en/profiles.md",
+        "pt-BR": "docs/wiki/pt-BR/profiles.md"
+      },
+      "availability": "implemented; see release status",
+      "screenshots": [
+        "cli-profile"
+      ],
+      "kind": "guide",
+      "translation_review": {
+        "en": "fca53366709bb2e103dafc9b1e778ab12d8310f3a6c28516c1bf4e6c8c9a6345",
+        "pt-BR": "9cc810640335d48ee9b6fba9bb112f87a628cc8bff5c712e8c34dd352f8b60af"
+      },
+      "source_review": "dd5cad388c528fef1860cd08d2abf89f58b43592f5da1a9308026445c6f5131c"
+    },
+    {
+      "id": "configuration",
+      "title": "Machine configuration",
+      "summary": "Paths, environment, precedence",
+      "related": [
+        "profiles",
+        "cache",
+        "hosting"
+      ],
+      "commands": [],
+      "sources": [
+        "crates/rio-cli/src/config.rs",
+        "crates/rio-cli/src/deployment.rs"
+      ],
+      "keywords": [
+        "configuration",
+        "paths,",
+        "environment,",
+        "precedence"
+      ],
+      "agent": "docs/agent/configuration.md",
+      "pages": {
+        "en": "docs/wiki/en/configuration.md",
+        "pt-BR": "docs/wiki/pt-BR/configuration.md"
+      },
+      "availability": "implemented; see release status",
+      "screenshots": [],
+      "kind": "guide",
+      "translation_review": {
+        "en": "1c120708a99757dd3eb7c908fda163d7439972ff4041798050a9fc753011cb27",
+        "pt-BR": "f4f8529fa98ad5a53bd2752890341fc58ea49dd78d2806ab62a9941cc01f48ec"
+      },
+      "source_review": "8e7c07e3468a0f77181df9902fdfb9af324724cdb0e929d9607c3f0a9a2c43e5"
+    },
+    {
+      "id": "hosting",
+      "title": "Deploy or connect",
+      "summary": "Endpoint setup and runners",
+      "related": [
+        "providers",
+        "github",
+        "configuration"
+      ],
+      "commands": [
+        "rio init",
+        "rio deploy"
+      ],
+      "sources": [
+        "crates/rio-cli/src/deployment.rs",
+        "docs/cloudflare.md"
+      ],
+      "keywords": [
+        "hosting",
+        "endpoint",
+        "setup",
+        "and",
+        "runners"
+      ],
+      "agent": "docs/agent/hosting.md",
+      "pages": {
+        "en": "docs/wiki/en/hosting.md",
+        "pt-BR": "docs/wiki/pt-BR/hosting.md"
+      },
+      "availability": "implemented; see release status",
+      "screenshots": [
+        "init-i1-choose-mode",
+        "init-i3-deploying"
+      ],
+      "kind": "guide",
+      "translation_review": {
+        "en": "41f930a72b43b7cee3675d9d9530a837fbd22c22ffacc4f1a757740206e1efb8",
+        "pt-BR": "5709bb407e4fbbb978b84307ed8c6746c57c46d4772da2f17fef2772a0f23e70"
+      },
+      "source_review": "1c2a9c6193b7288a356e3120cc2e042f918130f616bb14fd9b926e9b0e270a95"
+    },
+    {
+      "id": "providers",
+      "title": "Model providers",
+      "summary": "Keys, custom routes and models",
+      "related": [
+        "hosting",
+        "budgets",
+        "profiles"
+      ],
+      "commands": [],
+      "sources": [
+        "docs/cloudflare.md",
+        "crates/rio-cli/src/providers.rs"
+      ],
+      "keywords": [
+        "providers",
+        "keys,",
+        "custom",
+        "routes",
+        "and",
+        "models"
+      ],
+      "agent": "docs/agent/providers.md",
+      "pages": {
+        "en": "docs/wiki/en/providers.md",
+        "pt-BR": "docs/wiki/pt-BR/providers.md"
+      },
+      "availability": "implemented; see release status",
+      "screenshots": [],
+      "kind": "guide",
+      "translation_review": {
+        "en": "273637d38aa033e960b0357014b7679425383d9cae3377da12e4c39eeb84e8a7",
+        "pt-BR": "cd6b0025a65da5c0ddd8f36628caffa56c93f3d3964dde71ff9ad4e3fdb05943"
+      },
+      "source_review": "25076d7511908d6ef76c0d71ba0b0db6e338dae62322dd7e0fe51ad47a1ead3e"
+    },
+    {
+      "id": "budgets",
+      "title": "Depth and spending",
+      "summary": "Presets, time and token limits",
+      "related": [
+        "profiles",
+        "providers",
+        "council"
+      ],
+      "commands": [],
+      "sources": [
+        "docs/profiles.md",
+        "schemas/profile-v1.json"
+      ],
+      "keywords": [
+        "budgets",
+        "presets,",
+        "time",
+        "and",
+        "token",
+        "limits"
+      ],
+      "agent": "docs/agent/budgets.md",
+      "pages": {
+        "en": "docs/wiki/en/budgets.md",
+        "pt-BR": "docs/wiki/pt-BR/budgets.md"
+      },
+      "availability": "implemented; see release status",
+      "screenshots": [],
+      "kind": "guide",
+      "translation_review": {
+        "en": "a45e05ffaa4ef06abafa1ff0f051ca39cb5bd727773636efcb415acf52a3d6f0",
+        "pt-BR": "cfb050600470bee605b12234ee4661ce9e3f3d4073e03b40e1dfc320abe461df"
+      },
+      "source_review": "370b44e860cffdc1de009bcca5282362f86b976494f6bb7117860f48294f470e"
+    },
+    {
+      "id": "github",
+      "title": "GitHub and PR reviews",
+      "summary": "App setup, policy and publishing",
+      "related": [
+        "hosting",
+        "feedback",
+        "ci"
+      ],
+      "commands": [],
+      "sources": [
+        "docs/github-app.md",
+        "crates/rio-cli/src/pull.rs"
+      ],
+      "keywords": [
+        "github",
+        "app",
+        "setup,",
+        "policy",
+        "and",
+        "publishing"
+      ],
+      "agent": "docs/agent/github.md",
+      "pages": {
+        "en": "docs/wiki/en/github.md",
+        "pt-BR": "docs/wiki/pt-BR/github.md"
+      },
+      "availability": "implemented; see release status",
+      "screenshots": [
+        "team-p2-publish-preview"
+      ],
+      "kind": "guide",
+      "translation_review": {
+        "en": "f19ca066fb46ee792cf2d5afffbb44446ba0c20332572a351a62d7c2a9027eda",
+        "pt-BR": "c607dfefe4785cabf011169ec9a6ce85d94c1bdf561f3b4d27a800ae9d42d0d2"
+      },
+      "source_review": "60169ed36ada6aeee381bff370752b7ff637394b076ee7a5403afdd0968ac2a0"
+    },
+    {
+      "id": "feedback",
+      "title": "Rounds and finding history",
+      "summary": "Lineages, dismissals and regressions",
+      "related": [
+        "github",
+        "suppressions"
+      ],
+      "commands": [
+        "rio feedback",
+        "rio findings"
+      ],
+      "sources": [
+        "crates/rio-cli/src/registry.rs",
+        "crates/rio-cli/src/lineage.rs"
+      ],
+      "keywords": [
+        "feedback",
+        "lineages,",
+        "dismissals",
+        "and",
+        "regressions"
+      ],
+      "agent": "docs/agent/feedback.md",
+      "pages": {
+        "en": "docs/wiki/en/feedback.md",
+        "pt-BR": "docs/wiki/pt-BR/feedback.md"
+      },
+      "availability": "implemented; see release status",
+      "screenshots": [
+        "team-p3-finding-history"
+      ],
+      "kind": "guide",
+      "translation_review": {
+        "en": "10793e84908b524a679ac2e18805d66b325e25361639c4a9be70aaa64a2d90f8",
+        "pt-BR": "8a49c74dbb6f1219f98d35839c8871fb96e8fe96af0e05060d282fe3ecdd9f4f"
+      },
+      "source_review": "b970dec186c65d237d1476f80fde60baa2a6cf4758b73d40f10d6427bd84c43c"
+    },
+    {
+      "id": "suppressions",
+      "title": "Suppression proposals",
+      "summary": "Inspect, apply or decline",
+      "related": [
+        "feedback",
+        "profiles"
+      ],
+      "commands": [
+        "rio suppressions",
+        "rio suppressions list",
+        "rio suppressions apply",
+        "rio suppressions decline"
+      ],
+      "sources": [
+        "crates/rio-cli/src/registry.rs",
+        "docs/finding-history.md"
+      ],
+      "keywords": [
+        "suppressions",
+        "inspect,",
+        "apply",
+        "or",
+        "decline"
+      ],
+      "agent": "docs/agent/suppressions.md",
+      "pages": {
+        "en": "docs/wiki/en/suppressions.md",
+        "pt-BR": "docs/wiki/pt-BR/suppressions.md"
+      },
+      "availability": "implemented; see release status",
+      "screenshots": [
+        "team-p4-suppression-proposals"
+      ],
+      "kind": "guide",
+      "translation_review": {
+        "en": "d0be9a7450b389f81f476452357eed715e9e061866a3718f136d1a8028952aa0",
+        "pt-BR": "c43bd61f41978181c97d2a078a887ae6bb886df73d6f3624df4b89170712aef6"
+      },
+      "source_review": "748909eff627e2bac8fdcbd365e184a9e1baf17f5464ee7e06f33835a1425b25"
+    },
+    {
+      "id": "security",
+      "title": "Security review",
+      "summary": "Catalogs, evidence and failure policy",
+      "related": [
+        "council",
+        "profiles",
+        "providers"
+      ],
+      "commands": [],
+      "sources": [
+        "docs/profiles.md",
+        "modules/profiles/security.yaml"
+      ],
+      "keywords": [
+        "security",
+        "catalogs,",
+        "evidence",
+        "and",
+        "failure",
+        "policy"
+      ],
+      "agent": "docs/agent/security.md",
+      "pages": {
+        "en": "docs/wiki/en/security.md",
+        "pt-BR": "docs/wiki/pt-BR/security.md"
+      },
+      "availability": "implemented; see release status",
+      "screenshots": [
+        "team-p1-security-council"
+      ],
+      "kind": "guide",
+      "translation_review": {
+        "en": "68851ae56473762c067b3b54cea384c13c2dfc5b0312d78269933a089754bb36",
+        "pt-BR": "ed42170ffb48fe89e6c81599a5f9ca5ca592ad163afd80f3ea55a6f567e223c0"
+      },
+      "source_review": "979155352b7c9b47902191768a20aeaf2fcf1842234172d2a843ddbe46da354c"
+    },
+    {
+      "id": "council",
+      "title": "Independent council",
+      "summary": "Opt-in vendors and evidence tiers",
+      "related": [
+        "security",
+        "hosting",
+        "budgets"
+      ],
+      "commands": [],
+      "sources": [
+        "modules/profiles/security.yaml",
+        "docs/profiles.md",
+        "docs/evaluation/v0.3-council.md"
+      ],
+      "keywords": [
+        "council",
+        "opt-in",
+        "vendors",
+        "and",
+        "evidence",
+        "tiers"
+      ],
+      "agent": "docs/agent/council.md",
+      "pages": {
+        "en": "docs/wiki/en/council.md",
+        "pt-BR": "docs/wiki/pt-BR/council.md"
+      },
+      "availability": "implemented; see release status",
+      "screenshots": [],
+      "kind": "guide",
+      "translation_review": {
+        "en": "5f591f2c5603dd6b0affeb2a8200ea99e6f2617285faa54d2ad525271c690d76",
+        "pt-BR": "c29323b9696991c90e50873778930d91d6384c622bf419d45a91560adf87b8f8"
+      },
+      "source_review": "5f05c78785bf960405ed0727ce66ed1e690c9401c9140e93fabb2dcc63a5aa1d"
+    },
+    {
+      "id": "qa",
+      "title": "Browser QA",
+      "summary": "Set up and run browser journeys",
+      "related": [
+        "qa-journeys",
+        "qa-seeds",
+        "qa-evidence",
+        "tui"
+      ],
+      "commands": [
+        "rio qa",
+        "rio qa init",
+        "rio qa validate",
+        "rio qa list",
+        "rio qa show",
+        "rio qa rules"
+      ],
+      "sources": [
+        "crates/rio-cli/src/qa.rs",
+        "docs/qa.md"
+      ],
+      "keywords": [
+        "qa",
+        "set",
+        "up",
+        "and",
+        "run",
+        "browser",
+        "journeys"
+      ],
+      "agent": "docs/agent/qa.md",
+      "pages": {
+        "en": "docs/wiki/en/qa.md",
+        "pt-BR": "docs/wiki/pt-BR/qa.md"
+      },
+      "availability": "implemented; see release status",
+      "screenshots": [
+        "qa-q1-journeys",
+        "qa-q2-matrix-live"
+      ],
+      "kind": "guide",
+      "translation_review": {
+        "en": "a1487d354e8a4897b59a5f53ad1ccba75eca9a30ca7bef2fc8369a99449d1050",
+        "pt-BR": "0e8b070261312d25e8f446df3517935bd435b5298e95cd0998376a4b04e946a0"
+      },
+      "source_review": "6cb4aec88adad841cdb32b9bb88c00736b1b1ed13d3406de9448666ed75fecc1"
+    },
+    {
+      "id": "qa-journeys",
+      "title": "Journeys and owner guidance",
+      "summary": "Coverage, dependencies and sync",
+      "related": [
+        "qa",
+        "qa-seeds"
+      ],
+      "commands": [
+        "rio qa sync"
+      ],
+      "sources": [
+        "docs/qa.md",
+        "schemas/journey-v1.json"
+      ],
+      "keywords": [
+        "qa-journeys",
+        "coverage,",
+        "dependencies",
+        "and",
+        "sync"
+      ],
+      "agent": "docs/agent/qa-journeys.md",
+      "pages": {
+        "en": "docs/wiki/en/qa-journeys.md",
+        "pt-BR": "docs/wiki/pt-BR/qa-journeys.md"
+      },
+      "availability": "implemented; see release status",
+      "screenshots": [],
+      "kind": "guide",
+      "translation_review": {
+        "en": "8e19dc27a7c14f77b168944a42c0f138035b1230afc605a3c0d72bedd035045d",
+        "pt-BR": "055dbca02a840bcac87c0bb6364f1dc98b47222b1c6443810b4433750b0846af"
+      },
+      "source_review": "5441fb24c2aa5595ffd9e9500a01201e5fb943b5607aa0da99fa8b1b68b0262a"
+    },
+    {
+      "id": "qa-seeds",
+      "title": "Seeds and fixtures",
+      "summary": "Synthetic data, build and export",
+      "related": [
+        "qa",
+        "qa-journeys"
+      ],
+      "commands": [
+        "rio qa seed",
+        "rio qa seed build",
+        "rio qa seed export",
+        "rio qa seed prune",
+        "rio qa seed status",
+        "rio qa fixtures",
+        "rio qa fixtures status"
+      ],
+      "sources": [
+        "docs/qa.md",
+        "crates/rio-cli/src/qa_seed.rs"
+      ],
+      "keywords": [
+        "qa-seeds",
+        "synthetic",
+        "data,",
+        "build",
+        "and",
+        "export"
+      ],
+      "agent": "docs/agent/qa-seeds.md",
+      "pages": {
+        "en": "docs/wiki/en/qa-seeds.md",
+        "pt-BR": "docs/wiki/pt-BR/qa-seeds.md"
+      },
+      "availability": "implemented; see release status",
+      "screenshots": [],
+      "kind": "guide",
+      "translation_review": {
+        "en": "a17a9ba566717f5c55ec5a64edffc1b4a1577a7c3c931e74e3c8d8488eebd9eb",
+        "pt-BR": "f7a025f11e45c7bcd5a5a6c4b04125d062d2b229e8300abf77112d32348874cc"
+      },
+      "source_review": "5d9e58f7cb08ec2d16cdc7181c630448a6a2439be2694d81db74300d88d3cb33"
+    },
+    {
+      "id": "qa-evidence",
+      "title": "QA evidence and UX",
+      "summary": "Screenshots, traces and retention",
+      "related": [
+        "qa",
+        "results",
+        "cache"
+      ],
+      "commands": [
+        "rio qa evidence",
+        "rio qa evidence prune"
+      ],
+      "sources": [
+        "docs/qa.md",
+        "crates/rio-cli/src/qa.rs"
+      ],
+      "keywords": [
+        "qa-evidence",
+        "screenshots,",
+        "traces",
+        "and",
+        "retention"
+      ],
+      "agent": "docs/agent/qa-evidence.md",
+      "pages": {
+        "en": "docs/wiki/en/qa-evidence.md",
+        "pt-BR": "docs/wiki/pt-BR/qa-evidence.md"
+      },
+      "availability": "implemented; see release status",
+      "screenshots": [
+        "qa-q3-cell-detail",
+        "qa-q4-ux-recommendations"
+      ],
+      "kind": "guide",
+      "translation_review": {
+        "en": "a0760efd82f0555abc63233c3796f8cf513db3aca7359e1e1162732beac3ba45",
+        "pt-BR": "da58abd572986f40c46891523aab8b901d87541ff3d892610e5dff805718e855"
+      },
+      "source_review": "6cb4aec88adad841cdb32b9bb88c00736b1b1ed13d3406de9448666ed75fecc1"
+    },
+    {
+      "id": "ci",
+      "title": "Continuous integration",
+      "summary": "Reports, exit policy and SARIF",
+      "related": [
+        "results",
+        "github",
+        "profiles"
+      ],
+      "commands": [],
+      "sources": [
+        "docs/sarif-mapping.md",
+        ".github/workflows/ci.yml"
+      ],
+      "keywords": [
+        "ci",
+        "reports,",
+        "exit",
+        "policy",
+        "and",
+        "sarif"
+      ],
+      "agent": "docs/agent/ci.md",
+      "pages": {
+        "en": "docs/wiki/en/ci.md",
+        "pt-BR": "docs/wiki/pt-BR/ci.md"
+      },
+      "availability": "implemented; see release status",
+      "screenshots": [],
+      "kind": "guide",
+      "translation_review": {
+        "en": "7e1b5878cb50db04e1ee6ce807330ae31442253ebc7fa7e791743abe023714f2",
+        "pt-BR": "321502e23534bb5a22e134232ade02c8e0efc8e887f9045956e46c8a039bb8d8"
+      },
+      "source_review": "3ce8d9e0996f8e9ccd2d90276520c1de4b164f54fa81fa11c4c584a6a31520ad"
+    },
+    {
+      "id": "cache",
+      "title": "Cache, privacy and offline limits",
+      "summary": "Retention, snapshots, network",
+      "related": [
+        "configuration",
+        "review",
+        "qa-evidence"
+      ],
+      "commands": [],
+      "sources": [
+        "crates/rio-cli/src/config.rs",
+        "docs/adapters.md"
+      ],
+      "keywords": [
+        "cache",
+        "retention,",
+        "snapshots,",
+        "network"
+      ],
+      "agent": "docs/agent/cache.md",
+      "pages": {
+        "en": "docs/wiki/en/cache.md",
+        "pt-BR": "docs/wiki/pt-BR/cache.md"
+      },
+      "availability": "implemented; see release status",
+      "screenshots": [],
+      "kind": "guide",
+      "translation_review": {
+        "en": "faadd072dbe78d6d98da07281ed59ebcfa0ca14cbc4ba51ecb7845da144d29ad",
+        "pt-BR": "7e888aeaeaf1ef777abbb2bf1d13715e51eef253ef28e761a4286db487263974"
+      },
+      "source_review": "e2d2167e5b95ffe183b25b2f0c3a717bee089da3681f7e2af946226a0288c3c4"
+    },
+    {
+      "id": "evaluation",
+      "title": "Evaluation tooling",
+      "summary": "Noise and incident harness",
+      "related": [
+        "results",
+        "installation"
+      ],
+      "commands": [
+        "rio eval",
+        "rio eval noise",
+        "rio eval import-incident"
+      ],
+      "sources": [
+        "eval/README.md",
+        "eval/noise.py",
+        "eval/incident.py"
+      ],
+      "keywords": [
+        "evaluation",
+        "noise",
+        "and",
+        "incident",
+        "harness"
+      ],
+      "agent": "docs/agent/evaluation.md",
+      "pages": {
+        "en": "docs/wiki/en/evaluation.md",
+        "pt-BR": "docs/wiki/pt-BR/evaluation.md"
+      },
+      "availability": "implemented; see release status",
+      "screenshots": [],
+      "kind": "guide",
+      "translation_review": {
+        "en": "118fed702679baf174ccdcf7fb350aa41769ff9405519006acbd8963e252df54",
+        "pt-BR": "bb16b4b0cb32d6bbd84b9ad5b8d92de3c0a2f1ca1cfc4121c8ce25ceb01ed4de"
+      },
+      "source_review": "463204ccf80d38ffdecfdc5bc042972a209fb041f747494efbe2540923f40979"
+    },
+    {
+      "id": "docs",
+      "title": "Read embedded documentation",
+      "summary": "Offline discovery and search",
+      "related": [
+        "review",
+        "profiles"
+      ],
+      "commands": [
+        "rio docs"
+      ],
+      "sources": [
+        "crates/rio-cli/src/docs.rs"
+      ],
+      "keywords": [
+        "docs",
+        "offline",
+        "discovery",
+        "and",
+        "search"
+      ],
+      "agent": "docs/agent/docs.md",
+      "pages": {
+        "en": "docs/wiki/en/docs.md",
+        "pt-BR": "docs/wiki/pt-BR/docs.md"
+      },
+      "availability": "implemented; see release status",
+      "screenshots": [],
+      "kind": "guide",
+      "translation_review": {
+        "en": "2475f0c83ef04a9c72b4615b0fe9b9f622f73ceb77f84431511b9f7d93217916",
+        "pt-BR": "3597965f06f9251a3245c5b447f14222260120a94e2aff1c1d7be237137af6e7"
+      },
+      "source_review": "fcf745928ab33da63f89f0e900c2c49b4919f0f1d7eab362a0b3fcc8f87e2a9d"
+    },
+    {
+      "id": "modules",
+      "title": "Steps, rules and adapters",
+      "summary": "Pipeline customization and tools",
+      "related": [
+        "profiles",
+        "review",
+        "security",
+        "qa",
+        "budgets"
+      ],
+      "commands": [],
+      "sources": [
+        "docs/adapters.md",
+        "docs/profiles.md",
+        "schemas/module-v1.json"
+      ],
+      "keywords": [
+        "modules",
+        "pipeline",
+        "customization",
+        "and",
+        "tools"
+      ],
+      "agent": "docs/agent/modules.md",
+      "pages": {
+        "en": "docs/wiki/en/modules.md",
+        "pt-BR": "docs/wiki/pt-BR/modules.md"
+      },
+      "availability": "implemented; see release status",
+      "screenshots": [],
+      "kind": "guide",
+      "translation_review": {
+        "en": "08eb329e6fb7d0cbbc2a902bbe1fde366c6a4c106d9421f2aa3970adbbf7747d",
+        "pt-BR": "df51427d9d691f9d84170fb33dcb209815044e64c0e1182cef547109e469ad3b"
+      },
+      "source_review": "d35c90d2547f322c536bbf469ec542db0c8097b42189fc016900129ac928517b"
+    },
+    {
+      "id": "start",
+      "title": "Start with Rio",
+      "summary": "",
+      "related": [],
+      "commands": [],
+      "sources": [
+        "README.md"
+      ],
+      "keywords": [],
+      "agent": null,
+      "pages": {
+        "en": "docs/wiki/en/start.md",
+        "pt-BR": "docs/wiki/pt-BR/start.md"
+      },
+      "availability": "documentation",
+      "screenshots": [],
+      "kind": "reference",
+      "translation_review": {
+        "en": "df66fe7278c1b80d32e00dd982c19169b2f923b4a1cd6093707e102e1584bd83",
+        "pt-BR": "2227989583f5a927f84174a273b468c3df922ba314c2aa1f6449354ec53dfbe9"
+      },
+      "source_review": "f12da1c25e60a8a85f306614ef671fcc3764920d56bbefea23a3dc28c11c2770"
+    },
+    {
+      "id": "troubleshooting",
+      "title": "Troubleshooting and frequently asked questions",
+      "summary": "",
+      "related": [],
+      "commands": [],
+      "sources": [
+        "README.md"
+      ],
+      "keywords": [],
+      "agent": null,
+      "pages": {
+        "en": "docs/wiki/en/troubleshooting.md",
+        "pt-BR": "docs/wiki/pt-BR/troubleshooting.md"
+      },
+      "availability": "documentation",
+      "screenshots": [],
+      "kind": "reference",
+      "translation_review": {
+        "en": "3c1b6a458aa5a35b392227d006773d01d21124771168d9718784ac88171c3b9d",
+        "pt-BR": "6749b63cdb0fb835f3c1a10008ccd9c77bba24bcc1f11a39509e6be4f15c6649"
+      },
+      "source_review": "f12da1c25e60a8a85f306614ef671fcc3764920d56bbefea23a3dc28c11c2770"
+    },
+    {
+      "id": "glossary",
+      "title": "Glossary",
+      "summary": "",
+      "related": [],
+      "commands": [],
+      "sources": [
+        "README.md"
+      ],
+      "keywords": [],
+      "agent": null,
+      "pages": {
+        "en": "docs/wiki/en/glossary.md",
+        "pt-BR": "docs/wiki/pt-BR/glossary.md"
+      },
+      "availability": "documentation",
+      "screenshots": [],
+      "kind": "reference",
+      "translation_review": {
+        "en": "e2a25b177aae8b929a99aa8ebe70b04a8edc7be9f4254c5214e6ed80e9ff5465",
+        "pt-BR": "cfe59a84551b6d3c511a80436490cbe6801907bb4429366e3e80dd60f21f913f"
+      },
+      "source_review": "f12da1c25e60a8a85f306614ef671fcc3764920d56bbefea23a3dc28c11c2770"
+    },
+    {
+      "id": "guides",
+      "title": "Guides by task",
+      "summary": "",
+      "related": [],
+      "commands": [],
+      "sources": [
+        "README.md"
+      ],
+      "keywords": [],
+      "agent": null,
+      "pages": {
+        "en": "docs/wiki/en/guides.md",
+        "pt-BR": "docs/wiki/pt-BR/guides.md"
+      },
+      "availability": "documentation",
+      "screenshots": [],
+      "kind": "reference",
+      "translation_review": {
+        "en": "1e5acc8959f2892cc57ebfbfbe3127a29fef4d7c0c50ad8038dec283318446e6",
+        "pt-BR": "770f9ad069490cbaae82d81f2bb47ceee07c2b2f59729eed2cdc2b4fbaeb63b1"
+      },
+      "source_review": "f12da1c25e60a8a85f306614ef671fcc3764920d56bbefea23a3dc28c11c2770"
+    },
+    {
+      "id": "reference",
+      "title": "Reference index",
+      "summary": "",
+      "related": [],
+      "commands": [
+        "rio"
+      ],
+      "sources": [
+        "README.md"
+      ],
+      "keywords": [],
+      "agent": null,
+      "pages": {
+        "en": "docs/wiki/en/reference.md",
+        "pt-BR": "docs/wiki/pt-BR/reference.md"
+      },
+      "availability": "documentation",
+      "screenshots": [],
+      "kind": "reference",
+      "translation_review": {
+        "en": "bcdea5863414421999d911dde2af75e6b1ff48cd08b48dff9d32d565001006dd",
+        "pt-BR": "0bf9fc30ecb69b80fb5a3706b61921730ccb377b85b42a34dd7cb81f7d4b0a53"
+      },
+      "source_review": "f12da1c25e60a8a85f306614ef671fcc3764920d56bbefea23a3dc28c11c2770"
+    },
+    {
+      "id": "profile-fields-1",
+      "title": "Profile fields 1",
+      "summary": "profile schema fields, part 1",
+      "related": [
+        "profiles",
+        "modules"
+      ],
+      "commands": [],
+      "sources": [
+        "schemas/profile-v1.json"
+      ],
+      "keywords": [
+        "profile",
+        "fields",
+        "schema"
+      ],
+      "agent": "docs/agent/profile-fields-1.md",
+      "pages": {
+        "en": "docs/wiki/en/profile-fields-1.md",
+        "pt-BR": "docs/wiki/pt-BR/profile-fields-1.md"
+      },
+      "kind": "reference",
+      "availability": "implemented schema",
+      "screenshots": [],
+      "index_parent": "modules",
+      "translation_review": {
+        "en": "b7de4aa94d158e568fe04ef771fbecff5c0d8b382f33a98c5a1f12e3a7d7dd1a",
+        "pt-BR": "ad75448c5b8dfdba21a27f63ad35d001c9d221ad16fb85afc4217de8a5c700db"
+      },
+      "source_review": "20595632f168da3c864d0538dd3f000cdf8cff3ec1c4a9ab9b06fc255262d9a9"
+    },
+    {
+      "id": "profile-fields-2",
+      "title": "Profile fields 2",
+      "summary": "profile schema fields, part 2",
+      "related": [
+        "profiles",
+        "modules"
+      ],
+      "commands": [],
+      "sources": [
+        "schemas/profile-v1.json"
+      ],
+      "keywords": [
+        "profile",
+        "fields",
+        "schema"
+      ],
+      "agent": "docs/agent/profile-fields-2.md",
+      "pages": {
+        "en": "docs/wiki/en/profile-fields-2.md",
+        "pt-BR": "docs/wiki/pt-BR/profile-fields-2.md"
+      },
+      "kind": "reference",
+      "availability": "implemented schema",
+      "screenshots": [],
+      "index_parent": "modules",
+      "translation_review": {
+        "en": "ba46cef39448b944f0f735070669a132bb0a81c1fbb7f64ec98931b1af03dd3e",
+        "pt-BR": "ab02199322796f5db57d57e71c5878e2f6248a69ade34c5f270014d90f373259"
+      },
+      "source_review": "20595632f168da3c864d0538dd3f000cdf8cff3ec1c4a9ab9b06fc255262d9a9"
+    },
+    {
+      "id": "qa-config-fields-1",
+      "title": "QA environment fields 1",
+      "summary": "qa-config schema fields, part 1",
+      "related": [
+        "qa",
+        "modules"
+      ],
+      "commands": [],
+      "sources": [
+        "schemas/qa-config-v1.json"
+      ],
+      "keywords": [
+        "qa-config",
+        "fields",
+        "schema"
+      ],
+      "agent": "docs/agent/qa-config-fields-1.md",
+      "pages": {
+        "en": "docs/wiki/en/qa-config-fields-1.md",
+        "pt-BR": "docs/wiki/pt-BR/qa-config-fields-1.md"
+      },
+      "kind": "reference",
+      "availability": "implemented schema",
+      "screenshots": [],
+      "index_parent": "modules",
+      "translation_review": {
+        "en": "738900668b842c96de340cbc8f380447e2682df7ce0ed93db4f34b2ad306d84f",
+        "pt-BR": "4d1260141901b420b2ca39ddb7126d116621f3a62530c9f7ee0cd6eb679cfa78"
+      },
+      "source_review": "9a93d24cca8a0384282a11b009b3c12e149414acd6655b6ab5ecc98398d227ef"
+    },
+    {
+      "id": "qa-journey-fields-1",
+      "title": "Journey fields 1",
+      "summary": "qa-journey schema fields, part 1",
+      "related": [
+        "qa",
+        "modules"
+      ],
+      "commands": [],
+      "sources": [
+        "schemas/journey-v1.json"
+      ],
+      "keywords": [
+        "qa-journey",
+        "fields",
+        "schema"
+      ],
+      "agent": "docs/agent/qa-journey-fields-1.md",
+      "pages": {
+        "en": "docs/wiki/en/qa-journey-fields-1.md",
+        "pt-BR": "docs/wiki/pt-BR/qa-journey-fields-1.md"
+      },
+      "kind": "reference",
+      "availability": "implemented schema",
+      "screenshots": [],
+      "index_parent": "modules",
+      "translation_review": {
+        "en": "bd098ac7ff419ea681d208fbb68e63e0f79fafc131743336bf3d19cb1952e6ea",
+        "pt-BR": "46502ad2fb2bc903f01d055f9bd25bc99cc7e892ee77a775ea1e886db42e949e"
+      },
+      "source_review": "131f6a37861de58a17dc756dd5e770b3fcc118a2c232e8465cde3023e1912f7c"
+    },
+    {
+      "id": "qa-seed-fields-1",
+      "title": "Seed fields 1",
+      "summary": "qa-seed schema fields, part 1",
+      "related": [
+        "qa",
+        "modules"
+      ],
+      "commands": [],
+      "sources": [
+        "schemas/qa-seed-v1.json"
+      ],
+      "keywords": [
+        "qa-seed",
+        "fields",
+        "schema"
+      ],
+      "agent": "docs/agent/qa-seed-fields-1.md",
+      "pages": {
+        "en": "docs/wiki/en/qa-seed-fields-1.md",
+        "pt-BR": "docs/wiki/pt-BR/qa-seed-fields-1.md"
+      },
+      "kind": "reference",
+      "availability": "implemented schema",
+      "screenshots": [],
+      "index_parent": "modules",
+      "translation_review": {
+        "en": "28a41d7c8a3fd838d0a539f94819ef6f034b2d5de4fa4f4babfde23c0c97cc01",
+        "pt-BR": "c97151e68f0b19385e441b79a00158dbb458b0443fa8a6f754de3474963db101"
+      },
+      "source_review": "94aaa5de95fd5145a5bbb446499ab7bf863498101479b62c252e6902a2d465d0"
+    },
+    {
+      "id": "qa-fixtures-fields-1",
+      "title": "Fixture fields 1",
+      "summary": "qa-fixtures schema fields, part 1",
+      "related": [
+        "qa",
+        "modules"
+      ],
+      "commands": [],
+      "sources": [
+        "schemas/qa-fixtures-v1.json"
+      ],
+      "keywords": [
+        "qa-fixtures",
+        "fields",
+        "schema"
+      ],
+      "agent": "docs/agent/qa-fixtures-fields-1.md",
+      "pages": {
+        "en": "docs/wiki/en/qa-fixtures-fields-1.md",
+        "pt-BR": "docs/wiki/pt-BR/qa-fixtures-fields-1.md"
+      },
+      "kind": "reference",
+      "availability": "implemented schema",
+      "screenshots": [],
+      "index_parent": "modules",
+      "translation_review": {
+        "en": "be26d675f5601e8446af5c089fb92aa9570f370ccf48e3d55d8d2348220fdde7",
+        "pt-BR": "b00c2053313a6a107099bcf503024ecf7ee52cce49aa44e7f1d10a241a3a7a0c"
+      },
+      "source_review": "653ce2abdbb7d82576694a8c413cb404a18438ac5a3f0ce0be2f7d3e59cfde7d"
+    },
+    {
+      "id": "maintenance",
+      "title": "Maintain and publish the documentation",
+      "summary": "",
+      "related": [],
+      "commands": [],
+      "sources": [
+        "README.md"
+      ],
+      "keywords": [],
+      "agent": null,
+      "pages": {
+        "en": "docs/wiki/en/maintenance.md",
+        "pt-BR": "docs/wiki/pt-BR/maintenance.md"
+      },
+      "availability": "documentation",
+      "screenshots": [],
+      "kind": "reference",
+      "translation_review": {
+        "en": "bee7c9b66d125ec5bafbd93c66f642463eb1bfcc6658d80877cd8e8d2ff4ae4d",
+        "pt-BR": "c758b2b2220916893130b808429308d16c02a99153d8a6179f285bedf3419c91"
+      },
+      "source_review": "f12da1c25e60a8a85f306614ef671fcc3764920d56bbefea23a3dc28c11c2770"
+    },
+    {
+      "id": "qa-config-fields-2",
+      "title": "QA environment fields 2",
+      "summary": "qa-config schema fields, part 2",
+      "related": [
+        "qa",
+        "modules"
+      ],
+      "commands": [],
+      "sources": [
+        "schemas/qa-config-v1.json"
+      ],
+      "keywords": [
+        "qa-config",
+        "fields",
+        "schema"
+      ],
+      "agent": "docs/agent/qa-config-fields-2.md",
+      "pages": {
+        "en": "docs/wiki/en/qa-config-fields-2.md",
+        "pt-BR": "docs/wiki/pt-BR/qa-config-fields-2.md"
+      },
+      "kind": "reference",
+      "availability": "implemented schema",
+      "screenshots": [],
+      "index_parent": "modules",
+      "translation_review": {
+        "en": "720f3878a4f3d63e01b820dea22c259d6ffa8bc7073735224d344584fac96107",
+        "pt-BR": "1b51dba57d5c2d7e4d8329fea2b485b046b83877ae1703dca52655f3e04faca1"
+      },
+      "source_review": "9a93d24cca8a0384282a11b009b3c12e149414acd6655b6ab5ecc98398d227ef"
+    }
+  ]
+}

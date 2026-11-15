@@ -1,0 +1,278 @@
+{
+  "accept_contract": {
+    "en": "Accept the reviewed proposed QA launch contract.",
+    "pt-BR": "Aceita o contrato QA proposto e revisado."
+  },
+  "account": {
+    "en": "Cloudflare account ID for deployment.",
+    "pt-BR": "ID da conta Cloudflare para implantação."
+  },
+  "all_roots": {
+    "en": "Inspect all project roots, including unchanged ones.",
+    "pt-BR": "Inspeciona todas as raízes, inclusive não alteradas."
+  },
+  "args": {
+    "en": "Forward remaining arguments to the evaluation harness.",
+    "pt-BR": "Encaminha argumentos restantes à ferramenta de avaliação."
+  },
+  "ascii": {
+    "en": "Use ASCII terminal glyphs (also RIO_ASCII=1).",
+    "pt-BR": "Usa símbolos ASCII no terminal (também RIO_ASCII=1)."
+  },
+  "base": {
+    "en": "Compare committed HEAD against the merge base with this ref.",
+    "pt-BR": "Compara HEAD confirmado com a base comum desta referência."
+  },
+  "baseline": {
+    "en": "Run QA against base as well as head.",
+    "pt-BR": "Executa QA na base e na alteração."
+  },
+  "cell": {
+    "en": "Select one viewport/color-scheme QA cell.",
+    "pt-BR": "Seleciona uma célula viewport/esquema de cor."
+  },
+  "cf_profile": {
+    "en": "Select the cf authentication profile.",
+    "pt-BR": "Seleciona o perfil de autenticação cf."
+  },
+  "check": {
+    "en": "Report stale journey coverage without writing proposals.",
+    "pt-BR": "Informa cobertura desatualizada sem gravar propostas."
+  },
+  "council_vendors": {
+    "en": "Opt in a council vendor as VENDOR:FAMILY:ROUTE; repeatable.",
+    "pt-BR": "Adere a fornecedor do conselho como FORNECEDOR:FAMILIA:ROTA; repetível."
+  },
+  "credential_store": {
+    "en": "Choose OS keychain or explicitly selected private files.",
+    "pt-BR": "Escolhe chaveiro do sistema ou arquivos privados explícitos."
+  },
+  "custom_providers": {
+    "en": "Register SLUG:PROTOCOL:BASE_URL; keys are supplied privately.",
+    "pt-BR": "Registra SLUG:PROTOCOLO:URL_BASE; chaves são fornecidas privadamente."
+  },
+  "deep": {
+    "en": "Use the deep preset; conflicts with --preset.",
+    "pt-BR": "Usa preset deep; conflita com --preset."
+  },
+  "default_model": {
+    "en": "Default model route for the generated profile.",
+    "pt-BR": "Rota padrão de modelo do perfil gerado."
+  },
+  "directory": {
+    "en": "New directory receiving verified opaque seed archives.",
+    "pt-BR": "Novo diretório que recebe arquivos de dados verificados, sem extrair."
+  },
+  "dismiss": {
+    "en": "Record fixed, wrong, intentional, irrelevant or style feedback.",
+    "pt-BR": "Registra resposta fixed, wrong, intentional, irrelevant ou style."
+  },
+  "dry_run": {
+    "en": "Show deployment plan without credentials or account changes.",
+    "pt-BR": "Mostra plano de implantação sem alterar credenciais ou conta."
+  },
+  "endpoint": {
+    "en": "Connect this endpoint instead of provisioning infrastructure.",
+    "pt-BR": "Conecta este endpoint em vez de provisionar infraestrutura."
+  },
+  "fix_pr": {
+    "en": "URL of the pull request that fixed the incident.",
+    "pt-BR": "URL do pull request que corrigiu o incidente."
+  },
+  "force": {
+    "en": "Explicitly rebuild seed or replace validated journeys, depending on command.",
+    "pt-BR": "Reconstrói dados ou substitui jornadas validadas, conforme o comando."
+  },
+  "fork": {
+    "en": "Mark this local hosted submission as fork-related; endpoint validates PR metadata.",
+    "pt-BR": "Marca submissão local hospedada como fork; endpoint valida metadados de PR."
+  },
+  "format": {
+    "en": "Choose the output format; supported values are listed.",
+    "pt-BR": "Escolhe formato de saída; valores suportados são listados."
+  },
+  "from": {
+    "en": "Replay deployment choices from a saved user config file.",
+    "pt-BR": "Reutiliza escolhas de um arquivo pessoal de configuração."
+  },
+  "full": {
+    "en": "Run all QA journeys; conflicts with explicit --journey.",
+    "pt-BR": "Executa todas as jornadas QA; conflita com --journey explícito."
+  },
+  "github_app": {
+    "en": "Register the GitHub App after deployment.",
+    "pt-BR": "Registra o GitHub App após implantação."
+  },
+  "github_org": {
+    "en": "Own the registered App under this organization.",
+    "pt-BR": "Registra o App sob esta organização."
+  },
+  "harness": {
+    "en": "Select the QA browser authoring/execution driver.",
+    "pt-BR": "Seleciona ferramenta de autoria/execução QA."
+  },
+  "help": {
+    "en": "Show command syntax and supported options.",
+    "pt-BR": "Mostra sintaxe e opções do comando."
+  },
+  "id": {
+    "en": "Finding prefix (at least 8 characters) or proposal ID, as appropriate.",
+    "pt-BR": "Prefixo de achado (mínimo 8 caracteres) ou ID de proposta, conforme o comando."
+  },
+  "image": {
+    "en": "Inspect this provisioned app image for seed status.",
+    "pt-BR": "Inspeciona esta imagem provisionada para estado dos dados."
+  },
+  "journey": {
+    "en": "Select a named QA journey and its prerequisites; repeatable.",
+    "pt-BR": "Seleciona jornada e pré-requisitos; repetível."
+  },
+  "keep": {
+    "en": "Retain this many newest seed snapshots plus active leases.",
+    "pt-BR": "Preserva esta quantidade de snapshots recentes e os em uso."
+  },
+  "limit": {
+    "en": "Maximum documentation search hits, 1–10; default 5.",
+    "pt-BR": "Máximo de resultados na busca documental, 1–10; padrão 5."
+  },
+  "name": {
+    "en": "Resource name or journey name, depending on command.",
+    "pt-BR": "Nome de recurso ou jornada, conforme o comando."
+  },
+  "nightly": {
+    "en": "Mark a nightly evaluation run for council triggers.",
+    "pt-BR": "Marca execução noturna de avaliação para gatilhos do conselho."
+  },
+  "no_color": {
+    "en": "Disable ANSI color.",
+    "pt-BR": "Desativa cores ANSI."
+  },
+  "no_council": {
+    "en": "Skip optional council setup.",
+    "pt-BR": "Pula configuração opcional do conselho."
+  },
+  "no_tui": {
+    "en": "Use streaming output or terminal prompts instead of the TUI.",
+    "pt-BR": "Usa saída contínua ou perguntas no terminal em vez da TUI."
+  },
+  "note": {
+    "en": "Attach an explanation to feedback or proposal rejection.",
+    "pt-BR": "Acrescenta explicação ao feedback ou recusa de proposta."
+  },
+  "offline": {
+    "en": "Disable Rio network calls; subprocesses are not network-isolated.",
+    "pt-BR": "Desativa rede do Rio; subprocessos não são isolados da rede."
+  },
+  "pr": {
+    "en": "Pull request number for review, or incident PR URL in eval.",
+    "pt-BR": "Número do PR na revisão ou URL do incidente na avaliação."
+  },
+  "preset": {
+    "en": "Select review depth; requires an online endpoint.",
+    "pt-BR": "Seleciona profundidade; exige endpoint online."
+  },
+  "profile": {
+    "en": "Select a named profile or explicit YAML path.",
+    "pt-BR": "Seleciona perfil nomeado ou caminho YAML explícito."
+  },
+  "publish": {
+    "en": "Request publication according to hosted policy; remote side effects.",
+    "pt-BR": "Solicita publicação conforme política hospedada; altera recursos remotos."
+  },
+  "query": {
+    "en": "Quoted documentation search terms; nonempty, at most 256 UTF-8 bytes.",
+    "pt-BR": "Termos de busca entre aspas; não vazios, até 256 bytes UTF-8."
+  },
+  "raw": {
+    "en": "Print authored profile without resolving inheritance.",
+    "pt-BR": "Mostra perfil original sem resolver herança."
+  },
+  "reference": {
+    "en": "Profile name/path; omitted validate uses the default profile.",
+    "pt-BR": "Nome/caminho do perfil; validate sem argumento usa o padrão."
+  },
+  "replace_private_key": {
+    "en": "Read a downloaded GitHub App PEM and update its endpoint secret.",
+    "pt-BR": "Lê PEM do GitHub App e atualiza o segredo no endpoint."
+  },
+  "reset_lineage": {
+    "en": "Start a new branch lineage generation; requires --since-last.",
+    "pt-BR": "Inicia nova geração da linhagem; exige --since-last."
+  },
+  "review": {
+    "en": "Review ID whose hosted QA evidence will be deleted.",
+    "pt-BR": "ID da revisão cujas evidências QA hospedadas serão apagadas."
+  },
+  "rotate": {
+    "en": "Rotate the GitHub App webhook secret; this is a mutation.",
+    "pt-BR": "Rotaciona o segredo do webhook do GitHub App; altera dados."
+  },
+  "rule": {
+    "en": "Filter findings by rule ID.",
+    "pt-BR": "Filtra achados pelo ID da regra."
+  },
+  "runner": {
+    "en": "Choose Cloudflare Sandbox or self-hosted execution.",
+    "pt-BR": "Escolhe Cloudflare Sandbox ou execução em runner próprio."
+  },
+  "runner_image": {
+    "en": "Use this paired runner image.",
+    "pt-BR": "Usa esta imagem pareada do runner."
+  },
+  "secrets_file": {
+    "en": "Read provider credentials from private JSON; do not commit it.",
+    "pt-BR": "Lê credenciais de JSON privado; não versione o arquivo."
+  },
+  "section": {
+    "en": "Retrieve one embedded topic section with its prerequisites.",
+    "pt-BR": "Consulta uma seção embutida com seus pré-requisitos."
+  },
+  "show_pre_existing": {
+    "en": "Include baseline/pre-existing findings in output.",
+    "pt-BR": "Inclui achados preexistentes da base na saída."
+  },
+  "show_remembered": {
+    "en": "List remembered dismissals separately without changing exit policy.",
+    "pt-BR": "Lista dispensas lembradas separadamente sem mudar política de saída."
+  },
+  "since": {
+    "en": "Filter updates at or after this RFC3339 timestamp.",
+    "pt-BR": "Filtra atualizações nesta data RFC3339 ou posteriores."
+  },
+  "since_last": {
+    "en": "Continue the current branch lineage at the endpoint.",
+    "pt-BR": "Continua a linhagem da branch no endpoint."
+  },
+  "staged": {
+    "en": "Select only the index against HEAD; conflicts with --base.",
+    "pt-BR": "Seleciona somente o índice contra HEAD; conflita com --base."
+  },
+  "status": {
+    "en": "Filter lifecycle status using the listed accepted values.",
+    "pt-BR": "Filtra estado pelos valores aceitos listados."
+  },
+  "token_stdin": {
+    "en": "Read the endpoint token from standard input; requires --endpoint.",
+    "pt-BR": "Lê token do endpoint pela entrada padrão; exige --endpoint."
+  },
+  "topic": {
+    "en": "Embedded topic ID, list, or search.",
+    "pt-BR": "ID de tópico embutido, list ou search."
+  },
+  "verifier_model": {
+    "en": "Select the verifier model route.",
+    "pt-BR": "Seleciona a rota de modelo do verificador."
+  },
+  "version": {
+    "en": "Show Rio version, target triple and build commit.",
+    "pt-BR": "Mostra versão, plataforma de destino e commit."
+  },
+  "workers_subdomain": {
+    "en": "Select the account workers.dev subdomain.",
+    "pt-BR": "Seleciona subdomínio workers.dev da conta."
+  },
+  "yes": {
+    "en": "Apply a suppression proposal without the confirmation prompt.",
+    "pt-BR": "Aplica proposta de supressão sem perguntar confirmação."
+  }
+}

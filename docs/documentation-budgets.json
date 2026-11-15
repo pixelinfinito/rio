@@ -1,0 +1,2808 @@
+{
+  "tokenizer": "o200k_base",
+  "tiktoken": "0.12.0",
+  "docs_revision": "e5fe72d87ea3a19919ed94d6e7cb2348fee81577a6ccdda7dd8ffe4b9f50ca29",
+  "payload_bytes": 70953,
+  "measurements": [
+    {
+      "arguments": [
+        "--format",
+        "json"
+      ],
+      "bytes": 1762,
+      "tokens": 423
+    },
+    {
+      "arguments": [],
+      "bytes": 1114,
+      "tokens": 266
+    },
+    {
+      "arguments": [
+        "list"
+      ],
+      "bytes": 1114,
+      "tokens": 266
+    },
+    {
+      "arguments": [
+        "installation"
+      ],
+      "bytes": 1946,
+      "tokens": 448
+    },
+    {
+      "arguments": [
+        "installation",
+        "--format",
+        "json"
+      ],
+      "bytes": 2230,
+      "tokens": 537
+    },
+    {
+      "arguments": [
+        "installation",
+        "--section",
+        "install"
+      ],
+      "bytes": 928,
+      "tokens": 213
+    },
+    {
+      "arguments": [
+        "installation",
+        "--section",
+        "install",
+        "--format",
+        "json"
+      ],
+      "bytes": 1168,
+      "tokens": 291
+    },
+    {
+      "arguments": [
+        "installation",
+        "--section",
+        "versions"
+      ],
+      "bytes": 892,
+      "tokens": 202
+    },
+    {
+      "arguments": [
+        "installation",
+        "--section",
+        "versions",
+        "--format",
+        "json"
+      ],
+      "bytes": 1128,
+      "tokens": 279
+    },
+    {
+      "arguments": [
+        "installation",
+        "--section",
+        "remove"
+      ],
+      "bytes": 766,
+      "tokens": 177
+    },
+    {
+      "arguments": [
+        "installation",
+        "--section",
+        "remove",
+        "--format",
+        "json"
+      ],
+      "bytes": 1002,
+      "tokens": 253
+    },
+    {
+      "arguments": [
+        "review"
+      ],
+      "bytes": 2189,
+      "tokens": 505
+    },
+    {
+      "arguments": [
+        "review",
+        "--format",
+        "json"
+      ],
+      "bytes": 2471,
+      "tokens": 596
+    },
+    {
+      "arguments": [
+        "review",
+        "--section",
+        "selection"
+      ],
+      "bytes": 1133,
+      "tokens": 266
+    },
+    {
+      "arguments": [
+        "review",
+        "--section",
+        "selection",
+        "--format",
+        "json"
+      ],
+      "bytes": 1372,
+      "tokens": 345
+    },
+    {
+      "arguments": [
+        "review",
+        "--section",
+        "hosted"
+      ],
+      "bytes": 948,
+      "tokens": 217
+    },
+    {
+      "arguments": [
+        "review",
+        "--section",
+        "hosted",
+        "--format",
+        "json"
+      ],
+      "bytes": 1187,
+      "tokens": 297
+    },
+    {
+      "arguments": [
+        "review",
+        "--section",
+        "interpret"
+      ],
+      "bytes": 902,
+      "tokens": 200
+    },
+    {
+      "arguments": [
+        "review",
+        "--section",
+        "interpret",
+        "--format",
+        "json"
+      ],
+      "bytes": 1140,
+      "tokens": 278
+    },
+    {
+      "arguments": [
+        "doctor"
+      ],
+      "bytes": 1763,
+      "tokens": 358
+    },
+    {
+      "arguments": [
+        "doctor",
+        "--format",
+        "json"
+      ],
+      "bytes": 2041,
+      "tokens": 450
+    },
+    {
+      "arguments": [
+        "doctor",
+        "--section",
+        "commands"
+      ],
+      "bytes": 738,
+      "tokens": 163
+    },
+    {
+      "arguments": [
+        "doctor",
+        "--section",
+        "commands",
+        "--format",
+        "json"
+      ],
+      "bytes": 973,
+      "tokens": 242
+    },
+    {
+      "arguments": [
+        "doctor",
+        "--section",
+        "recovery"
+      ],
+      "bytes": 1043,
+      "tokens": 211
+    },
+    {
+      "arguments": [
+        "doctor",
+        "--section",
+        "recovery",
+        "--format",
+        "json"
+      ],
+      "bytes": 1279,
+      "tokens": 292
+    },
+    {
+      "arguments": [
+        "doctor",
+        "--section",
+        "exits"
+      ],
+      "bytes": 650,
+      "tokens": 138
+    },
+    {
+      "arguments": [
+        "doctor",
+        "--section",
+        "exits",
+        "--format",
+        "json"
+      ],
+      "bytes": 885,
+      "tokens": 218
+    },
+    {
+      "arguments": [
+        "results"
+      ],
+      "bytes": 1973,
+      "tokens": 437
+    },
+    {
+      "arguments": [
+        "results",
+        "--format",
+        "json"
+      ],
+      "bytes": 2251,
+      "tokens": 526
+    },
+    {
+      "arguments": [
+        "results",
+        "--section",
+        "evidence"
+      ],
+      "bytes": 768,
+      "tokens": 165
+    },
+    {
+      "arguments": [
+        "results",
+        "--section",
+        "evidence",
+        "--format",
+        "json"
+      ],
+      "bytes": 1003,
+      "tokens": 243
+    },
+    {
+      "arguments": [
+        "results",
+        "--section",
+        "output"
+      ],
+      "bytes": 950,
+      "tokens": 227
+    },
+    {
+      "arguments": [
+        "results",
+        "--section",
+        "output",
+        "--format",
+        "json"
+      ],
+      "bytes": 1186,
+      "tokens": 305
+    },
+    {
+      "arguments": [
+        "results",
+        "--section",
+        "policy"
+      ],
+      "bytes": 801,
+      "tokens": 181
+    },
+    {
+      "arguments": [
+        "results",
+        "--section",
+        "policy",
+        "--format",
+        "json"
+      ],
+      "bytes": 1036,
+      "tokens": 258
+    },
+    {
+      "arguments": [
+        "tui"
+      ],
+      "bytes": 1751,
+      "tokens": 410
+    },
+    {
+      "arguments": [
+        "tui",
+        "--format",
+        "json"
+      ],
+      "bytes": 2030,
+      "tokens": 500
+    },
+    {
+      "arguments": [
+        "tui",
+        "--section",
+        "navigation"
+      ],
+      "bytes": 977,
+      "tokens": 236
+    },
+    {
+      "arguments": [
+        "tui",
+        "--section",
+        "navigation",
+        "--format",
+        "json"
+      ],
+      "bytes": 1214,
+      "tokens": 314
+    },
+    {
+      "arguments": [
+        "tui",
+        "--section",
+        "qa"
+      ],
+      "bytes": 735,
+      "tokens": 185
+    },
+    {
+      "arguments": [
+        "tui",
+        "--section",
+        "qa",
+        "--format",
+        "json"
+      ],
+      "bytes": 971,
+      "tokens": 262
+    },
+    {
+      "arguments": [
+        "tui",
+        "--section",
+        "recovery"
+      ],
+      "bytes": 705,
+      "tokens": 179
+    },
+    {
+      "arguments": [
+        "tui",
+        "--section",
+        "recovery",
+        "--format",
+        "json"
+      ],
+      "bytes": 941,
+      "tokens": 258
+    },
+    {
+      "arguments": [
+        "profiles"
+      ],
+      "bytes": 2167,
+      "tokens": 472
+    },
+    {
+      "arguments": [
+        "profiles",
+        "--format",
+        "json"
+      ],
+      "bytes": 2447,
+      "tokens": 563
+    },
+    {
+      "arguments": [
+        "profiles",
+        "--section",
+        "selection"
+      ],
+      "bytes": 969,
+      "tokens": 206
+    },
+    {
+      "arguments": [
+        "profiles",
+        "--section",
+        "selection",
+        "--format",
+        "json"
+      ],
+      "bytes": 1206,
+      "tokens": 285
+    },
+    {
+      "arguments": [
+        "profiles",
+        "--section",
+        "inheritance"
+      ],
+      "bytes": 730,
+      "tokens": 151
+    },
+    {
+      "arguments": [
+        "profiles",
+        "--section",
+        "inheritance",
+        "--format",
+        "json"
+      ],
+      "bytes": 966,
+      "tokens": 230
+    },
+    {
+      "arguments": [
+        "profiles",
+        "--section",
+        "recipes"
+      ],
+      "bytes": 1190,
+      "tokens": 267
+    },
+    {
+      "arguments": [
+        "profiles",
+        "--section",
+        "recipes",
+        "--format",
+        "json"
+      ],
+      "bytes": 1427,
+      "tokens": 346
+    },
+    {
+      "arguments": [
+        "configuration"
+      ],
+      "bytes": 1899,
+      "tokens": 461
+    },
+    {
+      "arguments": [
+        "configuration",
+        "--format",
+        "json"
+      ],
+      "bytes": 2184,
+      "tokens": 548
+    },
+    {
+      "arguments": [
+        "configuration",
+        "--section",
+        "paths"
+      ],
+      "bytes": 713,
+      "tokens": 160
+    },
+    {
+      "arguments": [
+        "configuration",
+        "--section",
+        "paths",
+        "--format",
+        "json"
+      ],
+      "bytes": 949,
+      "tokens": 236
+    },
+    {
+      "arguments": [
+        "configuration",
+        "--section",
+        "settings"
+      ],
+      "bytes": 1008,
+      "tokens": 264
+    },
+    {
+      "arguments": [
+        "configuration",
+        "--section",
+        "settings",
+        "--format",
+        "json"
+      ],
+      "bytes": 1251,
+      "tokens": 341
+    },
+    {
+      "arguments": [
+        "configuration",
+        "--section",
+        "credentials"
+      ],
+      "bytes": 894,
+      "tokens": 191
+    },
+    {
+      "arguments": [
+        "configuration",
+        "--section",
+        "credentials",
+        "--format",
+        "json"
+      ],
+      "bytes": 1130,
+      "tokens": 267
+    },
+    {
+      "arguments": [
+        "hosting"
+      ],
+      "bytes": 2832,
+      "tokens": 621
+    },
+    {
+      "arguments": [
+        "hosting",
+        "--format",
+        "json"
+      ],
+      "bytes": 3135,
+      "tokens": 716
+    },
+    {
+      "arguments": [
+        "hosting",
+        "--section",
+        "connect"
+      ],
+      "bytes": 756,
+      "tokens": 158
+    },
+    {
+      "arguments": [
+        "hosting",
+        "--section",
+        "connect",
+        "--format",
+        "json"
+      ],
+      "bytes": 993,
+      "tokens": 235
+    },
+    {
+      "arguments": [
+        "hosting",
+        "--section",
+        "deploy"
+      ],
+      "bytes": 1307,
+      "tokens": 298
+    },
+    {
+      "arguments": [
+        "hosting",
+        "--section",
+        "deploy",
+        "--format",
+        "json"
+      ],
+      "bytes": 1545,
+      "tokens": 376
+    },
+    {
+      "arguments": [
+        "hosting",
+        "--section",
+        "maintain"
+      ],
+      "bytes": 1211,
+      "tokens": 251
+    },
+    {
+      "arguments": [
+        "hosting",
+        "--section",
+        "maintain",
+        "--format",
+        "json"
+      ],
+      "bytes": 1449,
+      "tokens": 330
+    },
+    {
+      "arguments": [
+        "hosting",
+        "--section",
+        "self-hosted"
+      ],
+      "bytes": 923,
+      "tokens": 214
+    },
+    {
+      "arguments": [
+        "hosting",
+        "--section",
+        "self-hosted",
+        "--format",
+        "json"
+      ],
+      "bytes": 1160,
+      "tokens": 291
+    },
+    {
+      "arguments": [
+        "providers"
+      ],
+      "bytes": 1942,
+      "tokens": 373
+    },
+    {
+      "arguments": [
+        "providers",
+        "--format",
+        "json"
+      ],
+      "bytes": 2221,
+      "tokens": 463
+    },
+    {
+      "arguments": [
+        "providers",
+        "--section",
+        "standard"
+      ],
+      "bytes": 764,
+      "tokens": 156
+    },
+    {
+      "arguments": [
+        "providers",
+        "--section",
+        "standard",
+        "--format",
+        "json"
+      ],
+      "bytes": 1000,
+      "tokens": 234
+    },
+    {
+      "arguments": [
+        "providers",
+        "--section",
+        "custom"
+      ],
+      "bytes": 1117,
+      "tokens": 225
+    },
+    {
+      "arguments": [
+        "providers",
+        "--section",
+        "custom",
+        "--format",
+        "json"
+      ],
+      "bytes": 1354,
+      "tokens": 304
+    },
+    {
+      "arguments": [
+        "providers",
+        "--section",
+        "caching"
+      ],
+      "bytes": 831,
+      "tokens": 156
+    },
+    {
+      "arguments": [
+        "providers",
+        "--section",
+        "caching",
+        "--format",
+        "json"
+      ],
+      "bytes": 1067,
+      "tokens": 235
+    },
+    {
+      "arguments": [
+        "budgets"
+      ],
+      "bytes": 1910,
+      "tokens": 412
+    },
+    {
+      "arguments": [
+        "budgets",
+        "--format",
+        "json"
+      ],
+      "bytes": 2213,
+      "tokens": 511
+    },
+    {
+      "arguments": [
+        "budgets",
+        "--section",
+        "presets"
+      ],
+      "bytes": 769,
+      "tokens": 161
+    },
+    {
+      "arguments": [
+        "budgets",
+        "--section",
+        "presets",
+        "--format",
+        "json"
+      ],
+      "bytes": 1006,
+      "tokens": 242
+    },
+    {
+      "arguments": [
+        "budgets",
+        "--section",
+        "profile"
+      ],
+      "bytes": 967,
+      "tokens": 224
+    },
+    {
+      "arguments": [
+        "budgets",
+        "--section",
+        "profile",
+        "--format",
+        "json"
+      ],
+      "bytes": 1205,
+      "tokens": 305
+    },
+    {
+      "arguments": [
+        "budgets",
+        "--section",
+        "accounting"
+      ],
+      "bytes": 835,
+      "tokens": 165
+    },
+    {
+      "arguments": [
+        "budgets",
+        "--section",
+        "accounting",
+        "--format",
+        "json"
+      ],
+      "bytes": 1072,
+      "tokens": 246
+    },
+    {
+      "arguments": [
+        "budgets",
+        "--section",
+        "option-fields"
+      ],
+      "bytes": 449,
+      "tokens": 105
+    },
+    {
+      "arguments": [
+        "budgets",
+        "--section",
+        "option-fields",
+        "--format",
+        "json"
+      ],
+      "bytes": 687,
+      "tokens": 186
+    },
+    {
+      "arguments": [
+        "github"
+      ],
+      "bytes": 2215,
+      "tokens": 456
+    },
+    {
+      "arguments": [
+        "github",
+        "--format",
+        "json"
+      ],
+      "bytes": 2495,
+      "tokens": 546
+    },
+    {
+      "arguments": [
+        "github",
+        "--section",
+        "setup"
+      ],
+      "bytes": 1075,
+      "tokens": 228
+    },
+    {
+      "arguments": [
+        "github",
+        "--section",
+        "setup",
+        "--format",
+        "json"
+      ],
+      "bytes": 1312,
+      "tokens": 306
+    },
+    {
+      "arguments": [
+        "github",
+        "--section",
+        "run"
+      ],
+      "bytes": 873,
+      "tokens": 189
+    },
+    {
+      "arguments": [
+        "github",
+        "--section",
+        "run",
+        "--format",
+        "json"
+      ],
+      "bytes": 1109,
+      "tokens": 266
+    },
+    {
+      "arguments": [
+        "github",
+        "--section",
+        "recovery"
+      ],
+      "bytes": 1061,
+      "tokens": 225
+    },
+    {
+      "arguments": [
+        "github",
+        "--section",
+        "recovery",
+        "--format",
+        "json"
+      ],
+      "bytes": 1298,
+      "tokens": 304
+    },
+    {
+      "arguments": [
+        "feedback"
+      ],
+      "bytes": 1820,
+      "tokens": 395
+    },
+    {
+      "arguments": [
+        "feedback",
+        "--format",
+        "json"
+      ],
+      "bytes": 2100,
+      "tokens": 484
+    },
+    {
+      "arguments": [
+        "feedback",
+        "--section",
+        "rounds"
+      ],
+      "bytes": 750,
+      "tokens": 162
+    },
+    {
+      "arguments": [
+        "feedback",
+        "--section",
+        "rounds",
+        "--format",
+        "json"
+      ],
+      "bytes": 985,
+      "tokens": 240
+    },
+    {
+      "arguments": [
+        "feedback",
+        "--section",
+        "answer"
+      ],
+      "bytes": 1002,
+      "tokens": 223
+    },
+    {
+      "arguments": [
+        "feedback",
+        "--section",
+        "answer",
+        "--format",
+        "json"
+      ],
+      "bytes": 1240,
+      "tokens": 301
+    },
+    {
+      "arguments": [
+        "feedback",
+        "--section",
+        "history"
+      ],
+      "bytes": 720,
+      "tokens": 162
+    },
+    {
+      "arguments": [
+        "feedback",
+        "--section",
+        "history",
+        "--format",
+        "json"
+      ],
+      "bytes": 955,
+      "tokens": 239
+    },
+    {
+      "arguments": [
+        "suppressions"
+      ],
+      "bytes": 1543,
+      "tokens": 317
+    },
+    {
+      "arguments": [
+        "suppressions",
+        "--format",
+        "json"
+      ],
+      "bytes": 1822,
+      "tokens": 406
+    },
+    {
+      "arguments": [
+        "suppressions",
+        "--section",
+        "list"
+      ],
+      "bytes": 650,
+      "tokens": 144
+    },
+    {
+      "arguments": [
+        "suppressions",
+        "--section",
+        "list",
+        "--format",
+        "json"
+      ],
+      "bytes": 885,
+      "tokens": 221
+    },
+    {
+      "arguments": [
+        "suppressions",
+        "--section",
+        "apply"
+      ],
+      "bytes": 779,
+      "tokens": 156
+    },
+    {
+      "arguments": [
+        "suppressions",
+        "--section",
+        "apply",
+        "--format",
+        "json"
+      ],
+      "bytes": 1014,
+      "tokens": 233
+    },
+    {
+      "arguments": [
+        "suppressions",
+        "--section",
+        "decline"
+      ],
+      "bytes": 758,
+      "tokens": 163
+    },
+    {
+      "arguments": [
+        "suppressions",
+        "--section",
+        "decline",
+        "--format",
+        "json"
+      ],
+      "bytes": 995,
+      "tokens": 242
+    },
+    {
+      "arguments": [
+        "security"
+      ],
+      "bytes": 2588,
+      "tokens": 579
+    },
+    {
+      "arguments": [
+        "security",
+        "--format",
+        "json"
+      ],
+      "bytes": 2972,
+      "tokens": 701
+    },
+    {
+      "arguments": [
+        "security",
+        "--section",
+        "run"
+      ],
+      "bytes": 714,
+      "tokens": 157
+    },
+    {
+      "arguments": [
+        "security",
+        "--section",
+        "run",
+        "--format",
+        "json"
+      ],
+      "bytes": 951,
+      "tokens": 236
+    },
+    {
+      "arguments": [
+        "security",
+        "--section",
+        "findings"
+      ],
+      "bytes": 757,
+      "tokens": 150
+    },
+    {
+      "arguments": [
+        "security",
+        "--section",
+        "findings",
+        "--format",
+        "json"
+      ],
+      "bytes": 994,
+      "tokens": 230
+    },
+    {
+      "arguments": [
+        "security",
+        "--section",
+        "policy"
+      ],
+      "bytes": 909,
+      "tokens": 173
+    },
+    {
+      "arguments": [
+        "security",
+        "--section",
+        "policy",
+        "--format",
+        "json"
+      ],
+      "bytes": 1146,
+      "tokens": 252
+    },
+    {
+      "arguments": [
+        "security",
+        "--section",
+        "option-fields"
+      ],
+      "bytes": 1333,
+      "tokens": 336
+    },
+    {
+      "arguments": [
+        "security",
+        "--section",
+        "option-fields",
+        "--format",
+        "json"
+      ],
+      "bytes": 1653,
+      "tokens": 442
+    },
+    {
+      "arguments": [
+        "council"
+      ],
+      "bytes": 1867,
+      "tokens": 384
+    },
+    {
+      "arguments": [
+        "council",
+        "--format",
+        "json"
+      ],
+      "bytes": 2169,
+      "tokens": 477
+    },
+    {
+      "arguments": [
+        "council",
+        "--section",
+        "configure"
+      ],
+      "bytes": 820,
+      "tokens": 181
+    },
+    {
+      "arguments": [
+        "council",
+        "--section",
+        "configure",
+        "--format",
+        "json"
+      ],
+      "bytes": 1057,
+      "tokens": 258
+    },
+    {
+      "arguments": [
+        "council",
+        "--section",
+        "behavior"
+      ],
+      "bytes": 881,
+      "tokens": 175
+    },
+    {
+      "arguments": [
+        "council",
+        "--section",
+        "behavior",
+        "--format",
+        "json"
+      ],
+      "bytes": 1118,
+      "tokens": 252
+    },
+    {
+      "arguments": [
+        "council",
+        "--section",
+        "inspect"
+      ],
+      "bytes": 795,
+      "tokens": 171
+    },
+    {
+      "arguments": [
+        "council",
+        "--section",
+        "inspect",
+        "--format",
+        "json"
+      ],
+      "bytes": 1032,
+      "tokens": 248
+    },
+    {
+      "arguments": [
+        "council",
+        "--section",
+        "option-fields"
+      ],
+      "bytes": 442,
+      "tokens": 109
+    },
+    {
+      "arguments": [
+        "council",
+        "--section",
+        "option-fields",
+        "--format",
+        "json"
+      ],
+      "bytes": 680,
+      "tokens": 187
+    },
+    {
+      "arguments": [
+        "qa"
+      ],
+      "bytes": 4121,
+      "tokens": 1041
+    },
+    {
+      "arguments": [
+        "qa",
+        "--format",
+        "json"
+      ],
+      "bytes": 4556,
+      "tokens": 1174
+    },
+    {
+      "arguments": [
+        "qa",
+        "--section",
+        "setup"
+      ],
+      "bytes": 1248,
+      "tokens": 293
+    },
+    {
+      "arguments": [
+        "qa",
+        "--section",
+        "setup",
+        "--format",
+        "json"
+      ],
+      "bytes": 1487,
+      "tokens": 371
+    },
+    {
+      "arguments": [
+        "qa",
+        "--section",
+        "run"
+      ],
+      "bytes": 1015,
+      "tokens": 241
+    },
+    {
+      "arguments": [
+        "qa",
+        "--section",
+        "run",
+        "--format",
+        "json"
+      ],
+      "bytes": 1253,
+      "tokens": 318
+    },
+    {
+      "arguments": [
+        "qa",
+        "--section",
+        "inspect"
+      ],
+      "bytes": 991,
+      "tokens": 213
+    },
+    {
+      "arguments": [
+        "qa",
+        "--section",
+        "inspect",
+        "--format",
+        "json"
+      ],
+      "bytes": 1229,
+      "tokens": 290
+    },
+    {
+      "arguments": [
+        "qa",
+        "--section",
+        "option-fields"
+      ],
+      "bytes": 2436,
+      "tokens": 666
+    },
+    {
+      "arguments": [
+        "qa",
+        "--section",
+        "option-fields",
+        "--format",
+        "json"
+      ],
+      "bytes": 2806,
+      "tokens": 783
+    },
+    {
+      "arguments": [
+        "qa-journeys"
+      ],
+      "bytes": 1861,
+      "tokens": 377
+    },
+    {
+      "arguments": [
+        "qa-journeys",
+        "--format",
+        "json"
+      ],
+      "bytes": 2139,
+      "tokens": 464
+    },
+    {
+      "arguments": [
+        "qa-journeys",
+        "--section",
+        "author"
+      ],
+      "bytes": 995,
+      "tokens": 208
+    },
+    {
+      "arguments": [
+        "qa-journeys",
+        "--section",
+        "author",
+        "--format",
+        "json"
+      ],
+      "bytes": 1231,
+      "tokens": 285
+    },
+    {
+      "arguments": [
+        "qa-journeys",
+        "--section",
+        "chains"
+      ],
+      "bytes": 755,
+      "tokens": 169
+    },
+    {
+      "arguments": [
+        "qa-journeys",
+        "--section",
+        "chains",
+        "--format",
+        "json"
+      ],
+      "bytes": 990,
+      "tokens": 245
+    },
+    {
+      "arguments": [
+        "qa-journeys",
+        "--section",
+        "sync"
+      ],
+      "bytes": 801,
+      "tokens": 180
+    },
+    {
+      "arguments": [
+        "qa-journeys",
+        "--section",
+        "sync",
+        "--format",
+        "json"
+      ],
+      "bytes": 1036,
+      "tokens": 256
+    },
+    {
+      "arguments": [
+        "qa-seeds"
+      ],
+      "bytes": 2045,
+      "tokens": 394
+    },
+    {
+      "arguments": [
+        "qa-seeds",
+        "--format",
+        "json"
+      ],
+      "bytes": 2323,
+      "tokens": 481
+    },
+    {
+      "arguments": [
+        "qa-seeds",
+        "--section",
+        "commands"
+      ],
+      "bytes": 1052,
+      "tokens": 225
+    },
+    {
+      "arguments": [
+        "qa-seeds",
+        "--section",
+        "commands",
+        "--format",
+        "json"
+      ],
+      "bytes": 1288,
+      "tokens": 302
+    },
+    {
+      "arguments": [
+        "qa-seeds",
+        "--section",
+        "fixtures"
+      ],
+      "bytes": 887,
+      "tokens": 179
+    },
+    {
+      "arguments": [
+        "qa-seeds",
+        "--section",
+        "fixtures",
+        "--format",
+        "json"
+      ],
+      "bytes": 1122,
+      "tokens": 255
+    },
+    {
+      "arguments": [
+        "qa-seeds",
+        "--section",
+        "cache"
+      ],
+      "bytes": 894,
+      "tokens": 176
+    },
+    {
+      "arguments": [
+        "qa-seeds",
+        "--section",
+        "cache",
+        "--format",
+        "json"
+      ],
+      "bytes": 1129,
+      "tokens": 252
+    },
+    {
+      "arguments": [
+        "qa-evidence"
+      ],
+      "bytes": 1642,
+      "tokens": 304
+    },
+    {
+      "arguments": [
+        "qa-evidence",
+        "--format",
+        "json"
+      ],
+      "bytes": 1921,
+      "tokens": 397
+    },
+    {
+      "arguments": [
+        "qa-evidence",
+        "--section",
+        "inspect"
+      ],
+      "bytes": 888,
+      "tokens": 174
+    },
+    {
+      "arguments": [
+        "qa-evidence",
+        "--section",
+        "inspect",
+        "--format",
+        "json"
+      ],
+      "bytes": 1125,
+      "tokens": 254
+    },
+    {
+      "arguments": [
+        "qa-evidence",
+        "--section",
+        "troubleshoot"
+      ],
+      "bytes": 698,
+      "tokens": 138
+    },
+    {
+      "arguments": [
+        "qa-evidence",
+        "--section",
+        "troubleshoot",
+        "--format",
+        "json"
+      ],
+      "bytes": 934,
+      "tokens": 219
+    },
+    {
+      "arguments": [
+        "qa-evidence",
+        "--section",
+        "retention"
+      ],
+      "bytes": 700,
+      "tokens": 142
+    },
+    {
+      "arguments": [
+        "qa-evidence",
+        "--section",
+        "retention",
+        "--format",
+        "json"
+      ],
+      "bytes": 936,
+      "tokens": 222
+    },
+    {
+      "arguments": [
+        "ci"
+      ],
+      "bytes": 1864,
+      "tokens": 390
+    },
+    {
+      "arguments": [
+        "ci",
+        "--format",
+        "json"
+      ],
+      "bytes": 2143,
+      "tokens": 477
+    },
+    {
+      "arguments": [
+        "ci",
+        "--section",
+        "run"
+      ],
+      "bytes": 1003,
+      "tokens": 215
+    },
+    {
+      "arguments": [
+        "ci",
+        "--section",
+        "run",
+        "--format",
+        "json"
+      ],
+      "bytes": 1240,
+      "tokens": 292
+    },
+    {
+      "arguments": [
+        "ci",
+        "--section",
+        "sarif"
+      ],
+      "bytes": 819,
+      "tokens": 183
+    },
+    {
+      "arguments": [
+        "ci",
+        "--section",
+        "sarif",
+        "--format",
+        "json"
+      ],
+      "bytes": 1055,
+      "tokens": 259
+    },
+    {
+      "arguments": [
+        "ci",
+        "--section",
+        "limits"
+      ],
+      "bytes": 790,
+      "tokens": 160
+    },
+    {
+      "arguments": [
+        "ci",
+        "--section",
+        "limits",
+        "--format",
+        "json"
+      ],
+      "bytes": 1026,
+      "tokens": 236
+    },
+    {
+      "arguments": [
+        "cache"
+      ],
+      "bytes": 1844,
+      "tokens": 374
+    },
+    {
+      "arguments": [
+        "cache",
+        "--format",
+        "json"
+      ],
+      "bytes": 2122,
+      "tokens": 464
+    },
+    {
+      "arguments": [
+        "cache",
+        "--section",
+        "data"
+      ],
+      "bytes": 915,
+      "tokens": 182
+    },
+    {
+      "arguments": [
+        "cache",
+        "--section",
+        "data",
+        "--format",
+        "json"
+      ],
+      "bytes": 1151,
+      "tokens": 260
+    },
+    {
+      "arguments": [
+        "cache",
+        "--section",
+        "retention"
+      ],
+      "bytes": 784,
+      "tokens": 182
+    },
+    {
+      "arguments": [
+        "cache",
+        "--section",
+        "retention",
+        "--format",
+        "json"
+      ],
+      "bytes": 1020,
+      "tokens": 261
+    },
+    {
+      "arguments": [
+        "cache",
+        "--section",
+        "recovery"
+      ],
+      "bytes": 905,
+      "tokens": 180
+    },
+    {
+      "arguments": [
+        "cache",
+        "--section",
+        "recovery",
+        "--format",
+        "json"
+      ],
+      "bytes": 1141,
+      "tokens": 259
+    },
+    {
+      "arguments": [
+        "evaluation"
+      ],
+      "bytes": 1415,
+      "tokens": 280
+    },
+    {
+      "arguments": [
+        "evaluation",
+        "--format",
+        "json"
+      ],
+      "bytes": 1692,
+      "tokens": 370
+    },
+    {
+      "arguments": [
+        "evaluation",
+        "--section",
+        "noise"
+      ],
+      "bytes": 712,
+      "tokens": 147
+    },
+    {
+      "arguments": [
+        "evaluation",
+        "--section",
+        "noise",
+        "--format",
+        "json"
+      ],
+      "bytes": 947,
+      "tokens": 225
+    },
+    {
+      "arguments": [
+        "evaluation",
+        "--section",
+        "incidents"
+      ],
+      "bytes": 702,
+      "tokens": 149
+    },
+    {
+      "arguments": [
+        "evaluation",
+        "--section",
+        "incidents",
+        "--format",
+        "json"
+      ],
+      "bytes": 937,
+      "tokens": 228
+    },
+    {
+      "arguments": [
+        "evaluation",
+        "--section",
+        "gates"
+      ],
+      "bytes": 767,
+      "tokens": 152
+    },
+    {
+      "arguments": [
+        "evaluation",
+        "--section",
+        "gates",
+        "--format",
+        "json"
+      ],
+      "bytes": 1002,
+      "tokens": 231
+    },
+    {
+      "arguments": [
+        "docs"
+      ],
+      "bytes": 1726,
+      "tokens": 387
+    },
+    {
+      "arguments": [
+        "docs",
+        "--format",
+        "json"
+      ],
+      "bytes": 2006,
+      "tokens": 477
+    },
+    {
+      "arguments": [
+        "docs",
+        "--section",
+        "retrieve"
+      ],
+      "bytes": 901,
+      "tokens": 201
+    },
+    {
+      "arguments": [
+        "docs",
+        "--section",
+        "retrieve",
+        "--format",
+        "json"
+      ],
+      "bytes": 1139,
+      "tokens": 280
+    },
+    {
+      "arguments": [
+        "docs",
+        "--section",
+        "output"
+      ],
+      "bytes": 774,
+      "tokens": 176
+    },
+    {
+      "arguments": [
+        "docs",
+        "--section",
+        "output",
+        "--format",
+        "json"
+      ],
+      "bytes": 1009,
+      "tokens": 253
+    },
+    {
+      "arguments": [
+        "docs",
+        "--section",
+        "budgets"
+      ],
+      "bytes": 799,
+      "tokens": 182
+    },
+    {
+      "arguments": [
+        "docs",
+        "--section",
+        "budgets",
+        "--format",
+        "json"
+      ],
+      "bytes": 1034,
+      "tokens": 260
+    },
+    {
+      "arguments": [
+        "modules"
+      ],
+      "bytes": 3208,
+      "tokens": 733
+    },
+    {
+      "arguments": [
+        "modules",
+        "--format",
+        "json"
+      ],
+      "bytes": 3565,
+      "tokens": 847
+    },
+    {
+      "arguments": [
+        "modules",
+        "--section",
+        "pipeline"
+      ],
+      "bytes": 1152,
+      "tokens": 235
+    },
+    {
+      "arguments": [
+        "modules",
+        "--section",
+        "pipeline",
+        "--format",
+        "json"
+      ],
+      "bytes": 1393,
+      "tokens": 313
+    },
+    {
+      "arguments": [
+        "modules",
+        "--section",
+        "tools"
+      ],
+      "bytes": 793,
+      "tokens": 179
+    },
+    {
+      "arguments": [
+        "modules",
+        "--section",
+        "tools",
+        "--format",
+        "json"
+      ],
+      "bytes": 1033,
+      "tokens": 256
+    },
+    {
+      "arguments": [
+        "modules",
+        "--section",
+        "rules"
+      ],
+      "bytes": 924,
+      "tokens": 183
+    },
+    {
+      "arguments": [
+        "modules",
+        "--section",
+        "rules",
+        "--format",
+        "json"
+      ],
+      "bytes": 1164,
+      "tokens": 260
+    },
+    {
+      "arguments": [
+        "modules",
+        "--section",
+        "option-fields"
+      ],
+      "bytes": 1237,
+      "tokens": 332
+    },
+    {
+      "arguments": [
+        "modules",
+        "--section",
+        "option-fields",
+        "--format",
+        "json"
+      ],
+      "bytes": 1507,
+      "tokens": 425
+    },
+    {
+      "arguments": [
+        "modules",
+        "--section",
+        "schema-topics"
+      ],
+      "bytes": 566,
+      "tokens": 144
+    },
+    {
+      "arguments": [
+        "modules",
+        "--section",
+        "schema-topics",
+        "--format",
+        "json"
+      ],
+      "bytes": 806,
+      "tokens": 221
+    },
+    {
+      "arguments": [
+        "profile-fields-1"
+      ],
+      "bytes": 2956,
+      "tokens": 892
+    },
+    {
+      "arguments": [
+        "profile-fields-1",
+        "--format",
+        "json"
+      ],
+      "bytes": 3429,
+      "tokens": 1022
+    },
+    {
+      "arguments": [
+        "profile-fields-1",
+        "--section",
+        "fields-1"
+      ],
+      "bytes": 821,
+      "tokens": 231
+    },
+    {
+      "arguments": [
+        "profile-fields-1",
+        "--section",
+        "fields-1",
+        "--format",
+        "json"
+      ],
+      "bytes": 1072,
+      "tokens": 308
+    },
+    {
+      "arguments": [
+        "profile-fields-1",
+        "--section",
+        "fields-2"
+      ],
+      "bytes": 967,
+      "tokens": 295
+    },
+    {
+      "arguments": [
+        "profile-fields-1",
+        "--section",
+        "fields-2",
+        "--format",
+        "json"
+      ],
+      "bytes": 1224,
+      "tokens": 375
+    },
+    {
+      "arguments": [
+        "profile-fields-1",
+        "--section",
+        "fields-3"
+      ],
+      "bytes": 864,
+      "tokens": 260
+    },
+    {
+      "arguments": [
+        "profile-fields-1",
+        "--section",
+        "fields-3",
+        "--format",
+        "json"
+      ],
+      "bytes": 1117,
+      "tokens": 339
+    },
+    {
+      "arguments": [
+        "profile-fields-1",
+        "--section",
+        "fields-4"
+      ],
+      "bytes": 717,
+      "tokens": 191
+    },
+    {
+      "arguments": [
+        "profile-fields-1",
+        "--section",
+        "fields-4",
+        "--format",
+        "json"
+      ],
+      "bytes": 964,
+      "tokens": 267
+    },
+    {
+      "arguments": [
+        "profile-fields-1",
+        "--section",
+        "fields-5"
+      ],
+      "bytes": 889,
+      "tokens": 232
+    },
+    {
+      "arguments": [
+        "profile-fields-1",
+        "--section",
+        "fields-5",
+        "--format",
+        "json"
+      ],
+      "bytes": 1168,
+      "tokens": 320
+    },
+    {
+      "arguments": [
+        "profile-fields-1",
+        "--section",
+        "fields-6"
+      ],
+      "bytes": 763,
+      "tokens": 193
+    },
+    {
+      "arguments": [
+        "profile-fields-1",
+        "--section",
+        "fields-6",
+        "--format",
+        "json"
+      ],
+      "bytes": 1031,
+      "tokens": 278
+    },
+    {
+      "arguments": [
+        "profile-fields-2"
+      ],
+      "bytes": 1654,
+      "tokens": 531
+    },
+    {
+      "arguments": [
+        "profile-fields-2",
+        "--format",
+        "json"
+      ],
+      "bytes": 1972,
+      "tokens": 621
+    },
+    {
+      "arguments": [
+        "profile-fields-2",
+        "--section",
+        "fields-1"
+      ],
+      "bytes": 809,
+      "tokens": 219
+    },
+    {
+      "arguments": [
+        "profile-fields-2",
+        "--section",
+        "fields-1",
+        "--format",
+        "json"
+      ],
+      "bytes": 1057,
+      "tokens": 298
+    },
+    {
+      "arguments": [
+        "profile-fields-2",
+        "--section",
+        "fields-2"
+      ],
+      "bytes": 973,
+      "tokens": 311
+    },
+    {
+      "arguments": [
+        "profile-fields-2",
+        "--section",
+        "fields-2",
+        "--format",
+        "json"
+      ],
+      "bytes": 1227,
+      "tokens": 387
+    },
+    {
+      "arguments": [
+        "profile-fields-2",
+        "--section",
+        "fields-3"
+      ],
+      "bytes": 638,
+      "tokens": 181
+    },
+    {
+      "arguments": [
+        "profile-fields-2",
+        "--section",
+        "fields-3",
+        "--format",
+        "json"
+      ],
+      "bytes": 882,
+      "tokens": 258
+    },
+    {
+      "arguments": [
+        "qa-config-fields-1"
+      ],
+      "bytes": 2865,
+      "tokens": 872
+    },
+    {
+      "arguments": [
+        "qa-config-fields-1",
+        "--format",
+        "json"
+      ],
+      "bytes": 3369,
+      "tokens": 1012
+    },
+    {
+      "arguments": [
+        "qa-config-fields-1",
+        "--section",
+        "fields-1"
+      ],
+      "bytes": 946,
+      "tokens": 289
+    },
+    {
+      "arguments": [
+        "qa-config-fields-1",
+        "--section",
+        "fields-1",
+        "--format",
+        "json"
+      ],
+      "bytes": 1219,
+      "tokens": 375
+    },
+    {
+      "arguments": [
+        "qa-config-fields-1",
+        "--section",
+        "fields-2"
+      ],
+      "bytes": 1461,
+      "tokens": 432
+    },
+    {
+      "arguments": [
+        "qa-config-fields-1",
+        "--section",
+        "fields-2",
+        "--format",
+        "json"
+      ],
+      "bytes": 1818,
+      "tokens": 533
+    },
+    {
+      "arguments": [
+        "qa-config-fields-1",
+        "--section",
+        "fields-3"
+      ],
+      "bytes": 856,
+      "tokens": 225
+    },
+    {
+      "arguments": [
+        "qa-config-fields-1",
+        "--section",
+        "fields-3",
+        "--format",
+        "json"
+      ],
+      "bytes": 1115,
+      "tokens": 308
+    },
+    {
+      "arguments": [
+        "qa-config-fields-1",
+        "--section",
+        "fields-4"
+      ],
+      "bytes": 796,
+      "tokens": 217
+    },
+    {
+      "arguments": [
+        "qa-config-fields-1",
+        "--section",
+        "fields-4",
+        "--format",
+        "json"
+      ],
+      "bytes": 1055,
+      "tokens": 300
+    },
+    {
+      "arguments": [
+        "qa-journey-fields-1"
+      ],
+      "bytes": 2353,
+      "tokens": 709
+    },
+    {
+      "arguments": [
+        "qa-journey-fields-1",
+        "--format",
+        "json"
+      ],
+      "bytes": 2760,
+      "tokens": 832
+    },
+    {
+      "arguments": [
+        "qa-journey-fields-1",
+        "--section",
+        "fields-1"
+      ],
+      "bytes": 919,
+      "tokens": 267
+    },
+    {
+      "arguments": [
+        "qa-journey-fields-1",
+        "--section",
+        "fields-1",
+        "--format",
+        "json"
+      ],
+      "bytes": 1189,
+      "tokens": 355
+    },
+    {
+      "arguments": [
+        "qa-journey-fields-1",
+        "--section",
+        "fields-2"
+      ],
+      "bytes": 720,
+      "tokens": 206
+    },
+    {
+      "arguments": [
+        "qa-journey-fields-1",
+        "--section",
+        "fields-2",
+        "--format",
+        "json"
+      ],
+      "bytes": 966,
+      "tokens": 282
+    },
+    {
+      "arguments": [
+        "qa-journey-fields-1",
+        "--section",
+        "fields-3"
+      ],
+      "bytes": 727,
+      "tokens": 198
+    },
+    {
+      "arguments": [
+        "qa-journey-fields-1",
+        "--section",
+        "fields-3",
+        "--format",
+        "json"
+      ],
+      "bytes": 975,
+      "tokens": 278
+    },
+    {
+      "arguments": [
+        "qa-journey-fields-1",
+        "--section",
+        "fields-4"
+      ],
+      "bytes": 948,
+      "tokens": 270
+    },
+    {
+      "arguments": [
+        "qa-journey-fields-1",
+        "--section",
+        "fields-4",
+        "--format",
+        "json"
+      ],
+      "bytes": 1210,
+      "tokens": 355
+    },
+    {
+      "arguments": [
+        "qa-journey-fields-1",
+        "--section",
+        "fields-5"
+      ],
+      "bytes": 651,
+      "tokens": 184
+    },
+    {
+      "arguments": [
+        "qa-journey-fields-1",
+        "--section",
+        "fields-5",
+        "--format",
+        "json"
+      ],
+      "bytes": 894,
+      "tokens": 262
+    },
+    {
+      "arguments": [
+        "qa-seed-fields-1"
+      ],
+      "bytes": 1285,
+      "tokens": 410
+    },
+    {
+      "arguments": [
+        "qa-seed-fields-1",
+        "--format",
+        "json"
+      ],
+      "bytes": 1584,
+      "tokens": 505
+    },
+    {
+      "arguments": [
+        "qa-seed-fields-1",
+        "--section",
+        "fields-1"
+      ],
+      "bytes": 853,
+      "tokens": 256
+    },
+    {
+      "arguments": [
+        "qa-seed-fields-1",
+        "--section",
+        "fields-1",
+        "--format",
+        "json"
+      ],
+      "bytes": 1112,
+      "tokens": 342
+    },
+    {
+      "arguments": [
+        "qa-seed-fields-1",
+        "--section",
+        "fields-2"
+      ],
+      "bytes": 796,
+      "tokens": 244
+    },
+    {
+      "arguments": [
+        "qa-seed-fields-1",
+        "--section",
+        "fields-2",
+        "--format",
+        "json"
+      ],
+      "bytes": 1050,
+      "tokens": 324
+    },
+    {
+      "arguments": [
+        "qa-fixtures-fields-1"
+      ],
+      "bytes": 2161,
+      "tokens": 622
+    },
+    {
+      "arguments": [
+        "qa-fixtures-fields-1",
+        "--format",
+        "json"
+      ],
+      "bytes": 2554,
+      "tokens": 749
+    },
+    {
+      "arguments": [
+        "qa-fixtures-fields-1",
+        "--section",
+        "fields-1"
+      ],
+      "bytes": 906,
+      "tokens": 258
+    },
+    {
+      "arguments": [
+        "qa-fixtures-fields-1",
+        "--section",
+        "fields-1",
+        "--format",
+        "json"
+      ],
+      "bytes": 1177,
+      "tokens": 342
+    },
+    {
+      "arguments": [
+        "qa-fixtures-fields-1",
+        "--section",
+        "fields-2"
+      ],
+      "bytes": 996,
+      "tokens": 291
+    },
+    {
+      "arguments": [
+        "qa-fixtures-fields-1",
+        "--section",
+        "fields-2",
+        "--format",
+        "json"
+      ],
+      "bytes": 1269,
+      "tokens": 377
+    },
+    {
+      "arguments": [
+        "qa-fixtures-fields-1",
+        "--section",
+        "fields-3"
+      ],
+      "bytes": 741,
+      "tokens": 190
+    },
+    {
+      "arguments": [
+        "qa-fixtures-fields-1",
+        "--section",
+        "fields-3",
+        "--format",
+        "json"
+      ],
+      "bytes": 988,
+      "tokens": 274
+    },
+    {
+      "arguments": [
+        "qa-fixtures-fields-1",
+        "--section",
+        "fields-4"
+      ],
+      "bytes": 703,
+      "tokens": 177
+    },
+    {
+      "arguments": [
+        "qa-fixtures-fields-1",
+        "--section",
+        "fields-4",
+        "--format",
+        "json"
+      ],
+      "bytes": 949,
+      "tokens": 263
+    },
+    {
+      "arguments": [
+        "qa-config-fields-2"
+      ],
+      "bytes": 1074,
+      "tokens": 312
+    },
+    {
+      "arguments": [
+        "qa-config-fields-2",
+        "--format",
+        "json"
+      ],
+      "bytes": 1374,
+      "tokens": 399
+    },
+    {
+      "arguments": [
+        "qa-config-fields-2",
+        "--section",
+        "fields-1"
+      ],
+      "bytes": 921,
+      "tokens": 267
+    },
+    {
+      "arguments": [
+        "qa-config-fields-2",
+        "--section",
+        "fields-1",
+        "--format",
+        "json"
+      ],
+      "bytes": 1188,
+      "tokens": 348
+    },
+    {
+      "arguments": [
+        "qa-config-fields-2",
+        "--section",
+        "fields-2"
+      ],
+      "bytes": 531,
+      "tokens": 134
+    },
+    {
+      "arguments": [
+        "qa-config-fields-2",
+        "--section",
+        "fields-2",
+        "--format",
+        "json"
+      ],
+      "bytes": 778,
+      "tokens": 211
+    },
+    {
+      "arguments": [
+        "search",
+        "rio",
+        "--limit",
+        "10"
+      ],
+      "bytes": 605,
+      "tokens": 138
+    },
+    {
+      "arguments": [
+        "search",
+        "rio",
+        "--limit",
+        "10",
+        "--format",
+        "json"
+      ],
+      "bytes": 1063,
+      "tokens": 269
+    },
+    {
+      "arguments": [
+        "search",
+        "profile",
+        "--limit",
+        "10"
+      ],
+      "bytes": 581,
+      "tokens": 137
+    },
+    {
+      "arguments": [
+        "search",
+        "profile",
+        "--limit",
+        "10",
+        "--format",
+        "json"
+      ],
+      "bytes": 1061,
+      "tokens": 264
+    },
+    {
+      "arguments": [
+        "search",
+        "the",
+        "--limit",
+        "10"
+      ],
+      "bytes": 600,
+      "tokens": 135
+    },
+    {
+      "arguments": [
+        "search",
+        "the",
+        "--limit",
+        "10",
+        "--format",
+        "json"
+      ],
+      "bytes": 1069,
+      "tokens": 269
+    },
+    {
+      "arguments": [
+        "search",
+        "a",
+        "--limit",
+        "10"
+      ],
+      "bytes": 553,
+      "tokens": 125
+    },
+    {
+      "arguments": [
+        "search",
+        "a",
+        "--limit",
+        "10",
+        "--format",
+        "json"
+      ],
+      "bytes": 1088,
+      "tokens": 257
+    },
+    {
+      "arguments": [
+        "search",
+        "dependency mismatch",
+        "--limit",
+        "10"
+      ],
+      "bytes": 157,
+      "tokens": 43
+    },
+    {
+      "arguments": [
+        "search",
+        "dependency mismatch",
+        "--limit",
+        "10",
+        "--format",
+        "json"
+      ],
+      "bytes": 374,
+      "tokens": 119
+    },
+    {
+      "arguments": [
+        "search",
+        "nonexistent-zz",
+        "--limit",
+        "10"
+      ],
+      "bytes": 100,
+      "tokens": 36
+    },
+    {
+      "arguments": [
+        "search",
+        "nonexistent-zz",
+        "--limit",
+        "10",
+        "--format",
+        "json"
+      ],
+      "bytes": 205,
+      "tokens": 82
+    },
+    {
+      "arguments": [
+        "missing",
+        "--format",
+        "json"
+      ],
+      "bytes": 290,
+      "tokens": 103
+    },
+    {
+      "arguments": [
+        "review",
+        "--section",
+        "missing",
+        "--format",
+        "json"
+      ],
+      "bytes": 321,
+      "tokens": 102
+    },
+    {
+      "arguments": [
+        "search",
+        "",
+        "--format",
+        "json"
+      ],
+      "bytes": 291,
+      "tokens": 102
+    },
+    {
+      "arguments": [
+        "search",
+        "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "--format",
+        "json"
+      ],
+      "bytes": 291,
+      "tokens": 102
+    },
+    {
+      "arguments": [
+        "search",
+        "x",
+        "--limit",
+        "11",
+        "--format",
+        "json"
+      ],
+      "bytes": 271,
+      "tokens": 98
+    }
+  ]
+}

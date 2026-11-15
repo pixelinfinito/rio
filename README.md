@@ -1,5 +1,7 @@
 <p align="center"><img src="docs/assets/readme-header.webp" alt="Rio: open-source AI code review, right in your terminal. Pipeline: prepare, checks and graph run on your machine; triage, agents and verify run in your Cloudflare account (optional); report." width="1280"></p>
 
+**Documentation:** [English Wiki](https://github.com/pixelinfinito/rio/wiki/EN-Start) · [Wiki em Português (Brasil)](https://github.com/pixelinfinito/rio/wiki/PT-BR-Start). Start with practical guides, screenshots, configuration recipes, and troubleshooting. Agents can read version-matched docs offline with `rio docs`, `rio docs search "topic"`, and `rio docs profiles --section inheritance`.
+
 Rio reviews Git changes with TypeScript, Python and Rust type checking, linting, secret scanning, diff coverage, dependency auditing, and a bounded impact graph. Run deterministic checks locally, or configure the Cloudflare endpoint for isolated checks and agent review with independent verifier voters. Rio is licensed under Apache-2.0.
 
 The original [automated acceptance evaluation](docs/evaluation/v0.1.md) concluded **no-go**. A [methodology-corrected rescoring](docs/evaluation/v0.1-rescored.md) finds **insufficient evidence** because all ten PRs lacked working baseline classification; stable v0.1 release remains blocked. The implementation and release-candidate validation are available; the commands below describe published release installation.

@@ -1,0 +1,40 @@
+ ▃▅▇▇▇▅▃▃▁▁▁▃  rio  qa · shop-demo · .rio/qa.yaml · changed mode                    ◐ sync: 2 need review  docker · pod 
+  1 Journeys   2 Matrix   3 Cell   4 UX   5 Seed   6 Rules                                                              
+ PERSONAS               │ Journeys 8              why selected     │ checkout  Checkout with saved address              
+ ● shopper     creds ok │──────────────────────────────────────────│ persona shopper   tags smoke, money                
+ ● admin       creds ok │▌ ● checkout           shopper  covers src│ chain   login → add-to-cart → checkout             
+ ○ guest       no login │  ● add-to-cart        shopper  covers src│────────────────────────────────────────────────────
+                        │  ● payment-recovery   shopper  §Recovery │ COVERS                                             
+ CELLS  2 × 2           │  ● keyboard-shopping  shopper  covers src│ paths   src/**   server.mjs                        
+ ▣ mobile  · light      │  ● profile-address    shopper  ◐ drift   │ routes  /cart   /checkout   /order/:id             
+ ▣ mobile  · dark       │  ↳ login              shopper  chained by│                                                    
+ ▣ desktop · light      │  ○ registration       guest    held · cap│ PRECONDITIONS                                      
+ ▣ desktop · dark       │  ○ admin-import       admin    not covere│ · Synthetic products and persona accounts seeded   
+                        │                                          │ · Cart holds a Canvas bag (from add-to-cart)       
+ CHANGED  3 files       │──────────────────────────────────────────│                                                    
+ M src/main.js     +14  │ PROPOSED  .rio/qa.proposed.yaml          │ STEPS                                              
+ M src/style.css    +6  │ + guest-checkout    from §Goals          │  1  Open the cart                   /cart          
+ M REVIEW.md        +2  │ ~ payment-recovery  step 3 rewritten     │     expect  Canvas bag and total are visible       
+   guidance edited      │ A accept  D diff  committed files untouch│  2  Proceed to checkout             /checkout      
+                        │                                          │     expect  Saved address is preselected           
+ SELECTION              │──────────────────────────────────────────│  3  Pay with the test card          /checkout      
+ mode    changed        │ SYNC  rio qa sync --check · exit 1       │     expect  Card form accepts the 4242 card        
+ cap     5 journeys     │ ◐ profile-address   server.mjs changed   │  4  Confirm the order               /checkout      
+ picked  5 of 8         │ ◐ payment-recovery  guidance edited      │     expect  Pay is reachable, order is placed      
+ held    1 · cap        │   sync never rewrites a journey;         │  5  View the confirmation           /order/:id     
+                        │   s opens the reconcile diff             │     expect  Order number and receipt mail          
+ SEED                   │                                          │                                                    
+ ✓ fp 9f3a·c21 cached   │                                          │ SUCCESS                                            
+   restore ~2.1 s       │                                          │ ✓ Order row exists for shopper                     
+                        │                                          │ ✓ One receipt captured by the mail double          
+ HARNESS                │                                          │                                                    
+ codex · gateway        │                                          │ LAST BASELINE  main · 2h ago                       
+ egress   deny-all      │                                          │            mobile        desktop                   
+ doubles  stripe, mail  │                                          │ light      ✓ passed      ✓ passed                  
+                        │                                          │ dark       ✓ passed      ✓ passed                  
+                        │                                          │                                                    
+                        │                                          │                                                    
+                        │                                          │                                                    
+                        │                                          │                                                    
+ 5 selected + 1 chained · 20 cells · est. 6m 10s · budget 500k tok, 60k per voter · fast                                
+ ↑↓ move  space select   ⏎ run  a --full  b baseline  s sync  i init  v validate  ? help  q quit                        

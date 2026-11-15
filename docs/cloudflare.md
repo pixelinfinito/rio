@@ -1,5 +1,7 @@
 # Cloudflare endpoint and runners
 
+User guides: [English](https://github.com/pixelinfinito/rio/wiki/EN-Hosting) · [Português (Brasil)](https://github.com/pixelinfinito/rio/wiki/PT-BR-Hosting).
+
 The v0.2 control plane is a TypeScript Worker API, one `ReviewWorkflow` per review,
 Queues for runner dispatch, D1 for ownership/state/budgets, and private R2 objects
 for immutable snapshots and evidence. Workflow step results contain R2 keys rather

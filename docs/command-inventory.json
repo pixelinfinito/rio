@@ -1,0 +1,1676 @@
+[
+  {
+    "about": "Review local code changes with deterministic evidence",
+    "arguments": [
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Print version",
+        "id": "version",
+        "long": "version",
+        "required": false,
+        "short": "V",
+        "values": []
+      }
+    ],
+    "command": "rio",
+    "help": "Review local code changes with deterministic evidence\n\nUsage: rio <COMMAND>\n\nCommands:\n  docs          Read embedded documentation: index, topic/section, or local search (offline)\n  review        \n  qa            Inspect and validate browser QA contracts and journey coverage\n  profile       \n  doctor        \n  init          \n  deploy        \n  feedback      Answer a posted finding through the configured endpoint\n  findings      List the repository's finding registry held by the endpoint\n  suppressions  List, apply or decline suppression proposals from repeated dismissals\n  eval          Run the evaluation harness (requires python3 and Rio's `eval/` directory)\n  help          Print this message or the help of the given subcommand(s)\n\nOptions:\n  -h, --help\n          Print help\n\n  -V, --version\n          Print version\n"
+  },
+  {
+    "about": "Read embedded documentation: index, topic/section, or local search (offline)",
+    "arguments": [
+      {
+        "defaults": [],
+        "help": "Topic ID, 'list' for the index, or 'search' followed by a query",
+        "id": "topic",
+        "long": null,
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Search text (quote multiple words); only valid after 'search'",
+        "id": "query",
+        "long": null,
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Retrieve one section, retaining prerequisites and effects",
+        "id": "section",
+        "long": "section",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Maximum search hits, 1–10 (default 5); only valid for search",
+        "id": "limit",
+        "long": "limit",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "text"
+        ],
+        "help": "Plain text by default; JSON is versioned and machine-readable",
+        "id": "format",
+        "long": "format",
+        "required": false,
+        "short": null,
+        "values": [
+          "text",
+          "json"
+        ]
+      },
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio docs",
+    "help": "Read embedded documentation: index, topic/section, or local search (offline)\n\nUsage: rio docs [OPTIONS] [TOPIC] [QUERY]\n\nArguments:\n  [TOPIC]\n          Topic ID, 'list' for the index, or 'search' followed by a query\n\n  [QUERY]\n          Search text (quote multiple words); only valid after 'search'\n\nOptions:\n      --section <SECTION>\n          Retrieve one section, retaining prerequisites and effects\n\n      --limit <LIMIT>\n          Maximum search hits, 1–10 (default 5); only valid for search\n\n      --format <FORMAT>\n          Plain text by default; JSON is versioned and machine-readable\n          \n          [default: text]\n          [possible values: text, json]\n\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "",
+    "arguments": [
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "Review only staged changes; selection flags are mutually exclusive",
+        "id": "staged",
+        "long": "staged",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Review HEAD against its merge base with REF",
+        "id": "base",
+        "long": "base",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "",
+        "id": "profile",
+        "long": "profile",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Output format; without it a terminal session opens the interactive UI",
+        "id": "format",
+        "long": "format",
+        "required": false,
+        "short": null,
+        "values": [
+          "terminal",
+          "json",
+          "md",
+          "sarif"
+        ]
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "",
+        "id": "offline",
+        "long": "offline",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "",
+        "id": "no_color",
+        "long": "no-color",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "Draw only ASCII characters (also `RIO_ASCII=1`), for terminals that render box drawing and symbols two cells wide",
+        "id": "ascii",
+        "long": "ascii",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "Stream plain output instead of opening the interactive UI (also `RIO_TUI=0`)",
+        "id": "no_tui",
+        "long": "no-tui",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "",
+        "id": "show_pre_existing",
+        "long": "show-pre-existing",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "List findings remembered as dismissed on unchanged code in their own section",
+        "id": "show_remembered",
+        "long": "show-remembered",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "",
+        "id": "pr",
+        "long": "pr",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "",
+        "id": "deep",
+        "long": "deep",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "",
+        "id": "preset",
+        "long": "preset",
+        "required": false,
+        "short": null,
+        "values": [
+          "quick",
+          "standard",
+          "deep"
+        ]
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "",
+        "id": "fork",
+        "long": "fork",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "Mark the review as started by the nightly evaluation job, for the council's `nightly` trigger",
+        "id": "nightly",
+        "long": "nightly",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "",
+        "id": "publish",
+        "long": "publish",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "Review the current branch as a lineage held by the endpoint",
+        "id": "since_last",
+        "long": "since-last",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "Start a new lineage generation at round 1 (requires --since-last)",
+        "id": "reset_lineage",
+        "long": "reset-lineage",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio review",
+    "help": "Usage: rio review [OPTIONS]\n\nOptions:\n      --staged\n          Review only staged changes; selection flags are mutually exclusive\n\n      --base <REF>\n          Review HEAD against its merge base with REF\n\n      --profile <PROFILE>\n          \n\n      --format <FORMAT>\n          Output format; without it a terminal session opens the interactive UI\n          \n          [possible values: terminal, json, md, sarif]\n\n      --offline\n          \n\n      --no-color\n          \n\n      --ascii\n          Draw only ASCII characters (also `RIO_ASCII=1`), for terminals that render box drawing and symbols two cells wide\n\n      --no-tui\n          Stream plain output instead of opening the interactive UI (also `RIO_TUI=0`)\n\n      --show-pre-existing\n          \n\n      --show-remembered\n          List findings remembered as dismissed on unchanged code in their own section\n\n      --pr <PR>\n          \n\n      --deep\n          \n\n      --preset <PRESET>\n          [possible values: quick, standard, deep]\n\n      --fork\n          \n\n      --nightly\n          Mark the review as started by the nightly evaluation job, for the council's `nightly` trigger\n\n      --publish\n          \n\n      --since-last\n          Review the current branch as a lineage held by the endpoint\n\n      --reset-lineage\n          Start a new lineage generation at round 1 (requires --since-last)\n\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "Inspect and validate browser QA contracts and journey coverage",
+    "arguments": [
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "Review only staged changes; selection flags are mutually exclusive",
+        "id": "staged",
+        "long": "staged",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Review HEAD against its merge base with REF",
+        "id": "base",
+        "long": "base",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "",
+        "id": "profile",
+        "long": "profile",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Output format; without it a terminal session opens the interactive UI",
+        "id": "format",
+        "long": "format",
+        "required": false,
+        "short": null,
+        "values": [
+          "terminal",
+          "json",
+          "md",
+          "sarif"
+        ]
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "Stream plain output instead of opening the interactive UI (also `RIO_TUI=0`)",
+        "id": "no_tui",
+        "long": "no-tui",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "",
+        "id": "no_color",
+        "long": "no-color",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "Draw only ASCII characters (also `RIO_ASCII=1`)",
+        "id": "ascii",
+        "long": "ascii",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "",
+        "id": "publish",
+        "long": "publish",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "",
+        "id": "full",
+        "long": "full",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "",
+        "id": "journey",
+        "long": "journey",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "",
+        "id": "baseline",
+        "long": "baseline",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "",
+        "id": "harness",
+        "long": "harness",
+        "required": false,
+        "short": null,
+        "values": [
+          "codex",
+          "pi"
+        ]
+      },
+      {
+        "defaults": [],
+        "help": "Run only this cell of the matrix, as `<viewport>/<color-scheme>` (with --journey, one cell run again)",
+        "id": "cell",
+        "long": "cell",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio qa",
+    "help": "Inspect and validate browser QA contracts and journey coverage\n\nUsage: rio qa [OPTIONS] [COMMAND]\n\nCommands:\n  init      Generate owner-guided journeys against the configured, seeded application\n  validate  Validate committed journeys and proposed replacements without starting an app\n  list      List runnable journeys, their dependencies and separate proposed candidates\n  show      Show the resolved environment contract, or one validated journey, as JSON\n  fixtures  Inspect named uploads, service doubles and captured-message fixtures\n  rules     Print the versioned UI probes and UX assessment rubric\n  seed      Inspect the seed definitions and locally published snapshot\n  evidence  Manage retained browser evidence\n  sync      Check whether source or owner guidance changes require journey reconciliation\n  help      Print this message or the help of the given subcommand(s)\n\nOptions:\n      --staged\n          Review only staged changes; selection flags are mutually exclusive\n\n      --base <REF>\n          Review HEAD against its merge base with REF\n\n      --profile <PROFILE>\n          \n\n      --format <FORMAT>\n          Output format; without it a terminal session opens the interactive UI\n          \n          [possible values: terminal, json, md, sarif]\n\n      --no-tui\n          Stream plain output instead of opening the interactive UI (also `RIO_TUI=0`)\n\n      --no-color\n          \n\n      --ascii\n          Draw only ASCII characters (also `RIO_ASCII=1`)\n\n      --publish\n          \n\n      --full\n          \n\n      --journey <JOURNEY>\n          \n\n      --baseline\n          \n\n      --harness <HARNESS>\n          [possible values: codex, pi]\n\n      --cell <VIEWPORT/SCHEME>\n          Run only this cell of the matrix, as `<viewport>/<color-scheme>` (with --journey, one cell run again)\n\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "Generate owner-guided journeys against the configured, seeded application",
+    "arguments": [
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "Replace existing committed journeys after validating the generated batch",
+        "id": "force",
+        "long": "force",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "Accept the reviewed .rio/qa.proposed.yaml from a previous init",
+        "id": "accept_contract",
+        "long": "accept-contract",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio qa init",
+    "help": "Generate owner-guided journeys against the configured, seeded application\n\nUsage: rio qa init [OPTIONS]\n\nOptions:\n      --force\n          Replace existing committed journeys after validating the generated batch\n\n      --accept-contract\n          Accept the reviewed .rio/qa.proposed.yaml from a previous init\n\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "Validate committed journeys and proposed replacements without starting an app",
+    "arguments": [
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio qa validate",
+    "help": "Validate committed journeys and proposed replacements without starting an app\n\nUsage: rio qa validate\n\nOptions:\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "List runnable journeys, their dependencies and separate proposed candidates",
+    "arguments": [
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio qa list",
+    "help": "List runnable journeys, their dependencies and separate proposed candidates\n\nUsage: rio qa list\n\nOptions:\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "Show the resolved environment contract, or one validated journey, as JSON",
+    "arguments": [
+      {
+        "defaults": [],
+        "help": "",
+        "id": "name",
+        "long": null,
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio qa show",
+    "help": "Show the resolved environment contract, or one validated journey, as JSON\n\nUsage: rio qa show [NAME]\n\nArguments:\n  [NAME]\n          \n\nOptions:\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "Inspect named uploads, service doubles and captured-message fixtures",
+    "arguments": [
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio qa fixtures",
+    "help": "Inspect named uploads, service doubles and captured-message fixtures\n\nUsage: rio qa fixtures <COMMAND>\n\nCommands:\n  status  \n  help    Print this message or the help of the given subcommand(s)\n\nOptions:\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "",
+    "arguments": [
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio qa fixtures status",
+    "help": "Usage: rio qa fixtures status\n\nOptions:\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "Print the versioned UI probes and UX assessment rubric",
+    "arguments": [
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio qa rules",
+    "help": "Print the versioned UI probes and UX assessment rubric\n\nUsage: rio qa rules\n\nOptions:\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "Inspect the seed definitions and locally published snapshot",
+    "arguments": [
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio qa seed",
+    "help": "Inspect the seed definitions and locally published snapshot\n\nUsage: rio qa seed <COMMAND>\n\nCommands:\n  build   Build the seed in the isolated app pod, or restore a matching snapshot\n  export  Export verified seed archives from the local cache for inspection\n  prune   Keep the newest snapshots and any snapshots leased by running jobs\n  status  Show the current fingerprint, cached snapshot and rebuild reason\n  help    Print this message or the help of the given subcommand(s)\n\nOptions:\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "Build the seed in the isolated app pod, or restore a matching snapshot",
+    "arguments": [
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "",
+        "id": "force",
+        "long": "force",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio qa seed build",
+    "help": "Build the seed in the isolated app pod, or restore a matching snapshot\n\nUsage: rio qa seed build [OPTIONS]\n\nOptions:\n      --force\n          \n\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "Export verified seed archives from the local cache for inspection",
+    "arguments": [
+      {
+        "defaults": [],
+        "help": "",
+        "id": "directory",
+        "long": null,
+        "required": true,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio qa seed export",
+    "help": "Export verified seed archives from the local cache for inspection\n\nUsage: rio qa seed export <DIRECTORY>\n\nArguments:\n  <DIRECTORY>\n          \n\nOptions:\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "Keep the newest snapshots and any snapshots leased by running jobs",
+    "arguments": [
+      {
+        "defaults": [
+          "3"
+        ],
+        "help": "",
+        "id": "keep",
+        "long": "keep",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio qa seed prune",
+    "help": "Keep the newest snapshots and any snapshots leased by running jobs\n\nUsage: rio qa seed prune [OPTIONS]\n\nOptions:\n      --keep <KEEP>\n          [default: 3]\n\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "Show the current fingerprint, cached snapshot and rebuild reason",
+    "arguments": [
+      {
+        "defaults": [],
+        "help": "A provisioned app image to inspect without building it",
+        "id": "image",
+        "long": "image",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio qa seed status",
+    "help": "Show the current fingerprint, cached snapshot and rebuild reason\n\nUsage: rio qa seed status [OPTIONS]\n\nOptions:\n      --image <IMAGE>\n          A provisioned app image to inspect without building it\n\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "Manage retained browser evidence",
+    "arguments": [
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio qa evidence",
+    "help": "Manage retained browser evidence\n\nUsage: rio qa evidence <COMMAND>\n\nCommands:\n  prune  Delete hosted evidence for one review and revoke its download links\n  help   Print this message or the help of the given subcommand(s)\n\nOptions:\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "Delete hosted evidence for one review and revoke its download links",
+    "arguments": [
+      {
+        "defaults": [],
+        "help": "",
+        "id": "review",
+        "long": "review",
+        "required": true,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio qa evidence prune",
+    "help": "Delete hosted evidence for one review and revoke its download links\n\nUsage: rio qa evidence prune --review <REVIEW>\n\nOptions:\n      --review <REVIEW>\n          \n\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "Check whether source or owner guidance changes require journey reconciliation",
+    "arguments": [
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "",
+        "id": "check",
+        "long": "check",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "Review only staged changes; selection flags are mutually exclusive",
+        "id": "staged",
+        "long": "staged",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Review HEAD against its merge base with REF",
+        "id": "base",
+        "long": "base",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio qa sync",
+    "help": "Check whether source or owner guidance changes require journey reconciliation\n\nUsage: rio qa sync [OPTIONS]\n\nOptions:\n      --check\n          \n\n      --staged\n          Review only staged changes; selection flags are mutually exclusive\n\n      --base <REF>\n          Review HEAD against its merge base with REF\n\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "",
+    "arguments": [
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio profile",
+    "help": "Usage: rio profile <COMMAND>\n\nCommands:\n  list      \n  show      \n  validate  \n  help      Print this message or the help of the given subcommand(s)\n\nOptions:\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "",
+    "arguments": [
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio profile list",
+    "help": "Usage: rio profile list\n\nOptions:\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "",
+    "arguments": [
+      {
+        "defaults": [],
+        "help": "",
+        "id": "reference",
+        "long": null,
+        "required": true,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "",
+        "id": "raw",
+        "long": "raw",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio profile show",
+    "help": "Usage: rio profile show [OPTIONS] <REFERENCE>\n\nArguments:\n  <REFERENCE>\n          \n\nOptions:\n      --raw\n          \n\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "",
+    "arguments": [
+      {
+        "defaults": [],
+        "help": "",
+        "id": "reference",
+        "long": null,
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio profile validate",
+    "help": "Usage: rio profile validate [REFERENCE]\n\nArguments:\n  [REFERENCE]\n          \n\nOptions:\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "",
+    "arguments": [
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "Rotate the GitHub App webhook secret on the app and the endpoint",
+        "id": "rotate",
+        "long": "rotate",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "Inspect every detected project, including roots outside the current diff",
+        "id": "all_roots",
+        "long": "all-roots",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "Review only staged changes; selection flags are mutually exclusive",
+        "id": "staged",
+        "long": "staged",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Review HEAD against its merge base with REF",
+        "id": "base",
+        "long": "base",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "terminal"
+        ],
+        "help": "",
+        "id": "format",
+        "long": "format",
+        "required": false,
+        "short": null,
+        "values": [
+          "terminal",
+          "json"
+        ]
+      },
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio doctor",
+    "help": "Usage: rio doctor [OPTIONS]\n\nOptions:\n      --rotate\n          Rotate the GitHub App webhook secret on the app and the endpoint\n\n      --all-roots\n          Inspect every detected project, including roots outside the current diff\n\n      --staged\n          Review only staged changes; selection flags are mutually exclusive\n\n      --base <REF>\n          Review HEAD against its merge base with REF\n\n      --format <FORMAT>\n          [default: terminal]\n          [possible values: terminal, json]\n\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "",
+    "arguments": [
+      {
+        "defaults": [],
+        "help": "",
+        "id": "endpoint",
+        "long": "endpoint",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "",
+        "id": "token_stdin",
+        "long": "token-stdin",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "Register a GitHub App for PR mode after deploying (skippable; replayed by --from)",
+        "id": "github_app",
+        "long": "github-app",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Register the app under this GitHub organization instead of your account",
+        "id": "github_org",
+        "long": "github-org",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Store a new private key (PEM file) for the registered app on the endpoint",
+        "id": "replace_private_key",
+        "long": "replace-private-key",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "Prompt on the terminal instead of opening the interactive UI (also `RIO_TUI=0`)",
+        "id": "no_tui",
+        "long": "no-tui",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Reproduce deployment choices from a Rio user config (contains no secrets)",
+        "id": "from",
+        "long": "from",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "",
+        "id": "account",
+        "long": "account",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "",
+        "id": "name",
+        "long": "name",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "",
+        "id": "cf_profile",
+        "long": "cf-profile",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "",
+        "id": "runner",
+        "long": "runner",
+        "required": false,
+        "short": null,
+        "values": [
+          "sandbox",
+          "self-hosted"
+        ]
+      },
+      {
+        "defaults": [],
+        "help": "Local Docker image, public image, or an existing registry.cloudflare.com reference",
+        "id": "runner_image",
+        "long": "runner-image",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Account subdomain to register if the account has none; existing subdomains are reused",
+        "id": "workers_subdomain",
+        "long": "workers-subdomain",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Default: OS keychain. Use file explicitly on a headless host",
+        "id": "credential_store",
+        "long": "credential-store",
+        "required": false,
+        "short": null,
+        "values": [
+          "keychain",
+          "file"
+        ]
+      },
+      {
+        "defaults": [],
+        "help": "Private JSON file containing model provider keys, AI_GATEWAY_TOKEN or AI_GATEWAY_PROVIDER_KEY_<SLUG> custom provider keys; never copied to config",
+        "id": "secrets_file",
+        "long": "secrets-file",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Add or replace a custom AI Gateway provider: SLUG:PROTOCOL:BASE_URL, where PROTOCOL is openai or anthropic and BASE_URL is the API root that /chat/completions or /messages is appended to. Repeatable",
+        "id": "custom_providers",
+        "long": "custom-provider",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Generation model for a newly written personal default profile, e.g. custom-SLUG/MODEL; required with custom providers when that profile is absent",
+        "id": "default_model",
+        "long": "default-model",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Verification model for a newly written personal default profile (defaults to --default-model)",
+        "id": "verifier_model",
+        "long": "verifier-model",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "Print an offline plan without authentication, credential writes or account mutations",
+        "id": "dry_run",
+        "long": "dry-run",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Allow a council vendor: VENDOR:FAMILY:ROUTE, where ROUTE is a model route such as anthropic/claude-sonnet-5.5 or custom-SLUG/MODEL. Repeatable; replaces the saved council allowlist. Built-in provider routes need that provider's key from the environment or --secrets-file",
+        "id": "council_vendors",
+        "long": "council-vendor",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "Skip the council step and clear any saved council allowlist",
+        "id": "no_council",
+        "long": "no-council",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio init",
+    "help": "Usage: rio init [OPTIONS]\n\nOptions:\n      --endpoint <ENDPOINT>\n          \n\n      --token-stdin\n          \n\n      --github-app\n          Register a GitHub App for PR mode after deploying (skippable; replayed by --from)\n\n      --github-org <ORG>\n          Register the app under this GitHub organization instead of your account\n\n      --replace-private-key <PEM>\n          Store a new private key (PEM file) for the registered app on the endpoint\n\n      --no-tui\n          Prompt on the terminal instead of opening the interactive UI (also `RIO_TUI=0`)\n\n      --from <FROM>\n          Reproduce deployment choices from a Rio user config (contains no secrets)\n\n      --account <ACCOUNT>\n          \n\n      --name <NAME>\n          \n\n      --cf-profile <CF_PROFILE>\n          \n\n      --runner <RUNNER>\n          [possible values: sandbox, self-hosted]\n\n      --runner-image <RUNNER_IMAGE>\n          Local Docker image, public image, or an existing registry.cloudflare.com reference\n\n      --workers-subdomain <WORKERS_SUBDOMAIN>\n          Account subdomain to register if the account has none; existing subdomains are reused\n\n      --credential-store <CREDENTIAL_STORE>\n          Default: OS keychain. Use file explicitly on a headless host\n          \n          [possible values: keychain, file]\n\n      --secrets-file <SECRETS_FILE>\n          Private JSON file containing model provider keys, AI_GATEWAY_TOKEN or AI_GATEWAY_PROVIDER_KEY_<SLUG> custom provider keys; never copied to config\n\n      --custom-provider <SLUG:PROTOCOL:BASE_URL>\n          Add or replace a custom AI Gateway provider: SLUG:PROTOCOL:BASE_URL, where PROTOCOL is openai or anthropic and BASE_URL is the API root that /chat/completions or /messages is appended to. Repeatable\n\n      --default-model <MODEL>\n          Generation model for a newly written personal default profile, e.g. custom-SLUG/MODEL; required with custom providers when that profile is absent\n\n      --verifier-model <MODEL>\n          Verification model for a newly written personal default profile (defaults to --default-model)\n\n      --dry-run\n          Print an offline plan without authentication, credential writes or account mutations\n\n      --council-vendor <VENDOR:FAMILY:ROUTE>\n          Allow a council vendor: VENDOR:FAMILY:ROUTE, where ROUTE is a model route such as anthropic/claude-sonnet-5.5 or custom-SLUG/MODEL. Repeatable; replaces the saved council allowlist. Built-in provider routes need that provider's key from the environment or --secrets-file\n\n      --no-council\n          Skip the council step and clear any saved council allowlist\n\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "",
+    "arguments": [
+      {
+        "defaults": [],
+        "help": "Reproduce deployment choices from a Rio user config (contains no secrets)",
+        "id": "from",
+        "long": "from",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "",
+        "id": "account",
+        "long": "account",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "",
+        "id": "name",
+        "long": "name",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "",
+        "id": "cf_profile",
+        "long": "cf-profile",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "",
+        "id": "runner",
+        "long": "runner",
+        "required": false,
+        "short": null,
+        "values": [
+          "sandbox",
+          "self-hosted"
+        ]
+      },
+      {
+        "defaults": [],
+        "help": "Local Docker image, public image, or an existing registry.cloudflare.com reference",
+        "id": "runner_image",
+        "long": "runner-image",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Account subdomain to register if the account has none; existing subdomains are reused",
+        "id": "workers_subdomain",
+        "long": "workers-subdomain",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Default: OS keychain. Use file explicitly on a headless host",
+        "id": "credential_store",
+        "long": "credential-store",
+        "required": false,
+        "short": null,
+        "values": [
+          "keychain",
+          "file"
+        ]
+      },
+      {
+        "defaults": [],
+        "help": "Private JSON file containing model provider keys, AI_GATEWAY_TOKEN or AI_GATEWAY_PROVIDER_KEY_<SLUG> custom provider keys; never copied to config",
+        "id": "secrets_file",
+        "long": "secrets-file",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Add or replace a custom AI Gateway provider: SLUG:PROTOCOL:BASE_URL, where PROTOCOL is openai or anthropic and BASE_URL is the API root that /chat/completions or /messages is appended to. Repeatable",
+        "id": "custom_providers",
+        "long": "custom-provider",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Generation model for a newly written personal default profile, e.g. custom-SLUG/MODEL; required with custom providers when that profile is absent",
+        "id": "default_model",
+        "long": "default-model",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Verification model for a newly written personal default profile (defaults to --default-model)",
+        "id": "verifier_model",
+        "long": "verifier-model",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "Print an offline plan without authentication, credential writes or account mutations",
+        "id": "dry_run",
+        "long": "dry-run",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Allow a council vendor: VENDOR:FAMILY:ROUTE, where ROUTE is a model route such as anthropic/claude-sonnet-5.5 or custom-SLUG/MODEL. Repeatable; replaces the saved council allowlist. Built-in provider routes need that provider's key from the environment or --secrets-file",
+        "id": "council_vendors",
+        "long": "council-vendor",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "Skip the council step and clear any saved council allowlist",
+        "id": "no_council",
+        "long": "no-council",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio deploy",
+    "help": "Usage: rio deploy [OPTIONS]\n\nOptions:\n      --from <FROM>\n          Reproduce deployment choices from a Rio user config (contains no secrets)\n\n      --account <ACCOUNT>\n          \n\n      --name <NAME>\n          \n\n      --cf-profile <CF_PROFILE>\n          \n\n      --runner <RUNNER>\n          [possible values: sandbox, self-hosted]\n\n      --runner-image <RUNNER_IMAGE>\n          Local Docker image, public image, or an existing registry.cloudflare.com reference\n\n      --workers-subdomain <WORKERS_SUBDOMAIN>\n          Account subdomain to register if the account has none; existing subdomains are reused\n\n      --credential-store <CREDENTIAL_STORE>\n          Default: OS keychain. Use file explicitly on a headless host\n          \n          [possible values: keychain, file]\n\n      --secrets-file <SECRETS_FILE>\n          Private JSON file containing model provider keys, AI_GATEWAY_TOKEN or AI_GATEWAY_PROVIDER_KEY_<SLUG> custom provider keys; never copied to config\n\n      --custom-provider <SLUG:PROTOCOL:BASE_URL>\n          Add or replace a custom AI Gateway provider: SLUG:PROTOCOL:BASE_URL, where PROTOCOL is openai or anthropic and BASE_URL is the API root that /chat/completions or /messages is appended to. Repeatable\n\n      --default-model <MODEL>\n          Generation model for a newly written personal default profile, e.g. custom-SLUG/MODEL; required with custom providers when that profile is absent\n\n      --verifier-model <MODEL>\n          Verification model for a newly written personal default profile (defaults to --default-model)\n\n      --dry-run\n          Print an offline plan without authentication, credential writes or account mutations\n\n      --council-vendor <VENDOR:FAMILY:ROUTE>\n          Allow a council vendor: VENDOR:FAMILY:ROUTE, where ROUTE is a model route such as anthropic/claude-sonnet-5.5 or custom-SLUG/MODEL. Repeatable; replaces the saved council allowlist. Built-in provider routes need that provider's key from the environment or --secrets-file\n\n      --no-council\n          Skip the council step and clear any saved council allowlist\n\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "Answer a posted finding through the configured endpoint",
+    "arguments": [
+      {
+        "defaults": [],
+        "help": "Finding id as shown in the report: at least 8 characters of the identity, matching exactly one finding",
+        "id": "id",
+        "long": null,
+        "required": true,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Dismiss the finding with a reason: fixed, wrong, intentional, irrelevant or style",
+        "id": "dismiss",
+        "long": "dismiss",
+        "required": true,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Free-text note recorded with the response",
+        "id": "note",
+        "long": "note",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio feedback",
+    "help": "Answer a posted finding through the configured endpoint\n\nUsage: rio feedback [OPTIONS] --dismiss <REASON> <ID>\n\nArguments:\n  <ID>\n          Finding id as shown in the report: at least 8 characters of the identity, matching exactly one finding\n\nOptions:\n      --dismiss <REASON>\n          Dismiss the finding with a reason: fixed, wrong, intentional, irrelevant or style\n\n      --note <TEXT>\n          Free-text note recorded with the response\n\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "List the repository's finding registry held by the endpoint",
+    "arguments": [
+      {
+        "defaults": [],
+        "help": "Only records with this lifecycle status",
+        "id": "status",
+        "long": "status",
+        "required": false,
+        "short": null,
+        "values": [
+          "open",
+          "fixed",
+          "dismissed"
+        ]
+      },
+      {
+        "defaults": [],
+        "help": "Only records with this rule id",
+        "id": "rule",
+        "long": "rule",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Only records updated at or after this RFC 3339 timestamp",
+        "id": "since",
+        "long": "since",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "terminal"
+        ],
+        "help": "",
+        "id": "format",
+        "long": "format",
+        "required": false,
+        "short": null,
+        "values": [
+          "terminal",
+          "json"
+        ]
+      },
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio findings",
+    "help": "List the repository's finding registry held by the endpoint\n\nUsage: rio findings [OPTIONS]\n\nOptions:\n      --status <STATUS>\n          Only records with this lifecycle status\n          \n          [possible values: open, fixed, dismissed]\n\n      --rule <RULE>\n          Only records with this rule id\n\n      --since <TIMESTAMP>\n          Only records updated at or after this RFC 3339 timestamp\n\n      --format <FORMAT>\n          [default: terminal]\n          [possible values: terminal, json]\n\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "List, apply or decline suppression proposals from repeated dismissals",
+    "arguments": [
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio suppressions",
+    "help": "List, apply or decline suppression proposals from repeated dismissals\n\nUsage: rio suppressions <COMMAND>\n\nCommands:\n  list     List the repository's suppression proposals\n  apply    Append a proposal's entry to `.rio/profiles/default.yaml` after confirmation\n  decline  Decline a proposal; its entry is not proposed again for 180 days\n  help     Print this message or the help of the given subcommand(s)\n\nOptions:\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "List the repository's suppression proposals",
+    "arguments": [
+      {
+        "defaults": [],
+        "help": "",
+        "id": "status",
+        "long": "status",
+        "required": false,
+        "short": null,
+        "values": [
+          "proposed",
+          "applied",
+          "declined"
+        ]
+      },
+      {
+        "defaults": [
+          "terminal"
+        ],
+        "help": "",
+        "id": "format",
+        "long": "format",
+        "required": false,
+        "short": null,
+        "values": [
+          "terminal",
+          "json"
+        ]
+      },
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio suppressions list",
+    "help": "List the repository's suppression proposals\n\nUsage: rio suppressions list [OPTIONS]\n\nOptions:\n      --status <STATUS>\n          [possible values: proposed, applied, declined]\n\n      --format <FORMAT>\n          [default: terminal]\n          [possible values: terminal, json]\n\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "Append a proposal's entry to `.rio/profiles/default.yaml` after confirmation",
+    "arguments": [
+      {
+        "defaults": [],
+        "help": "",
+        "id": "id",
+        "long": null,
+        "required": true,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [
+          "false"
+        ],
+        "help": "Apply without the confirmation prompt",
+        "id": "yes",
+        "long": "yes",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio suppressions apply",
+    "help": "Append a proposal's entry to `.rio/profiles/default.yaml` after confirmation\n\nUsage: rio suppressions apply [OPTIONS] <ID>\n\nArguments:\n  <ID>\n          \n\nOptions:\n      --yes\n          Apply without the confirmation prompt\n\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "Decline a proposal; its entry is not proposed again for 180 days",
+    "arguments": [
+      {
+        "defaults": [],
+        "help": "",
+        "id": "id",
+        "long": null,
+        "required": true,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "",
+        "id": "note",
+        "long": "note",
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio suppressions decline",
+    "help": "Decline a proposal; its entry is not proposed again for 180 days\n\nUsage: rio suppressions decline [OPTIONS] <ID>\n\nArguments:\n  <ID>\n          \n\nOptions:\n      --note <TEXT>\n          \n\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "Run the evaluation harness (requires python3 and Rio's `eval/` directory)",
+    "arguments": [
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio eval",
+    "help": "Run the evaluation harness (requires python3 and Rio's `eval/` directory)\n\nUsage: rio eval <COMMAND>\n\nCommands:\n  noise            Review known-clean PRs and write noise adjudication skeletons and a summary\n  import-incident  Turn a PR and the PR that fixed it into a labeled incident case\n  help             Print this message or the help of the given subcommand(s)\n\nOptions:\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "Review known-clean PRs and write noise adjudication skeletons and a summary",
+    "arguments": [
+      {
+        "defaults": [],
+        "help": "",
+        "id": "args",
+        "long": null,
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio eval noise",
+    "help": "Review known-clean PRs and write noise adjudication skeletons and a summary\n\nUsage: rio eval noise [ARGS]...\n\nArguments:\n  [ARGS]...\n          \n\nOptions:\n  -h, --help\n          Print help\n"
+  },
+  {
+    "about": "Turn a PR and the PR that fixed it into a labeled incident case",
+    "arguments": [
+      {
+        "defaults": [],
+        "help": "",
+        "id": "pr",
+        "long": null,
+        "required": true,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "",
+        "id": "fix_pr",
+        "long": null,
+        "required": true,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "",
+        "id": "args",
+        "long": null,
+        "required": false,
+        "short": null,
+        "values": []
+      },
+      {
+        "defaults": [],
+        "help": "Print help",
+        "id": "help",
+        "long": "help",
+        "required": false,
+        "short": "h",
+        "values": []
+      }
+    ],
+    "command": "rio eval import-incident",
+    "help": "Turn a PR and the PR that fixed it into a labeled incident case\n\nUsage: rio eval import-incident <PR> <FIX_PR> [ARGS]...\n\nArguments:\n  <PR>\n          \n\n  <FIX_PR>\n          \n\n  [ARGS]...\n          \n\nOptions:\n  -h, --help\n          Print help\n"
+  }
+]

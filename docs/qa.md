@@ -1,5 +1,7 @@
 # Browser QA
 
+User guides: [English](https://github.com/pixelinfinito/rio/wiki/EN-Qa) · [Português (Brasil)](https://github.com/pixelinfinito/rio/wiki/PT-BR-Qa).
+
 With a configured `.rio/qa.yaml` and committed journeys, run `rio qa` for changed
 coverage, `rio qa --full` for all journeys, or `rio qa --journey checkout` for an
 explicit journey and its prerequisites. `--baseline` compares base and head;

@@ -1,0 +1,50 @@
+name: Publish Wiki
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: rio-wiki-publication
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: '1.99.1'
+      - uses: Swatinem/rust-cache@v2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r scripts/requirements-docs.txt
+      - run: cargo build -p rio-cli --locked
+      - name: Validate publication source
+        run: |
+          RIO_DOCS_INVENTORY="$PWD/docs/command-inventory.json" cargo test -p rio-cli --bin rio docs_inventory::export_documentation_inventory --locked -- --ignored
+          git diff --exit-code -- docs/command-inventory.json
+          python scripts/documentation_schemas.py --check
+          python scripts/documentation.py check
+          python -m unittest discover -s tests/documentation -v
+          cargo test -p rio-cli --test docs --locked
+          python scripts/documentation.py budgets
+          python scripts/documentation.py render "$RUNNER_TEMP/rio-wiki-stage"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rio-wiki-publication
+          path: ${{ runner.temp }}/rio-wiki-stage
+          include-hidden-files: true
+      - name: Publish with scoped Wiki credential
+        env:
+          GH_TOKEN: ${{ secrets.RIO_WIKI_TOKEN }}
+          GIT_CONFIG_COUNT: '2'
+          GIT_CONFIG_KEY_0: credential.helper
+          GIT_CONFIG_VALUE_0: ''
+          GIT_CONFIG_KEY_1: credential.helper
+          GIT_CONFIG_VALUE_1: '!gh auth git-credential'
+        run: |
+          test -n "$GH_TOKEN" || { echo 'Configure RIO_WIKI_TOKEN with Wiki write access.' >&2; exit 1; }
+          python scripts/publish-wiki.py "$RUNNER_TEMP/rio-wiki-stage" --remote https://github.com/pixelinfinito/rio.wiki.git

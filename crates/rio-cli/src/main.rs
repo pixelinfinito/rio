@@ -1,5 +1,8 @@
 mod config;
 mod deployment;
+mod docs;
+#[cfg(test)]
+mod docs_inventory;
 mod endpoint;
 mod github_app;
 mod lineage;
@@ -33,6 +36,8 @@ struct Cli {
 }
 #[derive(Subcommand)]
 enum Command {
+    /// Read embedded documentation: index, topic/section, or local search (offline).
+    Docs(docs::DocsArgs),
     Review(ReviewArgs),
     /// Inspect and validate browser QA contracts and journey coverage.
     Qa {
@@ -251,6 +256,7 @@ async fn main() -> ExitCode {
         }
     };
     let code = match cli.command {
+        Command::Docs(args) => docs::run(args),
         Command::Review(args) => run_review(args).await,
         Command::Qa { command, args } => match command {
             Some(command) => qa::run(command).await,

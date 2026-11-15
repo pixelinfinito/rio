@@ -1,5 +1,7 @@
 # Adapter contract
 
+User guides: [English](https://github.com/pixelinfinito/rio/wiki/EN-Modules) · [Português (Brasil)](https://github.com/pixelinfinito/rio/wiki/PT-BR-Modules).
+
 Adapters connect repository detection and syntax to deterministic tool output. Rio embeds TypeScript/JavaScript, Python and Rust adapters; third-party module loading is rejected in v0.1. To add a language, extend the embedded adapter registry, detection/root scheduling, syntax tables, tool invocation and parsers, then add recorded-output and real-tool fixtures before enabling it in a profile.
 
 An adapter supplies file matching, project roots, source parsing, enclosing symbols, identifiers/imports, executable-line decisions and the capabilities `parse`, `typecheck`, `lint`, `test`, `coverage`, `scan`. Native tools run through `ProcessSupervisor`, which applies working-directory isolation, deadlines, output bounds and process-tree cleanup. Every tool executes in a disposable source tree. Shared cached trees remain pure; ignored dependency installations are linked into each tool tree from the current worktree. Tests may execute arbitrary project code.
