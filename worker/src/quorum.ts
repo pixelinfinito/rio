@@ -64,6 +64,22 @@ function validCode(ref: ArtifactRef, context: EvidenceContext): boolean {
   if (nodes.some((n) => !n)) return false;
   return connected(ref.node_ids, context.head);
 }
+/**
+ * A citation of a head file by its path alone. A protection is often where the
+ * graph has no symbol to cite (a document, a configuration file, a script) or
+ * spans a file, so a refutation may name the file; nodes it does name must be
+ * valid.
+ */
+function namedFile(ref: ArtifactRef, context: EvidenceContext): boolean {
+  return (
+    ref.kind === "code" &&
+    ref.version === "head" &&
+    !!ref.path &&
+    !ref.node_ids?.length &&
+    !!context.snapshot.head[ref.path] &&
+    context.snapshot.head[ref.path].mode !== 0o120000
+  );
+}
 /** A multi-node citation must describe a connected path, not an arbitrary bag of nodes. */
 function connected(nodeIds: string[], graph: Graph): boolean {
   const ids = new Set(nodeIds);
@@ -215,7 +231,7 @@ export function evidenceLevel(
         ? validRun(r, context, true)
         : contract
           ? updatedConsumer(r, h, context) || onContractPath(r, h, context)
-          : validCode(r, context),
+          : validCode(r, context) || namedFile(r, context),
     )
       ? "refuted"
       : "plausible";

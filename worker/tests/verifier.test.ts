@@ -24,7 +24,8 @@ import {
   filteredLines,
   guidanceBlock,
   readFile,
-  runAllowed } from "../src/tools";
+  runAllowed,
+} from "../src/tools";
 import { consolidate } from "../src/consolidate";
 import { evaluate, triage } from "../src/triage";
 import { graphs, hypothesis, profile, snapshot, submission } from "./fixtures";
@@ -341,6 +342,37 @@ describe("quorum", () => {
         context,
       ),
     ).toBe("plausible");
+    // A refutation may name a head file by its path alone: a document or a
+    // script has no graph node to cite. A file head does not hold refutes nothing.
+    for (const [path, level] of [
+      ["docs/design.md", "refuted"],
+      ["docs/absent.md", "plausible"],
+    ] as const)
+      expect(
+        evidenceLevel(
+          {
+            evidence_level: "refuted",
+            evidence: [
+              {
+                kind: "code",
+                version: "head",
+                path,
+                demonstrates: "protection",
+              },
+            ],
+          },
+          hypothesis,
+          {
+            ...context,
+            snapshot: {
+              head: {
+                ...context.snapshot.head,
+                "docs/design.md": { mode: 0o100644 },
+              },
+            },
+          },
+        ),
+      ).toBe(level);
     expect(
       evidenceLevel(
         {
@@ -361,7 +393,10 @@ describe("quorum", () => {
     ).toBe("plausible");
   });
   it("bounds the fallback excerpt when no graph node matches the location", async () => {
-    const longFile = Array.from({ length: 5000 }, (_, i) => `line ${i + 1}: ${"y".repeat(60)}`).join("\n");
+    const longFile = Array.from(
+      { length: 5000 },
+      (_, i) => `line ${i + 1}: ${"y".repeat(60)}`,
+    ).join("\n");
     const added = {
       base: {},
       head: { "src/new.ts": { mode: 0o100644, content: longFile } },
@@ -372,30 +407,52 @@ describe("quorum", () => {
       hypothesis: {
         ...hypothesis,
         // A huge line range must not send the whole file.
-        location: { ...hypothesis.location, path: "src/new.ts", symbol_path: "missing", line_start: 1, line_end: 5000 },
+        location: {
+          ...hypothesis.location,
+          path: "src/new.ts",
+          symbol_path: "missing",
+          line_start: 1,
+          line_end: 5000,
+        },
       },
       intent: "Fix behavior",
       guidance: [],
       snapshot: added,
       context: { snapshot: added, head: empty, executions: {}, guidance: [] },
-      gateway: { complete: async () => ({ content: "", input_tokens: 0, output_tokens: 0, cost_usd: null }) },
+      gateway: {
+        complete: async () => ({
+          content: "",
+          input_tokens: 0,
+          output_tokens: 0,
+          cost_usd: null,
+        }),
+      },
       ledger: new MemoryLedger(),
       tools: () => new Tools(added, { base: empty, head: empty }, undefined),
       verifyTokens: 10000,
       save: async () => {},
     } as any);
-    const start = prompt.indexOf('<repository_data label="selected code and direct callers">\n');
+    const start = prompt.indexOf(
+      '<repository_data label="selected code and direct callers">\n',
+    );
     const from = prompt.indexOf("\n", start) + 1;
-    const [base, head] = JSON.parse(prompt.slice(from, prompt.indexOf("\n</repository_data>", from)));
+    const [base, head] = JSON.parse(
+      prompt.slice(from, prompt.indexOf("\n</repository_data>", from)),
+    );
     expect(base.fallback).toBeNull();
     expect(base.fallback_truncated).toBeUndefined();
     expect(head.fallback.length).toBeLessThanOrEqual(CONTEXT_BYTES);
     expect(head.fallback.split("\n").length).toBeLessThanOrEqual(SYMBOL_LINES);
     expect(head.fallback_truncated).toBe(true);
-    expect(new TextEncoder().encode(prompt).length).toBeLessThan(CONTEXT_BYTES + 4096);
+    expect(new TextEncoder().encode(prompt).length).toBeLessThan(
+      CONTEXT_BYTES + 4096,
+    );
   });
   it("bounds the blind context by bytes and lines and points voters at the tools for the rest", async () => {
-    const longFile = Array.from({ length: 2000 }, (_, i) => `line ${i + 1}: ${"x".repeat(40)}`).join("\n");
+    const longFile = Array.from(
+      { length: 2000 },
+      (_, i) => `line ${i + 1}: ${"x".repeat(40)}`,
+    ).join("\n");
     const wide = {
       base: { "src/big.ts": { mode: 0o100644, content: longFile } },
       head: { "src/big.ts": { mode: 0o100644, content: longFile } },
@@ -409,7 +466,13 @@ describe("quorum", () => {
     }));
     const graph = {
       nodes: [
-        { id: "s", path: "src/big.ts", symbol_path: "big", line_start: 1, line_end: 2000 },
+        {
+          id: "s",
+          path: "src/big.ts",
+          symbol_path: "big",
+          line_start: 1,
+          line_end: 2000,
+        },
         ...callers,
       ],
       edges: callers.map((c) => ({ from: c.id, to: "s" })),
@@ -418,27 +481,49 @@ describe("quorum", () => {
       profile,
       hypothesis: {
         ...hypothesis,
-        location: { ...hypothesis.location, path: "src/big.ts", symbol_path: "big" },
+        location: {
+          ...hypothesis.location,
+          path: "src/big.ts",
+          symbol_path: "big",
+        },
       },
       intent: "Fix behavior",
       guidance: [],
       snapshot: wide,
       context: { snapshot: wide, head: graph, executions: {}, guidance: [] },
-      gateway: { complete: async () => ({ content: "", input_tokens: 0, output_tokens: 0, cost_usd: null }) },
+      gateway: {
+        complete: async () => ({
+          content: "",
+          input_tokens: 0,
+          output_tokens: 0,
+          cost_usd: null,
+        }),
+      },
       ledger: new MemoryLedger(),
       tools: () => new Tools(wide, { base: graph, head: graph }, undefined),
       verifyTokens: 10000,
       save: async () => {},
     } as any);
-    expect(new TextEncoder().encode(prompt).length).toBeLessThan(2 * CONTEXT_BYTES + 4096);
-    const start = prompt.indexOf('<repository_data label="selected code and direct callers">\n');
+    expect(new TextEncoder().encode(prompt).length).toBeLessThan(
+      2 * CONTEXT_BYTES + 4096,
+    );
+    const start = prompt.indexOf(
+      '<repository_data label="selected code and direct callers">\n',
+    );
     const from = prompt.indexOf("\n", start) + 1;
-    const versions = JSON.parse(prompt.slice(from, prompt.indexOf("\n</repository_data>", from)));
+    const versions = JSON.parse(
+      prompt.slice(from, prompt.indexOf("\n</repository_data>", from)),
+    );
     for (const version of versions) {
-      const bytes = version.symbols.reduce((n: number, s: any) => n + s.content.length, 0);
+      const bytes = version.symbols.reduce(
+        (n: number, s: any) => n + s.content.length,
+        0,
+      );
       expect(bytes).toBeLessThanOrEqual(CONTEXT_BYTES);
       expect(version.symbols[0].truncated).toBe(true);
-      expect(version.symbols[0].content.split("\n").length).toBeLessThanOrEqual(SYMBOL_LINES);
+      expect(version.symbols[0].content.split("\n").length).toBeLessThanOrEqual(
+        SYMBOL_LINES,
+      );
       expect(version.callers_omitted).toBeGreaterThan(0);
       expect(version.symbols.length + version.callers_omitted).toBe(13);
     }
@@ -574,25 +659,29 @@ describe("quorum", () => {
       });
     // Without the setting a risk keeps the profile's voters.
     expect(await verify({}, "risk")).toMatchObject({ calls: 6, voters: 3 });
-    expect(panelOf({ voters: 2, quorum: 2, risk_voters: 5 }, hypothesis)).toEqual(
-      { voters: 2, quorum: 2 },
-    );
+    expect(
+      panelOf({ voters: 2, quorum: 2, risk_voters: 5 }, hypothesis),
+    ).toEqual({ voters: 2, quorum: 2 });
     expect(
       panelOf({ voters: 2, quorum: 2, risk_voters: 5 }, { category: "risk" }),
     ).toEqual({ voters: 2, quorum: 2 });
   });
   it("accepts fewer risk voters only within the voters and the one-voter rule", () => {
-    const submit = (verify: object, models = profile.models) => () =>
-      validateSubmission({
-        ...submission(),
-        profile: { ...profile, models, verify },
-      });
+    const submit =
+      (verify: object, models = profile.models) =>
+      () =>
+        validateSubmission({
+          ...submission(),
+          profile: { ...profile, models, verify },
+        });
     expect(submit({ voters: 3, quorum: 2, risk_voters: 1 })).not.toThrow();
     expect(submit({ voters: 3, quorum: 2, risk_voters: 3 })).not.toThrow();
     expect(submit({ voters: 3, quorum: 2, risk_voters: 4 })).toThrow();
     expect(submit({ voters: 3, quorum: 2, risk_voters: 0 })).toThrow();
     const same = { default: "openai/test", verifier: "openai/test" };
-    expect(submit({ voters: 3, quorum: 2, risk_voters: 2 }, same)).not.toThrow();
+    expect(
+      submit({ voters: 3, quorum: 2, risk_voters: 2 }, same),
+    ).not.toThrow();
     expect(submit({ voters: 3, quorum: 2, risk_voters: 1 }, same)).toThrow(
       "single verifier must use a different model",
     );
@@ -625,7 +714,9 @@ describe("quorum", () => {
       "single verifier must use a different model",
     );
     expect(under(second, { voters: 3, quorum: 2 })).not.toThrow();
-    expect(under(third, { voters: 3, quorum: 2, risk_voters: 1 })).not.toThrow();
+    expect(
+      under(third, { voters: 3, quorum: 2, risk_voters: 1 }),
+    ).not.toThrow();
   });
   it("records cancelled, malformed and exhausted voters without reducing quorum", async () => {
     for (const error of [

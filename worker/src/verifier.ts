@@ -320,7 +320,7 @@ export async function verifyHypothesis(
             .map((ref) =>
               ref.kind === "execution"
                 ? `execution:${ref.version}:${ref.job_id}`
-                : `code:${ref.version}:${ref.path}:${ref.node_ids!.join(",")}`,
+                : `code:${ref.version}:${ref.path}:${(ref.node_ids ?? []).join(",")}`,
             ),
         ),
     ),
