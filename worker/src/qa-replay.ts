@@ -94,13 +94,15 @@ export async function dispatchQaReplay(o: {
       }),
     );
     invariant("job" in dispatched, "QA replay runtime unavailable");
-    const completed = await o.step.waitForEvent<{ key: string }>(
+    const completed = await o.step.waitForEvent<{ key?: string }>(
       `wait-${jobId}`,
       {
         type: `job-${jobId}-1`,
         timeout: `${Math.ceil(dispatched.job.limits.wall_ms / 1000) + 120} seconds`,
       },
     );
+    // A cancellation ends the wait with no result.
+    invariant(completed.payload.key, "cancelled");
     const execution = await store.get<ExecutionResult>(completed.payload.key);
     invariant(
       execution.job_id === jobId &&

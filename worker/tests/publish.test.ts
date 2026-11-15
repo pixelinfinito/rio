@@ -1568,6 +1568,87 @@ describe("in-progress announcement", () => {
     expect(await pending(s.review)).toBeNull();
   });
 
+  it("publishes nothing for a review cancelled by request, and says so on its check run", async () => {
+    const s = await pull();
+    github.setFiles("acme/pub", s.number, [
+      { filename: "src/a.ts", lines: [3] },
+    ]);
+    await announceReview(runtime, s.review, "auto");
+    // Cancelled while its last step ran: the workflow still reaches the
+    // publication with a report.
+    await runtime.DB.prepare("UPDATE reviews SET cancelled=1 WHERE id=?")
+      .bind(s.review)
+      .run();
+    const writes = github.requests.length;
+    expect(await publish(s, report([finding("inline", 3)]))).toBeNull();
+    expect(github.comments).toEqual([]);
+    expect(github.checkRuns).toHaveLength(1);
+    expect(github.checkRuns[0].output.title).toBe("Review did not complete");
+    expect(github.checkRuns[0].output.summary).toContain(
+      "The review was cancelled before it finished, so nothing was published for this head.",
+    );
+    // The banner is gone and no finding was written anywhere.
+    expect(github.issueComments[0].body).not.toContain("Rio is reviewing");
+    expect(github.issueComments[0].body).not.toContain("inline now throws");
+    expect(github.requests.length).toBeGreaterThan(writes);
+    expect(await pending(s.review)).toBeNull();
+    // One that ran out of time is not cancelled: it publishes what it has.
+    const late = await pull();
+    github.setFiles("acme/pub", late.number, [
+      { filename: "src/a.ts", lines: [3] },
+    ]);
+    await runtime.DB.prepare("UPDATE reviews SET deadline=1 WHERE id=?")
+      .bind(late.review)
+      .run();
+    expect(
+      await publish(late, report([finding("inline", 3)], { status: "partial" })),
+    ).toMatchObject({ posted: 1 });
+  });
+
+  it("stops a publication at its next write when the review is cancelled meanwhile", async () => {
+    const s = await pull();
+    github.setFiles("acme/pub", s.number, [
+      { filename: "src/a.ts", lines: [3, 5] },
+    ]);
+    await announceReview(runtime, s.review, "auto");
+    // The request to cancel lands as the first finding is posted.
+    const handle = github.handle.bind(github);
+    github.handle = async (url, init) => {
+      const response = await handle(url, init);
+      if (
+        init?.method === "POST" &&
+        new URL(url).pathname.endsWith(`/pulls/${s.number}/comments`)
+      )
+        await runtime.DB.prepare("UPDATE reviews SET cancelled=1 WHERE id=?")
+          .bind(s.review)
+          .run();
+      return response;
+    };
+    expect(
+      await publish(s, report([finding("inline", 3), finding("second", 5)])),
+    ).toBeNull();
+    // What was written stays; nothing more was.
+    expect(github.comments).toHaveLength(1);
+    expect(github.comments[0].body).toContain("inline now throws");
+    expect(github.issueComments[0].body).not.toContain("second now throws");
+    // The check run says so instead of carrying a result, and the banner is gone.
+    expect(github.checkRuns).toHaveLength(1);
+    expect(github.checkRuns[0].output.title).toBe("Review did not complete");
+    expect(github.checkRuns[0].output.summary).toContain(
+      "The review was cancelled while it was being published",
+    );
+    expect(github.issueComments[0].body).not.toContain("Rio is reviewing");
+    expect(await pending(s.review)).toBeNull();
+    // The lease is free for the round that follows.
+    expect(
+      await runtime.DB.prepare(
+        "SELECT COUNT(*) AS n FROM publication_leases WHERE lineage_id=? AND holder!='' AND until>?",
+      )
+        .bind(s.lineage, Date.now())
+        .first<{ n: number }>(),
+    ).toEqual({ n: 0 });
+  });
+
   it("remembers the last policy a review of the repository resolved", async () => {
     const s = await pull();
     await runtime.DB.prepare(

@@ -873,6 +873,13 @@ fn select_account(
     );
     Ok(string(&accounts[choice - 1], "id")?.into())
 }
+/// Requests one review's workflow may make to storage and the network
+/// (Cloudflare's `limits.subrequests`; its default is 10,000). The platform
+/// ends an instance at the limit with no report, so the Worker counts a
+/// review's requests against this number and gives up searches, then model
+/// turns, before it: the number is headroom for large trees, the count is what
+/// bounds the work.
+const SUBREQUEST_LIMIT: u64 = 50_000;
 fn string<'a>(value: &'a Value, key: &str) -> Result<&'a str> {
     value
         .get(key)
@@ -917,10 +924,14 @@ fn metadata(
     for (name, text) in secrets.worker() {
         bindings.push(json!({"type":"secret_text","name":name,"text":text}));
     }
+    // The Worker budgets a review's storage requests against the limit it is told.
+    bindings.push(
+        json!({"type":"plain_text","name":"SUBREQUEST_LIMIT","text":SUBREQUEST_LIMIT.to_string()}),
+    );
     let _ = queue; // Queue binding uses the account-local name; consumer setup uses its ID.
     let mut value = json!({"main_module":"worker.mjs","compatibility_date":"2026-11-01","compatibility_flags":["nodejs_compat"],"bindings":bindings});
     // Workers' maximum: a review step's CPU allowance (bounded work, not a fix for unbounded work).
-    value["limits"] = json!({"cpu_ms":300000});
+    value["limits"] = json!({"cpu_ms":300000,"subrequests":SUBREQUEST_LIMIT});
     value["tags"] = json!(["rio-managed"]);
     value["keep_bindings"] = json!(["plain_text", "json", "secret_text"]);
     if deployment.runner == Runner::Sandbox {
@@ -2338,6 +2349,16 @@ mod tests {
         assert_eq!(value["containers"][0]["class_name"], "Sandbox");
         assert!(value.get("migrations").is_none());
         assert_eq!(value["limits"]["cpu_ms"], 300000);
+        // The limit the platform enforces is the one the Worker counts against.
+        assert_eq!(value["limits"]["subrequests"], SUBREQUEST_LIMIT);
+        let told = value["bindings"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|binding| binding["name"] == "SUBREQUEST_LIMIT")
+            .unwrap();
+        assert_eq!(told["type"], "plain_text");
+        assert_eq!(told["text"], SUBREQUEST_LIMIT.to_string());
     }
     struct Mock {
         url: String,

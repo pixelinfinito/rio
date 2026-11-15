@@ -40,7 +40,7 @@ A saída identifica a seleção, o perfil e a execução, as verificações apro
 
 Índices com conflitos são recusados nas seleções local/preparada. Comparações de branches precisam do histórico da base comum; aprofunde clones rasos. Disponibilize os objetos de clones parciais antes da revisão: o Rio não os busca. Repositórios bare são recusados; submódulos permanecem gitlinks e arquivos LFS permanecem ponteiros. Worktrees vinculadas e checkouts esparsos funcionam com essas limitações.
 
-O primeiro Ctrl-C preserva um relatório parcial; o segundo encerra os processos restantes e retorna 130. Veja [resultados e códigos de saída](results.md) antes de tratar toda saída diferente de zero como erro interno.
+O primeiro Ctrl-C preserva um relatório parcial; o segundo encerra os processos restantes e retorna 130. Um pedido de término (SIGTERM, como o enviado por um gerenciador de serviços) conta como Ctrl-C. Em uma revisão no endpoint, a segunda interrupção primeiro espera até 30 segundos para o endpoint aceitar o cancelamento, para que nenhuma revisão continue rodando lá. Veja [resultados e códigos de saída](results.md) antes de tratar toda saída diferente de zero como erro interno.
 
 ## Próximos passos
 

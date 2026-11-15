@@ -83,10 +83,10 @@
       ],
       "kind": "guide",
       "translation_review": {
-        "en": "87811c3bfeab2a63be2975f5e19e9c309b307da11f5d1cbec8c8ad9c36d68bea",
-        "pt-BR": "206111ee9d5f325bd6e4525072ae3815e1114e6814cd2374bc6377d502d633d3"
+        "en": "749ae0ec41d389196a112096f45c75ec4411b17e20ee998fb598685963f9f168",
+        "pt-BR": "948d927c58434aeb185fa2404f27a5246c07b63f4e23efe01aadf7e9ca77e57d"
       },
-      "source_review": "2749551d7c48f850296d83574fdecd4bf10dcd024bb6c687906351d562f32b63"
+      "source_review": "7da15d7d44a5192b65a940bc6453ac0942340c077494290540bd76a5dd76010d"
     },
     {
       "id": "doctor",
@@ -123,7 +123,7 @@
         "en": "b522ed68c9b1c1bc5866b40eb66687690b66d1223270ce17628b858e567fe195",
         "pt-BR": "603dbb801e6718cd427325d9218a982d47786435ef8fc92214e1ba4da2ab9cd2"
       },
-      "source_review": "eca98ec6c44833274040fa6aa226bb670f4201960d6f63e19fb8fb4cda53d261"
+      "source_review": "d7cd0dfffff34f35d9e5cbc7a496177cab3aeccce188bcab4a83a7b42d6671ad"
     },
     {
       "id": "results",
@@ -194,10 +194,10 @@
       ],
       "kind": "guide",
       "translation_review": {
-        "en": "cb0095f27922e7688134aa2bbe18969efef11b589eb2b9d3fef5224e947b395e",
-        "pt-BR": "82e201e9c222b7e8bced0c50ec0a1fe564888d5db3db40d3816fd99905c825d2"
+        "en": "434550a84b24e7a62173d87e16b1b6c5163eb598c0e5427a325019bc15264b2c",
+        "pt-BR": "5fd2803f97f150e94bfb53923f0c7ea7af19096abd3036497485981dcbc314f0"
       },
-      "source_review": "e5aee02fcfa6daaadba3e20c513aa61cc47df1536730408fbd3ac2a99354c722"
+      "source_review": "f3afd51adc9205702b0dfb8f68c37c62525685f2d05e14510c5670501b0c97b9"
     },
     {
       "id": "profiles",
@@ -274,7 +274,7 @@
         "en": "1c120708a99757dd3eb7c908fda163d7439972ff4041798050a9fc753011cb27",
         "pt-BR": "f4f8529fa98ad5a53bd2752890341fc58ea49dd78d2806ab62a9941cc01f48ec"
       },
-      "source_review": "8e7c07e3468a0f77181df9902fdfb9af324724cdb0e929d9607c3f0a9a2c43e5"
+      "source_review": "7d7556d07cac5efd8d331cf265c19dff7b96bbacd08f089e71d4b6ea1bf90c70"
     },
     {
       "id": "hosting",
@@ -315,7 +315,7 @@
         "en": "a996d4d6931112f6f66cf2eb0816db0c04e96fa0fd965b4dfb2c915142457deb",
         "pt-BR": "8edc520934016dd41feec966944690034fe5d8ae57a71cb81d8662fbca8230e9"
       },
-      "source_review": "1c2a9c6193b7288a356e3120cc2e042f918130f616bb14fd9b926e9b0e270a95"
+      "source_review": "e7350b7a86676e07d7606e216799fd7602d21207eb8919bd59cb5bfd0031793f"
     },
     {
       "id": "providers",
@@ -351,7 +351,7 @@
         "en": "273637d38aa033e960b0357014b7679425383d9cae3377da12e4c39eeb84e8a7",
         "pt-BR": "cd6b0025a65da5c0ddd8f36628caffa56c93f3d3964dde71ff9ad4e3fdb05943"
       },
-      "source_review": "25076d7511908d6ef76c0d71ba0b0db6e338dae62322dd7e0fe51ad47a1ead3e"
+      "source_review": "c7bf21bbe8822b2b00fb3f6fc79b9c1750b60bce6350f54fa95b7849c3e7ddde"
     },
     {
       "id": "budgets",
@@ -425,7 +425,7 @@
         "en": "ccd606afdbbd00faa61cf5b81067de433670ba90d949d669c747efb3ae091127",
         "pt-BR": "0089db12a6d34261405616e5b82a212def58c77ffc5b7b9699c6ce9e70847341"
       },
-      "source_review": "60169ed36ada6aeee381bff370752b7ff637394b076ee7a5403afdd0968ac2a0"
+      "source_review": "ee7a5b5589edd9416d52c4c39a1de1e3d26d9d197585d72f830b6210dffc89fc"
     },
     {
       "id": "feedback",

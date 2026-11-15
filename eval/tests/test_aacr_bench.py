@@ -45,6 +45,26 @@ class AACRAdapterTests(unittest.TestCase):
             self.assertEqual([call.args[1] for call in killpg.call_args_list],
                              [signal.SIGINT, signal.SIGKILL])
 
+    def test_a_request_to_terminate_is_an_interrupt(self):
+        """A service stop unwinds like Ctrl-C, so running reviews are stopped and not orphaned."""
+        previous = {number: signal.getsignal(number) for number in (signal.SIGTERM, signal.SIGINT)}
+        try:
+            aacr.interrupt_once()
+            with self.assertRaises(KeyboardInterrupt):
+                os.kill(os.getpid(), signal.SIGTERM)
+                # The handler runs between bytecodes of the main thread.
+                for _ in range(1000):
+                    threading.Event().wait(0.001)
+            # The same stop delivered again, and the interrupt a supervisor
+            # relays, do not interrupt the cleanup.
+            for number in (signal.SIGTERM, signal.SIGINT):
+                os.kill(os.getpid(), number)
+                for _ in range(50):
+                    threading.Event().wait(0.001)
+        finally:
+            for number, handler in previous.items():
+                signal.signal(number, handler)
+
     def test_interrupted_review_does_not_persist_terminal_status(self):
         """Resume must retry a case interrupted before it produces a usable report."""
         with tempfile.TemporaryDirectory() as tmp:
@@ -215,7 +235,7 @@ class AACRAdapterTests(unittest.TestCase):
         self.assertEqual(comments[0]["content"], "Problem\nCrash\nGuard it")
         self.assertEqual((comments[0]["start_line"], comments[0]["end_line"]), (3, 4))
 
-    def run_review(self, root, report, *, exit_code=0, timed_out=False, interrupt=False):
+    def run_review(self, root, report, *, exit_code=0, timed_out=False, interrupt=False, stdout=None):
         """Run one isolated case using a fake Git and review subprocess boundary."""
         args = argparse.Namespace(config_dir=root / "config", temp_root=root,
                                   out=root / "out", rio=root / "rio", timeout=1)
@@ -230,7 +250,7 @@ class AACRAdapterTests(unittest.TestCase):
             if interrupt:
                 raise KeyboardInterrupt
             return {"exit_code": exit_code, "timed_out": timed_out,
-                    "duration_seconds": 1}, json.dumps(report), ""
+                    "duration_seconds": 1}, json.dumps(report) if stdout is None else stdout, ""
         with patch.object(aacr, "execute", side_effect=execute):
             aacr.review_group("owner/repo", [instance], args)
         return args.out
@@ -325,8 +345,58 @@ class AACRAdapterTests(unittest.TestCase):
                     status = json.loads((out / "cases/owner__repo@head/status.json").read_text(encoding="utf-8"))
                     self.assertEqual(status["status"], "failed")
 
+    def test_error_envelopes_keep_rios_error_and_are_not_wrong_commits(self):
+        """An error envelope has no review identity; the case fails with Rio's own
+        error and its cause, as in aacr-bench-rerun-20261111T181340Z."""
+        envelope = lambda message: {"status": "error", "review": {"rio_version": "0.3.0"},
+                                    "error": {"code": "internal_error", "details": [], "message": message}}
+        cases = [
+            ("endpoint review cancelled; partial evidence is retained at review 85aa6905", "deadline"),
+            ("endpoint review cancelled: no report within the 1740 s the client waits; "
+             "partial evidence is retained at review 85aa6905", "deadline"),
+            ("endpoint review did not complete: 85aa6905: Too many API requests by single Worker invocation.",
+             "subrequest_limit"),
+            ("profile is invalid", None),
+        ]
+        for message, cause in cases:
+            with self.subTest(message=message), tempfile.TemporaryDirectory() as tmp:
+                out = self.run_review(Path(tmp), envelope(message), exit_code=3)
+                self.assertFalse((out / "results/owner__repo@head.json").exists())
+                status = json.loads((out / "cases/owner__repo@head/status.json").read_text(encoding="utf-8"))
+                self.assertEqual(status["status"], "failed")
+                self.assertEqual(status["error"], f"Rio reported an error (internal_error): {message}")
+                self.assertEqual(status["infra_failure"], cause)
+                self.assertEqual(status["infra_failures"], [cause] if cause else [])
+
+    def test_usable_reports_still_need_the_exact_identity(self):
+        """Only an error envelope is excused from the identity check."""
+        for review in [{"rio_version": "0.3.0"}, {"base": "wrong", "head": "snapshot:hash", "mode": "staged"},
+                       {"base": "base", "head": "head", "mode": "staged"},
+                       {"base": "base", "head": "snapshot:hash", "mode": "base"}]:
+            for state in ["complete", "partial", "incomplete"]:
+                with self.subTest(review=review, state=state), tempfile.TemporaryDirectory() as tmp:
+                    out = self.run_review(Path(tmp), {"status": state, "review": review,
+                                                      "footer": {"notes": ["Worker exceeded memory limit."]}},
+                                          exit_code=4 if state != "complete" else 0)
+                    self.assertFalse((out / "results/owner__repo@head.json").exists())
+                    status = json.loads((out / "cases/owner__repo@head/status.json").read_text(encoding="utf-8"))
+                    self.assertEqual((status["status"], status["error"]),
+                                     ("failed", "Report commit pins differ from dataset"))
+
+    def test_an_adapter_timeout_and_a_missing_report_say_so(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out = self.run_review(Path(tmp), {}, timed_out=True, exit_code=None)
+            status = json.loads((out / "cases/owner__repo@head/status.json").read_text(encoding="utf-8"))
+            self.assertEqual((status["error"], status["infra_failure"]),
+                             ("Review exceeded the adapter's 1 s limit", "deadline"))
+        with tempfile.TemporaryDirectory() as tmp:
+            out = self.run_review(Path(tmp), None, exit_code=101, stdout="thread 'main' panicked")
+            status = json.loads((out / "cases/owner__repo@head/status.json").read_text(encoding="utf-8"))
+            self.assertEqual((status["error"], status["infra_failure"]),
+                             ("Review printed no report (exit code 101)", None))
+
     def test_infra_failures_are_classified_from_notes_and_errors(self):
-        """Platform causes seen in aacr-bench-final-20261111 map to stable labels."""
+        """Platform causes seen in aacr-bench-final-20261111 and the rerun map to stable labels."""
         notes = lambda *n: {"footer": {"notes": list(n)}}
         cases = [
             (notes("Impact graph truncated at max_nodes", "Worker exceeded CPU time limit."), "cpu_limit"),
@@ -336,28 +406,175 @@ class AACRAdapterTests(unittest.TestCase):
                    "WorkflowTimeoutError: Execution timed out after 240000ms"), "job_timeout"),
             (notes("checks: runner attempt 1 failed (runner backend: sandbox executor failed: ); retried"), None),
             (notes("graph: runner analysis failed (timed out); the review uses the submitted graph"), "job_timeout"),
+            (notes("checks: runner analysis failed (timed out during transfer (transfer 240 s)); "
+                   "deterministic checks did not run"), "job_timeout"),
             (notes("graph: runner analysis failed (exit code 2); the review uses the submitted graph"), "executor"),
             (notes("Rio ended this review: runtime stopped: WorkflowFatalError."), "deadline"),
+            (notes("Rio ended this review: cancelled."), "deadline"),
+            (notes("Review cancelled before it finished."), "deadline"),
+            (notes("graph: runner analysis failed (timed out); the review uses the submitted graph",
+                   "cancelled"), "deadline"),
+            (notes("WorkflowInternalError: Attempt failed due to internal workflows error"), "workflow_internal"),
+            (notes("Too many API requests by single Worker invocation."), "subrequest_limit"),
+            # The sweep names the limit that ended a workflow (aacr-bench-fix3-20261112T004450Z:
+            # three such reviews carried only "runtime stopped: Error", read as a deadline).
+            (notes("Rio ended this review: runtime stopped: Too many API requests by single Worker "
+                   "invocation."), "subrequest_limit"),
+            (notes("Rio ended this review: runtime stopped: Worker exceeded memory limit."), "memory_limit"),
+            # So does a cause that is listed after the deadline.
+            (notes("Rio ended this review: runtime stopped: Attempt failed due to internal workflows "
+                   "error."), "workflow_internal"),
+            # The review's own request budget, kept below the platform's limit.
+            (notes("correctness agent failed: review request budget exhausted; its findings are missing "
+                   "from this review."), "subrequest_limit"),
+            (notes("Request budget: 3 tree searches were not run, because the review had used its share of "
+                   "the 50000 requests the platform allows one review on searching; what a search would "
+                   "have found is missing from this review."), "subrequest_limit"),
+            (notes("Request budget: 1 model turn was not started, because the review had used its share "
+                   "of the 50000 requests the platform allows one review; the agents, verifier votes "
+                   "and council answers they belonged to did not complete."), "subrequest_limit"),
+            (notes("correctness agent failed: The operation was aborted due to timeout; its findings are "
+                   "missing from this review."), "model_timeout"),
+            (notes("Agent result cache not updated for correctness: D1_ERROR: D1 DB is overloaded. Too many "
+                   "resources consumed within a 10 second window."), "storage"),
+            (notes("D1_ERROR: Network connection lost."), "storage"),
             (notes("Hypothesis board coordination is deferred; agents and verifier voters run independently."), None),
+            # Skipped and failed checks are the review's outcome, and a finding may quote anything.
+            (notes("dependencies skipped offline", "tests: skipped (no test command is configured)",
+                   "3 verifier votes did not complete; inspect the vote audit. Missing votes do not reduce quorum.",
+                   "the cancelled order is charged twice"), None),
         ]
         for report, cause in cases:
             self.assertEqual(aacr.infra_failure(report), cause)
         self.assertEqual(aacr.infra_failure(None, "contacting Rio endpoint: error sending request: "
                                                   "Connection reset by peer (os error 104)"), "transport")
+        # The fix2 canary: a status poll answered with the database's overload ended two cases.
+        self.assertEqual(aacr.infra_failure(
+            None, "Rio reported an error (internal_error): endpoint error: D1_ERROR: D1 DB is overloaded. "
+                  "Too many resources consumed within a 10 second window.: Rio endpoint returned HTTP 400"),
+            "storage")
+        # The fix4 full run: the object store failed a write while a snapshot was uploaded.
+        self.assertEqual(aacr.infra_failure(
+            None, "Rio reported an error (internal_error): endpoint error: put: We encountered an internal "
+                  "connectivity issue. Please try again. (10001): Rio endpoint returned HTTP 400"),
+            "storage")
         self.assertIsNone(aacr.infra_failure(None, "Report commit pins differ from dataset"))
+        # Every cause is kept, in a stable order.
+        self.assertEqual(aacr.infra_failures(notes(
+            "graph: runner analysis failed (runner backend: Network connection lost.); the review uses the submitted graph",
+            "WorkflowInternalError: Attempt failed due to internal workflows error")),
+            ["executor", "workflow_internal"])
 
-    def test_older_status_files_are_classified_from_saved_evidence(self):
-        """A status written before infra_failure existed is classified from its report and stderr."""
+    def test_failures_recorded_only_in_the_audit_are_causes(self):
+        """FreeCAD@82fef4a: three votes ended on the Worker's memory limit, under a
+        report that says only that votes did not complete."""
+        report = {"footer": {"notes": [
+            "checks: runner analysis failed (timed out); deterministic checks did not run",
+            "3 verifier votes did not complete; inspect the vote audit. Missing votes do not reduce quorum."]}}
+        execution = lambda **fields: {"attempt": 1, "kind": "run", "version": "head", "command": ["sh"],
+                                      "outcome": "exited", "exit_code": 0, "timed_out": False,
+                                      "stderr": "", **fields}
+        audit = {"votes": [
+            {"status": "failed", "error": "Worker exceeded memory limit.", "voter": 0},
+            {"status": "completed", "answer": {"reasoning": "Worker exceeded CPU time limit"}, "voter": 1}],
+            "executions": [
+                execution(kind="checks", command=["rio-internal", "rio/checks"], exit_code=124,
+                          timed_out=True, stderr="runner wall deadline exceeded during transfer"),
+                # A repository command's own output and its own timeout are not causes.
+                execution(exit_code=2, stderr="curl: Connection reset by peer"),
+                execution(command=["sleep", "900"], exit_code=124, timed_out=True,
+                          stderr="runner wall deadline exceeded during command")]}
+        self.assertEqual(aacr.infra_failures(report, audit=audit), ["memory_limit", "job_timeout"])
+        self.assertEqual(aacr.infra_failures({"footer": {"notes": []}}, audit=audit),
+                         ["memory_limit", "job_timeout"])
+        # A runner that failed and whose retry ran is not a cause; one that never ran is.
+        lost = execution(kind="graph", command=["rio-internal", "rio/graph"], outcome="runner_failed",
+                         exit_code=1, stderr="runner backend: Network connection lost.")
+        self.assertEqual(aacr.infra_failures(None, audit={"executions": [
+            lost, execution(kind="graph", command=["rio-internal", "rio/graph"], attempt=2)]}), [])
+        self.assertEqual(aacr.infra_failures(None, audit={"executions": [lost, {**lost, "attempt": 2}]}),
+                         ["executor"])
+        # The audit lists jobs in no order: the retry counts wherever it stands.
+        self.assertEqual(aacr.infra_failures(None, audit={"executions": [
+            execution(kind="graph", command=["rio-internal", "rio/graph"], attempt=2), lost]}), [])
+        # Two calls of one command are two executions, not attempts of one.
+        self.assertEqual(aacr.infra_failures(None, audit={"executions": [
+            execution(outcome="runner_failed", exit_code=1, stderr="sandbox executor failed"),
+            execution()]}), ["executor"])
+        # Nor does the retry of one call hide the timeout that ended another.
+        checks = lambda **fields: execution(kind="checks", command=["rio-internal", "rio/checks"], **fields)
+        slow = checks(exit_code=124, timed_out=True, stderr="runner wall deadline exceeded during command")
+        gone = checks(outcome="runner_failed", exit_code=1, stderr="runner backend: Network connection lost.")
+        self.assertEqual(aacr.infra_failures(None, audit={"executions": [slow, gone, checks(attempt=2)]}),
+                         ["job_timeout"])
+        # A command that could not be spawned is not tried again either: the retry
+        # beside it followed the runner's failure, which it recovered.
+        absent = checks(outcome="spawn_failed", exit_code=127, stderr="sandbox executor failed")
+        self.assertEqual(aacr.infra_failures(None, audit={"executions": [
+            checks(outcome="spawn_failed", exit_code=127, stderr="rio-internal: not found"),
+            gone, checks(attempt=2)]}), [])
+        self.assertEqual(aacr.infra_failures(None, audit={"executions": [absent, gone, checks(attempt=2)]}),
+                         ["executor"])
+        # One retry does not recover two failures, and nothing says which it followed.
+        self.assertEqual(aacr.infra_failures(None, audit={"executions": [gone, gone, checks(attempt=2)]}),
+                         ["executor"])
+        self.assertEqual(aacr.infra_failures(None, audit={}), [])
+        # Neither a list where a report or an audit belongs nor an expired job is a cause or an error.
+        self.assertEqual(aacr.infra_failures([{"status": "error"}], audit=[]), [])
+        self.assertEqual(aacr.infra_failures(None, audit={"executions": [{"job_id": "a", "expired": True}]}), [])
+
+    def test_error_texts_count_one_by_one(self):
+        self.assertEqual(aacr.infra_failures(None, [
+            "Review exceeded the adapter's 2700 s limit", "contacting Rio endpoint: connection error"]),
+            ["deadline", "transport"])
+
+    def test_saved_evidence_is_classified_under_the_current_rules(self):
+        """A status written before a cause had a label is classified from its
+        report, audit and stderr; a recorded cause the evidence no longer names stays."""
         with tempfile.TemporaryDirectory() as tmp:
             evidence = Path(tmp)
             (evidence / "report.json").write_text(json.dumps(
                 {"footer": {"notes": ["Worker exceeded CPU time limit."]}}), encoding="utf-8")
             self.assertEqual(aacr.case_infra_failure(evidence, {"status": "partial"}), "cpu_limit")
-            self.assertIsNone(aacr.case_infra_failure(evidence, {"infra_failure": None}))
+            self.assertEqual(aacr.case_infra_failure(evidence, {"status": "partial", "infra_failure": None}),
+                             "cpu_limit")
+            (evidence / "audit.json").write_text(json.dumps(
+                {"votes": [{"status": "failed", "error": "Worker exceeded memory limit."}]}), encoding="utf-8")
+            self.assertEqual(aacr.case_infra_failures(evidence, {"status": "partial"}),
+                             ["cpu_limit", "memory_limit"])
+            (evidence / "audit.json").unlink()
             (evidence / "report.json").unlink()
+            self.assertEqual(aacr.case_infra_failures(evidence, {"status": "partial", "infra_failure": "executor"}),
+                             ["executor"])
+            # Every recorded cause stays, not only the first.
+            self.assertEqual(aacr.case_infra_failures(evidence, {
+                "status": "partial", "infra_failure": "cpu_limit",
+                "infra_failures": ["cpu_limit", "memory_limit"]}), ["cpu_limit", "memory_limit"])
+            self.assertEqual(aacr.case_infra_failures(evidence, {"status": "partial", "infra_failure": None,
+                                                                 "infra_failures": []}), [])
+            # A saved report that is no object is no report, and no error either.
+            (evidence / "report.json").write_text('[{"status": "error"}]', encoding="utf-8")
+            self.assertEqual(aacr.case_infra_failures(evidence, {"status": "failed", "error": "x"}), [])
+            (evidence / "report.json").unlink()
+            # The error and the stderr are separate texts: each names its own cause.
+            (evidence / "review.stderr").write_text(
+                "contacting Rio endpoint: connection error", encoding="utf-8")
+            self.assertEqual(aacr.case_infra_failures(evidence, {
+                "status": "failed", "error": "Review exceeded the adapter's 2700 s limit"}),
+                ["deadline", "transport"])
             (evidence / "review.stderr").write_text(
                 "contacting Rio endpoint: connection error: Connection reset by peer", encoding="utf-8")
             self.assertEqual(aacr.case_infra_failure(evidence, {"status": "failed"}), "transport")
+            # A usable report's stderr holds retried polls, not causes.
+            self.assertIsNone(aacr.case_infra_failure(evidence, {"status": "complete"}))
+            # The rerun's mislabelled envelope: the saved report names the cause.
+            (evidence / "report.json").write_text(json.dumps({"status": "error", "error": {
+                "code": "internal_error", "message": "endpoint review cancelled; partial evidence is retained"}}),
+                encoding="utf-8")
+            (evidence / "review.stderr").write_text("", encoding="utf-8")
+            self.assertEqual(aacr.case_infra_failure(evidence, {
+                "status": "failed", "infra_failure": None, "error": "Report commit pins differ from dataset"}),
+                "deadline")
 
 
 if __name__ == "__main__":

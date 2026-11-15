@@ -40,7 +40,7 @@ You see the selected source, profile and run identity, checks that passed/found 
 
 Conflicted indexes are refused for working-tree/staged selections. Branch comparisons need sufficient merge-base history; deepen shallow clones. Hydrate missing partial-clone objects first: Rio does not fetch them. Bare repositories are refused; submodules remain gitlinks and LFS files remain pointers. Linked worktrees and sparse checkouts are supported with these limits.
 
-First Ctrl-C preserves a partial report; a second kills remaining processes and exits 130. See [results and exit codes](results.md) before treating a nonzero exit as a crash.
+First Ctrl-C preserves a partial report; a second kills remaining processes and exits 130. A request to terminate (SIGTERM, as sent by a service manager) counts as Ctrl-C. On an endpoint review, the second interrupt first waits up to 30 seconds for the endpoint to accept the cancellation, so no review keeps running there. See [results and exit codes](results.md) before treating a nonzero exit as a crash.
 
 ## Next steps
 

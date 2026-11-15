@@ -43,6 +43,7 @@ export interface VerifyOptions {
   verifyTokens?: number;
   cancelled?: () => Promise<boolean>;
   call?: Parameters<typeof converse>[0]["call"];
+  record?: Parameters<typeof converse>[0]["record"];
   save: (vote: Vote) => Promise<void>;
   // Prompt settings (design D4, D9, D12, D14); absent means the pre-change layout.
   prompt?: {
@@ -191,6 +192,7 @@ export async function verifyHypothesis(
             messages,
             dispatch: tools.dispatch.bind(tools),
             call: o.call,
+            record: o.record,
             cancelled: o.cancelled,
             singleSystem: o.prompt?.single,
             compaction: o.prompt?.compaction,

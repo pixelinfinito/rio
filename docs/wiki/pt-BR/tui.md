@@ -28,7 +28,7 @@ No QA, abra uma célula da matriz para examinar passos e evidências. Localmente
 
 ## Resultados esperados
 
-Ao sair, o terminal é restaurado e um resumo é impresso com o código de saída da revisão. O primeiro Ctrl-C cancela trabalho ativo e mantém resultados parciais; o segundo encerra os processos e retorna 130.
+Ao sair, o terminal é restaurado e um resumo é impresso com o código de saída da revisão. O primeiro Ctrl-C cancela trabalho ativo e mantém resultados parciais; o segundo encerra os processos e retorna 130. Um pedido de término (SIGTERM) fecha a interface como ao sair, parando antes uma revisão em andamento.
 
 ## Solução de problemas
 

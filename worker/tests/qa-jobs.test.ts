@@ -383,7 +383,10 @@ it("revokes controller access on cancellation while accepting the runner's parti
     (await new Store(runtime).get<any>(run.result_key)).artifact
       .journey_outcomes,
   ).toHaveLength(1);
-  expect(events).toEqual([]);
+  // Cancelling ended the workflow's wait; the late result wakes nothing.
+  expect(events).toEqual([
+    { type: `job-${input.job}-1`, payload: { cancelled: true } },
+  ]);
   expect(
     (await request(path + "/archive", claim.token, undefined, "GET")).status,
   ).toBe(401);

@@ -14,12 +14,14 @@ import { invariant, safePath } from "./validation";
 import {
   LARGE,
   SYMLINK,
+  compareUtf8,
   decodeText,
   readerOf,
   splitLines,
   type Entry,
   type SnapshotReader,
 } from "./snapshot";
+import { SEARCH_REFUSED } from "./requests";
 export const OUTPUT_LIMIT = 24000;
 /** The readable entry for a path; never follows links, even intermediate ones. */
 async function readable(
@@ -105,6 +107,36 @@ export async function readFile(
   invariant(text !== null, "binary file cannot be read as text");
   return text;
 }
+/**
+ * Whether `needle` occurs in `bytes`. UTF-8 is self-synchronising, so a text
+ * holds a pattern exactly when its bytes hold the pattern's: a search decodes
+ * and splits only the files that can match, not every file of the tree.
+ * Every byte is compared a bounded number of times, whatever the pattern
+ * repeats (Knuth-Morris-Pratt): a pattern of 499 `a` and a `b` over 8 MiB
+ * of `a` was four billion comparisons when each start was tried in full.
+ */
+export function holds(bytes: Uint8Array, needle: Uint8Array): boolean {
+  const length = needle.length,
+    first = needle[0],
+    last = bytes.length - length;
+  // For each prefix of the pattern, the longest proper prefix that ends it.
+  const back = new Int32Array(length);
+  for (let i = 1, k = 0; i < length; i++) {
+    while (k && needle[i] !== needle[k]) k = back[k - 1];
+    if (needle[i] === needle[k]) k++;
+    back[i] = k;
+  }
+  // `matched` bytes of the pattern end before `at`. With none matched the
+  // next candidate is found natively, as most of a file is skipped.
+  let matched = 0;
+  for (let at = bytes.indexOf(first); at !== -1 && at - matched <= last;)
+    if (bytes[at] === needle[matched]) {
+      at++;
+      if (++matched === length) return true;
+    } else if (matched) matched = back[matched - 1];
+    else at = bytes.indexOf(first, at + 1);
+  return false;
+}
 /** Lines of a large file, streamed; null when it is not text. */
 async function largeLines(
   tree: SnapshotReader[Version],
@@ -123,6 +155,245 @@ async function largeLines(
     return null;
   }
   return lines;
+}
+interface Hit {
+  path: string;
+  line: number;
+  text: string;
+}
+// The matching lines of one file, and their size in an answer.
+interface Found {
+  path: string;
+  items: Hit[];
+  size: number;
+}
+interface Answer {
+  results: Hit[];
+  truncated: boolean;
+  version: Version;
+  scope?: string;
+  note?: string;
+}
+// A search holds hits beyond one answer while the tree is read out of order.
+const HELD = 4 * OUTPUT_LIMIT;
+// Answers a snapshot remembers.
+const REMEMBERED = 128;
+/**
+ * One search while its tree is read. A tree is read in storage order and an
+ * answer is the first hits in path order, so the hits are kept by file until
+ * the end; once the files held fill an answer, the paths after them cannot
+ * reach it and are no longer wanted.
+ */
+class Query {
+  /** Files the scope covers. */
+  files = 0;
+  readonly needle: Uint8Array;
+  private readonly match: (path: string) => boolean;
+  private found: Found[] = [];
+  private size = 0;
+  private last?: string;
+  constructor(
+    readonly pattern: string,
+    readonly scope: string,
+    readonly scoped: boolean,
+  ) {
+    this.needle = new TextEncoder().encode(pattern);
+    this.match = scopeMatcher(scope);
+  }
+  wants(entry: Entry): boolean {
+    return (
+      this.match(entry.path) &&
+      (this.last === undefined || compareUtf8(entry.path, this.last) <= 0)
+    );
+  }
+  open(path: string): Found {
+    return { path, items: [], size: 0 };
+  }
+  /** Adds a matching line; false once the file alone fills an answer. */
+  add(file: Found, line: number, text: string): boolean {
+    const item = { path: file.path, line, text: redact(text).slice(0, 1000) };
+    file.items.push(item);
+    file.size += JSON.stringify(item).length;
+    return file.size <= OUTPUT_LIMIT;
+  }
+  close(file: Found) {
+    if (!file.items.length) return;
+    this.found.push(file);
+    this.size += file.size;
+    if (this.size <= HELD) return;
+    this.found.sort((a, b) => compareUtf8(a.path, b.path));
+    let size = 0,
+      kept = 0;
+    while (size <= OUTPUT_LIMIT) size += this.found[kept++].size;
+    this.found.length = kept;
+    this.size = size;
+    this.last = this.found[kept - 1].path;
+  }
+  answer(version: Version): Answer {
+    const results: Hit[] = [];
+    let size = 0,
+      truncated = false;
+    this.found.sort((a, b) => compareUtf8(a.path, b.path));
+    scan: for (const file of this.found)
+      for (const item of file.items) {
+        size += JSON.stringify(item).length;
+        if (size > OUTPUT_LIMIT) {
+          truncated = true;
+          break scan;
+        }
+        results.push(item);
+      }
+    // An empty result must mean "no match", never "the scope selected nothing".
+    invariant(
+      truncated || this.files > 0 || !this.scoped,
+      `search scope ${JSON.stringify(this.scope)} matches no file in the ${version} snapshot; scope is a glob or a path relative to the repository root, such as "src/**", "src/auth" or "*.ts"`,
+    );
+    return {
+      results,
+      truncated,
+      version,
+      ...(this.scoped ? { scope: this.scope } : {}),
+      ...(!results.length && REGEX_SYNTAX.test(this.pattern)
+        ? {
+            note: "pattern is matched as literal text; regular expression syntax is not interpreted",
+          }
+        : {}),
+    };
+  }
+}
+interface Asked {
+  query: Query;
+  resolve: (answer: Answer) => void;
+  reject: (error: unknown) => void;
+}
+/**
+ * The searches of one snapshot. Reading a tree costs storage requests in
+ * proportion to its size, whatever is searched for, and a review's requests
+ * are limited (see `Requests`). So one pass over a version runs at a time and
+ * answers every search asked before it began: the searches of one model turn,
+ * and those other conversations asked meanwhile. An answer is remembered, as
+ * a snapshot never changes; and a review that has spent its share of requests
+ * on searching is told so instead of being ended by the platform.
+ */
+class Searches {
+  private waiting: Record<Version, Asked[]> = { base: [], head: [] };
+  private running: Partial<Record<Version, Promise<void>>> = {};
+  private answers = new Map<string, Promise<Answer>>();
+  constructor(private readonly snapshot: SnapshotReader) {}
+  async search(
+    version: Version,
+    pattern: string,
+    scope: string,
+    scoped: boolean,
+  ): Promise<Answer> {
+    const key = JSON.stringify([version, scope, scoped, pattern]);
+    let answer = this.answers.get(key);
+    if (answer) {
+      this.snapshot.requests?.count(1, "remembered");
+    } else {
+      answer = new Promise<Answer>((resolve, reject) =>
+        this.waiting[version].push({
+          query: new Query(pattern, scope, scoped),
+          resolve,
+          reject,
+        }),
+      );
+      if (this.answers.size >= REMEMBERED)
+        this.answers.delete(this.answers.keys().next().value!);
+      this.answers.set(key, answer);
+      const asked = answer;
+      // Only answers are remembered; a failure is the asker's alone.
+      asked.catch(() => {
+        if (this.answers.get(key) === asked) this.answers.delete(key);
+      });
+      this.running[version] ??= this.run(version);
+    }
+    // An asker may change what it is given.
+    return structuredClone(await answer);
+  }
+  private async run(version: Version) {
+    // The askers of this turn of the event loop have all asked by now.
+    await Promise.resolve();
+    try {
+      while (this.waiting[version].length) {
+        const asked = this.waiting[version].splice(0);
+        try {
+          await this.pass(version, asked);
+        } catch (error) {
+          for (const a of asked) a.reject(error);
+        }
+      }
+    } finally {
+      this.running[version] = undefined;
+    }
+  }
+  private async pass(version: Version, asked: Asked[]) {
+    const requests = this.snapshot.requests;
+    if (requests && !requests.searchable) {
+      requests.count(asked.length, "refused");
+      for (const a of asked) a.reject(new Error(SEARCH_REFUSED));
+      return;
+    }
+    requests?.count(1, "scans");
+    requests?.count(asked.length, "searches");
+    const tree = this.snapshot[version],
+      queries = asked.map((a) => a.query);
+    {
+      for await (const batch of tree.sweep(
+        (e) => e.mode !== SYMLINK && queries.some((q) => q.wants(e)),
+      ))
+        for (const [entry, bytes] of batch) {
+          const takers = queries.filter((q) => q.wants(entry));
+          for (const q of takers) q.files++;
+          if (bytes) {
+            // Decoded once, and only when a pattern's bytes are in the file.
+            let lines: string[] | null | undefined;
+            for (const q of takers) {
+              if (!holds(bytes, q.needle)) continue;
+              if (lines === undefined)
+                lines = decodeText(bytes)?.split("\n") ?? null;
+              // Binary files are skipped.
+              if (lines === null) break;
+              const file = q.open(entry.path);
+              for (let i = 0; i < lines.length; i++)
+                if (
+                  lines[i].includes(q.pattern) &&
+                  !q.add(file, i + 1, lines[i])
+                )
+                  break;
+              q.close(file);
+            }
+          } else {
+            // A large file is streamed once for every search that wants it.
+            const files = takers.map((q) => q.open(entry.path)),
+              full = takers.map(() => false);
+            const lines = await largeLines(tree, entry, (text, i) => {
+              let open = false;
+              takers.forEach((q, n) => {
+                if (full[n]) return;
+                if (text.includes(q.pattern))
+                  full[n] = !q.add(files[n], i + 1, text);
+                open ||= !full[n];
+              });
+              return open ? false : "stop";
+            });
+            if (lines !== null) takers.forEach((q, n) => q.close(files[n]));
+          }
+        }
+    }
+    for (const a of asked)
+      try {
+        a.resolve(a.query.answer(version));
+      } catch (error) {
+        a.reject(error);
+      }
+  }
+}
+const searches = new WeakMap<SnapshotReader, Searches>();
+function searchesOf(snapshot: SnapshotReader): Searches {
+  let known = searches.get(snapshot);
+  if (!known) searches.set(snapshot, (known = new Searches(snapshot)));
+  return known;
 }
 export function runAllowed(
   agent: string,
@@ -730,68 +1001,12 @@ export class Tools {
           !scope.startsWith("/"),
         'search "scope" must be a glob or a path relative to the repository root, such as "src/**", "src/auth" or "*.ts", without ".." or a leading "/"',
       );
-      const match = scopeMatcher(scope),
-        results: any[] = [];
-      const tree = this.snapshot[version];
-      const answer = (truncated: boolean) => ({
-        results,
-        truncated,
+      return searchesOf(this.snapshot).search(
         version,
-        ...(scoped ? { scope } : {}),
-        ...(!results.length && REGEX_SYNTAX.test(args.pattern)
-          ? {
-              note: "pattern is matched as literal text; regular expression syntax is not interpreted",
-            }
-          : {}),
-      });
-      let size = 0,
-        files = 0,
-        truncated = false;
-      // Streams the tree in path order and stops at the output limit.
-      for await (const batch of tree.batches(
-        (e) => e.mode !== SYMLINK && match(e.path),
-      )) {
-        for (const [entry, bytes] of batch) {
-          files++;
-          let lines: string[] | null;
-          const found: { line: number; text: string }[] = [];
-          if (bytes) {
-            lines = decodeText(bytes)?.split("\n") ?? null;
-            lines?.forEach((text, i) => {
-              if (text.includes(args.pattern))
-                found.push({ line: i + 1, text });
-            });
-          } else
-            lines = await largeLines(tree, entry, (text, i) => {
-              if (text.includes(args.pattern))
-                found.push({ line: i + 1, text });
-              // Each item exceeds 24 characters, so this already passes the limit.
-              return found.length > 1000 ? "stop" : false;
-            });
-          // Binary files are skipped, as before.
-          if (lines === null) continue;
-          for (const f of found) {
-            const item = {
-              path: entry.path,
-              line: f.line,
-              text: redact(f.text).slice(0, 1000),
-            };
-            size += JSON.stringify(item).length;
-            if (size > OUTPUT_LIMIT) {
-              truncated = true;
-              break;
-            }
-            results.push(item);
-          }
-          if (truncated) return answer(true);
-        }
-      }
-      // An empty result must mean "no match", never "the scope selected nothing".
-      invariant(
-        files > 0 || !scoped,
-        `search scope ${JSON.stringify(scope)} matches no file in the ${version} snapshot; scope is a glob or a path relative to the repository root, such as "src/**", "src/auth" or "*.ts"`,
+        args.pattern,
+        scope,
+        scoped,
       );
-      return answer(false);
     }
     if (name === "graph_query") {
       onlyArgs("graph_query", args, [

@@ -94,3 +94,99 @@ fn fixture_symbol_tables_are_stable_across_cached_reads() {
         insta::assert_json_snapshot!(format!("symbols_{fixture}"), table.symbols);
     }
 }
+
+#[test]
+fn xml_named_like_typescript_is_not_analyzed_as_code() {
+    // Qt Linguist translations are XML files with a `.ts` extension.
+    let qt = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!DOCTYPE TS>\n<TS version=\"2.1\" language=\"de\">\n<context>\n    <name>App</name>\n    <message>\n        <source>Open</source>\n        <translation>format(1)</translation>\n    </message>\n</context>\n</TS>\n";
+    for source in [
+        qt.to_owned(),
+        format!("\u{feff}\n  {qt}"),
+        qt.replacen("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n", "", 1),
+    ] {
+        assert!(is_markup(source.as_bytes()));
+        let table = analyze_source("i18n/App_de.ts", source.as_bytes()).unwrap();
+        assert!(table.parse_errors);
+        assert!(table.symbols.is_empty() && table.identifiers.is_empty());
+        assert!(table.imports.is_empty() && table.executable_lines.is_empty());
+    }
+    // Code that merely starts with an angle bracket is still code.
+    let generic = b"<T>(value: T) => value;\nexport function id() { return 1; }\n";
+    assert!(!is_markup(generic));
+    assert_eq!(
+        analyze_source("src/id.ts", generic).unwrap().symbols.len(),
+        1
+    );
+    // The path still has to name a supported language.
+    assert!(analyze_source("i18n/App_de.xml", qt.as_bytes()).is_err());
+}
+
+#[test]
+fn an_interrupted_analysis_gives_nothing_instead_of_a_partial_table() {
+    use std::cell::Cell;
+    let lines = 4000;
+    let sources = [
+        (
+            "src/wide.ts",
+            (0..lines)
+                .map(|i| {
+                    format!(
+                        "export function value{i}(input: number) {{ return other{i}(input); }}\n"
+                    )
+                })
+                .collect::<String>(),
+        ),
+        (
+            "pkg/wide.py",
+            (0..lines)
+                .map(|i| format!("def value{i}(input):\n    return other{i}(input)\n"))
+                .collect::<String>(),
+        ),
+        (
+            "src/wide.rs",
+            (0..lines)
+                .map(|i| format!("pub fn value{i}(input: u32) -> u32 {{ other{i}(input) }}\n"))
+                .collect::<String>(),
+        ),
+    ];
+    for (path, source) in &sources {
+        let full = analyze_source(path, source.as_bytes()).unwrap();
+        assert_eq!(full.symbols.len(), lines);
+        let calls = Cell::new(0usize);
+        let count = || {
+            calls.set(calls.get() + 1);
+            false
+        };
+        assert_eq!(
+            analyze_source_until(path, source.as_bytes(), &count).unwrap(),
+            Some(full.clone())
+        );
+        // The deadline is asked during the parse and during every later walk.
+        let asked = calls.get();
+        assert!(asked >= 8, "{path}: asked {asked} times");
+        // Stopping at any of those points ends the analysis without a table.
+        for limit in (0..16).map(|step| step * (asked - 1) / 15) {
+            let calls = Cell::new(0usize);
+            let stop = || {
+                calls.set(calls.get() + 1);
+                calls.get() > limit
+            };
+            assert_eq!(
+                analyze_source_until(path, source.as_bytes(), &stop).unwrap(),
+                None,
+                "{path}: stopped at check {limit} of {asked}"
+            );
+            // It also ends promptly: at most one more question after the yes.
+            assert!(calls.get() <= limit + 2, "{path}: {} checks", calls.get());
+        }
+        // A file the cache gave up on is analyzed again in full later.
+        let cache = SyntaxCache::default();
+        assert_eq!(
+            cache
+                .analyze_until(path, source.as_bytes(), &|| true)
+                .unwrap(),
+            None
+        );
+        assert_eq!(cache.analyze(path, source.as_bytes()).unwrap(), full);
+    }
+}

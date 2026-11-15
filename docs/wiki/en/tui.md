@@ -28,7 +28,7 @@ For QA, open a matrix cell to inspect steps/evidence. Local `p` pauses the queue
 
 ## Expected results
 
-Leaving the UI restores the terminal and prints a summary with the review exit code. First Ctrl-C cancels running work but keeps partial results; the second exits 130 after stopping processes.
+Leaving the UI restores the terminal and prints a summary with the review exit code. First Ctrl-C cancels running work but keeps partial results; the second exits 130 after stopping processes. A request to terminate (SIGTERM) closes the UI as quitting does, stopping a running review first.
 
 ## Troubleshooting
 

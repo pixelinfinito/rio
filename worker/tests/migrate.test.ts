@@ -274,6 +274,7 @@ it("upgrades a v0.2 database and converts draft feedback reasons", async () => {
     "jobs",
     "usage",
     "prompt_partitions",
+    "reviews",
   ])
     await env.DB.prepare(`DROP TABLE IF EXISTS ${table}`).run();
   const core = migrations.find((m) => m.name === "0001_core.sql")!;

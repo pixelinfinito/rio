@@ -885,7 +885,13 @@ fn no_color_environment_overrides_renderer_color_request() {
 #[test]
 fn interrupts_preserve_one_partial_document_and_second_interrupt_emits_none() {
     use std::time::{Duration, Instant};
-    for twice in [false, true] {
+    // A request to terminate (a service manager's stop) is an interrupt too.
+    for (signal, twice) in [
+        (libc::SIGINT, false),
+        (libc::SIGINT, true),
+        (libc::SIGTERM, false),
+        (libc::SIGTERM, true),
+    ] {
         let temp = repository();
         let root = temp.path();
         // Ignore TERM so the second interrupt is tested during the cleanup grace period.
@@ -933,12 +939,12 @@ fn interrupts_preserve_one_partial_document_and_second_interrupt_emits_none() {
         let worker = read_pid().unwrap();
         // SAFETY: signaling only the child CLI started by this test.
         unsafe {
-            libc::kill(child.id() as i32, libc::SIGINT);
+            libc::kill(child.id() as i32, signal);
         }
         if twice {
             std::thread::sleep(Duration::from_millis(200));
             unsafe {
-                libc::kill(child.id() as i32, libc::SIGINT);
+                libc::kill(child.id() as i32, signal);
             }
         }
         let deadline = Instant::now() + Duration::from_secs(20);
@@ -1620,8 +1626,11 @@ impl MockEndpoint {
                 let (status, response) = handler(&method, &path, &body);
                 log.lock().unwrap().push((method, path, body));
                 let body = serde_json::to_vec(&response).unwrap();
-                write!(stream, "HTTP/1.1 {status} X\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n", body.len()).unwrap();
-                stream.write_all(&body).unwrap();
+                let mut answer = format!("HTTP/1.1 {status} X\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n", body.len()).into_bytes();
+                answer.extend_from_slice(&body);
+                // A client that has left (an interrupted poll drops its
+                // connection) gets no answer; the next request still does.
+                let _ = stream.write_all(&answer);
             }
         });
         Self {
@@ -2660,6 +2669,326 @@ fn submission_endpoint() -> MockEndpoint {
             _ => (404, serde_json::json!({"error": "not found"})),
         }
     })
+}
+/// A service manager's stop reaches a process twice within milliseconds
+/// (measured: systemd signals each process of a stopped unit twice). The
+/// second signal ends the CLI without a document, but not before the endpoint
+/// has the cancellation of its review, also of one whose submission is still
+/// in flight.
+#[cfg(unix)]
+#[test]
+fn a_stop_signalled_twice_cancels_the_endpoint_review_before_leaving() {
+    use std::io::Read;
+    use std::sync::{
+        Arc, Mutex,
+        atomic::{AtomicBool, Ordering},
+    };
+    use std::time::{Duration, Instant};
+    for (during_submission, second) in [
+        (false, libc::SIGTERM),
+        (false, libc::SIGINT),
+        (true, libc::SIGTERM),
+    ] {
+        let temp = repository();
+        let root = temp.path();
+        fs::write(root.join("a.txt"), "two\n").unwrap();
+        // Set when the CLI is where the stop should meet it.
+        let reached = Arc::new(AtomicBool::new(false));
+        let flag = reached.clone();
+        let endpoint = MockEndpoint::start(move |method, path, _| {
+            let route = path.split('?').next().unwrap_or(path);
+            match (method, route) {
+                ("POST", "/v1/contents/missing") => (200, serde_json::json!({"missing": []})),
+                ("PUT", p) if p.starts_with("/v1/manifests/") => {
+                    (201, serde_json::json!({"chunk": 0}))
+                }
+                ("POST", p) if p.starts_with("/v1/manifests/") && p.ends_with("/seal") => (
+                    201,
+                    serde_json::json!({"id": p.trim_start_matches("/v1/manifests/").trim_end_matches("/seal")}),
+                ),
+                ("POST", "/v1/reviews") => {
+                    if during_submission {
+                        flag.store(true, Ordering::SeqCst);
+                        std::thread::sleep(Duration::from_millis(700));
+                    }
+                    (
+                        202,
+                        serde_json::json!({"id": "open-review", "status": "queued"}),
+                    )
+                }
+                ("GET", "/v1/reviews/open-review") => {
+                    flag.store(true, Ordering::SeqCst);
+                    (
+                        200,
+                        serde_json::json!({"id": "open-review", "status": "running"}),
+                    )
+                }
+                // Slower than the gap between the two signals.
+                ("POST", "/v1/reviews/open-review/cancel") => {
+                    std::thread::sleep(Duration::from_millis(300));
+                    (
+                        200,
+                        serde_json::json!({"id": "open-review", "status": "cancelled"}),
+                    )
+                }
+                _ => (404, serde_json::json!({"error": "not found"})),
+            }
+        });
+        let setup = rio(root);
+        let mut command = Process::new(setup.get_program());
+        command.current_dir(root);
+        for (key, value) in setup.get_envs() {
+            if let Some(value) = value {
+                command.env(key, value);
+            } else {
+                command.env_remove(key);
+            }
+        }
+        let mut child = command
+            .env("RIO_ENDPOINT_URL", &endpoint.url)
+            .env("RIO_API_TOKEN", TOKEN)
+            .args(["review", "--format", "json"])
+            .stdout(std::process::Stdio::piped())
+            .stderr(std::process::Stdio::piped())
+            .spawn()
+            .unwrap();
+        // Standard error is read as it is written: the second signal waits
+        // for what the CLI prints on the first.
+        let printed = Arc::new(Mutex::new(Vec::new()));
+        let reader = {
+            let (printed, mut stderr) = (printed.clone(), child.stderr.take().unwrap());
+            std::thread::spawn(move || {
+                let mut chunk = [0; 4096];
+                while let Ok(n) = stderr.read(&mut chunk) {
+                    if n == 0 {
+                        break;
+                    }
+                    printed.lock().unwrap().extend_from_slice(&chunk[..n]);
+                }
+            })
+        };
+        let stderr = || String::from_utf8_lossy(&printed.lock().unwrap()).into_owned();
+        let deadline = Instant::now() + Duration::from_secs(60);
+        while !reached.load(Ordering::SeqCst) {
+            if Instant::now() >= deadline || child.try_wait().unwrap().is_some() {
+                let _ = child.kill();
+                let _ = child.wait();
+                reader.join().unwrap();
+                panic!("review did not reach the endpoint: {}", stderr());
+            }
+            std::thread::sleep(Duration::from_millis(5));
+        }
+        // SAFETY: signaling only the child CLI started by this test.
+        unsafe {
+            libc::kill(child.id() as i32, libc::SIGTERM);
+        }
+        // Two signals of one kind that are both pending reach a process as
+        // one. The second is sent once the first has been taken, and the
+        // endpoint is slower to answer the cancellation than that takes.
+        let deadline = Instant::now() + Duration::from_secs(20);
+        while !stderr().contains("Interrupted;") {
+            if Instant::now() >= deadline || child.try_wait().unwrap().is_some() {
+                let _ = child.kill();
+                let _ = child.wait();
+                reader.join().unwrap();
+                panic!("the first signal was not taken: {}", stderr());
+            }
+            std::thread::sleep(Duration::from_millis(1));
+        }
+        unsafe {
+            libc::kill(child.id() as i32, second);
+        }
+        let deadline = Instant::now() + Duration::from_secs(20);
+        while child.try_wait().unwrap().is_none() {
+            if Instant::now() >= deadline {
+                let _ = child.kill();
+                let _ = child.wait();
+                reader.join().unwrap();
+                panic!("the stop did not finish: {}", stderr());
+            }
+            std::thread::sleep(Duration::from_millis(5));
+        }
+        // The endpoint records a request once it has answered it: the CLI
+        // was still there for the answer to its cancellation.
+        let answered = endpoint.take();
+        let output = child.wait_with_output().unwrap();
+        reader.join().unwrap();
+        let stderr = stderr();
+        assert!(
+            answered
+                .iter()
+                .any(|(method, path, _)| method == "POST"
+                    && path == "/v1/reviews/open-review/cancel"),
+            "left without cancelling (submission in flight: {during_submission}): {stderr}"
+        );
+        assert_eq!(output.status.code(), Some(130), "{stderr}");
+        assert!(output.stdout.is_empty());
+        assert!(
+            stderr.contains("Waiting for the endpoint to cancel the review…"),
+            "{stderr}"
+        );
+        assert!(!stderr.contains("did not confirm"), "{stderr}");
+    }
+}
+/// The interactive UI has no streaming signal handler: a request to terminate
+/// closes it as quitting does, and the endpoint's review is cancelled first.
+#[cfg(unix)]
+#[test]
+fn a_request_to_terminate_the_interactive_ui_cancels_the_endpoint_review() {
+    use std::io::{Read, Write};
+    use std::os::fd::FromRawFd;
+    use std::process::Stdio;
+    use std::sync::{
+        Arc,
+        atomic::{AtomicBool, Ordering},
+    };
+    use std::time::{Duration, Instant};
+    let temp = repository();
+    let root = temp.path();
+    fs::write(root.join("a.txt"), "two\n").unwrap();
+    let reached = Arc::new(AtomicBool::new(false));
+    let flag = reached.clone();
+    let endpoint = MockEndpoint::start(move |method, path, _| {
+        let route = path.split('?').next().unwrap_or(path);
+        match (method, route) {
+            ("POST", "/v1/contents/missing") => (200, serde_json::json!({"missing": []})),
+            ("PUT", p) if p.starts_with("/v1/manifests/") => (201, serde_json::json!({"chunk": 0})),
+            ("POST", p) if p.starts_with("/v1/manifests/") && p.ends_with("/seal") => (
+                201,
+                serde_json::json!({"id": p.trim_start_matches("/v1/manifests/").trim_end_matches("/seal")}),
+            ),
+            ("POST", "/v1/reviews") => (
+                202,
+                serde_json::json!({"id": "open-review", "status": "queued"}),
+            ),
+            ("GET", "/v1/reviews/open-review") => {
+                flag.store(true, Ordering::SeqCst);
+                (
+                    200,
+                    serde_json::json!({"id": "open-review", "status": "running"}),
+                )
+            }
+            ("POST", "/v1/reviews/open-review/cancel") => (
+                200,
+                serde_json::json!({"id": "open-review", "status": "cancelled"}),
+            ),
+            _ => (404, serde_json::json!({"error": "not found"})),
+        }
+    });
+    let (mut leader, mut follower) = (0, 0);
+    let mut size = libc::winsize {
+        ws_row: 40,
+        ws_col: 120,
+        ws_xpixel: 0,
+        ws_ypixel: 0,
+    };
+    // SAFETY: two out-pointers and a valid winsize.
+    assert_eq!(
+        unsafe {
+            libc::openpty(
+                &mut leader,
+                &mut follower,
+                std::ptr::null_mut(),
+                std::ptr::null_mut(),
+                &raw mut size,
+            )
+        },
+        0
+    );
+    // SAFETY: openpty returned these descriptors; each is owned once.
+    let (mut input, output, stdin, stdout, stderr) = unsafe {
+        (
+            std::fs::File::from_raw_fd(libc::dup(leader)),
+            std::fs::File::from_raw_fd(leader),
+            Stdio::from_raw_fd(libc::dup(follower)),
+            Stdio::from_raw_fd(libc::dup(follower)),
+            Stdio::from_raw_fd(follower),
+        )
+    };
+    let setup = rio(root);
+    let mut command = Process::new(setup.get_program());
+    command.current_dir(root);
+    for (key, value) in setup.get_envs() {
+        if let Some(value) = value {
+            command.env(key, value);
+        } else {
+            command.env_remove(key);
+        }
+    }
+    let mut child = command
+        .env("RIO_ENDPOINT_URL", &endpoint.url)
+        .env("RIO_API_TOKEN", TOKEN)
+        .env("TERM", "xterm-256color")
+        .env_remove("CI")
+        .env_remove("RIO_TUI")
+        .arg("review")
+        .stdin(stdin)
+        .stdout(stdout)
+        .stderr(stderr)
+        .spawn()
+        .unwrap();
+    // Read the screen on a thread; the test waits on what it shows.
+    let (sender, received) = std::sync::mpsc::channel::<Vec<u8>>();
+    std::thread::spawn(move || {
+        let mut output = output;
+        let mut buffer = [0u8; 65536];
+        while let Ok(n) = output.read(&mut buffer) {
+            if n == 0 || sender.send(buffer[..n].to_vec()).is_err() {
+                break;
+            }
+        }
+    });
+    let mut seen = Vec::new();
+    let end = Instant::now() + Duration::from_secs(30);
+    while !String::from_utf8_lossy(&seen).contains("start") {
+        assert!(Instant::now() < end, "the start screen never drew");
+        if let Ok(chunk) = received.recv_timeout(Duration::from_millis(100)) {
+            seen.extend(chunk);
+        }
+    }
+    std::thread::sleep(Duration::from_millis(500));
+    input.write_all(b"\r").unwrap();
+    let end = Instant::now() + Duration::from_secs(60);
+    while !reached.load(Ordering::SeqCst) {
+        if Instant::now() >= end || child.try_wait().unwrap().is_some() {
+            let _ = child.kill();
+            let _ = child.wait();
+            while let Ok(chunk) = received.try_recv() {
+                seen.extend(chunk);
+            }
+            panic!(
+                "the review did not reach the endpoint: {}",
+                String::from_utf8_lossy(&seen)
+            );
+        }
+        std::thread::sleep(Duration::from_millis(5));
+    }
+    // SAFETY: signaling only the child CLI started by this test.
+    unsafe {
+        libc::kill(child.id() as i32, libc::SIGTERM);
+    }
+    let end = Instant::now() + Duration::from_secs(20);
+    let status = loop {
+        if let Some(status) = child.try_wait().unwrap() {
+            break status;
+        }
+        if Instant::now() >= end {
+            let _ = child.kill();
+            let _ = child.wait();
+            panic!("the UI did not close on the request to terminate");
+        }
+        std::thread::sleep(Duration::from_millis(5));
+    };
+    // Ended by itself (not by the signal's default action), after the
+    // endpoint answered the cancellation.
+    assert!(status.code().is_some(), "{status:?}");
+    assert!(
+        endpoint
+            .take()
+            .iter()
+            .any(|(method, path, _)| method == "POST" && path == "/v1/reviews/open-review/cancel"),
+        "left without cancelling"
+    );
 }
 #[test]
 fn hosted_prepare_submits_what_rio_review_submits_under_the_base_profile() {
