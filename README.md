@@ -31,16 +31,16 @@ Start with local checks—no cloud account or API key needed. Add hosted AI revi
 
 ### 1. Install Rio
 
-Rio is in active development. There are no published releases yet; build from source to try it today. Install [Rust with rustup](https://rustup.rs/) and Git, then run:
+Rio is in active development and published as pre-releases. On Linux or macOS, download the installer, read it, and run it:
 
 ```sh
-git clone https://github.com/pixelinfinito/rio.git
-cd rio
-cargo install --path crates/rio-cli --locked
+curl -fsSL https://raw.githubusercontent.com/pixelinfinito/rio/main/scripts/install.sh -o install.sh
+less install.sh
+sh install.sh
 rio --version
 ```
 
-The checkout selects the required Rust toolchain. [Installation guide →](https://github.com/pixelinfinito/rio/wiki/EN-Installation)
+It installs the newest release (a pre-release until a stable one exists) after checking its SHA-256. On Windows, or to build from source with [Rust](https://rustup.rs/), see the [installation guide →](https://github.com/pixelinfinito/rio/wiki/EN-Installation)
 
 ### 2. Review your changes
 
