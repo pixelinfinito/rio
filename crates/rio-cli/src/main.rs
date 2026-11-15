@@ -713,18 +713,65 @@ async fn run_review(args: ReviewArgs) -> u8 {
     }
     stream_review(args, started).await
 }
+/// Interrupts (Ctrl-C) and, on Unix, requests to terminate: a service manager
+/// that stops the CLI ends its review as an interrupt does, so the endpoint's
+/// review is cancelled and not left to run. It listens from `listen` until
+/// dropped: a signal that arrives between two waits is the next wait's.
+pub(crate) struct Interrupts {
+    #[cfg(unix)]
+    interrupt: tokio::signal::unix::Signal,
+    #[cfg(unix)]
+    terminate: tokio::signal::unix::Signal,
+}
+impl Interrupts {
+    pub(crate) fn listen() -> std::io::Result<Self> {
+        #[cfg(unix)]
+        {
+            use tokio::signal::unix::{SignalKind, signal};
+            Ok(Self {
+                interrupt: signal(SignalKind::interrupt())?,
+                terminate: signal(SignalKind::terminate())?,
+            })
+        }
+        #[cfg(not(unix))]
+        Ok(Self {})
+    }
+    /// Waits for the next interrupt; `None` when no more can be received.
+    pub(crate) async fn next(&mut self) -> Option<()> {
+        #[cfg(unix)]
+        {
+            tokio::select! {
+                received = self.interrupt.recv() => received,
+                received = self.terminate.recv() => received,
+            }
+        }
+        #[cfg(not(unix))]
+        tokio::signal::ctrl_c().await.ok()
+    }
+}
 /// `rio review` with streaming output (pipes, CI, `--format`, `--no-tui`).
 async fn stream_review(args: ReviewArgs, started: String) -> u8 {
     let supervisor = ProcessSupervisor::default();
     let cancellation = CancellationToken::new();
     let signal_cancel = cancellation.clone();
     let signal_supervisor = supervisor.clone();
+    // Set by a second interrupt: the review ends without a document.
+    let forced = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
+    let signal_forced = forced.clone();
     let signals = tokio::spawn(async move {
-        if tokio::signal::ctrl_c().await.is_ok() {
+        let Ok(mut interrupts) = Interrupts::listen() else {
+            return;
+        };
+        if interrupts.next().await.is_some() {
             signal_cancel.cancel();
             eprintln!("Interrupted; stopping checks and preserving partial results…");
-            if tokio::signal::ctrl_c().await.is_ok() {
+            if interrupts.next().await.is_some() {
+                signal_forced.store(true, std::sync::atomic::Ordering::SeqCst);
                 signal_supervisor.kill_all();
+                // Leaving must not leave the endpoint's review running: a
+                // service manager's stop can signal a process twice within
+                // milliseconds, before the first signal's cancellation is sent.
+                endpoint::settled().await;
                 std::process::exit(130);
             }
         }
@@ -755,6 +802,9 @@ async fn stream_review(args: ReviewArgs, started: String) -> u8 {
         },
     )
     .await;
+    if forced.load(std::sync::atomic::Ordering::SeqCst) {
+        std::process::exit(130);
+    }
     let _ = progress.await;
     let executed = match outcome {
         Ok(executed) => executed,

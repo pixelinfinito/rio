@@ -5,7 +5,11 @@ import type {
   GraphNode,
   Version,
 } from "./types";
-import { textOf, type SnapshotReader } from "./snapshot";
+import {
+  changeTexts,
+  type ChangeTexts,
+  type SnapshotReader,
+} from "./snapshot";
 
 /**
  * Deterministic inventory of the public contracts a change touches, computed
@@ -681,10 +685,15 @@ export async function inventory(
             : null,
       }));
       for await (const [path, content] of input.scan(version)) {
-        const lines = content.split("\n");
+        // A file is split into lines for the first name it holds: most files
+        // of a large tree hold none, and a line cannot hold a name its file
+        // does not.
+        let lines: string[] | undefined;
         for (const { entry, needle, word } of patterns) {
           if (path === entry.path || needle.length < 3) continue;
           if (entry.consumers[version].length >= MAX_CONSUMERS) continue;
+          if (!content.includes(needle)) continue;
+          lines ??= content.split("\n");
           const sameLanguage = languageOf(path) === languageOf(entry.path);
           const index = lines.findIndex((l) =>
             word
@@ -935,17 +944,14 @@ export function taintMap(
   return hits;
 }
 
-/** Changed-file contents for the inventory, read once per version. */
+/**
+ * Changed-file contents for the inventory, read once per version, in batches
+ * and within the change text budget; `omitted` counts what the budget left out.
+ */
 export async function changedContents(
   changed: ChangedFile[],
   snapshot: SnapshotReader,
-): Promise<ChangedContents> {
-  const contents: ChangedContents = { base: {}, head: {} };
-  for (const file of changed)
-    for (const [version, path] of [
-      ["base", file.old_path ?? file.path],
-      ["head", file.path],
-    ] as const)
-      contents[version][path] = await textOf(snapshot[version], path);
-  return contents;
+  budget?: number,
+): Promise<ChangeTexts> {
+  return changeTexts(snapshot, changed, budget);
 }

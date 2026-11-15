@@ -34,6 +34,47 @@ pub struct EndpointOutcome {
     /// The endpoint's id of the review (for its audit); `None` when nothing was submitted.
     pub remote_id: Option<String>,
 }
+/// Whether this process has an endpoint review: one being submitted, or
+/// submitted and waited for. The first interrupt cancels it; until the
+/// endpoint has the cancellation the process must not leave, or the review
+/// would run to its deadline with no one left to read it.
+static OWNED: std::sync::LazyLock<tokio::sync::watch::Sender<bool>> =
+    std::sync::LazyLock::new(|| tokio::sync::watch::channel(false).0);
+/// How long a second interrupt waits for the first one's cancellation: longer
+/// than the client keeps trying to cancel.
+const SETTLE_WINDOW: Duration = Duration::from_secs(30);
+const INTERRUPTED_EARLY: &str = "interrupted before the endpoint review was submitted";
+/// Marks the endpoint review as this process's until dropped.
+struct Owned;
+impl Owned {
+    fn begin() -> Self {
+        OWNED.send_replace(true);
+        Self
+    }
+}
+impl Drop for Owned {
+    fn drop(&mut self) {
+        OWNED.send_replace(false);
+    }
+}
+/// For an exit that does not wait for the review (the second interrupt):
+/// waits until the first interrupt has ended this process's endpoint review,
+/// if it has one, for at most `SETTLE_WINDOW`.
+pub async fn settled() {
+    let mut owned = OWNED.subscribe();
+    if !*owned.borrow() {
+        return;
+    }
+    eprintln!("Waiting for the endpoint to cancel the review…");
+    if tokio::time::timeout(SETTLE_WINDOW, owned.wait_for(|owned| !owned))
+        .await
+        .is_err()
+    {
+        eprintln!(
+            "The endpoint did not confirm the cancellation; its review may run until its deadline"
+        );
+    }
+}
 /// Saved tokens are bound to the configured URL; never send them elsewhere.
 pub fn client(url: &str, config_dir: &Path) -> Result<rio_client::Client> {
     let token = match std::env::var("RIO_API_TOKEN").ok() {
@@ -84,6 +125,14 @@ pub async fn review(
         lineage,
     } = request;
     let client = client(url, config_dir)?;
+    // Time before the endpoint has a review is not part of its deadline; say
+    // where it went.
+    let mut phase = std::time::Instant::now();
+    let mut lap = || {
+        let elapsed = phase.elapsed().as_secs_f64();
+        phase = std::time::Instant::now();
+        elapsed
+    };
     if diff(&changes, &profile_excludes(&profile))?
         .files
         .is_empty()
@@ -94,6 +143,7 @@ pub async fn review(
             remote_id: None,
         });
     }
+    let diff_seconds = lap();
     let snapshot = Snapshot::from_changes(&changes);
     let id = rio_engine::review_id(&snapshot.key, &profile)?;
     // Triage can select either budget after submission. Allow the longest configured deadline.
@@ -119,6 +169,7 @@ pub async fn review(
             remote_id: None,
         });
     };
+    let graph_seconds = lap();
     cache.reference(&format!("snapshots/{}.tar.zst", snapshot.key))?;
     snapshot.write(&cache.options.dir)?;
     cache.write("profile.resolved.yaml", profile.to_yaml()?.as_bytes())?;
@@ -127,7 +178,16 @@ pub async fn review(
         &serde_json::to_vec_pretty(&prepared.guidance)?,
     )?;
     prepared.graphs.write(&cache.path)?;
-    let upload = client.upload_snapshot(&changes.base, &changes.head).await?;
+    eprintln!(
+        "prepared locally: diff {diff_seconds:.1}s, graph and plan {graph_seconds:.1}s, run records {:.1}s",
+        lap()
+    );
+    // Nothing runs on the endpoint yet: an interrupt ends the review here.
+    let upload = tokio::select! {
+        _ = cancellation.cancelled() => anyhow::bail!("{INTERRUPTED_EARLY}"),
+        upload = client.upload_snapshot(&changes.base, &changes.head) => upload?,
+    };
+    let upload_seconds = lap();
     eprintln!(
         "snapshot: uploaded {} in {} new contents ({} in {} distinct contents, {} files total)",
         rio_client::format_bytes(upload.uploaded_bytes),
@@ -146,8 +206,16 @@ pub async fn review(
     if let Some(lineage) = &lineage {
         submission["lineage"] = lineage.submission();
     }
+    // Owned before the last look at the interrupt: a second interrupt then
+    // finds either no submission or this mark.
+    let _owned = Owned::begin();
+    ensure!(!cancellation.is_cancelled(), "{INTERRUPTED_EARLY}");
     let remote_id = client.submit(&submission).await?;
     eprintln!("Endpoint review: {remote_id}");
+    eprintln!(
+        "submitted: snapshot upload {upload_seconds:.1}s, submission {:.1}s",
+        lap()
+    );
     cache.write(
         "endpoint.json",
         &serde_json::to_vec(&json!({"id":remote_id,"url":url}))?,
@@ -219,7 +287,12 @@ fn cache_qa_records(cache: &RunCache, audit: &serde_json::Value) -> Result<()> {
     Ok(())
 }
 
-/// The longest configured review deadline plus a minute: triage can select
+/// Time past a review's deadline the client still waits: an endpoint whose
+/// workflow cannot finish ends the review itself two minutes past the deadline,
+/// from a job that runs each minute. A client that left sooner cancelled the
+/// review and got no report where the endpoint had a partial one.
+const DEADLINE_MARGIN: Duration = Duration::from_secs(240);
+/// The longest configured review deadline plus the margin: triage can select
 /// either budget after submission.
 pub fn review_timeout(profile: &ResolvedProfile) -> Result<Duration> {
     Ok([false, true]
@@ -234,7 +307,7 @@ pub fn review_timeout(profile: &ResolvedProfile) -> Result<Duration> {
         .into_iter()
         .max()
         .unwrap_or_default()
-        + Duration::from_secs(60))
+        + DEADLINE_MARGIN)
 }
 
 /// The graph budget, overridable with `RIO_GRAPH_BUDGET_SECS`.

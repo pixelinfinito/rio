@@ -5,6 +5,7 @@ import {
 } from "cloudflare:test";
 import { beforeAll, expect, it, vi } from "vitest";
 import { app } from "../src/index";
+import { Requests } from "../src/requests";
 import { Store } from "../src/storage";
 import { finishJob } from "../src/jobs";
 import { allMigrations, submission } from "./fixtures";
@@ -106,6 +107,79 @@ const member = (
 const ROLE =
   /You are the (skeptic|exploit author|code owner|maintainer|tester) on Rio's review council/;
 
+/** A submission whose plausible findings go to a five member council. */
+const councilled = (snapshotId: string) => {
+  const s = submission();
+  s.snapshot_id = snapshotId;
+  s.changed = [{ path: "src/a.ts", lines_changed: 4 }];
+  s.graphs = { base: graph("b"), head: graph("h") } as any;
+  s.profile.budget = {
+    fast: {
+      wall_time: "4m",
+      tokens: 3_000_000,
+      agents_max: 1,
+      verify_tokens: 20_000,
+    },
+  };
+  s.profile.steps = [
+    { id: "triage", uses: "rio/triage@0.1.0", needs: [], with: {} },
+    {
+      id: "agents",
+      uses: "rio/agents@0.1.0",
+      needs: ["triage"],
+      with: { cache: false },
+    },
+    { id: "verify", uses: "rio/verify@0.1.0", needs: ["agents"], with: {} },
+    {
+      id: "council",
+      uses: "rio/council@0.1.0",
+      needs: ["verify"],
+      with: { enabled: true },
+      rules: [
+        { when: "evidence == plausible and severity >= error" },
+        { when: "verify.split" },
+        { when: "risk_tier == high" },
+        { when: "mode == deep" },
+        { when: "nightly" },
+      ],
+    },
+    { id: "report", uses: "rio/report@0.1.0", needs: ["council"], with: {} },
+  ];
+  s.profile.council = {
+    members: [
+      "skeptic",
+      "exploit-author",
+      "code-owner",
+      "maintainer",
+      "tester",
+    ].map((r) => ({
+      uses: `rio/council-${r}`,
+    })),
+    max_findings: 5,
+    max_experiments: 2,
+    max_rounds: 2,
+    min_members: 3,
+    timeout: "90s",
+    vendors_allowed: ["anthropic", "openai", "openrouter", "mistral"],
+  };
+  s.profile.council_members = [
+    member("skeptic", "diff-only", "anthropic", "test-claude", "claude"),
+    member("exploit-author", "execution", "openai", "test-gpt", "gpt"),
+    {
+      ...member(
+        "code-owner",
+        "graph-heavy",
+        "openrouter",
+        "google/gemini",
+        "gemini",
+      ),
+    },
+    member("maintainer", "graph-heavy", "openai", "test-gpt", "gpt"),
+    member("tester", "execution", "mistral", "mistral-large", "mistral"),
+  ];
+  return s;
+};
+
 it("councils four findings with an experiment, a protection, a note and a partial council", async () => {
   const council: {
     role: string;
@@ -196,74 +270,7 @@ it("councils four findings with an experiment, a protection, a note and a partia
         app.request(`https://rio${path}`, { method, headers, body }, bindings),
       snapshot,
     );
-    const s = submission();
-    s.snapshot_id = ((await uploaded.json()) as any).id;
-    s.changed = [{ path: "src/a.ts", lines_changed: 4 }];
-    s.graphs = { base: graph("b"), head: graph("h") } as any;
-    s.profile.budget = {
-      fast: {
-        wall_time: "4m",
-        tokens: 3_000_000,
-        agents_max: 1,
-        verify_tokens: 20_000,
-      },
-    };
-    s.profile.steps = [
-      { id: "triage", uses: "rio/triage@0.1.0", needs: [], with: {} },
-      {
-        id: "agents",
-        uses: "rio/agents@0.1.0",
-        needs: ["triage"],
-        with: { cache: false },
-      },
-      { id: "verify", uses: "rio/verify@0.1.0", needs: ["agents"], with: {} },
-      {
-        id: "council",
-        uses: "rio/council@0.1.0",
-        needs: ["verify"],
-        with: { enabled: true },
-        rules: [
-          { when: "evidence == plausible and severity >= error" },
-          { when: "verify.split" },
-          { when: "risk_tier == high" },
-          { when: "mode == deep" },
-          { when: "nightly" },
-        ],
-      },
-      { id: "report", uses: "rio/report@0.1.0", needs: ["council"], with: {} },
-    ];
-    s.profile.council = {
-      members: [
-        "skeptic",
-        "exploit-author",
-        "code-owner",
-        "maintainer",
-        "tester",
-      ].map((r) => ({
-        uses: `rio/council-${r}`,
-      })),
-      max_findings: 5,
-      max_experiments: 2,
-      max_rounds: 2,
-      min_members: 3,
-      timeout: "90s",
-      vendors_allowed: ["anthropic", "openai", "openrouter", "mistral"],
-    };
-    s.profile.council_members = [
-      member("skeptic", "diff-only", "anthropic", "test-claude", "claude"),
-      member("exploit-author", "execution", "openai", "test-gpt", "gpt"),
-      {
-        ...member(
-          "code-owner",
-          "graph-heavy",
-          "openrouter",
-          "google/gemini",
-          "gemini",
-        ),
-      },
-      member("maintainer", "graph-heavy", "openai", "test-gpt", "gpt"),
-      member("tester", "execution", "mistral", "mistral-large", "mistral"),
-    ];
+    const s = councilled(((await uploaded.json()) as any).id);
     const response = await app.request(
       "https://rio/v1/reviews",
       { method: "POST", headers, body: JSON.stringify(s) },
@@ -393,6 +400,9 @@ it("councils four findings with an experiment, a protection, a note and a partia
     ]);
     expect(Number.isInteger(report.council.total.runner_seconds)).toBe(true);
     expect(report.agent_audit.council.selected).toHaveLength(4);
+    // Every member call that started counts against the request budget.
+    expect(report.agent_audit.requests.stopped).toBe(0);
+    expect(report.agent_audit.requests.used).toBeGreaterThan(4 * 4 + 4 * 4 - 1);
     expect(report.agent_audit.council.selected[0].rule).toBe(
       "evidence == plausible and severity >= error",
     );
@@ -462,5 +472,127 @@ it("councils four findings with an experiment, a protection, a note and a partia
     expect(packs.size).toBe(4);
   } finally {
     transport.mockRestore();
+  }
+}, 120000);
+
+it("refuses a council member's call once the review's request budget is spent, and counts the calls it makes", async () => {
+  // The budget is spent when the council begins: what the agents and the
+  // verifier found is reported, and no member is asked.
+  let councilBegun = false;
+  const event = Store.prototype.event;
+  const events = vi
+    .spyOn(Store.prototype, "event")
+    .mockImplementation(function (this: Store, ...args) {
+      const [, name, data] = args as [string, string, { step?: string }];
+      if (name === "step:started" && data?.step === "council")
+        councilBegun = true;
+      return event.apply(this, args);
+    });
+  const spent = vi
+    .spyOn(Requests.prototype, "exhausted", "get")
+    .mockImplementation(() => councilBegun);
+  const asked: string[] = [];
+  const transport = vi
+    .spyOn(globalThis, "fetch")
+    .mockImplementation(async (input, init) => {
+      const body = JSON.parse(init!.body as string);
+      const anthropic = String(input).includes("anthropic");
+      const system: string = anthropic ? body.system : body.messages[0].content;
+      const user: string = body.messages.at(-1).content;
+      const reply = (result: unknown) => {
+        const content = JSON.stringify(result);
+        return Response.json(
+          anthropic
+            ? {
+                content: [{ type: "text", text: content }],
+                usage: { input_tokens: 60, output_tokens: 20 },
+              }
+            : {
+                choices: [{ message: { content } }],
+                usage: { prompt_tokens: 100, completion_tokens: 20 },
+              },
+        );
+      };
+      const role = ROLE.exec(system)?.[1];
+      if (role) {
+        asked.push(role);
+        return reply({});
+      }
+      if (user.includes("Review the change independently"))
+        return reply({ result: hypotheses.slice(0, 1) });
+      if (
+        body.messages.some((m: any) =>
+          m.content.includes("Verify this hypothesis."),
+        )
+      )
+        return reply({ result: { evidence_level: "plausible", evidence: [] } });
+      return reply({ result: [] });
+    });
+  try {
+    const uploaded = await uploadSnapshot(
+      (path, method, body) =>
+        app.request(`https://rio${path}`, { method, headers, body }, runtime),
+      snapshot,
+    );
+    const response = await app.request(
+      "https://rio/v1/reviews",
+      {
+        method: "POST",
+        headers,
+        body: JSON.stringify(councilled(((await uploaded.json()) as any).id)),
+      },
+      runtime,
+    );
+    expect(response.status).toBe(202);
+    const { id } = (await response.json()) as any;
+    await using instance = await introspectWorkflowInstance(
+      runtime.REVIEWS,
+      id,
+    );
+    await instance.waitForStatus("complete");
+    expect(councilBegun).toBe(true);
+    expect(asked).toEqual([]);
+    const row = await runtime.DB.prepare(
+      "SELECT status,report_key FROM reviews WHERE id=?",
+    )
+      .bind(id)
+      .first<any>();
+    const report = await new Store(runtime).get<any>(row.report_key);
+    // Each of the four allowed members abstains for the budget, and says so.
+    const rows = await runtime.DB.prepare(
+      "SELECT member,abstained,cause FROM council_assessments WHERE review_id=? ORDER BY member",
+    )
+      .bind(id)
+      .all<any>();
+    expect(rows.results).toEqual(
+      ["code-owner", "exploit-author", "maintainer", "skeptic"].map(
+        (member) => ({ member, abstained: 1, cause: "budget" }),
+      ),
+    );
+    expect(report.agent_audit.requests.stopped).toBe(4);
+    expect(report.footer.notes).toContain(
+      "Request budget: 4 model turns were not started, because the review had used its share of the 10000 requests the platform allows one review; the agents, verifier votes and council answers they belonged to did not complete.",
+    );
+    expect([row.status, report.status]).toEqual(["complete", "incomplete"]);
+    // No call was reserved either: the refusal comes before the ledger.
+    expect(
+      (
+        await runtime.DB.prepare(
+          "SELECT COUNT(*) AS n FROM usage WHERE review_id=? AND phase='council'",
+        )
+          .bind(id)
+          .first<{ n: number }>()
+      )?.n,
+    ).toBe(0);
+    // The finding the agents raised is still reported.
+    expect(
+      [...report.findings, ...report.risks].some((f: any) =>
+        f.message.startsWith("M1"),
+      ),
+    ).toBe(true);
+  } finally {
+    transport.mockRestore();
+    spent.mockRestore();
+    events.mockRestore();
   }
 }, 120000);

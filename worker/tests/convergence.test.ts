@@ -1324,6 +1324,13 @@ describe("end-to-end lineage", () => {
     });
     const pinned = normalize(report);
     delete pinned.cache;
+    // So is the count of the review's own storage requests.
+    expect(pinned.agent_audit.requests).toMatchObject({
+      limit: 10000,
+      refused: 0,
+      stopped: 0,
+    });
+    delete pinned.agent_audit.requests;
     for (const list of [
       pinned.findings,
       pinned.risks,

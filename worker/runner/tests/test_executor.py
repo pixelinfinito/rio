@@ -78,6 +78,64 @@ print(json.dumps(out))'''
                 self.assertEqual(result['exit_code'], 0, result['stderr'])
                 self.assertEqual(json.loads(result['stdout']), {name: [hashlib.sha256(content).hexdigest(), mode] for name, content, mode in members})
 
+    def test_files_both_trees_share_arrive_once_and_are_copied(self):
+        program = '''import hashlib, json, os, stat
+out = {}
+for version in ("base", "head"):
+    for directory, _, names in os.walk(os.path.join("..", version)):
+        for name in names:
+            path = os.path.join(directory, name)
+            info = os.lstat(path)
+            assert stat.S_ISREG(info.st_mode) and info.st_nlink == 1
+            out[os.path.relpath(path, "..")] = [hashlib.sha256(open(path, "rb").read()).hexdigest(), stat.S_IMODE(info.st_mode)]
+print(json.dumps(out))'''
+        job = self.job(['/usr/bin/python3', '-c', program], needs=('base', 'head'))
+        job['limits']['output_bytes'] = 1048576
+        tool, text = bytes(range(256)) * 300, 'ünïcödé\n'.encode()
+        shared = ['tool.sh', 'src/ünïcödé ✓.txt', 'deep/er/empty']
+        members = [
+            ('head/tool.sh', tool, 0o755), ('head/src/ünïcödé ✓.txt', text, 0o644), ('head/deep/er/empty', b'', 0o644),
+            ('head/changed.txt', b'new\n', 0o644), ('head/added.txt', b'added\n', 0o644),
+            ('base/changed.txt', b'old\n', 0o644), ('base/removed.txt', b'removed\n', 0o644),
+            # Two members, as for a tree of many paths.
+            ('same/base', json.dumps(shared[:1]).encode(), 0o644), ('same/base', json.dumps(shared[1:]).encode(), 0o644),
+        ]
+        result = executor.execute(io.BytesIO(json.dumps(job).encode() + b'\n' + archive(members)))
+        self.assertEqual(result['exit_code'], 0, result['stderr'])
+        digest = lambda content: hashlib.sha256(content).hexdigest()
+        self.assertEqual(json.loads(result['stdout']), {
+            'head/tool.sh': [digest(tool), 0o755], 'head/src/ünïcödé ✓.txt': [digest(text), 0o644], 'head/deep/er/empty': [digest(b''), 0o644],
+            'head/changed.txt': [digest(b'new\n'), 0o644], 'head/added.txt': [digest(b'added\n'), 0o644],
+            'base/tool.sh': [digest(tool), 0o755], 'base/src/ünïcödé ✓.txt': [digest(text), 0o644], 'base/deep/er/empty': [digest(b''), 0o644],
+            'base/changed.txt': [digest(b'old\n'), 0o644], 'base/removed.txt': [digest(b'removed\n'), 0o644],
+        })
+        self.assertGreaterEqual(result['timing']['extract_ms'], 0)
+        self.assertGreaterEqual(result['timing']['command_ms'], 0)
+
+    def test_unsafe_shared_members_abort_the_job(self):
+        head = ('head/a.txt', b'ok', 0o644)
+        cases = {
+            'missing source': (FileNotFoundError, [head, ('same/base', b'["b.txt"]', 0o644)]),
+            'before its source': (FileNotFoundError, [('same/base', b'["a.txt"]', 0o644), head]),
+            'traversal': (AssertionError, [head, ('same/base', b'["../head/a.txt"]', 0o644)]),
+            'absolute': (AssertionError, [head, ('same/base', b'["/etc/passwd"]', 0o644)]),
+            'git metadata': (AssertionError, [head, ('same/base', b'[".git/config"]', 0o644)]),
+            'not a list': (AssertionError, [head, ('same/base', b'{"a.txt": 1}', 0o644)]),
+            'not a path': (AssertionError, [head, ('same/base', b'[1]', 0o644)]),
+            'unknown version': (AssertionError, [head, ('same/other', b'["a.txt"]', 0o644)]),
+            'nested name': (AssertionError, [head, ('same/base/x', b'["a.txt"]', 0o644)]),
+            'duplicate': (FileExistsError, [head, ('base/a.txt', b'old', 0o644), ('same/base', b'["a.txt"]', 0o644)]),
+            'directory source': (IsADirectoryError, [('head/d/a.txt', b'ok', 0o644), ('same/base', b'["d"]', 0o644)]),
+            'oversized': (AssertionError, [head, ('same/base', b'[' + b' ' * executor.SHARED_LIMIT + b']', 0o644)]),
+        }
+        for label, (error, members) in cases.items():
+            with self.subTest(label):
+                with self.assertRaises(error):
+                    self.execute(self.job(['/bin/true'], needs=('base', 'head')), members)
+        # A job with one tree has nothing to share.
+        with self.assertRaises(AssertionError):
+            self.execute(self.job(['/bin/true']), [head, ('same/head', b'["a.txt"]', 0o644)])
+
     def test_unsafe_members_abort_the_job(self):
         cases = {
             'symlink': special('head/link', tarfile.SYMTYPE, '/etc/passwd'),

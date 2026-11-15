@@ -373,6 +373,19 @@ export interface ExecutionResult {
   truncated: boolean;
   version: Version;
   artifact?: any;
+  /** Where a timed-out job was: its archive on the way in, or its command. */
+  phase?: "transfer" | "command";
+  /**
+   * Where the job's time went: the archive reaching the container (and how
+   * much of that was reading storage), the executor extracting it, the command.
+   */
+  timing?: {
+    transfer_ms?: number;
+    archive_bytes?: number;
+    storage_ms?: number;
+    extract_ms?: number;
+    command_ms?: number;
+  };
 }
 /**
  * Whether a route's cache counts are trusted: `verified` where documentation and
@@ -441,6 +454,8 @@ export interface Env {
   RUNNER_SECRET: string;
   RIO_VERSION: string;
   RUNNER_BACKEND: "sandbox" | "self-hosted";
+  // The deployment's `limits.subrequests`, when it declares one.
+  SUBREQUEST_LIMIT?: string;
   PUBLIC_URL?: string;
   ANTHROPIC_API_KEY?: string;
   OPENAI_API_KEY?: string;
