@@ -3,7 +3,7 @@
 Use these exact keys with the [profile guide](profiles.md) or [QA guide](qa.md). See [Modules](modules.md) for complete schema tables and semantic rules. `*` marks required fields. Commands and keys are intentionally untranslated.
 
 ```text
-max_defects: integer; default=5; minimum=1
+max_defects: integer; default=10; minimum=1
 rounds: object; default={"cap":3,"diff_only_after":1}; extra=false
 rounds.cap: integer; default=3; minimum=1
 rounds.diff_only_after: integer; default=1; minimum=0
@@ -13,6 +13,7 @@ verify: object; extra=false
 verify.voters: integer; default=3; minimum=1
 verify.quorum: integer; minimum=1
 verify.model: string; minLength=1
+verify.risk_voters: integer; minimum=1
 council: object; extra=false
 council.members: array; minItems=1; maxItems=9
 council.members[].uses: string *; pattern="^rio/[a-z][a-z0-9-]*(@[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?)?$"

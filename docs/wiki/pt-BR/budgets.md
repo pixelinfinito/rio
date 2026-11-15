@@ -32,6 +32,8 @@ Salve como perfil, execute `rio profile validate CAMINHO` e inspecione com `rio 
 
 Relatórios expõem uso, leituras/gravações de cache, origem dos preços e trabalho incompleto. Custo ausente não significa custo zero. Limites são tetos, não estimativas. O schema não possui `cost_usd` no orçamento; controle tempo/tokens/agentes e acompanhe o custo medido.
 
+`rio/openrouter` permite 12.000.000 de tokens e 40 minutos por revisão nos dois modos, dimensionados para uma alteração grande revisada em oito partes; a maioria das revisões usa bem menos, mas as maiores podem passar de meia hora. Seu verificador é um modelo diferente do revisor, então um voto examina cada risco (`verify.risk_voters: 1`); um perfil filho restaura o painel completo com `risk_voters: 3`, necessário quando um só modelo faz as duas coisas.
+
 O perfil QA usa 500.000 tokens de revisão e 60.000 por votante em fast; deep usa 1.000.000 e 120.000. Capturas consomem tokens de visão. Padrões gerais e substituições explícitas podem diferir; consulte `profile show` na versão instalada.
 
 ## Solução de problemas

@@ -14,6 +14,8 @@ Use `rio profile show rio/base` to inspect the resolved graph. Prepare selects/s
 
 Step IDs must be unique, `needs` must reference existing steps without cycles, and `with` must satisfy that module's schema. Hypothesis producers need a dependent verifier. The generated reference below lists field types/defaults/allowed values from the same schemas as implementation.
 
+`rio/agents` `parts` (1–8, default 1) reviews a change longer than one prompt in up to that many parts, one conversation each at the same time; parts share the agent's token allowance and are not cached. An agent declaration names one model alias (`model`) or up to four (`models: [default, second]`); the agent reviews the same code under each, and what they raise is combined before verification. An alias the profile does not define is skipped. `rio/prepare` `omit` removes paths from the snapshot, while `exclude` only keeps them out of the reviewed change; see [profiles](profiles.md).
+
 TypeScript adapters use tsc/ESLint/Vitest or Jest; Python uses Pyright or mypy/Ruff/pytest and coverage.py; Rust uses Cargo checks and configured Clippy/rustfmt/llvm-cov. Project-local tools precede PATH. Workspaces schedule changed roots and dependents. Known lockfile/install mismatch cannot be overridden by dependency trust.
 
 ## Expected results
@@ -93,7 +95,7 @@ Generated from `schemas/profile-v1.json`. `*` means required. `extra=false` reje
 | `min_evidence` | `enum; enum=["reproduced","static_proven","plausible","refuted"]` |
 | `max_lines` | `integer; minimum=1` |
 | `posture` | `enum; enum=["critical-only","balanced","thorough"]; default="balanced"` |
-| `max_defects` | `integer; default=5; minimum=1` |
+| `max_defects` | `integer; default=10; minimum=1` |
 | `rounds` | `object; default={"cap":3,"diff_only_after":1}; extra=false` |
 | `rounds.cap` | `integer; default=3; minimum=1` |
 | `rounds.diff_only_after` | `integer; default=1; minimum=0` |
@@ -103,6 +105,7 @@ Generated from `schemas/profile-v1.json`. `*` means required. `extra=false` reje
 | `verify.voters` | `integer; default=3; minimum=1` |
 | `verify.quorum` | `integer; minimum=1` |
 | `verify.model` | `string; minLength=1` |
+| `verify.risk_voters` | `integer; minimum=1` |
 | `council` | `object; extra=false` |
 | `council.members` | `array; minItems=1; maxItems=9` |
 | `council.members[].uses` | `string *; pattern="^rio/[a-z][a-z0-9-]*(@[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?)?$"` |
@@ -371,6 +374,7 @@ Source: `modules/steps/agents/module.yaml`
 
 ```text
 cache: boolean; default=true
+parts: integer; default=1; minimum=1; maximum=8
 ```
 
 ### `rio/checks@0.1.0` (step)
@@ -411,6 +415,8 @@ Source: `modules/steps/prepare/module.yaml`
 ```text
 exclude: array; default=[]
 exclude[]: string
+omit: array; default=[]
+omit[]: string
 ```
 
 ### `rio/qa@0.1.0` (step)

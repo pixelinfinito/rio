@@ -63,7 +63,9 @@ For a hosted profile, start from its resolved steps and preserve the model/verif
 
 `rio profile show` displays inheritance applied and module versions pinned. Validation exits 0 when valid, 2 on errors with YAML paths. It can warn that model steps will be deferred locally without rejecting a valid profile.
 
-`fail_on.incomplete: false` changes incomplete-analysis exit policy; `suppress` accepts path/rule/exact-finding entries; `publish` controls never/ask/auto. Posture changes agent evidence/severity/caps: critical-only, balanced or thorough. [Budgets](budgets.md) limits resources; [module reference](modules.md) explains step options. Generated schema fields below/reference cover supported keys.
+`fail_on.incomplete: false` changes incomplete-analysis exit policy; `suppress` accepts path/rule/exact-finding entries; `publish` controls never/ask/auto. Posture changes agent evidence/severity/caps: critical-only, balanced or thorough. `max_defects` (10 under balanced) caps only findings the verifier left plausible: a proved or reproduced finding is always shown, a plausible one no completed vote supported is held back, and a change reviewed in parts gets half the cap again for each part after the first. [Budgets](budgets.md) limits resources; [module reference](modules.md) explains step options. Generated schema fields below/reference cover supported keys.
+
+`rio/prepare` takes two kinds of path globs. `exclude` keeps matching paths out of the reviewed change, but tools and checks can still read them. `omit` removes them from both trees before anything else: they are not uploaded, built or reviewed, and do not count toward the 1.5 GiB snapshot limit. Omit only what no check needs, such as large design exports (`design/exports/**`); keep vendored dependencies an offline build reads.
 
 ## Troubleshooting
 

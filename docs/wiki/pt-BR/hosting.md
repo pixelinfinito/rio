@@ -49,7 +49,7 @@ As escolhas ficam em `[deployment]` no `config.toml` pessoal; credenciais usam o
 
 Confira perfil/conta do cf e serviços habilitados. Erros de Docker no Sandbox podem ser de transferência de imagem; runner próprio tem requisitos diferentes. Um chaveiro bloqueado exige desbloqueio ou escolha explícita de arquivos. Rotacione chaves pelo ambiente/arquivo privado e implante novamente. `--secrets-file` contém JSON privado, não um arquivo versionado do projeto.
 
-`--default-model` e `--verifier-model` escolhem rotas. O perfil base não define modelos: implantar o endpoint não transforma todo perfil em perfil de IA. [Provedores](providers.md) explica rotas personalizadas.
+A configuração pergunta quais modelos revisam e verificam: o formulário tem os campos `reviews` e `verifies` abaixo do provedor, e `--no-tui` pergunta pelo modelo que revisa e pelo que verifica. Cada um começa no padrão do provedor e aceita uma rota como os perfis a escrevem (`PROVEDOR/MODELO`). Na configuração por script, `--default-model` e `--verifier-model` os escolhem. A escolha é gravada quando o perfil padrão pessoal é criado; um `profiles/default.yaml` existente nunca é sobrescrito, então edite seus `models` para mudá-los depois. O perfil base não define modelos: implantar o endpoint não transforma todo perfil em perfil de IA. [Provedores](providers.md) explica rotas personalizadas.
 
 ## Próximos passos
 

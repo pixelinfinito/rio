@@ -4,7 +4,7 @@ Profile steps form a validated dependency graph. Third-party module loading is n
 
 ## pipeline
 prepare selects/snapshots/excludes files; checks runs deterministic tools; graph builds bounded impact; triage routes risk; agents propose hypotheses; security applies catalogs; qa exercises browser journeys; verify independently tests hypotheses; council adds opt-in independent evidence assessment; report applies policy and renders. Each step has id, uses, needs, optional parallel/with/rules/agents according to its schema. Lists replace inherited lists.
-Default graph bounds: hops 2, max_nodes 2000. rio/checks options include typecheck, lint, secrets, coverage, dependencies, baseline and trust_installed_dependencies. Enable/disable under that step's with; preserve prepare/report and valid dependencies. rio/agents cache:false disables hypothesis reuse.
+Default graph bounds: hops 2, max_nodes 2000. rio/checks options include typecheck, lint, secrets, coverage, dependencies, baseline and trust_installed_dependencies. Enable/disable under that step's with; preserve prepare/report and valid dependencies. rio/agents cache:false disables hypothesis reuse; parts (1-8) reviews a change longer than one prompt in that many uncached parts. An agent declaration takes model: ALIAS or models: [up to four aliases]; it reviews under each, combines results before verification, and skips undefined aliases. rio/prepare omit removes paths from the snapshot; exclude only keeps them out of the reviewed change.
 
 ## tools
 TypeScript: tsc, ESLint, Vitest/Jest. Python: Pyright/mypy, Ruff, pytest/coverage.py. Rust: cargo check, configured Clippy/rustfmt, optional cargo llvm-cov. Project-local executables precede PATH. Install project dependencies first. Workspaces schedule affected roots/dependents; checks compare head/base where compatible. Known lockfile/install mismatch cannot be overridden by trust_installed_dependencies.
@@ -16,6 +16,7 @@ Rules and module manifests constrain allowed predicates, effects and options. Us
 ## option-fields
 rio/agents@0.1.0:
 cache: boolean; default=true
+parts: integer; default=1; minimum=1; maximum=8
 
 rio/checks@0.1.0:
 typecheck: boolean; default=true
@@ -33,6 +34,8 @@ max_nodes: integer; default=2000; minimum=1
 rio/prepare@0.1.0:
 exclude: array; default=[]
 exclude[]: string
+omit: array; default=[]
+omit[]: string
 
 rio/report@0.1.0:
 class_threshold: integer; default=3; minimum=1

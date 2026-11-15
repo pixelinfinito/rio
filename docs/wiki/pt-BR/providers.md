@@ -10,7 +10,7 @@ Endpoint online e credenciais do provedor. Trechos de código e evidências pode
 
 ## Passos
 
-Comece por `rio profile show rio/openrouter` ou `rio profile show rio/anthropic` para inspecionar os aliases. Após fornecer a chave correspondente na configuração, use `rio review --profile rio/openrouter --preset standard`. Confira o perfil resolvido: `rio/base` não define rotas de modelos.
+Comece por `rio profile show rio/openrouter` ou `rio profile show rio/anthropic` para inspecionar os aliases. Após fornecer a chave correspondente na configuração, use `rio review --profile rio/openrouter --preset standard`. Confira o perfil resolvido: `rio/base` não define rotas de modelos. `rio/openrouter` revisa com Anthropic Opus 5.5 e verifica com OpenAI GPT-6.1 Sol, e revisa uma alteração maior que um prompt em até oito partes. Escolha outros modelos na [configuração](hosting.md) ou substitua os aliases `default` e `verifier` em `models` num perfil filho.
 
 Para um endpoint personalizado, registre-o no init:
 
