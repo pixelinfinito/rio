@@ -9,7 +9,7 @@ Running graph~
 Finished graph
 Running report~
 Finished report
-Rio 0.1.0 - incomplete
+Rio 0.3.0 - incomplete
 Review: <demo-review-id>  Run: <demo-run-id>
 Mode: working-tree  Base: <demo-commit>  Head:
 snapshot:<deterministic-demo-hash>
