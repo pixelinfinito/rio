@@ -46,4 +46,4 @@ Corrected the real TUI `never` policy label to `no publication`, updated the doc
 
 Follow-up validation: 18 documentation/publisher tests, 24 team-renderer tests, 21 capture-fixture tests and 5 embedded-doc integration tests passed. Format and Clippy for both affected crates/all targets passed; strict OpenSpec, schema drift, source/rendered links and translation/capture freshness passed. All 292 measured outputs remain within their byte/token budgets (71,016-byte embedded payload). Terminal transcript trailing spaces intentionally preserve the rendered cell grid.
 
-Publication commit and public verification results are recorded after the update is delivered.
+Published source `1428a76f4c6557f404d36b9fd5b4748c7a34250f`; Wiki commit `614af91e7a5f5a252d49eb694a51964647f171f8`. Public HTTP checks passed for Home, EN/pt-BR Start, Reference and Review pages, localized sidebar/switch links, command anchors and expandable option tables. The findings, start-screen and corrected publish-preview PNGs returned HTTP 200 and matched local SHA-256 hashes.

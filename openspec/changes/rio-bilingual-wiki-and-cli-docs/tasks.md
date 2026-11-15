@@ -64,4 +64,4 @@
 - [x] 8.1 Replace Home with validated authored EN/pt-BR landing content: prominent real TUI captures, local/staged/branch/PR commands, accurate prerequisites and clear next steps. Preserve existing URLs.
 - [x] 8.2 Improve localized sidebar/breadcrumbs, reference lookup, guide descriptions, schema navigation and collapsible command tables; use command-specific option descriptions.
 - [x] 8.3 Correct the actual TUI never-policy label and refresh its rendering expectations/captures; clarify version tags and polish both languages.
-- [ ] 8.4 Validate content, rendering, source/translation freshness, focused tests and embedded budgets; push the updated PR, republish and verify public Home/navigation/images.
+- [x] 8.4 Validate content, rendering, source/translation freshness, focused tests and embedded budgets; push the updated PR, republish and verify public Home/navigation/images.
