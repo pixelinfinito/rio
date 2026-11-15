@@ -615,7 +615,7 @@ const BUILTIN_KEYS: [&str; 3] = ["OPENAI_API_KEY", "ANTHROPIC_API_KEY", "OPENROU
 fn primary_models(primary: &[&str]) -> Option<ProfileModels> {
     let (default, verifier) = if primary.contains(&"OPENROUTER_API_KEY") {
         (
-            "openrouter/anthropic/claude-sonnet-5.5",
+            "openrouter/anthropic/claude-opus-5.5",
             "openrouter/openai/gpt-6.1-sol",
         )
     } else if primary.contains(&"OPENAI_API_KEY") {
@@ -1387,6 +1387,26 @@ impl Deployer {
         {
             models = secrets.prompt_provider(&mut self.deployment)?.or(models);
         }
+        // A profile about to be written: the user may name its models.
+        if models.is_none()
+            && self.interactive
+            && !directory.join("profiles/default.yaml").exists()
+            && let Some(defaults) = primary_models(
+                &BUILTIN_KEYS
+                    .iter()
+                    .filter(|key| secrets.0.contains_key(**key))
+                    .copied()
+                    .collect::<Vec<_>>(),
+            )
+        {
+            let chosen = ProfileModels {
+                default: prompt_model("Reviewing model", &defaults.default)?,
+                verifier: prompt_model("Verifying model", &defaults.verifier)?,
+            };
+            if chosen.default != defaults.default || chosen.verifier != defaults.verifier {
+                models = Some(chosen);
+            }
+        }
         ensure!(
             secrets.has_builtin_key() || !self.deployment.custom_providers.is_empty(),
             "provide a model key using OPENROUTER_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY or --secrets-file, or configure a custom provider with --custom-provider"
@@ -1976,10 +1996,24 @@ impl Deployer {
 /// The built-in model profile as the deployment's default, with its models.
 /// One voter for a risk needs a verifier that is another model than the
 /// agent's, so one model for both keeps every voter.
+/// Ask for a model route on the terminal; an empty answer keeps the default.
+fn prompt_model(label: &str, default: &str) -> Result<String> {
+    eprint!("{label} [{default}]: ");
+    io::stderr().flush()?;
+    let mut answer = String::new();
+    io::stdin().read_line(&mut answer)?;
+    let answer = answer.trim();
+    ensure!(
+        !answer.contains(char::is_whitespace),
+        "a model route has no spaces"
+    );
+    Ok(if answer.is_empty() { default } else { answer }.to_owned())
+}
+
 fn model_profile(default: &str, verifier: &str) -> String {
     let profile = include_str!("../../../modules/profiles/openrouter.yaml")
         .replace("name: rio/openrouter", "name: rio-default")
-        .replace("openrouter/anthropic/claude-sonnet-5.5", default)
+        .replace("openrouter/anthropic/claude-opus-5.5", default)
         .replace("openrouter/openai/gpt-6.1-sol", verifier);
     if default == verifier {
         profile.replace("risk_voters: 1 }", "risk_voters: 3 }")

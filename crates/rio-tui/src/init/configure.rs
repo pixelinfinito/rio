@@ -34,15 +34,19 @@ pub enum Section {
     Runner,
     Provider,
     Key,
+    Reviewer,
+    Verifier,
     Credentials,
 }
 
-const SECTIONS: [Section; 6] = [
+const SECTIONS: [Section; 8] = [
     Section::Account,
     Section::Name,
     Section::Runner,
     Section::Provider,
     Section::Key,
+    Section::Reviewer,
+    Section::Verifier,
     Section::Credentials,
 ];
 
@@ -64,6 +68,25 @@ pub fn deploy_args(data: &ConfigureData) -> Vec<String> {
     args
 }
 
+/// The arguments naming the default profile's models, when they are not the
+/// provider's defaults (`rio init --default-model … --verifier-model …`).
+pub fn model_args(provider: Provider, reviewer: &str, verifier: &str) -> Vec<String> {
+    if (reviewer, verifier) == provider.models() {
+        return vec![];
+    }
+    vec![
+        "--default-model".into(),
+        reviewer.into(),
+        "--verifier-model".into(),
+        verifier.into(),
+    ]
+}
+
+/// A model route as profiles write it: `PROVIDER/MODEL`, no spaces.
+pub fn valid_model(route: &str) -> bool {
+    route.contains('/') && !route.starts_with('/') && !route.ends_with('/')
+}
+
 /// A deployment name `rio init` accepts: 3–48 lowercase letters, digits or
 /// hyphens, starting with a letter.
 pub fn valid_name(name: &str) -> bool {
@@ -81,6 +104,9 @@ pub struct Configure {
     focus: usize,
     /// The provider key as typed; drawn only as bullets.
     key: String,
+    /// The model that reviews and the model that verifies, as profile routes.
+    reviewer: String,
+    verifier: String,
     /// The choices changed since the plan was made.
     stale: bool,
     /// Why ⏎ did not deploy.
@@ -90,11 +116,14 @@ pub struct Configure {
 impl Configure {
     pub fn new(data: InitData) -> Self {
         let form = data.configure.clone();
+        let (reviewer, verifier) = form.provider.models();
         Self {
             data,
             form,
             focus: 0,
             key: String::new(),
+            reviewer: reviewer.into(),
+            verifier: verifier.into(),
             stale: false,
             problem: None,
         }
@@ -107,6 +136,30 @@ impl Configure {
     /// The choices as they stand.
     pub fn choices(&self) -> &ConfigureData {
         &self.form
+    }
+
+    /// The models as they stand.
+    pub fn models(&self) -> (&str, &str) {
+        (&self.reviewer, &self.verifier)
+    }
+
+    /// `rio init` arguments for every choice of the form.
+    fn args(&self) -> Vec<String> {
+        let mut args = deploy_args(&self.form);
+        args.extend(model_args(
+            self.form.provider,
+            &self.reviewer,
+            &self.verifier,
+        ));
+        args
+    }
+
+    /// A new provider brings its own default models.
+    fn provider_changed(&mut self) {
+        let (reviewer, verifier) = self.form.provider.models();
+        self.reviewer = reviewer.into();
+        self.verifier = verifier.into();
+        self.changed();
     }
 
     fn changed(&mut self) {
@@ -129,7 +182,7 @@ impl Configure {
     }
 
     fn plan(&mut self) -> Action {
-        self.data.handoff.set_args(deploy_args(&self.form));
+        self.data.handoff.set_args(self.args());
         Action::Effect(Effect::Step("init:plan".into()))
     }
 
@@ -148,7 +201,11 @@ impl Configure {
             self.problem = Some(format!("{} key needed", self.form.provider.name()));
             return Action::Many(vec![]);
         }
-        let args = deploy_args(&self.form);
+        if !valid_model(&self.reviewer) || !valid_model(&self.verifier) {
+            self.problem = Some("models: write each as PROVIDER/MODEL".into());
+            return Action::Many(vec![]);
+        }
+        let args = self.args();
         self.data.handoff.set_args(args.clone());
         self.data.handoff.set_secret(if self.key.trim().is_empty() {
             None
@@ -424,17 +481,22 @@ impl Configure {
                 );
             }
             mark(c, ky, section == Section::Key);
-            if matches!(section, Section::Provider | Section::Key) {
-                focus = (y, y + 3);
+            for (row, label, value, this) in [
+                (y + 3, "reviews", &self.reviewer, Section::Reviewer),
+                (y + 4, "verifies", &self.verifier, Section::Verifier),
+            ] {
+                clip(c, 2, row, right, &[run(label, Token::Faint, Token::Bg)]);
+                let cells = 44.min(right.saturating_sub(12));
+                text_field(c, 11, row, cells, value, section == this, Token::Raise);
+                mark(c, row, section == this);
             }
-            clip(
-                c,
-                2,
-                y + 3,
-                right,
-                &[run(self.form.provider.models(), Token::Faint, Token::Bg)],
-            );
-            y += 5;
+            if matches!(
+                section,
+                Section::Provider | Section::Key | Section::Reviewer | Section::Verifier
+            ) {
+                focus = (y, y + 4);
+            }
+            y += 6;
         }
 
         // CREDENTIALS
@@ -517,7 +579,10 @@ impl Screen for Configure {
         KEYS
     }
     fn wants_text(&self) -> bool {
-        matches!(self.section(), Section::Name | Section::Key)
+        matches!(
+            self.section(),
+            Section::Name | Section::Key | Section::Reviewer | Section::Verifier
+        )
     }
 
     fn draw(&self, c: &mut Canvas<'_>, _session: &Session) {
@@ -588,6 +653,23 @@ impl Screen for Configure {
             (Section::Key, KeyCode::Backspace) => {
                 self.key.pop();
             }
+            (Section::Reviewer, KeyCode::Char(ch)) if !ch.is_whitespace() => {
+                self.reviewer.push(ch);
+                self.changed();
+            }
+            (Section::Reviewer, KeyCode::Backspace) => {
+                self.reviewer.pop();
+                self.changed();
+            }
+            (Section::Verifier, KeyCode::Char(ch)) if !ch.is_whitespace() => {
+                self.verifier.push(ch);
+                self.changed();
+            }
+            (Section::Verifier, KeyCode::Backspace) => {
+                self.verifier.pop();
+                self.changed();
+            }
+            (Section::Reviewer | Section::Verifier, _) => {}
             (Section::Account, KeyCode::Up | KeyCode::Char('k')) => {
                 self.form.account = self.form.account.saturating_sub(1);
                 self.changed();
@@ -619,7 +701,7 @@ impl Screen for Configure {
                     .position(|p| *p == self.form.provider)
                     .unwrap_or(0);
                 self.form.provider = Provider::ALL[i.saturating_sub(1)];
-                self.changed();
+                self.provider_changed();
             }
             (Section::Provider, KeyCode::Right | KeyCode::Char('l')) => {
                 let i = Provider::ALL
@@ -627,11 +709,11 @@ impl Screen for Configure {
                     .position(|p| *p == self.form.provider)
                     .unwrap_or(0);
                 self.form.provider = Provider::ALL[(i + 1).min(Provider::ALL.len() - 1)];
-                self.changed();
+                self.provider_changed();
             }
             (_, KeyCode::Char('p')) => return self.plan(),
             (_, KeyCode::Char('s')) => {
-                self.data.handoff.set_args(deploy_args(&self.form));
+                self.data.handoff.set_args(self.args());
                 return Action::Effect(Effect::Step("init:save-choices".into()));
             }
             _ => {}

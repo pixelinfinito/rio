@@ -206,12 +206,19 @@ impl Provider {
         }
     }
 
-    /// The default profile's models for this key (`primary_models`).
-    pub fn models(self) -> &'static str {
+    /// The default profile's reviewing and verifying models for this key
+    /// (`primary_models` in the CLI).
+    pub fn models(self) -> (&'static str, &'static str) {
         match self {
-            Provider::OpenRouter => "rio/openrouter: sonnet-5.5 writes, gpt-6.1-sol verifies",
-            Provider::OpenAi => "rio-default: gpt-4.1-mini writes and verifies",
-            Provider::Anthropic => "rio-default: claude-haiku-4-5 writes and verifies",
+            Provider::OpenRouter => (
+                "openrouter/anthropic/claude-opus-5.5",
+                "openrouter/openai/gpt-6.1-sol",
+            ),
+            Provider::OpenAi => ("openai/gpt-4.1-mini", "openai/gpt-4.1-mini"),
+            Provider::Anthropic => (
+                "anthropic/claude-haiku-4-5-20251001",
+                "anthropic/claude-haiku-4-5-20251001",
+            ),
         }
     }
 }

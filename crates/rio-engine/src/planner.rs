@@ -138,7 +138,10 @@ pub fn omit_globs(changes: &mut ChangeSet, globs: &[String]) -> Result<Omitted> 
         let base = changes.base.remove(&path);
         let head = changes.head.remove(&path);
         omitted.paths += 1;
-        omitted.bytes += head.as_ref().or(base.as_ref()).map_or(0, |e| e.content.len()) as u64;
+        omitted.bytes += head
+            .as_ref()
+            .or(base.as_ref())
+            .map_or(0, |e| e.content.len()) as u64;
         omitted.changed += match (&base, &head) {
             (Some(base), Some(head)) => usize::from(!base.same_content(head)),
             _ => 1,
@@ -712,18 +715,32 @@ mod tests {
         };
         let untouched = changes.clone();
         assert_eq!(omit_globs(&mut changes, &[]).unwrap(), Omitted::default());
-        assert_eq!((&changes.base, &changes.head), (&untouched.base, &untouched.head));
+        assert_eq!(
+            (&changes.base, &changes.head),
+            (&untouched.base, &untouched.head)
+        );
         // `*` stays within one directory: `design/*` leaves `design/export/…`.
         assert_eq!(
             omit_globs(&mut changes, &["design/*".into()]).unwrap(),
-            Omitted { paths: 1, bytes: 4, changed: 0 }
+            Omitted {
+                paths: 1,
+                bytes: 4,
+                changed: 0
+            }
         );
         let omitted = omit_globs(
             &mut changes,
             &["vendor/**".into(), "design/export/**".into()],
         )
         .unwrap();
-        assert_eq!(omitted, Omitted { paths: 4, bytes: 4 + 4 + 4 + 6, changed: 3 });
+        assert_eq!(
+            omitted,
+            Omitted {
+                paths: 4,
+                bytes: 4 + 4 + 4 + 6,
+                changed: 3
+            }
+        );
         assert_eq!(changes.base.keys().collect::<Vec<_>>(), ["src/lib.rs"]);
         assert_eq!(changes.head.keys().collect::<Vec<_>>(), ["src/lib.rs"]);
         assert!(omit_globs(&mut changes, &["[".into()]).is_err());
