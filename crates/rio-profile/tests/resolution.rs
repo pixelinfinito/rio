@@ -661,3 +661,39 @@ fn a_council_role_may_appear_only_once() {
         "{error}"
     );
 }
+
+#[test]
+fn preparation_time_is_inherited_and_bounded_to_an_hour() {
+    let root = tempfile::tempdir().unwrap();
+    write(
+        root.path(),
+        "parent.yaml",
+        "version: 1\nname: parent\nextends: rio/base\nbudget: {prepare: 30m}\n",
+    );
+    write(
+        root.path(),
+        "child.yaml",
+        "version: 1\nname: child\nextends: parent.yaml\nbudget: {fast: {wall_time: 2m}}\n",
+    );
+    let resolved = loader(root.path()).load(Some("child.yaml")).unwrap();
+    assert_eq!(resolved.profile.budget.prepare.as_deref(), Some("30m"));
+    let base = loader(root.path()).load(Some("rio/base")).unwrap();
+    assert_eq!(base.profile.budget.prepare, None);
+    for (value, valid) in [
+        ("60s", true),
+        ("60m", true),
+        ("90s", true),
+        ("59s", false),
+        ("61m", false),
+        ("1h", false),
+        ("0m", false),
+    ] {
+        write(
+            root.path(),
+            "p.yaml",
+            &format!("version: 1\nname: p\nbudget: {{prepare: {value}}}\n"),
+        );
+        let result = loader(root.path()).load(Some("p.yaml"));
+        assert_eq!(result.is_ok(), valid, "{value}: {result:?}");
+    }
+}

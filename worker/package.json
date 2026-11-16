@@ -18,7 +18,8 @@
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "hono": "4.13.16",
-    "picomatch": "^4.0.3"
+    "picomatch": "^4.0.3",
+    "yaml": "^2.9.1"
   },
   "devDependencies": {
     "@cloudflare/vitest-plugin": "^1.6.0",
@@ -28,8 +29,7 @@
     "prettier": "^3.9.10",
     "typescript": "^5.9.3",
     "vitest": "^4.1.0",
-    "wrangler": "4.158.0",
-    "yaml": "^2.9.1"
+    "wrangler": "4.158.0"
   },
   "allowScripts": {
     "esbuild@0.28.2": true,

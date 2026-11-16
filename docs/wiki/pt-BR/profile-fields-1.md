@@ -7,6 +7,7 @@ version: value *; const=1
 name: string *; minLength=1
 extends: string; minLength=1
 budget: object; extra=false
+budget.prepare: string; pattern="^[1-9][0-9]*(s|m)$"
 budget.fast: object; extra=false
 budget.fast.wall_time: string; pattern="^([0-9]+(\\.[0-9]+)?)(ms|s|m|h|d)$"
 budget.fast.tokens: integer; minimum=1
@@ -57,5 +58,4 @@ fail_on.required_checks: array; uniqueItems=true
 fail_on.required_checks[]: enum=["typecheck","lint","secrets","coverage","dependencies"]
 min_evidence: enum; enum=["reproduced","static_proven","plausible","refuted"]
 max_lines: integer; minimum=1
-posture: enum; enum=["critical-only","balanced","thorough"]; default="balanced"
 ```

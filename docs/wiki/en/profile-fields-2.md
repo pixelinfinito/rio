@@ -3,6 +3,7 @@
 Use these exact keys with the [profile guide](profiles.md) or [QA guide](qa.md). See [Modules](modules.md) for complete schema tables and semantic rules. `*` marks required fields. Commands and keys are intentionally untranslated.
 
 ```text
+posture: enum; enum=["critical-only","balanced","thorough"]; default="balanced"
 max_defects: integer; default=10; minimum=1
 rounds: object; default={"cap":3,"diff_only_after":1}; extra=false
 rounds.cap: integer; default=3; minimum=1

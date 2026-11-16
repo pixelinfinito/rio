@@ -44,6 +44,7 @@ Generated from `schemas/profile-v1.json`. `*` means required. `extra=false` reje
 | `name` | `string *; minLength=1` |
 | `extends` | `string; minLength=1` |
 | `budget` | `object; extra=false` |
+| `budget.prepare` | `string; pattern="^[1-9][0-9]*(s\|m)$"` |
 | `budget.fast` | `object; extra=false` |
 | `budget.fast.wall_time` | `string; pattern="^([0-9]+(\\.[0-9]+)?)(ms\|s\|m\|h\|d)$"` |
 | `budget.fast.tokens` | `integer; minimum=1` |

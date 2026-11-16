@@ -3,6 +3,7 @@
 Use estas chaves exatas com o [guia de perfis](profiles.md) ou [guia QA](qa.md). Veja [Módulos](modules.md) para tabelas completas e regras semânticas. `*` marca campos obrigatórios. Comandos e chaves preservam a grafia original.
 
 ```text
+posture: enum; enum=["critical-only","balanced","thorough"]; default="balanced"
 max_defects: integer; default=10; minimum=1
 rounds: object; default={"cap":3,"diff_only_after":1}; extra=false
 rounds.cap: integer; default=3; minimum=1

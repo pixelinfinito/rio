@@ -77,7 +77,14 @@ pub struct Budget {
     pub fast: BudgetLimit,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub deep: Option<BudgetLimit>,
+    /// Time a pull request review may spend being prepared on the endpoint
+    /// (download, snapshot and graph) before the review itself starts.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub prepare: Option<String>,
 }
+
+/// The longest preparation a profile may give a pull request review.
+pub const MAX_PREPARE: Duration = Duration::from_secs(60 * 60);
 
 fn empty_object() -> Value {
     json!({})
@@ -794,6 +801,16 @@ impl ProfileLoader {
                         add(&format!("/budget/{name}/qa/{field}"), message);
                     }
                 }
+            }
+        }
+        if let Some(prepare) = &profile.budget.prepare {
+            match parse_duration(prepare) {
+                Ok(wall) if wall < Duration::from_secs(60) || wall > MAX_PREPARE => add(
+                    "/budget/prepare",
+                    "prepare must be between 1 and 60 minutes".into(),
+                ),
+                Ok(_) => {}
+                Err(message) => add("/budget/prepare", message),
             }
         }
         if let Err(error) = execution_order(&profile.steps) {

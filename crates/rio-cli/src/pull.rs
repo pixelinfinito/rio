@@ -10,8 +10,9 @@ use std::{
 };
 use tokio_util::sync::CancellationToken;
 
-/// How long the endpoint may spend preparing before the review itself starts.
-const PREPARE_ALLOWANCE: Duration = Duration::from_secs(15 * 60);
+/// How long the endpoint may spend preparing before the review itself starts:
+/// the longest `budget.prepare` a profile may set.
+const PREPARE_ALLOWANCE: Duration = rio_profile::MAX_PREPARE;
 /// The endpoint's longest review deadline. The PR runs under the profile at
 /// its merge base, not the local one, so the local budget cannot bound the wait.
 const ENDPOINT_REVIEW_LIMIT: Duration = Duration::from_secs(60 * 60 + 60);

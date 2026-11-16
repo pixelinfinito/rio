@@ -17,13 +17,12 @@ import { createPrepareJob, stopRunners, withdrawIdle } from "./jobs";
 import { ingestTarballs } from "./tarball";
 import { Store } from "./storage";
 import { announceReview, knownPolicy, settleAnnouncement } from "./announce";
+import { PREPARE_MS, preparationTime } from "./prepare-budget";
 
 // Pull request reviews (git-host-integration): the review-request consumer,
 // fork detection and metadata, eligibility, and the hand-off from hosted
 // preparation to an ordinary review in the PR's lineage.
 
-/** Time a PR review may spend in preparation before its runner claim expires. */
-export const PREPARE_MS = 15 * 60 * 1000;
 export const FORK_REQUIRES_SELF_HOSTED = "fork_requires_self_hosted_runner";
 /** How long one attempt may hold a request while it prepares (tarballs included). */
 export const CLAIM_MS = 10 * 60 * 1000;
@@ -379,6 +378,18 @@ export async function handleReviewRequest(
       .first();
     if (!claimed) return;
     try {
+      // The repository's profile at the merge base may give preparation more
+      // time than the default the review was created with; counted from the request.
+      const preparation = await preparationTime(
+        token,
+        message.repository,
+        mergeBase,
+      );
+      await env.DB.prepare(
+        "UPDATE reviews SET deadline=created_at+? WHERE id=? AND status='preparing' AND submission_key=''",
+      )
+        .bind(preparation, review)
+        .run();
       await env.DB.prepare(
         "UPDATE pull_requests SET base_sha=?,head_sha=?,fork=?,author_login=?,author_type=?,agent_json=?,state='preparing' WHERE review_id=? AND state IN ('requested','preparing') AND NOT EXISTS (SELECT 1 FROM jobs WHERE jobs.review_id=pull_requests.review_id)",
       )
@@ -535,9 +546,10 @@ export async function prepareCredential(
     env.DB.prepare(
       "DELETE FROM api_tokens WHERE hash IN (SELECT prepare_token_hash FROM pull_requests WHERE review_id=? AND prepare_token_hash IS NOT NULL)",
     ).bind(review),
+    // It lasts as long as the review's preparation may.
     env.DB.prepare(
-      "INSERT INTO api_tokens(hash,tenant,scope,expires_at) VALUES(?,?,'prepare',?)",
-    ).bind(digest, tenant, Date.now() + PREPARE_MS),
+      "INSERT INTO api_tokens(hash,tenant,scope,expires_at) SELECT ?,?,'prepare',MAX(deadline,?) FROM reviews WHERE id=?",
+    ).bind(digest, tenant, Date.now() + PREPARE_MS, review),
     env.DB.prepare(
       "UPDATE pull_requests SET prepare_token_hash=? WHERE review_id=?",
     ).bind(digest, review),
