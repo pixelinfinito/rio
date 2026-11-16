@@ -3,7 +3,7 @@
 Requires a supported OS/architecture and network for downloads; source builds require the pinned Rust toolchain. Installation writes the chosen binary directory; Windows may update user PATH.
 
 ## install
-Linux/macOS: `curl -fsSL https://github.com/pixelinfinito/rio/releases/latest/download/install.sh -o install.sh`; inspect, then `sh install.sh`. Windows: download the same release's `install.ps1`, inspect it, then run `.\install.ps1`. Published releases, not this source checkout, determine what latest installs; stable acceptance remains pending in the repository records.
+Linux/macOS: `curl -fsSL https://raw.githubusercontent.com/pixelinfinito/rio/main/scripts/install.sh -o install.sh`; inspect, then `sh install.sh`. Windows: download `https://raw.githubusercontent.com/pixelinfinito/rio/main/scripts/install.ps1`, inspect it, then run `.\install.ps1`. Published releases, not this source checkout, determine what latest installs: the newest stable release, or the newest pre-release while none is stable (stable acceptance remains pending in the repository records).
 `rio --version` prints version, target and commit. Unix default: `~/.local/bin`; Windows: `%LOCALAPPDATA%\Programs\rio\bin`. Add the Unix directory to PATH yourself. Windows `-NoModifyPath` avoids changing PATH.
 
 ## versions

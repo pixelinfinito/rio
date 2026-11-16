@@ -5,8 +5,8 @@
       "id": "init-i1-choose-mode",
       "mode": "actual TUI renderer, synthetic fixture; displayed fixture version is demo data",
       "command": "cargo test -p rio-tui --test init match",
-      "source_commit": "e08509880f889c985c52dea3e3c9651847388f1a",
-      "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu e08509880f88",
+      "source_commit": "9685e303906fb77502daaa211dfee0145eb90b83",
+      "rio_version": "rio 0.3.0 x86_64-unknown-linux-gnu 9685e303906f",
       "dimensions": [
         120,
         40
@@ -67,8 +67,8 @@
       "id": "init-i2-configure",
       "mode": "actual TUI renderer, synthetic fixture; displayed fixture version is demo data",
       "command": "cargo test -p rio-tui --test init match",
-      "source_commit": "e08509880f889c985c52dea3e3c9651847388f1a",
-      "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu e08509880f88",
+      "source_commit": "9685e303906fb77502daaa211dfee0145eb90b83",
+      "rio_version": "rio 0.3.0 x86_64-unknown-linux-gnu 9685e303906f",
       "dimensions": [
         120,
         40
@@ -129,8 +129,8 @@
       "id": "init-i3-deploying",
       "mode": "actual TUI renderer, synthetic fixture; displayed fixture version is demo data",
       "command": "cargo test -p rio-tui --test init match",
-      "source_commit": "e08509880f889c985c52dea3e3c9651847388f1a",
-      "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu e08509880f88",
+      "source_commit": "9685e303906fb77502daaa211dfee0145eb90b83",
+      "rio_version": "rio 0.3.0 x86_64-unknown-linux-gnu 9685e303906f",
       "dimensions": [
         120,
         40
@@ -191,8 +191,8 @@
       "id": "init-i4-failed-resumable",
       "mode": "actual TUI renderer, synthetic fixture; displayed fixture version is demo data",
       "command": "cargo test -p rio-tui --test init match",
-      "source_commit": "e08509880f889c985c52dea3e3c9651847388f1a",
-      "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu e08509880f88",
+      "source_commit": "9685e303906fb77502daaa211dfee0145eb90b83",
+      "rio_version": "rio 0.3.0 x86_64-unknown-linux-gnu 9685e303906f",
       "dimensions": [
         120,
         40
@@ -253,8 +253,8 @@
       "id": "init-i5-deployed",
       "mode": "actual TUI renderer, synthetic fixture; displayed fixture version is demo data",
       "command": "cargo test -p rio-tui --test init match",
-      "source_commit": "e08509880f889c985c52dea3e3c9651847388f1a",
-      "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu e08509880f88",
+      "source_commit": "9685e303906fb77502daaa211dfee0145eb90b83",
+      "rio_version": "rio 0.3.0 x86_64-unknown-linux-gnu 9685e303906f",
       "dimensions": [
         120,
         40
@@ -315,8 +315,8 @@
       "id": "init-i6-connect-existing",
       "mode": "actual TUI renderer, synthetic fixture; displayed fixture version is demo data",
       "command": "cargo test -p rio-tui --test init match",
-      "source_commit": "e08509880f889c985c52dea3e3c9651847388f1a",
-      "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu e08509880f88",
+      "source_commit": "9685e303906fb77502daaa211dfee0145eb90b83",
+      "rio_version": "rio 0.3.0 x86_64-unknown-linux-gnu 9685e303906f",
       "dimensions": [
         120,
         40
@@ -377,8 +377,8 @@
       "id": "qa-q1-journeys",
       "mode": "actual TUI renderer, synthetic fixture; displayed fixture version is demo data",
       "command": "cargo test -p rio-tui --test qa match",
-      "source_commit": "e08509880f889c985c52dea3e3c9651847388f1a",
-      "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu e08509880f88",
+      "source_commit": "9685e303906fb77502daaa211dfee0145eb90b83",
+      "rio_version": "rio 0.3.0 x86_64-unknown-linux-gnu 9685e303906f",
       "dimensions": [
         120,
         40
@@ -439,8 +439,8 @@
       "id": "qa-q2-matrix-live",
       "mode": "actual TUI renderer, synthetic fixture; displayed fixture version is demo data",
       "command": "cargo test -p rio-tui --test qa match",
-      "source_commit": "e08509880f889c985c52dea3e3c9651847388f1a",
-      "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu e08509880f88",
+      "source_commit": "9685e303906fb77502daaa211dfee0145eb90b83",
+      "rio_version": "rio 0.3.0 x86_64-unknown-linux-gnu 9685e303906f",
       "dimensions": [
         120,
         40
@@ -501,8 +501,8 @@
       "id": "qa-q3-cell-detail",
       "mode": "actual TUI renderer, synthetic fixture; displayed fixture version is demo data",
       "command": "cargo test -p rio-tui --test qa match",
-      "source_commit": "e08509880f889c985c52dea3e3c9651847388f1a",
-      "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu e08509880f88",
+      "source_commit": "9685e303906fb77502daaa211dfee0145eb90b83",
+      "rio_version": "rio 0.3.0 x86_64-unknown-linux-gnu 9685e303906f",
       "dimensions": [
         120,
         40
@@ -563,8 +563,8 @@
       "id": "qa-q4-ux-recommendations",
       "mode": "actual TUI renderer, synthetic fixture; displayed fixture version is demo data",
       "command": "cargo test -p rio-tui --test qa match",
-      "source_commit": "e08509880f889c985c52dea3e3c9651847388f1a",
-      "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu e08509880f88",
+      "source_commit": "9685e303906fb77502daaa211dfee0145eb90b83",
+      "rio_version": "rio 0.3.0 x86_64-unknown-linux-gnu 9685e303906f",
       "dimensions": [
         120,
         40
@@ -625,8 +625,8 @@
       "id": "review-00-start",
       "mode": "actual TUI renderer, synthetic fixture; displayed fixture version is demo data",
       "command": "cargo test -p rio-tui --test review match",
-      "source_commit": "e08509880f889c985c52dea3e3c9651847388f1a",
-      "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu e08509880f88",
+      "source_commit": "9685e303906fb77502daaa211dfee0145eb90b83",
+      "rio_version": "rio 0.3.0 x86_64-unknown-linux-gnu 9685e303906f",
       "dimensions": [
         120,
         40
@@ -687,8 +687,8 @@
       "id": "review-01-live-review",
       "mode": "actual TUI renderer, synthetic fixture; displayed fixture version is demo data",
       "command": "cargo test -p rio-tui --test review match",
-      "source_commit": "e08509880f889c985c52dea3e3c9651847388f1a",
-      "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu e08509880f88",
+      "source_commit": "9685e303906fb77502daaa211dfee0145eb90b83",
+      "rio_version": "rio 0.3.0 x86_64-unknown-linux-gnu 9685e303906f",
       "dimensions": [
         120,
         40
@@ -749,8 +749,8 @@
       "id": "review-02-findings",
       "mode": "actual TUI renderer, synthetic fixture; displayed fixture version is demo data",
       "command": "cargo test -p rio-tui --test review match",
-      "source_commit": "e08509880f889c985c52dea3e3c9651847388f1a",
-      "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu e08509880f88",
+      "source_commit": "9685e303906fb77502daaa211dfee0145eb90b83",
+      "rio_version": "rio 0.3.0 x86_64-unknown-linux-gnu 9685e303906f",
       "dimensions": [
         120,
         40
@@ -811,8 +811,8 @@
       "id": "review-03-lineage-feedback",
       "mode": "actual TUI renderer, synthetic fixture; displayed fixture version is demo data",
       "command": "cargo test -p rio-tui --test review match",
-      "source_commit": "e08509880f889c985c52dea3e3c9651847388f1a",
-      "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu e08509880f88",
+      "source_commit": "9685e303906fb77502daaa211dfee0145eb90b83",
+      "rio_version": "rio 0.3.0 x86_64-unknown-linux-gnu 9685e303906f",
       "dimensions": [
         120,
         40
@@ -873,8 +873,8 @@
       "id": "review-04-impact-graph",
       "mode": "actual TUI renderer, synthetic fixture; displayed fixture version is demo data",
       "command": "cargo test -p rio-tui --test review match",
-      "source_commit": "e08509880f889c985c52dea3e3c9651847388f1a",
-      "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu e08509880f88",
+      "source_commit": "9685e303906fb77502daaa211dfee0145eb90b83",
+      "rio_version": "rio 0.3.0 x86_64-unknown-linux-gnu 9685e303906f",
       "dimensions": [
         120,
         40
@@ -935,8 +935,8 @@
       "id": "review-05-summary-export",
       "mode": "actual TUI renderer, synthetic fixture; displayed fixture version is demo data",
       "command": "cargo test -p rio-tui --test review match",
-      "source_commit": "e08509880f889c985c52dea3e3c9651847388f1a",
-      "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu e08509880f88",
+      "source_commit": "9685e303906fb77502daaa211dfee0145eb90b83",
+      "rio_version": "rio 0.3.0 x86_64-unknown-linux-gnu 9685e303906f",
       "dimensions": [
         120,
         40
@@ -997,8 +997,8 @@
       "id": "team-p1-security-council",
       "mode": "actual TUI renderer, synthetic fixture; displayed fixture version is demo data",
       "command": "cargo test -p rio-tui --test team match",
-      "source_commit": "e08509880f889c985c52dea3e3c9651847388f1a",
-      "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu e08509880f88",
+      "source_commit": "9685e303906fb77502daaa211dfee0145eb90b83",
+      "rio_version": "rio 0.3.0 x86_64-unknown-linux-gnu 9685e303906f",
       "dimensions": [
         120,
         40
@@ -1059,8 +1059,8 @@
       "id": "team-p2-publish-preview",
       "mode": "actual TUI renderer, synthetic fixture; displayed fixture version is demo data",
       "command": "cargo test -p rio-tui --test team match",
-      "source_commit": "e08509880f889c985c52dea3e3c9651847388f1a",
-      "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu e08509880f88",
+      "source_commit": "9685e303906fb77502daaa211dfee0145eb90b83",
+      "rio_version": "rio 0.3.0 x86_64-unknown-linux-gnu 9685e303906f",
       "dimensions": [
         120,
         40
@@ -1121,8 +1121,8 @@
       "id": "team-p3-finding-history",
       "mode": "actual TUI renderer, synthetic fixture; displayed fixture version is demo data",
       "command": "cargo test -p rio-tui --test team match",
-      "source_commit": "e08509880f889c985c52dea3e3c9651847388f1a",
-      "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu e08509880f88",
+      "source_commit": "9685e303906fb77502daaa211dfee0145eb90b83",
+      "rio_version": "rio 0.3.0 x86_64-unknown-linux-gnu 9685e303906f",
       "dimensions": [
         120,
         40
@@ -1183,8 +1183,8 @@
       "id": "team-p4-suppression-proposals",
       "mode": "actual TUI renderer, synthetic fixture; displayed fixture version is demo data",
       "command": "cargo test -p rio-tui --test team match",
-      "source_commit": "e08509880f889c985c52dea3e3c9651847388f1a",
-      "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu e08509880f88",
+      "source_commit": "9685e303906fb77502daaa211dfee0145eb90b83",
+      "rio_version": "rio 0.3.0 x86_64-unknown-linux-gnu 9685e303906f",
       "dimensions": [
         120,
         40
@@ -1245,8 +1245,8 @@
       "id": "cli-version",
       "mode": "actual CLI in disposable synthetic repository; volatile IDs/paths/timing normalized",
       "command": "rio --version",
-      "source_commit": "e08509880f889c985c52dea3e3c9651847388f1a",
-      "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu e08509880f88",
+      "source_commit": "9685e303906fb77502daaa211dfee0145eb90b83",
+      "rio_version": "rio 0.3.0 x86_64-unknown-linux-gnu 9685e303906f",
       "dimensions": [
         80,
         2
@@ -1257,8 +1257,8 @@
       "pillow": "11.3.0",
       "demo_data": true,
       "hashes": {
-        "png": "a0e09147d0b4c55c8b1e5de3c66c54d5a34a69e9e43b83bd2319ef2fec401e36",
-        "txt": "2ceaa18a689807834d12c5912ba7a6f2816e4e52c83b2a785a612311cb49f1d1"
+        "png": "aceda57586a056445fd6a9affff68fca315e2aa6b0de641af255b3a28b4ccfd1",
+        "txt": "fe1f37ab21bba62d2486df71c5f6d7f57fc25bb2c46f59ff97015efbd45be944"
       },
       "sources": {
         "crates/rio-cli/src/main.rs": "11bbd16f6caa0f2e4fe2302a77495b1d8cb2c49808d2105ffe40901f95b1b2a9",
@@ -1271,8 +1271,8 @@
       "id": "cli-help",
       "mode": "actual CLI in disposable synthetic repository; volatile IDs/paths/timing normalized",
       "command": "rio --help",
-      "source_commit": "e08509880f889c985c52dea3e3c9651847388f1a",
-      "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu e08509880f88",
+      "source_commit": "9685e303906fb77502daaa211dfee0145eb90b83",
+      "rio_version": "rio 0.3.0 x86_64-unknown-linux-gnu 9685e303906f",
       "dimensions": [
         92,
         22
@@ -1297,8 +1297,8 @@
       "id": "cli-doctor",
       "mode": "actual CLI in disposable synthetic repository; volatile IDs/paths/timing normalized",
       "command": "rio doctor",
-      "source_commit": "e08509880f889c985c52dea3e3c9651847388f1a",
-      "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu e08509880f88",
+      "source_commit": "9685e303906fb77502daaa211dfee0145eb90b83",
+      "rio_version": "rio 0.3.0 x86_64-unknown-linux-gnu 9685e303906f",
       "dimensions": [
         80,
         33
@@ -1323,8 +1323,8 @@
       "id": "cli-review",
       "mode": "actual CLI in disposable synthetic repository; volatile IDs/paths/timing normalized",
       "command": "rio review --offline --no-tui --ascii",
-      "source_commit": "e08509880f889c985c52dea3e3c9651847388f1a",
-      "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu e08509880f88",
+      "source_commit": "9685e303906fb77502daaa211dfee0145eb90b83",
+      "rio_version": "rio 0.3.0 x86_64-unknown-linux-gnu 9685e303906f",
       "dimensions": [
         80,
         33
@@ -1335,8 +1335,8 @@
       "pillow": "11.3.0",
       "demo_data": true,
       "hashes": {
-        "png": "a00eb1395a623fbee511abb36ff9e9acac8ff3ccbe69f71a9c2840529f6eb1ad",
-        "txt": "d4f4c4fda151bf8770faf95f6779a4e44ffa336611b48448d0c3e536456721fa"
+        "png": "052c058c92b163d31be7c512259a0ba08594490dcdafe4d3dfd41ab2a0c42061",
+        "txt": "b9b09da0693ce304a8d1e39440da8d97d686b5326b706c1d5d0b620bca020a13"
       },
       "sources": {
         "crates/rio-cli/src/main.rs": "11bbd16f6caa0f2e4fe2302a77495b1d8cb2c49808d2105ffe40901f95b1b2a9",
@@ -1349,8 +1349,8 @@
       "id": "cli-profile",
       "mode": "actual CLI in disposable synthetic repository; volatile IDs/paths/timing normalized",
       "command": "rio profile show rio/base",
-      "source_commit": "e08509880f889c985c52dea3e3c9651847388f1a",
-      "rio_version": "rio 0.1.0 x86_64-unknown-linux-gnu e08509880f88",
+      "source_commit": "9685e303906fb77502daaa211dfee0145eb90b83",
+      "rio_version": "rio 0.3.0 x86_64-unknown-linux-gnu 9685e303906f",
       "dimensions": [
         80,
         33
@@ -1362,7 +1362,7 @@
       "demo_data": true,
       "hashes": {
         "png": "57c0a020865ec0639f970f9e7b31a16fbefcc0fb964e003e882af11a3c9f3bb6",
-        "txt": "a5f642216a23c18cb2f60ba4467bd8a25911b7c3325cf5d857e46be3759c52a7"
+        "txt": "ad28d4f549b17cb32c120ac7ef37bed9c7104345e8e32f5e7f8bc30e57814ed2"
       },
       "sources": {
         "crates/rio-cli/src/main.rs": "11bbd16f6caa0f2e4fe2302a77495b1d8cb2c49808d2105ffe40901f95b1b2a9",

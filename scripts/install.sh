@@ -76,7 +76,15 @@ main() {
                     wget --https-only --timeout=120 --server-response -q -O /dev/null https://github.com/pixelinfinito/rio/releases/latest 2> "$rio_tmp/headers" || fail 'latest version resolution failed'
                     rio_latest=$(sed -n 's/^[[:space:]]*[Ll]ocation: \(.*\)[[:space:]]*$/\1/p' "$rio_tmp/headers" | tail -n 1)
                 else fail 'latest version resolution needs curl or wget'; fi
-                rio_version=${rio_latest##*/} ;;
+                case "$rio_latest" in
+                    */releases/tag/v*) rio_version=${rio_latest##*/} ;;
+                    *)
+                        # No stable release yet: GitHub sends /releases/latest to the
+                        # release list. Take the newest published pre-release instead.
+                        fetch https://api.github.com/repos/pixelinfinito/rio/releases?per_page=1 "$rio_tmp/releases.json"
+                        rio_version=$(tr ',' '\n' < "$rio_tmp/releases.json" | sed -n 's/^[[:space:]]*"tag_name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*$/\1/p' | head -n 1)
+                        [ -n "$rio_version" ] || fail 'no Rio release has been published yet' ;;
+                esac ;;
             *)
                 set -- "$rio_base"/rio-*-"$rio_target".tar.gz
                 if [ "$#" != 1 ] || [ ! -f "$1" ]; then fail 'local source needs --version when zero or multiple matching archives exist'; fi

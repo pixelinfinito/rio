@@ -185,7 +185,7 @@ modules:
   rio/security: 0.2.0
   rio/triage: 0.1.0
   rio/verify: 0.1.0
-engine_version: 0.1.0
+engine_version: 0.3.0
 posture_policy:
   defect_severity_floor: warning
   render_plausible_risks: true

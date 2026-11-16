@@ -1,2 +1,2 @@
 $ rio --version
-rio 0.1.0 x86_64-unknown-linux-gnu e08509880f88
+rio 0.3.0 x86_64-unknown-linux-gnu 9685e303906f

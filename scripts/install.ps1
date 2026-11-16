@@ -84,8 +84,15 @@ function Install-Rio {
                     } finally { $rioWebResponse.Dispose() }
                 }
                 $rioResolved = $rioUri.AbsoluteUri
-                if ($rioResolved -notmatch '^https://github.com/pixelinfinito/rio/releases/tag/(v[^/]+)$') { throw 'Latest version resolution failed' }
-                $Version = $Matches[1]
+                if ($rioResolved -match '^https://github.com/pixelinfinito/rio/releases/tag/(v[^/]+)$') {
+                    $Version = $Matches[1]
+                } elseif ($rioResolved -match '^https://github.com/pixelinfinito/rio/releases/?$') {
+                    # No stable release yet: GitHub sends /releases/latest to the
+                    # release list. Take the newest published pre-release instead.
+                    $rioReleases = @(Invoke-RestMethod -Uri 'https://api.github.com/repos/pixelinfinito/rio/releases?per_page=1' -Headers @{ Accept = 'application/vnd.github+json' } -TimeoutSec 120)
+                    if ($rioReleases.Count -lt 1 -or -not $rioReleases[0].tag_name) { throw 'No Rio release has been published yet' }
+                    $Version = [string]$rioReleases[0].tag_name
+                } else { throw 'Latest version resolution failed' }
             }
         }
         if ($Version -notmatch '^v') { $Version = 'v' + $Version }
