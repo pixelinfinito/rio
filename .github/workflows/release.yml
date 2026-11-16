@@ -61,6 +61,12 @@ jobs:
           - {os: windows-11-arm, target: aarch64-pc-windows-msvc, cross: false}
     runs-on: ${{ matrix.os }}
     steps:
+      # Windows runners default to core.autocrlf=true. Every target must build from
+      # the same LF bytes: the Worker contract checks compare them, and the binary
+      # embeds the Worker bundle and pod scripts.
+      - name: Check out with LF line endings
+        if: runner.os == 'Windows'
+        run: git config --global core.autocrlf false
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
