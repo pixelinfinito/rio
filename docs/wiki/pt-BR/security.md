@@ -23,6 +23,8 @@ Leia os itens avaliados, não avaliados e não aplicáveis. Um rastreamento expl
 
 Segurança tem um conjunto próprio de evidência/apresentação. `with.fail_on` na etapa de segurança considera por padrão achados novos/agravados de segurança com evidência plausible ou superior. Essa política ou a política geral pode causar falha antes dos limites de apresentação. Itens plausíveis continuam sendo riscos para avaliação humana; análise não é certificação.
 
+Com `with.follow_up: true` na etapa de segurança, a revisão de um pull request não espera por ela: o que as outras etapas levantaram é verificado e publicado, o resumo informa que a revisão de segurança continua e a verificação `rio/review` fica em andamento. Quando a etapa de segurança termina, seus achados são verificados e a revisão publica de novo sobre os mesmos comentários e conclui a verificação. Revisões com QA publicam uma vez, no fim.
+
 Orientações dos responsáveis são consideradas junto das evidências, mas não habilitam ferramentas nem ignoram limites/políticas. Itens não avaliados explicam limitações de tempo/evidência/ferramentas e não podem ser apresentados como revisão de segurança aprovada. Em PRs de forks, a análise de segurança é somente estática.
 
 ## Solução de problemas
