@@ -183,10 +183,27 @@ export interface WorkflowParams {
   review_id: string;
   snapshot_key: string;
 }
-/** Hypotheses verified at once, each with its own voters, while tokens allow. */
-const VERIFIED_TOGETHER = 3;
+/**
+ * Hypotheses verified at once, each with its own voters, while tokens allow.
+ * Three at a time took a review with 31 hypotheses 17 minutes to verify,
+ * more than every other step together.
+ */
+const VERIFIED_TOGETHER = 6;
 /** Characters of diff an agent's first message holds, over all changed files. */
 export const CHANGE_PROMPT_CHARS = 60_000;
+/** Model turns of the security agent's conversation. */
+export const SECURITY_TURNS = 40;
+/**
+ * Time one model call of the security agent may take: late in an audit the
+ * model reasons over 150,000 tokens, and a 180 s limit ended three audits in
+ * twenty-four. Shorter than the model step's own limit.
+ */
+export const SECURITY_CALL_MS = 240000;
+/**
+ * Bytes of tool results the security agent keeps readable after its first
+ * message: a trace across files needs what it read some turns ago.
+ */
+export const SECURITY_HISTORY = { max: 384 * 1024, low: 256 * 1024 };
 /** Changed files read for an agent's prompt; the files after them are named. */
 export const CHANGE_PROMPT_FILES = 200;
 // A diff cut shorter than this says too little: the file is named instead.
@@ -672,9 +689,9 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       const key = await step
         .do(
           `model-${name}`,
-          // Longer than the call itself (`MODEL_CALL_MS`) and its bookkeeping.
-          // The one retry is for an attempt the platform failed.
-          { retries: { limit: 1, delay: "1 second" }, timeout: "4 minutes" },
+          // Longer than the longest call (`SECURITY_CALL_MS`) and its
+          // bookkeeping. The one retry is for an attempt the platform failed.
+          { retries: { limit: 1, delay: "1 second" }, timeout: "5 minutes" },
           modelStep(
             store,
             requests,
@@ -2059,6 +2076,14 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                 // the conversation's repair limits, before the agent fails.
                 ...(agent === "security"
                   ? {
+                      // An audit follows values across files: it takes more
+                      // turns than a review of the diff, and is told how many
+                      // it has left so that it ends with a result.
+                      maxTurns: SECURITY_TURNS,
+                      turnNotice: true,
+                      history: SECURITY_HISTORY,
+                      callMs: SECURITY_CALL_MS,
+                      retryCall: true,
                       validateResult: (value: any) => {
                         invariant(securityResult(value), SECURITY_RESULT);
                         return value;
