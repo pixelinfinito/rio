@@ -38,8 +38,9 @@ it("executes identical duplicated provider tool JSON once and rejects differing 
   });
   expect(parseModelOutput(`${tool} \n\n${tool}`)).toEqual(JSON.parse(tool));
   for (const invalid of [
-    `${tool} {"result":[]}`,
-    `${tool} ${tool} trailing`,
+    `{"result":[]} ${tool}`,
+    `${tool} ${tool.replace("a", "b")}`,
+    `${tool} ${tool} trailing words that are no stray characters at all`,
     `${tool} ${tool.slice(0, -1)}`,
   ])
     expect(() => parseModelOutput(invalid)).toThrow("malformed");
@@ -1279,3 +1280,200 @@ it.each(["openai", "anthropic"])(
     expect(JSON.stringify(body)).not.toContain("token_bound");
   },
 );
+it("asks for a model under a Daybreak tier when the identifier names one", async () => {
+  const env = {
+    AI_GATEWAY_URL: "https://gateway.ai.cloudflare.com/v1/acct/rio/",
+    AI_GATEWAY_TOKEN: "gateway-token",
+    AI_GATEWAY_PROVIDERS: JSON.stringify({
+      "node-openai": { protocol: "openai" },
+      "node-anthropic": { protocol: "anthropic" },
+    }),
+  } as Env;
+  const blue = route(env, "openai/custom-node-openai/gpt-6-sol@daybreak-blue");
+  expect([blue.model, blue.cyber]).toEqual([
+    "custom-node-openai/gpt-6-sol",
+    "daybreak_blue",
+  ]);
+  expect(route(env, "custom-node-openai/gpt-6-sol@daybreak-red").cyber).toBe(
+    "daybreak_red",
+  );
+  expect(route(env, "custom-node-openai/gpt-6-sol").cyber).toBeUndefined();
+  expect(() =>
+    route(env, "custom-node-anthropic/claude-opus-5-5@daybreak-blue"),
+  ).toThrow("OpenAI-protocol");
+  const sent: any[] = [];
+  const transport = async (_url: unknown, init: RequestInit) => {
+    sent.push(JSON.parse(String(init.body)));
+    return Response.json({
+      choices: [{ message: { content: '{"result":[]}' } }],
+      usage: { prompt_tokens: 10, completion_tokens: 5 },
+    });
+  };
+  const provider = new ProviderGateway(env, transport as typeof fetch);
+  await provider.complete({
+    ...request,
+    model: "custom-node-openai/gpt-6-sol@daybreak-blue",
+  });
+  await provider.complete({ ...request, model: "custom-node-openai/gpt-6-sol" });
+  expect(sent.map((body) => [body.model, body.access_programs])).toEqual([
+    ["gpt-6-sol", { cyber: "daybreak_blue" }],
+    ["gpt-6-sol", undefined],
+  ]);
+});
+it("tells a conversation its remaining turns and ends at its own limit", async () => {
+  const ledger: Ledger = {
+    remaining: async () => 1000000,
+    reserve: async () => "id",
+    settle: async () => {},
+  };
+  const run = async (answerAt: number) => {
+    const messages = [{ role: "user" as const, content: "audit" }];
+    let turn = 0;
+    const result = converse({
+      gateway: {
+        complete: async () => ({
+          content:
+            turn++ === answerAt
+              ? '{"result":["done"]}'
+              : '{"tools":[{"name":"read_file","args":{"path":"a.ts"}}],"notes":"kept"}',
+          input_tokens: 80,
+          output_tokens: 50,
+          cost_usd: null,
+        }),
+      },
+      ledger,
+      actor: "security",
+      phase: "generation",
+      model: "openrouter/openai/gpt-6.1-sol",
+      allowance: { remaining: 1000000 },
+      messages,
+      dispatch: async () => ({ content: "source" }),
+      maxTurns: 3,
+      turnNotice: true,
+    });
+    return { result, messages };
+  };
+  const answered = await run(2);
+  expect(await answered.result).toEqual(["done"]);
+  const told = answered.messages
+    .filter((m) => m.role === "user")
+    .slice(1)
+    .map((m) => String(m.content));
+  expect(told[0]).toMatch(/^\{"tool_results":.*\nHost: 2 turns left; keep the last one for the result\.$/s);
+  expect(told[1]).toContain("Host: this is your last turn.");
+  // The model's notes stay in its own reply, which compaction never removes.
+  expect(String(answered.messages[1].content)).toContain('"notes":"kept"');
+  await expect((await run(9)).result).rejects.toThrow("turn limit exhausted");
+});
+it("accepts one JSON document followed by a few stray characters, and prose only after a tools request", () => {
+  const tools = '{"tools":[{"name":"read_file","args":{"path":"a.ts"}}],"notes":"n"}';
+  for (const tail of ["i\n", "_\u4e45\u4e45\u7231\n", " \u05d9\u05d9\u10d2\n"])
+    expect(parseModelOutput(tools + tail)).toEqual(JSON.parse(tools));
+  // A tools request may be followed by any prose; a result may not.
+  for (const prose of [` and then "quoted" text {braces}`, ` ${"x".repeat(41)}`])
+    expect(parseModelOutput(tools + prose)).toEqual(JSON.parse(tools));
+  const result = '{"result":["done"]}';
+  for (const invalid of [
+    `${result} and then "quoted" text`,
+    `${result} ${"x".repeat(41)}`,
+    `prose ${result} i`,
+  ])
+    expect(() => parseModelOutput(invalid)).toThrow("malformed");
+});
+it("runs a tools request that the same reply follows with a premature result", () => {
+  const tools = '{"tools":[{"name":"read_file","args":{"path":"a.ts"}}],"notes":"n"}';
+  const result = '{"result":{"hypotheses":[],"assessed":[],"unassessed":[]}}';
+  expect(parseModelOutput(tools + result)).toEqual(JSON.parse(tools));
+  expect(parseModelOutput(`${tools}\n${result}\n`)).toEqual(JSON.parse(tools));
+  // A result first, two different tools requests, or text between them: refused.
+  for (const invalid of [
+    result + tools,
+    `${tools}{"tools":[{"name":"search","args":{"pattern":"x"}}]}`,
+  ])
+    expect(() => parseModelOutput(invalid)).toThrow("malformed");
+});
+it("runs a repeated tools request once, with a premature result or stray characters after it", () => {
+  const tools = '{"tools":[{"name":"read_file","args":{"path":"a.ts"}}],"notes":"n"}';
+  const result = '{"result":{"hypotheses":[],"assessed":[],"unassessed":[]}}';
+  expect(parseModelOutput(tools + tools + result)).toEqual(JSON.parse(tools));
+  expect(parseModelOutput(`${tools}${tools} יי\n`)).toEqual(
+    JSON.parse(tools),
+  );
+  expect(() => parseModelOutput(result + result + tools)).toThrow("malformed");
+});
+it("sends a turn once more when its call timed out or was refused, and only when asked", async () => {
+  const ledger: Ledger = {
+    remaining: async () => 1000000,
+    reserve: async () => "id",
+    settle: async () => {},
+  };
+  const run = (failure: string, retryCall: boolean) => {
+    const ids: string[] = [];
+    let calls = 0;
+    const result = converse({
+      gateway: {
+        complete: async () => {
+          if (calls++ === 0) throw new Error(failure);
+          return {
+            content: '{"result":["done"]}',
+            input_tokens: 80,
+            output_tokens: 50,
+            cost_usd: null,
+          };
+        },
+      },
+      ledger,
+      actor: "security",
+      phase: "generation",
+      model: "openrouter/openai/gpt-6.1-sol",
+      allowance: { remaining: 1000000 },
+      messages: [{ role: "user" as const, content: "audit" }],
+      dispatch: async () => ({ content: "source" }),
+      call: async (id, action) => {
+        ids.push(id);
+        return action();
+      },
+      retryCall,
+    });
+    return { result, ids };
+  };
+  const timed = run("The operation was aborted due to timeout", true);
+  await expect(timed.result).resolves.toEqual(["done"]);
+  expect(timed.ids).toEqual([
+    "security-generation-0",
+    "security-generation-0-again",
+  ]);
+  await expect(
+    run("provider failed (400 invalid_prompt)", true).result,
+  ).resolves.toEqual(["done"]);
+  await expect(run("token budget exhausted", true).result).rejects.toThrow(
+    "token budget exhausted",
+  );
+  await expect(
+    run("The operation was aborted due to timeout", false).result,
+  ).rejects.toThrow("timeout");
+});
+it("names the provider's error code for a refused request and nothing else of the body", async () => {
+  const env = {
+    AI_GATEWAY_URL: "https://gateway.ai.cloudflare.com/v1/acct/rio/",
+    AI_GATEWAY_TOKEN: "gateway-token",
+    AI_GATEWAY_PROVIDERS: JSON.stringify({
+      "node-openai": { protocol: "openai" },
+    }),
+  } as Env;
+  const failing = (body: unknown) =>
+    new ProviderGateway(env, async () => Response.json(body, { status: 400 }))
+      .complete({
+        ...request,
+        model: "openai/custom-node-openai/gpt-6-sol",
+      });
+  await expect(
+    failing({ error: { code: "context_length_exceeded", message: "secret prompt text" } }),
+  ).rejects.toThrow(/^provider failed \(400 context_length_exceeded\)$/);
+  await expect(
+    failing({ error: { code: "has spaces and secrets", type: "invalid_request_error" } }),
+  ).rejects.toThrow(/^provider failed \(400 invalid_request_error\)$/);
+  await expect(failing({ error: { message: "only prose" } })).rejects.toThrow(
+    /^provider failed \(400\)$/,
+  );
+});

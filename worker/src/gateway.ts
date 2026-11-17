@@ -27,6 +27,8 @@ import voteSchema from "../../schemas/vote-answer-v1.json";
  * JSON document cut mid-way. The reservation still bounds the actual spend.
  */
 const MAX_OUTPUT_TOKENS = 16384;
+/** Characters of stray text accepted after a reply's one JSON document. */
+const STRAY_TAIL = 40;
 /**
  * Time one model call may take, a retry included. A reply of the full output
  * allowance takes about this long at 90 tokens a second; at 90 seconds, one
@@ -91,6 +93,11 @@ export function gatewayProviders(env: Env): Record<string, GatewayProvider> {
  * `openai/custom-SLUG/M` and `openai/dynamic/ROUTE` with a gateway are the
  * unified endpoint too, so profiles written for an `OPENAI_BASE_URL` pointed at
  * `/compat` keep working when the gateway is configured.
+ *
+ * An identifier may end in `@daybreak-blue` or `@daybreak-red`: the model is
+ * then asked for under that tier of OpenAI's Trusted Access for Cyber program
+ * (`access_programs.cyber`). The provider decides whether the account has the
+ * tier; one without it is answered under the standard tier.
  */
 export interface Route {
   url: URL;
@@ -100,8 +107,22 @@ export interface Route {
   headers: Record<string, string>;
   // The provider whose usage fields report cost (OpenRouter only).
   provider: string;
+  // The cyber access program the identifier asks for, if any.
+  cyber?: "daybreak_blue" | "daybreak_red";
 }
-export function route(env: Env, identifier: string): Route {
+const ACCESS_SUFFIX = /@daybreak-(blue|red)$/;
+export function route(env: Env, written: string): Route {
+  const access = ACCESS_SUFFIX.exec(written);
+  const identifier = access ? written.slice(0, access.index) : written;
+  const found = routeOfIdentifier(env, identifier);
+  if (!access) return found;
+  invariant(
+    found.protocol === "openai",
+    "a Daybreak access program needs an OpenAI-protocol model",
+  );
+  return { ...found, cyber: `daybreak_${access[1] as "blue" | "red"}` };
+}
+function routeOfIdentifier(env: Env, identifier: string): Route {
   const split = identifier.indexOf("/");
   invariant(
     split > 0 && split < identifier.length - 1,
@@ -405,7 +426,7 @@ export class ProviderGateway implements Gateway {
       globalThis.fetch(input, init),
   ) {}
   async complete(request: ModelRequest): Promise<ModelResponse> {
-    const { url, headers, model, protocol, provider } = route(
+    const { url, headers, model, protocol, provider, cyber } = route(
       this.env,
       request.model,
     );
@@ -447,6 +468,7 @@ export class ProviderGateway implements Gateway {
           ...(capability === "key" && request.cache?.key
             ? { prompt_cache_key: request.cache.key }
             : {}),
+          ...(cyber ? { access_programs: { cyber } } : {}),
         };
     // One transient failure (overload, rate limit, or a reply without content or
     // usage, which routers return under load) is retried once; the first attempt
@@ -458,8 +480,12 @@ export class ProviderGateway implements Gateway {
         body: JSON.stringify(body),
         signal: request.signal ?? AbortSignal.timeout(MODEL_CALL_MS),
       });
-      // Never persist provider response bodies on failure: they can contain credentials or raw prompts.
-      invariant(response.ok, `provider failed (${response.status})`);
+      // Never persist provider response bodies on failure: they can contain
+      // credentials or raw prompts. A refused request names only its error code.
+      invariant(
+        response.ok,
+        `provider failed (${response.status}${response.status === 400 ? await errorCode(response) : ""})`,
+      );
       const result: any = await response.json();
       const content = anthropic
         ? result.content
@@ -521,6 +547,21 @@ export interface Ledger {
   remaining(): Promise<number>;
   remainingMs?(): Promise<number>;
 }
+/**
+ * The provider's code for a request it refused, when it is a plain identifier
+ * such as `context_length_exceeded`. Nothing else of the body is kept.
+ */
+async function errorCode(response: Response): Promise<string> {
+  try {
+    const error = ((await response.json()) as any)?.error;
+    const code = [error?.code, error?.type].find(
+      (value) => typeof value === "string" && /^[a-z0-9_.-]{1,64}$/i.test(value),
+    );
+    return code ? ` ${code}` : "";
+  } catch {
+    return "";
+  }
+}
 export function parseModelOutput(content: string): any {
   try {
     return JSON.parse(content);
@@ -558,12 +599,36 @@ export function parseModelOutput(content: string): any {
         }
       }
     }
+    // Some models end a complete document with a few stray characters. A
+    // short tail that holds no JSON structure cannot be a second answer.
+    const tail = content.slice(start).trim();
     if (
-      documents.length > 1 &&
-      !content.slice(start).trim() &&
-      documents.every((d) => JSON.stringify(d) === JSON.stringify(documents[0]))
-    )
-      return documents[0];
+      documents.length > 0 &&
+      tail.length <= STRAY_TAIL &&
+      !/[{}[\]"]/.test(tail)
+    ) {
+      const first = documents[0] as any;
+      const same = (d: unknown) => JSON.stringify(d) === JSON.stringify(first);
+      // Some routes repeat the identical document: it is taken once.
+      if (documents.every(same)) return first;
+      // A tools request followed in the same reply by a result: the result was
+      // written before the host ran anything. The tools run and that result is
+      // discarded, so nothing the model stated without evidence is reported.
+      // The request may itself be repeated before the result.
+      if (
+        Array.isArray(first.tools) &&
+        first.tools.length > 0 &&
+        !Object.hasOwn(first, "result") &&
+        documents
+          .slice(1)
+          .every(
+            (d: any) =>
+              same(d) ||
+              (Object.hasOwn(d, "result") && !Object.hasOwn(d, "tools")),
+          )
+      )
+        return first;
+    }
   } catch {
     /* Ambiguous/malformed documents still fail below. */
   }
@@ -577,7 +642,10 @@ export function parseModelOutput(content: string): any {
       /* Report malformed below. */
     }
   }
-  const request = trailingToolsRequest(content) ?? nativeToolsRequest(content);
+  const request =
+    leadingToolsRequest(content) ??
+    trailingToolsRequest(content) ??
+    nativeToolsRequest(content);
   if (request) return request;
   throw new Error("malformed model output");
 }
@@ -606,6 +674,28 @@ function objectAt(
     }
   }
   return undefined;
+}
+/**
+ * A reply that opens with a complete tools request and goes on in prose: the
+ * model kept thinking aloud after its request. The request is taken and the
+ * prose dropped. Reading is all a request can do, and nothing stated after it
+ * is reported. A reply that holds another tools request is never taken this
+ * way: the host does not choose between requests.
+ */
+function leadingToolsRequest(content: string): unknown {
+  const text = content.trimStart();
+  if (!text.startsWith("{")) return undefined;
+  const found = objectAt(text, 0);
+  const value = found?.value as any;
+  return value !== null &&
+    typeof value === "object" &&
+    !Array.isArray(value) &&
+    Array.isArray(value.tools) &&
+    value.tools.length > 0 &&
+    !Object.hasOwn(value, "result") &&
+    !/"tools"\s*:/.test(text.slice(found!.end))
+    ? value
+    : undefined;
 }
 /**
  * A model that slips into its native tool syntax often follows the leaked
@@ -743,6 +833,14 @@ const MAX_CONSECUTIVE_REPAIRS = 2;
 /** Tool calls run per model turn; later calls in a batch are answered with the limit. */
 const MAX_TOOLS_PER_TURN = 8;
 const MAX_REPAIRS = 6;
+/** Model turns of a conversation that names no limit of its own. */
+const DEFAULT_TURNS = 16;
+/** What the host says after a tool result about the turns that remain. */
+export function turnNotice(left: number, elided = false): string {
+  if (left <= 1)
+    return '\nHost: this is your last turn. Reply with {"result":...} now, holding everything you have established; another tools request ends the review with nothing reported.';
+  return `\nHost: ${left} turns left${left <= 4 ? "; keep the last one for the result" : ""}.${elided ? " Earlier tool results were just removed from this conversation: write what you have established so far in `notes` beside your next `tools`, and do not read the same lines again." : ""}`;
+}
 /** Tools that start runner jobs, which are durable steps of their own. */
 const JOB_TOOLS = new Set(["run"]);
 /** Tools that read a whole tree, and share the reading when asked together. */
@@ -791,6 +889,28 @@ export async function converse(options: {
   redact?: string[];
   // `compaction`: elide in checkpoints (design D12).
   compaction?: boolean;
+  /** Model turns the conversation may take; 16 when absent. */
+  maxTurns?: number;
+  /**
+   * Tell the model, after each tool result, how many turns it has left, and
+   * on the last one that it must answer. Without it a conversation that keeps
+   * asking for tools ends at the limit with nothing reported.
+   */
+  turnNotice?: boolean;
+  /**
+   * Bytes of conversation kept after the first message before old tool
+   * results are elided (`max`), and the size an elision brings it down to
+   * (`low`). Without it the limit counts the first message too, so a first
+   * message longer than the limit leaves only the latest results readable.
+   */
+  history?: { max: number; low: number };
+  /**
+   * Time one model call may take, when longer than `MODEL_CALL_MS`: a call
+   * that reasons over a long conversation. The caller's step must outlast it.
+   */
+  callMs?: number;
+  /** Send a turn once more when its call timed out or the provider failed it. */
+  retryCall?: boolean;
 }): Promise<any> {
   const o = options;
   const system = o.system ?? systemPrompt(o.phase, o.singleSystem);
@@ -798,7 +918,17 @@ export async function converse(options: {
   let checkpoint: { turn: number; elided: number } | undefined;
   let repairs = 0,
     consecutiveRepairs = 0;
-  for (let turn = 0; turn < 16; turn++) {
+  const maxTurns = o.maxTurns ?? DEFAULT_TURNS;
+  const firstBytes = o.history
+    ? new TextEncoder().encode(
+        JSON.stringify(
+          o.messages
+            .slice(0, 1)
+            .map((m) => ({ role: m.role, content: join(m.content) })),
+        ),
+      ).length
+    : 0;
+  for (let turn = 0; turn < maxTurns; turn++) {
     if (await o.cancelled?.()) throw new Error("cancelled");
     const action = async () => {
       const inputBound = tokenBound(system, o.messages);
@@ -813,7 +943,8 @@ export async function converse(options: {
         o.phase,
         inputBound + output,
       );
-      const remainingMs = (await o.ledger.remainingMs?.()) ?? MODEL_CALL_MS;
+      const callMs = o.callMs ?? MODEL_CALL_MS;
+      const remainingMs = (await o.ledger.remainingMs?.()) ?? callMs;
       invariant(remainingMs > 0, "review wall budget exhausted");
       const response: ModelResponse = await o.gateway.complete({
         model: o.model,
@@ -821,7 +952,7 @@ export async function converse(options: {
         system,
         max_tokens: output,
         stop: NATIVE_CALL_STOPS,
-        signal: AbortSignal.timeout(Math.min(MODEL_CALL_MS, remainingMs)),
+        signal: AbortSignal.timeout(Math.min(callMs, remainingMs)),
         ...(o.cache ? { cache: { ...o.cache, tail: true } } : {}),
         ...(o.redact?.length ? { redact: o.redact } : {}),
       });
@@ -840,9 +971,21 @@ export async function converse(options: {
       );
       return response;
     };
-    const response = await (o.call
-      ? o.call(`${o.actor}-${o.phase}-${turn}`, action)
-      : action());
+    const send = (id: string) => (o.call ? o.call(id, action) : action());
+    const response = await send(`${o.actor}-${o.phase}-${turn}`).catch(
+      (error) => {
+        // A long conversation is not given up for one call the provider cut
+        // off or refused: the turn is sent once more, as a call of its own.
+        if (
+          !o.retryCall ||
+          !/timeout|provider failed \((400|5\d\d)/.test(
+            error instanceof Error ? error.message : "",
+          )
+        )
+          throw error;
+        return send(`${o.actor}-${o.phase}-${turn}-again`);
+      },
+    );
     checkpoint = undefined;
     const total = response.input_tokens + response.output_tokens;
     o.allowance.remaining -= total;
@@ -853,7 +996,8 @@ export async function converse(options: {
     const repair = (error: unknown, resultSchema = false) => {
       if (
         consecutiveRepairs >= MAX_CONSECUTIVE_REPAIRS ||
-        repairs >= MAX_REPAIRS
+        // A longer conversation is allowed in proportion more corrections.
+        repairs >= Math.max(MAX_REPAIRS, Math.floor(maxTurns / 4))
       )
         throw error;
       repairs++;
@@ -977,10 +1121,21 @@ export async function converse(options: {
       role: "user",
       content: JSON.stringify(scrub({ tool_results: results })).slice(0, 64000),
     });
-    const elided = o.compaction
-      ? elideOldToolResults(o.messages, HISTORY_BYTES, COMPACTED_BYTES)
-      : elideOldToolResults(o.messages);
+    const elided = o.history
+      ? elideOldToolResults(
+          o.messages,
+          firstBytes + o.history.max,
+          firstBytes + o.history.low,
+        )
+      : o.compaction
+        ? elideOldToolResults(o.messages, HISTORY_BYTES, COMPACTED_BYTES)
+        : elideOldToolResults(o.messages);
     if (elided) checkpoint = { turn, elided };
+    if (o.turnNotice)
+      o.messages[o.messages.length - 1].content += turnNotice(
+        maxTurns - turn - 1,
+        elided > 0,
+      );
   }
   throw new Error("model turn limit exhausted");
 }
