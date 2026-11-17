@@ -3,7 +3,7 @@
 Security agent execution requires hosted AI configuration. Secrets scanning also runs locally. Security profiles may enable council; vendors and credentials need separate opt-in. Source/evidence can reach configured providers.
 
 ## run
-`rio review --profile rio/security` selects the security profile; inspect it first with `rio profile show rio/security`. The rio/security step uses catalog owasp-top10-2025 or asvs-5.0. rio/security built-in uses thorough posture and ASVS, and declares its security agent with models: [default, second] (a child defining a second alias gets two security reviews, verified once; otherwise one under default); rio/base includes the step disabled. Copy all desired steps if customizing the list.
+`rio review --profile rio/security` selects the security profile; inspect it first with `rio profile show rio/security`. The rio/security step uses catalog owasp-top10-2025 or asvs-5.0. rio/security built-in uses thorough posture and ASVS, and declares its security agent with models: [default, second] (a child defining a second alias gets two security reviews, verified once; otherwise one under default); rio/base includes the step disabled. Copy all desired steps if customizing the list. Setting with.follow_up: true lets a PR review publish what the other steps raised before security ends (check run left in progress), then publish again over the same comments when it ends; reviews with QA publish once.
 
 ## findings
 Reports show assessed, unassessed and not-applicable catalog items, with security findings and evidence. Trace roles identify source, intermediary steps and sink; a missing guard is distinct from proof of exploitation. Review severity and evidence_level separately. A plausible issue is not a reproduced exploit, and a catalog review is not a certification.
@@ -16,6 +16,7 @@ The rio/security step’s with.fail_on sets evidence, categories, states and rul
 rio/security@0.2.0:
 enabled: boolean; default=false
 posture: enum; enum=["critical-only","balanced","thorough"]; default="thorough"
+follow_up: boolean; default=false
 max_defects: integer; minimum=1
 catalog: enum; enum=["owasp-top10-2025","asvs-5.0"]; default="owasp-top10-2025"
 fail_on: object; default={"evidence":"plausible","categories":["security"],"states":["new","worsened"],"rules":[],"incomplete":true,"required_checks":[]}; extra=false

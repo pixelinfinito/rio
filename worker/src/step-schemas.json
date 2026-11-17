@@ -224,6 +224,11 @@
         "enum": ["critical-only", "balanced", "thorough"],
         "default": "thorough"
       },
+      "follow_up": {
+        "type": "boolean",
+        "default": false,
+        "description": "Do not hold the review for this step: the verify step that needs it runs on what the other steps raised and a pull request review publishes that, with its check run in progress; when this step ends, what it raised is verified and the review publishes again, over the same comments, and completes"
+      },
       "max_defects": { "type": "integer", "minimum": 1 },
       "catalog": {
         "enum": ["owasp-top10-2025", "asvs-5.0"],

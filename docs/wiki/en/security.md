@@ -23,6 +23,8 @@ Read the security section's assessed, unassessed and not-applicable catalog item
 
 Security has its own evidence/presentation pool. `with.fail_on` on the security step defaults to plausible-or-stronger new/worsened security findings. Either that policy or general failure policy can fail a finding before presentation caps. Plausible entries remain risks for human judgment; a scan is not certification.
 
+With `with.follow_up: true` on the security step, a pull request review does not wait for it: what the other steps raised is verified and published, the summary says the security review is still running and the `rio/review` check stays in progress. When the security step ends, its findings are verified and the review publishes again over the same comments and completes the check. Reviews with QA publish once, at the end.
+
 Owner guidance is considered with evidence, but cannot enable tools or bypass budgets/policy. Unassessed items explain budget/evidence/tool limitations and must not be presented as a passed security review. Fork PR security analysis is static-only.
 
 ## Troubleshooting

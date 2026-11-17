@@ -13,6 +13,7 @@ import {
   CANCELLED_NOTE,
   changedCode,
   changeParts,
+  differing,
   renderDiff,
 } from "../src/workflow";
 import { LARGE, MemorySnapshot } from "../src/snapshot";
@@ -881,6 +882,43 @@ it("gives a cancellation that arrives after the report was written the same end 
     transport.mockRestore();
   }
 }, 60000);
+
+it("compares two rounds without the paths an omit setting added or removed", async () => {
+  const file = (content: string) => ({ mode: 0o100644, content });
+  // The round before held vendor/; this round's profile omits it and no longer omits docs/.
+  const rounds = new MemorySnapshot({
+    base: {
+      "src/a.ts": file("1"),
+      "src/gone.ts": file("x"),
+      "vendor/lib.rs": file("v"),
+    },
+    head: {
+      // The in-memory snapshot has no content hashes: the mode tells the two apart.
+      "src/a.ts": { mode: 0o100755, content: "2" },
+      "src/new.ts": file("n"),
+      "docs/guide.md": file("d"),
+    },
+  });
+  expect(await differing(rounds.base, rounds.head)).toEqual([
+    "docs/guide.md",
+    "src/a.ts",
+    "src/gone.ts",
+    "src/new.ts",
+    "vendor/lib.rs",
+  ]);
+  // Only what the pull request changed counts when one tree lacks the path.
+  expect(
+    await differing(
+      rounds.base,
+      rounds.head,
+      new Set(["src/a.ts", "src/gone.ts", "src/new.ts"]),
+    ),
+  ).toEqual(["src/a.ts", "src/gone.ts", "src/new.ts"]);
+  // A file both rounds hold counts even when the change no longer names it (a revert).
+  expect(await differing(rounds.base, rounds.head, new Set())).toEqual([
+    "src/a.ts",
+  ]);
+});
 
 it("names a changed file too large to hold in an agent's prompt, without reading it", async () => {
   const memory = new MemorySnapshot({

@@ -495,6 +495,20 @@ describe("other tools", () => {
     ).rejects.toThrow(
       'run needs "command": an argv array of strings such as ["npm","test"], and "version": "base" or "head"',
     );
+    // No repository in the sandbox: answered without a job.
+    for (const command of [
+      ["git", "diff", "HEAD~1"],
+      ["/usr/bin/git", "log"],
+    ])
+      await expect(
+        run.dispatch("run", { command, version: "head" }),
+      ).rejects.toThrow(/^run has no git repository/);
+    expect(
+      await run.dispatch("run", {
+        command: ["git", "diff", "--no-index", "a", "b"],
+        version: "head",
+      }),
+    ).toEqual({});
     await expect(
       new Tools(snapshot, graphs, undefined, 2, 2000, ["read_file"]).dispatch(
         "search",

@@ -108,6 +108,8 @@ export interface CheckOutput {
   summary: string;
   name?: "rio/review" | "rio/qa";
   conclusion?: "neutral" | "failure";
+  /** The review is not finished: the check run stays in progress. */
+  status?: "in_progress";
   annotations?: {
     path: string;
     start_line: number;
@@ -297,10 +299,14 @@ export class GitHubHost implements Host {
     }
     const body = {
       name,
-      status: "completed",
-      conclusion:
-        name === "rio/qa" ? (output.conclusion ?? "neutral") : "neutral",
-      completed_at: new Date().toISOString(),
+      ...(output.status === "in_progress"
+        ? { status: "in_progress" }
+        : {
+            status: "completed",
+            conclusion:
+              name === "rio/qa" ? (output.conclusion ?? "neutral") : "neutral",
+            completed_at: new Date().toISOString(),
+          }),
       output: {
         title: output.title.slice(0, 255),
         summary: output.summary.slice(0, 60000),
@@ -360,6 +366,12 @@ export interface PublishInput {
   updates: { id: string; status: string; resolution: any }[];
   prior: { id: string; finding: Finding }[];
   publicUrl?: string;
+  /**
+   * What the review is still doing, for a publication made before it ends:
+   * the summary and the check run say so, and the check run stays in progress
+   * for the review's last publication to complete.
+   */
+  pending?: string;
 }
 
 export function decide(
@@ -673,6 +685,7 @@ export async function publishReview(
     .bind(input.review)
     .first<{ cancelled: number }>();
   if (review?.cancelled) {
+    if (input.pending) return null;
     await settleAnnouncement(
       env,
       input.review,
@@ -688,6 +701,7 @@ export async function publishReview(
     // Cancelled while it was published: what was written stays, nothing
     // more is, and the check run says why.
     if (error instanceof PublicationCancelled) {
+      if (input.pending) return null;
       await settleAnnouncement(
         env,
         input.review,
@@ -712,6 +726,8 @@ export async function publishReview(
       ],
     };
   }
+  // The check run of a review that is still running stays announced.
+  if (input.pending) return result;
   // The in-progress check run is either completed by this publication or
   // completed here with the reason nothing was published.
   if (result?.check_run_url) await announcementPublished(env, input.review);
@@ -1117,6 +1133,7 @@ async function publishLeased(
         failOn: input.fail_on,
         urls,
         fixed: input.updates.filter((u) => u.status === "fixed").length,
+        pending: input.pending,
       });
       try {
         const existing = (await github.issueComments()).find(
@@ -1148,12 +1165,19 @@ async function publishLeased(
     }
     try {
       const record = records.get(`check_run:${row.head_sha}`);
+      const output = checkOutput(input.report, input.fail_on, {
+        askNote: decision.full ? undefined : row.number,
+        link,
+      });
       const run = await github.checkRun(
         row.head_sha!,
-        checkOutput(input.report, input.fail_on, {
-          askNote: decision.full ? undefined : row.number,
-          link,
-        }),
+        input.pending
+          ? {
+              title: `Still running · ${output.title}`,
+              summary: `${input.pending}\n\n${output.summary}`,
+              status: "in_progress",
+            }
+          : output,
         record?.external_id
           ? Number(record.external_id)
           : (row.announced_check ?? undefined),
@@ -1175,7 +1199,7 @@ async function publishLeased(
         error: failureText(error),
       });
     }
-    if (input.report.qa) {
+    if (input.report.qa && !input.pending) {
       const identity = `${row.head_sha}:qa`;
       try {
         const output = qaCheckOutput(input.report, await github.files());

@@ -22,12 +22,18 @@ import prLineageSarif from "../../tests/fixtures/sarif/pr-lineage/expected.sarif
 const runtime = env as Env;
 /** A pinned report as recorded with the active layout features (feature-on runs). */
 const withLayout = (report: any) => {
-  const features = (runtime.PROMPT_LAYOUT ?? "").split(",").filter(Boolean).sort();
+  const features = (runtime.PROMPT_LAYOUT ?? "")
+    .split(",")
+    .filter(Boolean)
+    .sort();
   return {
     ...report,
     agent_audit: {
       ...report.agent_audit,
-      prompt_cache: { ...report.agent_audit.prompt_cache, layout_features: features },
+      prompt_cache: {
+        ...report.agent_audit.prompt_cache,
+        layout_features: features,
+      },
     },
   };
 };
@@ -44,6 +50,14 @@ const e: Env = {
 let github: GitHubDouble;
 // Agent answers per round, keyed by symbol name present in the reviewed head.
 let agentSymbols: string[] = [];
+// A review whose security step is a follow-up: what the pull request showed
+// when the security agent was still to answer.
+let early:
+  { comments: string[]; check: any; summary: string | undefined } | undefined;
+const payHyp = (symbol: string, line: number): Hypothesis => ({
+  ...hyp(symbol, line),
+  location: { ...hyp(symbol, line).location, path: "src/pay.ts" },
+});
 
 type Files = Record<string, string>;
 const tree = (files: Files): Record<string, File> =>
@@ -103,7 +117,45 @@ async function gateway(
   const body = JSON.parse(String(init!.body));
   const text = body.messages.map((m: any) => m.content).join("\n");
   let result: any = [];
-  if (text.includes("Review the change independently")) {
+  if (text.includes("Review the change independently for security.")) {
+    // The security agent answers only once the review has published without it.
+    for (let i = 0; i < 400 && !early; i++) {
+      const check = github.checkRuns.find(
+        (c) =>
+          c.head_sha === sha("follow-head") &&
+          String(c.output?.title).startsWith("Still running"),
+      );
+      if (check)
+        early = {
+          comments: github.comments
+            .filter((c) => c.pr === `${REPO}#9`)
+            .map((c) => c.body.slice(-85)),
+          check: structuredClone(check),
+          summary: github.issueComments.find((c) =>
+            c.body.includes("still running"),
+          )?.body,
+        };
+      else await new Promise((r) => setTimeout(r, 50));
+    }
+    result = {
+      hypotheses: [
+        {
+          ...payHyp("refund", 2),
+          rule_id: "security/missing-authorization",
+          category: "security",
+          catalog_item: block(text, "catalog").items[0].id,
+          trace_change: "introduced",
+        },
+      ],
+      assessed: [block(text, "catalog").items[0].id],
+      unassessed: [],
+    };
+  } else if (
+    text.includes("src/pay.ts") &&
+    text.includes("Review the change independently")
+  ) {
+    result = [payHyp("charge", 1)];
+  } else if (text.includes("Review the change independently")) {
     const head = block(text, "change diff") ?? [];
     const content: string = JSON.stringify(head);
     result = agentSymbols
@@ -112,7 +164,10 @@ async function gateway(
         // A head line of the diff: its number, a mark, then the line.
         const line = (head[0]?.diff ?? "")
           .split("\n")
-          .find((l: string) => /^ *\d+ [+ ]/.test(l) && l.includes(`function ${s}(`));
+          .find(
+            (l: string) =>
+              /^ *\d+ [+ ]/.test(l) && l.includes(`function ${s}(`),
+          );
         return hyp(s, line ? parseInt(line, 10) : 0);
       });
   } else if (text.includes("Verify this hypothesis.")) {
@@ -176,7 +231,7 @@ async function drain() {
   }
 }
 /** The self-hosted runner: claim, then upload and submit with the prepare credential. */
-async function runPrepare(base: Files, head: Files) {
+async function runPrepare(base: Files, head: Files, steps?: any[]) {
   const claim: any = await (
     await app.request(
       "https://rio/v1/runner/claim",
@@ -222,6 +277,11 @@ async function runPrepare(base: Files, head: Files) {
     },
     { id: "verify", uses: "rio/verify@0.1.0", needs: ["agents"], with: {} },
   ];
+  if (steps) {
+    s.profile.steps = steps;
+    // Room for the security conversation beside the verifier's.
+    s.profile.budget.fast.tokens = 1_000_000;
+  }
   s.report.review = {
     id: "prepared-header",
     mode: "branch",
@@ -540,5 +600,74 @@ describe("PR mode end to end", () => {
     expect(JSON.parse(normalize(JSON.stringify(sarif)))).toEqual(
       JSON.parse(prLineageSarif),
     );
+  });
+});
+
+describe("a security step the review does not wait for", () => {
+  it("publishes the other findings with the check in progress, then the security findings, and completes", async () => {
+    const charge = idOf(payHyp("charge", 1));
+    github.pull(REPO, 9, { head: sha("follow-head"), base: sha("base") });
+    github.setFiles(REPO, 9, [{ filename: "src/pay.ts", lines: [1, 2] }]);
+    agentSymbols = ["charge", "refund"];
+    await deliver("pull_request", prEvent("opened", 9));
+    await drain();
+    const { report } = await runPrepare(
+      {
+        "src/pay.ts":
+          "function charge(){ return 1; }\nfunction refund(){ return 2; }\n",
+      },
+      {
+        "src/pay.ts":
+          "function charge(){ throw 1; }\nfunction refund(){ throw 2; }\n",
+      },
+      [
+        {
+          id: "agents",
+          uses: "rio/agents@0.1.0",
+          needs: [],
+          parallel: true,
+          with: { cache: false },
+        },
+        {
+          id: "security",
+          uses: "rio/security@0.2.0",
+          needs: [],
+          parallel: true,
+          with: { enabled: true, follow_up: true },
+        },
+        {
+          id: "verify",
+          uses: "rio/verify@0.1.0",
+          needs: ["agents", "security"],
+          with: {},
+        },
+      ],
+    );
+    // Before the security agent answered: the correctness finding was on the
+    // pull request and the check run said the review was still running.
+    expect(early).toBeDefined();
+    expect(early!.comments).toEqual([`<!-- rio:finding:${charge} -->`]);
+    expect(early!.check.status).toBe("in_progress");
+    expect(early!.check.conclusion).toBeUndefined();
+    expect(early!.summary).toMatch(/1 to fix before merge so far/);
+    // At the end: the security finding beside it, one summary, a completed check.
+    expect(report.status).toBe("complete");
+    expect(report.findings.map((f: any) => f.id)).toEqual([charge]);
+    expect(report.security).toHaveLength(1);
+    const mine = github.comments.filter((c) => c.pr === `${REPO}#9`);
+    expect(mine.map((c) => c.line).sort()).toEqual([1, 2]);
+    expect(mine.filter((c) => c.body.includes(charge))).toHaveLength(1);
+    const run = github.checkRuns.find((c) => c.head_sha === sha("follow-head"));
+    expect(run).toMatchObject({ status: "completed", conclusion: "neutral" });
+    expect(run.output.title).not.toMatch(/Still running/);
+    expect(
+      github.checkRuns.filter((c) => c.head_sha === sha("follow-head")),
+    ).toHaveLength(1);
+    const summaries = github.issueComments.filter((c) =>
+      c.body.includes("src/pay.ts"),
+    );
+    expect(summaries).toHaveLength(1);
+    expect(summaries[0].body).not.toMatch(/still running|so far/);
+    expect(report.publication).toMatchObject({ posted: 1, failed: 0 });
   });
 });

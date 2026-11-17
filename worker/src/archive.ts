@@ -213,6 +213,45 @@ async function* baseAfterHead(
     await head.return?.(undefined);
   }
 }
+/** Batches of a tree read from storage at a time while its archive is written. */
+const AHEAD = 4;
+/**
+ * A tree's regular files in path order with their bytes, in batches of a few
+ * MiB, `AHEAD` of them read at once. A storage read takes about a fifth of a
+ * second before its first byte whatever its length, and a batch is one or
+ * two reads: taken one after the other, a tree of a GiB reached the
+ * container at 8 MiB/s, slower than the container reads it.
+ */
+async function* ahead(
+  tree: TreeReader,
+): AsyncGenerator<[Entry, Uint8Array | null][]> {
+  const pending: Promise<[Entry, Uint8Array | null][]>[] = [];
+  const load = (entries: Entry[]) => {
+    const read = tree
+      .many(entries)
+      .then((bytes) =>
+        entries.map((entry, i): [Entry, Uint8Array | null] => [entry, bytes[i]]),
+      );
+    // A failed read surfaces when its batch is awaited, in order.
+    read.catch(() => {});
+    pending.push(read);
+  };
+  let batch: Entry[] = [],
+    size = 0;
+  for await (const entry of tree.list()) {
+    if (entry.mode === SYMLINK) continue;
+    batch.push(entry);
+    size += entry.size > LARGE ? 0 : entry.size;
+    if (batch.length >= BATCH_ENTRIES || size >= BATCH_BYTES) {
+      load(batch);
+      batch = [];
+      size = 0;
+      if (pending.length >= AHEAD) yield await pending.shift()!;
+    }
+  }
+  if (batch.length) load(batch);
+  while (pending.length) yield await pending.shift()!;
+}
 /** What a job's archive stream measured while it was read. */
 export interface Transfer {
   /** Archive bytes produced. */
@@ -249,7 +288,7 @@ export async function jobInput(
         continue;
       }
       const tree = snapshot[version];
-      for await (const batch of tree.batches((e) => e.mode !== SYMLINK))
+      for await (const batch of ahead(tree))
         yield* members(version, tree, batch);
     }
     yield new Uint8Array(BLOCK * 2);

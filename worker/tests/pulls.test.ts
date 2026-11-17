@@ -305,6 +305,96 @@ describe("Sandbox preparation", () => {
     github.failures.length = 0;
   });
 
+  it("keeps the paths the profile omits out of the snapshot", async () => {
+    const pr = github.pull("acme/svc", 9);
+    // The profile at the merge base decides; a child's steps replace its parent's.
+    github.contents.set(
+      `acme/svc@${pr.base.sha}:.rio/profiles/default.yaml`,
+      'version: 1\nname: svc\nextends: team\nsteps:\n  - id: prepare\n    uses: rio/prepare@0.1.0\n    with: {omit: ["vendor/**", "docs/*.pdf"]}\n',
+    );
+    github.contents.set(
+      `acme/svc@${pr.base.sha}:.rio/profiles/team.yaml`,
+      'version: 1\nname: team\nsteps:\n  - id: prepare\n    uses: rio/prepare@0.1.0\n    with: {omit: ["src/**"]}\n',
+    );
+    const kept = {
+      "src/a.ts": "export const a = 1;\n",
+      "docs/deep/b.pdf": "kept: * stays within one directory\n",
+      "vendored.txt": "kept\n",
+    };
+    const base = {
+      ...kept,
+      "vendor/lib/x.rs": "fn x() {}\n",
+      "docs/a.pdf": "omitted\n",
+    };
+    const head = {
+      ...kept,
+      "src/a.ts": "export const a = 2;\n",
+      "vendor/lib/x.rs": "fn x() { changed() }\n",
+      "vendor/.hidden/y": "y\n",
+    };
+    github.tarballs.set(pr.base.sha, await gzipTar("acme-svc-base", base));
+    github.tarballs.set(pr.head.sha, await gzipTar("acme-svc-head", head));
+    const { env: e } = capture({ RUNNER_BACKEND: "sandbox" });
+    await handleReviewRequest(e, {
+      ...request("acme/svc", 9),
+      installation_id: 72,
+    });
+    const tree = (files: Record<string, string>): Snapshot["base"] =>
+      Object.fromEntries(
+        Object.entries(files).map(([p, content]) => [
+          p,
+          { content, mode: 0o100644 },
+        ]),
+      );
+    const [row] = await pullRows("acme/svc", 9);
+    expect((await payloadOf(row.review_id)).snapshot_id).toBe(
+      manifestOf({
+        base: tree(kept),
+        head: tree({ ...kept, "src/a.ts": "export const a = 2;\n" }),
+      }).id,
+    );
+  });
+
+  it("fetches a merge base once for the pull requests that share it", async () => {
+    const shared = sha("shared-base");
+    const base = { "src/a.ts": "export const a = 1;\n", "run.sh": "#!/bin/sh\n" };
+    github.tarballs.set(shared, await gzipTar("acme-svc-base", base));
+    const tree = (files: Record<string, string>): Snapshot["base"] =>
+      Object.fromEntries(
+        Object.entries(files).map(([p, content]) => [
+          p,
+          { content, mode: p.endsWith(".sh") ? 0o100755 : 0o100644 },
+        ]),
+      );
+    const { env: e } = capture({ RUNNER_BACKEND: "sandbox" });
+    const fetched = () =>
+      github.calls.filter((c) => c.includes(`/tarball/${shared}`)).length;
+    for (const number of [11, 12]) {
+      const pr = github.pull("acme/svc", number, { base: shared });
+      const head = { ...base, "src/a.ts": `export const a = ${number};\n` };
+      github.tarballs.set(pr.head.sha, await gzipTar("acme-svc-head", head));
+      await handleReviewRequest(e, {
+        ...request("acme/svc", number),
+        installation_id: 72,
+      });
+      const [row] = await pullRows("acme/svc", number);
+      // The same snapshot as a fetched base gives.
+      expect((await payloadOf(row.review_id)).snapshot_id).toBe(
+        manifestOf({ base: tree(base), head: tree(head) }).id,
+      );
+      expect(fetched()).toBe(1);
+    }
+    // A listing whose contents are gone is not used: the base is fetched again.
+    await runtime.DB.prepare("DELETE FROM contents").run();
+    const pr = github.pull("acme/svc", 13, { base: shared });
+    github.tarballs.set(pr.head.sha, await gzipTar("acme-svc-head", base));
+    await handleReviewRequest(e, {
+      ...request("acme/svc", 13),
+      installation_id: 72,
+    });
+    expect(fetched()).toBe(2);
+  });
+
   it("fetches both trees into a snapshot and prepares from it without network", async () => {
     const pr = github.pull("acme/svc", 2);
     const base = {

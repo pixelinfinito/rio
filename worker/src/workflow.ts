@@ -183,10 +183,27 @@ export interface WorkflowParams {
   review_id: string;
   snapshot_key: string;
 }
-/** Hypotheses verified at once, each with its own voters, while tokens allow. */
-const VERIFIED_TOGETHER = 3;
+/**
+ * Hypotheses verified at once, each with its own voters, while tokens allow.
+ * Six at a time, in batches that waited for their slowest, took reviews with
+ * 18 to 29 hypotheses 19 to 20 minutes to verify.
+ */
+const VERIFIED_TOGETHER = 12;
 /** Characters of diff an agent's first message holds, over all changed files. */
 export const CHANGE_PROMPT_CHARS = 60_000;
+/** Model turns of the security agent's conversation. */
+export const SECURITY_TURNS = 40;
+/**
+ * Time one model call of the security agent may take: late in an audit the
+ * model reasons over 150,000 tokens, and a 180 s limit ended three audits in
+ * twenty-four. Shorter than the model step's own limit.
+ */
+export const SECURITY_CALL_MS = 240000;
+/**
+ * Bytes of tool results the security agent keeps readable after its first
+ * message: a trace across files needs what it read some turns ago.
+ */
+export const SECURITY_HISTORY = { max: 384 * 1024, low: 256 * 1024 };
 /** Changed files read for an agent's prompt; the files after them are named. */
 export const CHANGE_PROMPT_FILES = 200;
 // A diff cut shorter than this says too little: the file is named instead.
@@ -352,9 +369,21 @@ export async function changeParts(
   });
   return parts.length > 1 ? parts : [];
 }
-/** Paths whose content or mode differ between two trees, by manifest hash. */
-async function differing(before: TreeReader, after: TreeReader) {
+/**
+ * Paths whose content or mode differ between two trees, by manifest hash.
+ * With `changed`, a path only one tree holds counts only when it is one of
+ * them: two snapshots of a pull request also differ by what the profile's
+ * `omit` left out of one and not of the other, which is no change.
+ */
+export async function differing(
+  before: TreeReader,
+  after: TreeReader,
+  changed?: Set<string>,
+) {
   const paths: string[] = [];
+  const one = (path: string) => {
+    if (!changed || changed.has(path)) paths.push(path);
+  };
   const a = before.list()[Symbol.asyncIterator](),
     b = after.list()[Symbol.asyncIterator]();
   let x = await a.next(),
@@ -366,10 +395,10 @@ async function differing(before: TreeReader, after: TreeReader) {
         ? -1
         : compareUtf8((x.value as Entry).path, (y.value as Entry).path);
     if (order < 0) {
-      paths.push(x.value.path);
+      one(x.value.path);
       x = await a.next();
     } else if (order > 0) {
-      paths.push(y.value.path);
+      one(y.value.path);
       y = await b.next();
     } else {
       if (x.value.hash !== y.value.hash || x.value.mode !== y.value.mode)
@@ -617,6 +646,8 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
     // not complete, and whether the report already holds the consolidated
     // findings; the stopped path reads both.
     const settled = new Map<string, number>();
+    // Hypotheses a verify step has taken.
+    const taken = new Set<string>();
     // Parts the correctness agent reviewed the change in; scales the cap on
     // unverified findings.
     let reviewedParts = 1;
@@ -672,9 +703,9 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       const key = await step
         .do(
           `model-${name}`,
-          // Longer than the call itself (`MODEL_CALL_MS`) and its bookkeeping.
-          // The one retry is for an attempt the platform failed.
-          { retries: { limit: 1, delay: "1 second" }, timeout: "4 minutes" },
+          // Longer than the longest call (`SECURITY_CALL_MS`) and its
+          // bookkeeping. The one retry is for an attempt the platform failed.
+          { retries: { limit: 1, delay: "1 second" }, timeout: "5 minutes" },
           modelStep(
             store,
             requests,
@@ -2059,6 +2090,14 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                 // the conversation's repair limits, before the agent fails.
                 ...(agent === "security"
                   ? {
+                      // An audit follows values across files: it takes more
+                      // turns than a review of the diff, and is told how many
+                      // it has left so that it ends with a result.
+                      maxTurns: SECURITY_TURNS,
+                      turnNotice: true,
+                      history: SECURITY_HISTORY,
+                      callMs: SECURITY_CALL_MS,
+                      retryCall: true,
                       validateResult: (value: any) => {
                         invariant(securityResult(value), SECURITY_RESULT);
                         return value;
@@ -2380,10 +2419,13 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           }
           qaVerification = undefined;
         }
-        let candidates = hypotheses;
+        // A verify step that runs again, after a step the review did not
+        // wait for, takes only the hypotheses raised since.
+        let candidates = hypotheses.filter((h) => !taken.has(h.id));
+        for (const h of candidates) taken.add(h.id);
         if (lineage?.diff_only) {
           const reverify = planReverification(
-            hypotheses,
+            candidates,
             lineage,
             trees,
             head,
@@ -2397,12 +2439,21 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             await progress.settled({ verified: v, incomplete: 0 });
           }
           diffOnlyAudit = {
-            reverified: reverify.verify.map((h) => h.id),
-            carried: reverify.carried.map((v) => v.hypothesis.id),
-            not_reverified: reverify.skipped,
+            reverified: [
+              ...(diffOnlyAudit?.reverified ?? []),
+              ...reverify.verify.map((h) => h.id),
+            ],
+            carried: [
+              ...(diffOnlyAudit?.carried ?? []),
+              ...reverify.carried.map((v) => v.hypothesis.id),
+            ],
+            not_reverified: [
+              ...(diffOnlyAudit?.not_reverified ?? []),
+              ...reverify.skipped,
+            ],
           };
         }
-        // Hypotheses are verified a few at a time, each with its own voters,
+        // Hypotheses are verified several at a time, each with its own voters,
         // conversations and steps; `verified` keeps the order they were raised in.
         const outcomes: Verified[] = [];
         let done = 0;
@@ -2490,24 +2541,33 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           );
         };
         try {
-          for (let from = 0; from < candidates.length;) {
-            // Every voter's call reserves its whole conversation, up to the
-            // size where one is compacted, until the call returns: only as
-            // many hypotheses start together as the review's tokens cover.
+          // A hypothesis starts as soon as another ends, so none waits for
+          // the slowest of a batch. Every voter's call reserves its whole
+          // conversation, up to the size where one is compacted, until the
+          // call returns: only as many run together as the review's tokens
+          // cover, counting each running one as if it held its reservation.
+          const running = new Set<Promise<void>>();
+          const faults: unknown[] = [];
+          for (let from = 0; from < candidates.length && !faults.length;) {
             const room = Math.floor(
               (await ledger.remaining()) /
                 (submission.profile.verify.voters * HISTORY_BYTES),
             );
-            const together = Math.max(1, Math.min(VERIFIED_TOGETHER, room));
-            const batch = await Promise.allSettled(
-              candidates
-                .slice(from, from + together)
-                .map((h, i) => verifyOne(h, from + i)),
-            );
-            const failed = batch.find((r) => r.status === "rejected");
-            if (failed) throw failed.reason;
-            from += together;
+            if (
+              running.size &&
+              (running.size >= VERIFIED_TOGETHER || room <= running.size)
+            ) {
+              await Promise.race(running);
+              continue;
+            }
+            const run: Promise<void> = verifyOne(candidates[from], from)
+              .catch((error) => void faults.push(error))
+              .finally(() => running.delete(run));
+            running.add(run);
+            from++;
           }
+          await Promise.all(running);
+          if (faults.length) throw faults[0];
         } finally {
           // A sparse list where a verification did not end: `filter` skips the gaps.
           verified.push(...outcomes.filter(() => true));
@@ -2524,6 +2584,91 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         }
       await step.do(`finished-${s.id}`, () =>
         store.event(id, "step:finished", { step: s.id }),
+      );
+    };
+    // The repository's records of a report's findings, applied to it:
+    // remembered dismissals and history on recurrences.
+    const consult = async (
+      target: typeof report,
+      repository: string,
+      name: string,
+    ) => {
+      const historyKey = await step.do(name, async () => {
+        const produced: any[] = [
+          ...target.findings,
+          ...target.risks,
+          ...(target.security ?? []),
+        ];
+        const files = await materialize(
+          snapshot.head,
+          produced.flatMap((f) => [
+            f.location.path,
+            ...f.locations.map((l: any) => l.path),
+          ]),
+        );
+        const text = (path: string) =>
+          files[path] && !files[path].encoding ? files[path].content : null;
+        return store.put(`reviews/${id}/${name}.json`, {
+          records: await loadRecords(
+            this.env,
+            load.tenant,
+            repository,
+            produced.map((f) => f.id),
+          ),
+          hashes: Object.fromEntries(
+            produced.map((f) => [f.id, findingHash(f, graphs.head, text)]),
+          ),
+        });
+      });
+      const history = await store.get<{
+        records: RegistryRecord[];
+        hashes: Record<string, string | null>;
+      }>(historyKey);
+      applyHistory(
+        target,
+        history.records,
+        new Map(Object.entries(history.hashes)),
+        new Set(
+          (lineage?.prior ?? [])
+            .filter((p) => p.author_response)
+            .map((p) => p.id),
+        ),
+      );
+      return history;
+    };
+    // Publishes what is verified while a follow-up step still runs: a copy of
+    // the report as it would read now, on the pull request's comments and its
+    // check run, which stays in progress. Earlier findings are not closed and
+    // nothing is recorded: the review's last publication does both, over the
+    // same comments. QA results are published once, at the end.
+    const publishEarly = async () => {
+      if (!lineage || report.qa || !report.review?.pull_request) return;
+      const draft = structuredClone(report);
+      const findings = present(draft);
+      draft.summary.suppressed += findings.audit.suppressed;
+      draft.review.rio_version = this.env.RIO_VERSION;
+      const repository = lineage.repository ?? submission.repository ?? null;
+      if (repository) await consult(draft, repository, "history-early");
+      applyLineage(draft, lineage, {
+        head,
+        trees,
+        graph: graphs.head,
+        agents_reassessed: false,
+        changed: submission.changed,
+        max_lines: submission.profile.max_lines,
+      });
+      await step.do("publish-early", () =>
+        publishReview(this.env, {
+          review: id,
+          report: draft,
+          policy: submission.profile.publish,
+          fail_on: submission.profile.fail_on,
+          lineage: { id: lineage!.id, snapshot_id: lineage!.snapshot_id },
+          updates: [],
+          prior: lineage!.prior.map((p) => ({ id: p.id, finding: p.finding })),
+          pending:
+            "The security review of this change is still running. Its findings are added here, and this check completes, when it ends.",
+        }),
       );
     };
     // Consolidates verified hypotheses into a report: the findings lists, the
@@ -2671,7 +2816,18 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             this.env,
             lineage.previous_head_key,
           );
-          const paths = await differing(previousHead.head, snapshot.head);
+          // A round whose profile omits other paths than the round before
+          // differs from it by all of them: thousands of files that this
+          // pull request never touched.
+          const paths = await differing(
+            previousHead.head,
+            snapshot.head,
+            new Set(
+              submission.changed.flatMap((f) =>
+                f.old_path ? [f.path, f.old_path] : [f.path],
+              ),
+            ),
+          );
           incremental = incrementalChanges(
             await materialize(previousHead.head, paths),
             await materialize(snapshot.head, paths),
@@ -2685,6 +2841,15 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         store.selectBudget(id, submission.profile, plan.mode),
       );
       const pending = new Map(submission.profile.steps.map((s) => [s.id, s]));
+      const followUps: Promise<{ ended: true; error?: unknown }>[] = [];
+      // Only where a verify step waits for it: there the review has findings
+      // to publish before the step ends, and a step to verify what it raises.
+      const followsUp = (s: Submission["profile"]["steps"][number]) =>
+        s.uses.startsWith("rio/security@") &&
+        s.with.follow_up === true &&
+        submission.profile.steps.some(
+          (v) => v.uses.startsWith("rio/verify@") && v.needs.includes(s.id),
+        );
       while (pending.size) {
         const ready = [...pending.values()]
           .filter((s) => s.needs.every((n) => done.has(n)))
@@ -2694,11 +2859,43 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         const batch = ready[0].parallel
           ? ready.filter((s) => s.parallel)
           : [ready[0]];
-        await Promise.all(batch.map(perform));
+        // A follow-up step is started and not waited for: the steps after it
+        // run on what the others produced, and its own work is verified and
+        // published when it ends.
+        for (const s of batch.filter(followsUp))
+          followUps.push(
+            perform(s).then(
+              () => ({ ended: true }),
+              (error) => ({ ended: true, error }),
+            ),
+          );
+        await Promise.all(batch.filter((s) => !followsUp(s)).map(perform));
         for (const s of batch) {
           done.add(s.id);
           pending.delete(s.id);
         }
+      }
+      if (followUps.length) {
+        let running = true;
+        const all = Promise.all(followUps).then((ends) => {
+          running = false;
+          return ends;
+        });
+        // Let a step that ended in this turn say so.
+        await Promise.resolve();
+        if (running)
+          try {
+            await publishEarly();
+          } catch (error) {
+            // The review's last publication holds everything this one would.
+            report.footer.notes.push(
+              `The findings ready before the security review ended were not published early (${redact(error instanceof Error ? error.message : "error").slice(0, 160)}).`,
+            );
+          }
+        for (const end of await all) if ("error" in end) throw end.error;
+        for (const s of submission.profile.steps)
+          if (s.uses.startsWith("rio/verify@") && done.has(s.id))
+            await perform({ ...s, id: `${s.id}-follow-up` });
       }
       const findings = present(report);
       consolidated = true;
@@ -2772,47 +2969,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       let records: RegistryRecord[] = [];
       let hashes: Record<string, string | null> = {};
       if (repository) {
-        const historyKey = await step.do("history", async () => {
-          const produced: any[] = [
-            ...report.findings,
-            ...report.risks,
-            ...(report.security ?? []),
-          ];
-          const files = await materialize(
-            snapshot.head,
-            produced.flatMap((f) => [
-              f.location.path,
-              ...f.locations.map((l: any) => l.path),
-            ]),
-          );
-          const text = (path: string) =>
-            files[path] && !files[path].encoding ? files[path].content : null;
-          return store.put(`reviews/${id}/history.json`, {
-            records: await loadRecords(
-              this.env,
-              load.tenant,
-              repository,
-              produced.map((f) => f.id),
-            ),
-            hashes: Object.fromEntries(
-              produced.map((f) => [f.id, findingHash(f, graphs.head, text)]),
-            ),
-          });
-        });
-        ({ records, hashes } = await store.get<{
-          records: RegistryRecord[];
-          hashes: Record<string, string | null>;
-        }>(historyKey));
-        applyHistory(
-          report,
-          records,
-          new Map(Object.entries(hashes)),
-          new Set(
-            (lineage?.prior ?? [])
-              .filter((p) => p.author_response)
-              .map((p) => p.id),
-          ),
-        );
+        ({ records, hashes } = await consult(report, repository, "history"));
         const threshold =
           submission.profile.steps.find((s) => s.uses.startsWith("rio/report@"))
             ?.with?.proposal_threshold ?? 3;

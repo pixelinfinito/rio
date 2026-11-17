@@ -81,29 +81,61 @@ async function read(
   }
 }
 
+/** What a repository's default profile at the merge base says about preparation. */
+export interface Preparation {
+  /** How long the review may spend being prepared. */
+  time: number;
+  /** `rio/prepare`'s `omit` globs: paths kept out of the snapshot. */
+  omit: string[];
+}
+
+/** The `omit` globs of a profile's own `rio/prepare` step; null when it declares no steps. */
+function omitted(profile: any): string[] | null {
+  if (!Array.isArray(profile.steps)) return null;
+  const step = profile.steps.find(
+    (s: any) =>
+      s && typeof s === "object" && /^rio\/prepare(@|$)/.test(String(s.uses)),
+  );
+  const omit = step?.with?.omit;
+  return Array.isArray(omit)
+    ? omit.filter((g: unknown): g is string => typeof g === "string")
+    : [];
+}
+
 /**
- * How long a pull request review may spend being prepared: `budget.prepare`
- * of the repository's default profile at the merge base, or of the nearest
- * profile it extends that sets one. The review runs under the same profile,
- * which the runner validates; anything this cannot read or understand keeps
- * the default, so a broken profile fails the review there, not here.
+ * What the repository's default profile at the merge base says about
+ * preparing a pull request review: `budget.prepare` (how long it may take)
+ * and `rio/prepare`'s `omit` (what stays out of the snapshot), each from the
+ * nearest profile of the `extends` chain that sets it. A child's `steps`
+ * replace its parent's, so the first profile that declares steps decides
+ * `omit`. The review runs under the same profile, which the runner
+ * validates; anything this cannot read or understand keeps the defaults, so
+ * a broken profile fails the review there, not here.
  */
-export async function preparationTime(
+export async function preparation(
   token: InstallationToken,
   repository: string,
   commit: string,
-): Promise<number> {
+): Promise<Preparation> {
   let path = DEFAULT_PROFILE;
   const seen = new Set<string>([path]);
   let reads = 1;
+  let time: number | null = null;
+  let omit: string[] | null = null;
   try {
     let text = await read(token, repository, commit, path);
-    while (text !== null) {
+    while (text !== null && (time === null || omit === null)) {
       const profile = parse(text, { maxAliasCount: 100 });
       if (!profile || typeof profile !== "object") break;
       const budget = (profile as any).budget;
-      if (budget && typeof budget === "object" && "prepare" in budget)
-        return prepareMs(budget.prepare) ?? PREPARE_MS;
+      if (
+        time === null &&
+        budget &&
+        typeof budget === "object" &&
+        "prepare" in budget
+      )
+        time = prepareMs(budget.prepare) ?? PREPARE_MS;
+      omit ??= omitted(profile);
       const reference = (profile as any).extends;
       if (typeof reference !== "string") break;
       text = null;
@@ -119,7 +151,16 @@ export async function preparationTime(
       }
     }
   } catch {
-    // GitHub unavailable or a profile that does not parse: the default applies.
+    // GitHub unavailable or a profile that does not parse: the defaults apply.
   }
-  return PREPARE_MS;
+  return { time: time ?? PREPARE_MS, omit: omit ?? [] };
+}
+
+/** How long a pull request review may spend being prepared (see `preparation`). */
+export async function preparationTime(
+  token: InstallationToken,
+  repository: string,
+  commit: string,
+): Promise<number> {
+  return (await preparation(token, repository, commit)).time;
 }
