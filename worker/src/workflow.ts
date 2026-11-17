@@ -369,9 +369,21 @@ export async function changeParts(
   });
   return parts.length > 1 ? parts : [];
 }
-/** Paths whose content or mode differ between two trees, by manifest hash. */
-async function differing(before: TreeReader, after: TreeReader) {
+/**
+ * Paths whose content or mode differ between two trees, by manifest hash.
+ * With `changed`, a path only one tree holds counts only when it is one of
+ * them: two snapshots of a pull request also differ by what the profile's
+ * `omit` left out of one and not of the other, which is no change.
+ */
+export async function differing(
+  before: TreeReader,
+  after: TreeReader,
+  changed?: Set<string>,
+) {
   const paths: string[] = [];
+  const one = (path: string) => {
+    if (!changed || changed.has(path)) paths.push(path);
+  };
   const a = before.list()[Symbol.asyncIterator](),
     b = after.list()[Symbol.asyncIterator]();
   let x = await a.next(),
@@ -383,10 +395,10 @@ async function differing(before: TreeReader, after: TreeReader) {
         ? -1
         : compareUtf8((x.value as Entry).path, (y.value as Entry).path);
     if (order < 0) {
-      paths.push(x.value.path);
+      one(x.value.path);
       x = await a.next();
     } else if (order > 0) {
-      paths.push(y.value.path);
+      one(y.value.path);
       y = await b.next();
     } else {
       if (x.value.hash !== y.value.hash || x.value.mode !== y.value.mode)
@@ -2696,7 +2708,18 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             this.env,
             lineage.previous_head_key,
           );
-          const paths = await differing(previousHead.head, snapshot.head);
+          // A round whose profile omits other paths than the round before
+          // differs from it by all of them: thousands of files that this
+          // pull request never touched.
+          const paths = await differing(
+            previousHead.head,
+            snapshot.head,
+            new Set(
+              submission.changed.flatMap((f) =>
+                f.old_path ? [f.path, f.old_path] : [f.path],
+              ),
+            ),
+          );
           incremental = incrementalChanges(
             await materialize(previousHead.head, paths),
             await materialize(snapshot.head, paths),
