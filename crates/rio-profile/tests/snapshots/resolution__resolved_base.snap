@@ -83,6 +83,7 @@ steps:
       states:
       - new
       - worsened
+    follow_up: false
     max_defects: 15
     posture: thorough
 - id: qa

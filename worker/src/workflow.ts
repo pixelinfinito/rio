@@ -646,6 +646,8 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
     // not complete, and whether the report already holds the consolidated
     // findings; the stopped path reads both.
     const settled = new Map<string, number>();
+    // Hypotheses a verify step has taken.
+    const taken = new Set<string>();
     // Parts the correctness agent reviewed the change in; scales the cap on
     // unverified findings.
     let reviewedParts = 1;
@@ -2417,10 +2419,13 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           }
           qaVerification = undefined;
         }
-        let candidates = hypotheses;
+        // A verify step that runs again, after a step the review did not
+        // wait for, takes only the hypotheses raised since.
+        let candidates = hypotheses.filter((h) => !taken.has(h.id));
+        for (const h of candidates) taken.add(h.id);
         if (lineage?.diff_only) {
           const reverify = planReverification(
-            hypotheses,
+            candidates,
             lineage,
             trees,
             head,
@@ -2434,9 +2439,18 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             await progress.settled({ verified: v, incomplete: 0 });
           }
           diffOnlyAudit = {
-            reverified: reverify.verify.map((h) => h.id),
-            carried: reverify.carried.map((v) => v.hypothesis.id),
-            not_reverified: reverify.skipped,
+            reverified: [
+              ...(diffOnlyAudit?.reverified ?? []),
+              ...reverify.verify.map((h) => h.id),
+            ],
+            carried: [
+              ...(diffOnlyAudit?.carried ?? []),
+              ...reverify.carried.map((v) => v.hypothesis.id),
+            ],
+            not_reverified: [
+              ...(diffOnlyAudit?.not_reverified ?? []),
+              ...reverify.skipped,
+            ],
           };
         }
         // Hypotheses are verified several at a time, each with its own voters,
@@ -2570,6 +2584,91 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         }
       await step.do(`finished-${s.id}`, () =>
         store.event(id, "step:finished", { step: s.id }),
+      );
+    };
+    // The repository's records of a report's findings, applied to it:
+    // remembered dismissals and history on recurrences.
+    const consult = async (
+      target: typeof report,
+      repository: string,
+      name: string,
+    ) => {
+      const historyKey = await step.do(name, async () => {
+        const produced: any[] = [
+          ...target.findings,
+          ...target.risks,
+          ...(target.security ?? []),
+        ];
+        const files = await materialize(
+          snapshot.head,
+          produced.flatMap((f) => [
+            f.location.path,
+            ...f.locations.map((l: any) => l.path),
+          ]),
+        );
+        const text = (path: string) =>
+          files[path] && !files[path].encoding ? files[path].content : null;
+        return store.put(`reviews/${id}/${name}.json`, {
+          records: await loadRecords(
+            this.env,
+            load.tenant,
+            repository,
+            produced.map((f) => f.id),
+          ),
+          hashes: Object.fromEntries(
+            produced.map((f) => [f.id, findingHash(f, graphs.head, text)]),
+          ),
+        });
+      });
+      const history = await store.get<{
+        records: RegistryRecord[];
+        hashes: Record<string, string | null>;
+      }>(historyKey);
+      applyHistory(
+        target,
+        history.records,
+        new Map(Object.entries(history.hashes)),
+        new Set(
+          (lineage?.prior ?? [])
+            .filter((p) => p.author_response)
+            .map((p) => p.id),
+        ),
+      );
+      return history;
+    };
+    // Publishes what is verified while a follow-up step still runs: a copy of
+    // the report as it would read now, on the pull request's comments and its
+    // check run, which stays in progress. Earlier findings are not closed and
+    // nothing is recorded: the review's last publication does both, over the
+    // same comments. QA results are published once, at the end.
+    const publishEarly = async () => {
+      if (!lineage || report.qa || !report.review?.pull_request) return;
+      const draft = structuredClone(report);
+      const findings = present(draft);
+      draft.summary.suppressed += findings.audit.suppressed;
+      draft.review.rio_version = this.env.RIO_VERSION;
+      const repository = lineage.repository ?? submission.repository ?? null;
+      if (repository) await consult(draft, repository, "history-early");
+      applyLineage(draft, lineage, {
+        head,
+        trees,
+        graph: graphs.head,
+        agents_reassessed: false,
+        changed: submission.changed,
+        max_lines: submission.profile.max_lines,
+      });
+      await step.do("publish-early", () =>
+        publishReview(this.env, {
+          review: id,
+          report: draft,
+          policy: submission.profile.publish,
+          fail_on: submission.profile.fail_on,
+          lineage: { id: lineage!.id, snapshot_id: lineage!.snapshot_id },
+          updates: [],
+          prior: lineage!.prior.map((p) => ({ id: p.id, finding: p.finding })),
+          pending:
+            "The security review of this change is still running. Its findings are added here, and this check completes, when it ends.",
+        }),
       );
     };
     // Consolidates verified hypotheses into a report: the findings lists, the
@@ -2742,6 +2841,15 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         store.selectBudget(id, submission.profile, plan.mode),
       );
       const pending = new Map(submission.profile.steps.map((s) => [s.id, s]));
+      const followUps: Promise<{ ended: true; error?: unknown }>[] = [];
+      // Only where a verify step waits for it: there the review has findings
+      // to publish before the step ends, and a step to verify what it raises.
+      const followsUp = (s: Submission["profile"]["steps"][number]) =>
+        s.uses.startsWith("rio/security@") &&
+        s.with.follow_up === true &&
+        submission.profile.steps.some(
+          (v) => v.uses.startsWith("rio/verify@") && v.needs.includes(s.id),
+        );
       while (pending.size) {
         const ready = [...pending.values()]
           .filter((s) => s.needs.every((n) => done.has(n)))
@@ -2751,11 +2859,43 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         const batch = ready[0].parallel
           ? ready.filter((s) => s.parallel)
           : [ready[0]];
-        await Promise.all(batch.map(perform));
+        // A follow-up step is started and not waited for: the steps after it
+        // run on what the others produced, and its own work is verified and
+        // published when it ends.
+        for (const s of batch.filter(followsUp))
+          followUps.push(
+            perform(s).then(
+              () => ({ ended: true }),
+              (error) => ({ ended: true, error }),
+            ),
+          );
+        await Promise.all(batch.filter((s) => !followsUp(s)).map(perform));
         for (const s of batch) {
           done.add(s.id);
           pending.delete(s.id);
         }
+      }
+      if (followUps.length) {
+        let running = true;
+        const all = Promise.all(followUps).then((ends) => {
+          running = false;
+          return ends;
+        });
+        // Let a step that ended in this turn say so.
+        await Promise.resolve();
+        if (running)
+          try {
+            await publishEarly();
+          } catch (error) {
+            // The review's last publication holds everything this one would.
+            report.footer.notes.push(
+              `The findings ready before the security review ended were not published early (${redact(error instanceof Error ? error.message : "error").slice(0, 160)}).`,
+            );
+          }
+        for (const end of await all) if ("error" in end) throw end.error;
+        for (const s of submission.profile.steps)
+          if (s.uses.startsWith("rio/verify@") && done.has(s.id))
+            await perform({ ...s, id: `${s.id}-follow-up` });
       }
       const findings = present(report);
       consolidated = true;
@@ -2829,47 +2969,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       let records: RegistryRecord[] = [];
       let hashes: Record<string, string | null> = {};
       if (repository) {
-        const historyKey = await step.do("history", async () => {
-          const produced: any[] = [
-            ...report.findings,
-            ...report.risks,
-            ...(report.security ?? []),
-          ];
-          const files = await materialize(
-            snapshot.head,
-            produced.flatMap((f) => [
-              f.location.path,
-              ...f.locations.map((l: any) => l.path),
-            ]),
-          );
-          const text = (path: string) =>
-            files[path] && !files[path].encoding ? files[path].content : null;
-          return store.put(`reviews/${id}/history.json`, {
-            records: await loadRecords(
-              this.env,
-              load.tenant,
-              repository,
-              produced.map((f) => f.id),
-            ),
-            hashes: Object.fromEntries(
-              produced.map((f) => [f.id, findingHash(f, graphs.head, text)]),
-            ),
-          });
-        });
-        ({ records, hashes } = await store.get<{
-          records: RegistryRecord[];
-          hashes: Record<string, string | null>;
-        }>(historyKey));
-        applyHistory(
-          report,
-          records,
-          new Map(Object.entries(hashes)),
-          new Set(
-            (lineage?.prior ?? [])
-              .filter((p) => p.author_response)
-              .map((p) => p.id),
-          ),
-        );
+        ({ records, hashes } = await consult(report, repository, "history"));
         const threshold =
           submission.profile.steps.find((s) => s.uses.startsWith("rio/report@"))
             ?.with?.proposal_threshold ?? 3;

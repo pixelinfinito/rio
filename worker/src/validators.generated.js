@@ -98342,6 +98342,12 @@ const schema65 = {
       enum: ["critical-only", "balanced", "thorough"],
       default: "thorough",
     },
+    follow_up: {
+      type: "boolean",
+      default: false,
+      description:
+        "Do not hold the review for this step: the verify step that needs it runs on what the other steps raised and a pull request review publishes that, with its check run in progress; when this step ends, what it raised is verified and the review publishes again, over the same comments, and completes",
+    },
     max_defects: { type: "integer", minimum: 1 },
     catalog: {
       enum: ["owasp-top10-2025", "asvs-5.0"],
@@ -98412,6 +98418,7 @@ function validate43(
       if (!(
         key0 === "enabled" ||
         key0 === "posture" ||
+        key0 === "follow_up" ||
         key0 === "max_defects" ||
         key0 === "catalog" ||
         key0 === "fail_on"
@@ -98470,15 +98477,14 @@ function validate43(
         errors++;
       }
     }
-    if (data.max_defects !== undefined) {
-      let data2 = data.max_defects;
-      if (!(typeof data2 == "number" && !(data2 % 1) && !isNaN(data2))) {
+    if (data.follow_up !== undefined) {
+      if (typeof data.follow_up !== "boolean") {
         const err3 = {
-          instancePath: instancePath + "/max_defects",
-          schemaPath: "#/properties/max_defects/type",
+          instancePath: instancePath + "/follow_up",
+          schemaPath: "#/properties/follow_up/type",
           keyword: "type",
-          params: { type: "integer" },
-          message: "must be integer",
+          params: { type: "boolean" },
+          message: "must be boolean",
         };
         if (vErrors === null) {
           vErrors = [err3];
@@ -98487,9 +98493,27 @@ function validate43(
         }
         errors++;
       }
-      if (typeof data2 == "number") {
-        if (data2 < 1 || isNaN(data2)) {
-          const err4 = {
+    }
+    if (data.max_defects !== undefined) {
+      let data3 = data.max_defects;
+      if (!(typeof data3 == "number" && !(data3 % 1) && !isNaN(data3))) {
+        const err4 = {
+          instancePath: instancePath + "/max_defects",
+          schemaPath: "#/properties/max_defects/type",
+          keyword: "type",
+          params: { type: "integer" },
+          message: "must be integer",
+        };
+        if (vErrors === null) {
+          vErrors = [err4];
+        } else {
+          vErrors.push(err4);
+        }
+        errors++;
+      }
+      if (typeof data3 == "number") {
+        if (data3 < 1 || isNaN(data3)) {
+          const err5 = {
             instancePath: instancePath + "/max_defects",
             schemaPath: "#/properties/max_defects/minimum",
             keyword: "minimum",
@@ -98497,18 +98521,18 @@ function validate43(
             message: "must be >= 1",
           };
           if (vErrors === null) {
-            vErrors = [err4];
+            vErrors = [err5];
           } else {
-            vErrors.push(err4);
+            vErrors.push(err5);
           }
           errors++;
         }
       }
     }
     if (data.catalog !== undefined) {
-      let data3 = data.catalog;
-      if (!(data3 === "owasp-top10-2025" || data3 === "asvs-5.0")) {
-        const err5 = {
+      let data4 = data.catalog;
+      if (!(data4 === "owasp-top10-2025" || data4 === "asvs-5.0")) {
+        const err6 = {
           instancePath: instancePath + "/catalog",
           schemaPath: "#/properties/catalog/enum",
           keyword: "enum",
@@ -98516,17 +98540,17 @@ function validate43(
           message: "must be equal to one of the allowed values",
         };
         if (vErrors === null) {
-          vErrors = [err5];
+          vErrors = [err6];
         } else {
-          vErrors.push(err5);
+          vErrors.push(err6);
         }
         errors++;
       }
     }
     if (data.fail_on !== undefined) {
-      let data4 = data.fail_on;
-      if (data4 && typeof data4 == "object" && !Array.isArray(data4)) {
-        for (const key1 in data4) {
+      let data5 = data.fail_on;
+      if (data5 && typeof data5 == "object" && !Array.isArray(data5)) {
+        for (const key1 in data5) {
           if (!(
             key1 === "evidence" ||
             key1 === "categories" ||
@@ -98535,7 +98559,7 @@ function validate43(
             key1 === "incomplete" ||
             key1 === "required_checks"
           )) {
-            const err6 = {
+            const err7 = {
               instancePath: instancePath + "/fail_on",
               schemaPath: "#/properties/fail_on/additionalProperties",
               keyword: "additionalProperties",
@@ -98543,22 +98567,22 @@ function validate43(
               message: "must NOT have additional properties",
             };
             if (vErrors === null) {
-              vErrors = [err6];
+              vErrors = [err7];
             } else {
-              vErrors.push(err6);
+              vErrors.push(err7);
             }
             errors++;
           }
         }
-        if (data4.evidence !== undefined) {
-          let data5 = data4.evidence;
+        if (data5.evidence !== undefined) {
+          let data6 = data5.evidence;
           if (!(
-            data5 === "reproduced" ||
-            data5 === "static_proven" ||
-            data5 === "plausible" ||
-            data5 === "refuted"
+            data6 === "reproduced" ||
+            data6 === "static_proven" ||
+            data6 === "plausible" ||
+            data6 === "refuted"
           )) {
-            const err7 = {
+            const err8 = {
               instancePath: instancePath + "/fail_on/evidence",
               schemaPath: "#/properties/fail_on/properties/evidence/enum",
               keyword: "enum",
@@ -98569,25 +98593,25 @@ function validate43(
               message: "must be equal to one of the allowed values",
             };
             if (vErrors === null) {
-              vErrors = [err7];
+              vErrors = [err8];
             } else {
-              vErrors.push(err7);
+              vErrors.push(err8);
             }
             errors++;
           }
         }
-        if (data4.categories !== undefined) {
-          let data6 = data4.categories;
-          if (Array.isArray(data6)) {
-            const len0 = data6.length;
+        if (data5.categories !== undefined) {
+          let data7 = data5.categories;
+          if (Array.isArray(data7)) {
+            const len0 = data7.length;
             for (let i0 = 0; i0 < len0; i0++) {
-              let data7 = data6[i0];
+              let data8 = data7[i0];
               if (!(
-                data7 === "defect" ||
-                data7 === "risk" ||
-                data7 === "security"
+                data8 === "defect" ||
+                data8 === "risk" ||
+                data8 === "security"
               )) {
-                const err8 = {
+                const err9 = {
                   instancePath: instancePath + "/fail_on/categories/" + i0,
                   schemaPath:
                     "#/properties/fail_on/properties/categories/items/enum",
@@ -98600,20 +98624,20 @@ function validate43(
                   message: "must be equal to one of the allowed values",
                 };
                 if (vErrors === null) {
-                  vErrors = [err8];
+                  vErrors = [err9];
                 } else {
-                  vErrors.push(err8);
+                  vErrors.push(err9);
                 }
                 errors++;
               }
             }
-            let i1 = data6.length;
+            let i1 = data7.length;
             let j0;
             if (i1 > 1) {
               outer0: for (; i1--;) {
                 for (j0 = i1; j0--;) {
-                  if (func0(data6[i1], data6[j0])) {
-                    const err9 = {
+                  if (func0(data7[i1], data7[j0])) {
+                    const err10 = {
                       instancePath: instancePath + "/fail_on/categories",
                       schemaPath:
                         "#/properties/fail_on/properties/categories/uniqueItems",
@@ -98627,9 +98651,9 @@ function validate43(
                         " are identical)",
                     };
                     if (vErrors === null) {
-                      vErrors = [err9];
+                      vErrors = [err10];
                     } else {
-                      vErrors.push(err9);
+                      vErrors.push(err10);
                     }
                     errors++;
                     break outer0;
@@ -98638,7 +98662,7 @@ function validate43(
               }
             }
           } else {
-            const err10 = {
+            const err11 = {
               instancePath: instancePath + "/fail_on/categories",
               schemaPath: "#/properties/fail_on/properties/categories/type",
               keyword: "type",
@@ -98646,27 +98670,27 @@ function validate43(
               message: "must be array",
             };
             if (vErrors === null) {
-              vErrors = [err10];
+              vErrors = [err11];
             } else {
-              vErrors.push(err10);
+              vErrors.push(err11);
             }
             errors++;
           }
         }
-        if (data4.states !== undefined) {
-          let data8 = data4.states;
-          if (Array.isArray(data8)) {
-            const len1 = data8.length;
+        if (data5.states !== undefined) {
+          let data9 = data5.states;
+          if (Array.isArray(data9)) {
+            const len1 = data9.length;
             for (let i2 = 0; i2 < len1; i2++) {
-              let data9 = data8[i2];
+              let data10 = data9[i2];
               if (!(
-                data9 === "new" ||
-                data9 === "worsened" ||
-                data9 === "pre-existing" ||
-                data9 === "fixed" ||
-                data9 === "unclassified"
+                data10 === "new" ||
+                data10 === "worsened" ||
+                data10 === "pre-existing" ||
+                data10 === "fixed" ||
+                data10 === "unclassified"
               )) {
-                const err11 = {
+                const err12 = {
                   instancePath: instancePath + "/fail_on/states/" + i2,
                   schemaPath:
                     "#/properties/fail_on/properties/states/items/enum",
@@ -98678,20 +98702,20 @@ function validate43(
                   message: "must be equal to one of the allowed values",
                 };
                 if (vErrors === null) {
-                  vErrors = [err11];
+                  vErrors = [err12];
                 } else {
-                  vErrors.push(err11);
+                  vErrors.push(err12);
                 }
                 errors++;
               }
             }
-            let i3 = data8.length;
+            let i3 = data9.length;
             let j1;
             if (i3 > 1) {
               outer1: for (; i3--;) {
                 for (j1 = i3; j1--;) {
-                  if (func0(data8[i3], data8[j1])) {
-                    const err12 = {
+                  if (func0(data9[i3], data9[j1])) {
+                    const err13 = {
                       instancePath: instancePath + "/fail_on/states",
                       schemaPath:
                         "#/properties/fail_on/properties/states/uniqueItems",
@@ -98705,9 +98729,9 @@ function validate43(
                         " are identical)",
                     };
                     if (vErrors === null) {
-                      vErrors = [err12];
+                      vErrors = [err13];
                     } else {
-                      vErrors.push(err12);
+                      vErrors.push(err13);
                     }
                     errors++;
                     break outer1;
@@ -98716,7 +98740,7 @@ function validate43(
               }
             }
           } else {
-            const err13 = {
+            const err14 = {
               instancePath: instancePath + "/fail_on/states",
               schemaPath: "#/properties/fail_on/properties/states/type",
               keyword: "type",
@@ -98724,22 +98748,22 @@ function validate43(
               message: "must be array",
             };
             if (vErrors === null) {
-              vErrors = [err13];
+              vErrors = [err14];
             } else {
-              vErrors.push(err13);
+              vErrors.push(err14);
             }
             errors++;
           }
         }
-        if (data4.rules !== undefined) {
-          let data10 = data4.rules;
-          if (Array.isArray(data10)) {
-            const len2 = data10.length;
+        if (data5.rules !== undefined) {
+          let data11 = data5.rules;
+          if (Array.isArray(data11)) {
+            const len2 = data11.length;
             for (let i4 = 0; i4 < len2; i4++) {
-              let data11 = data10[i4];
-              if (typeof data11 === "string") {
-                if (func2(data11) < 1) {
-                  const err14 = {
+              let data12 = data11[i4];
+              if (typeof data12 === "string") {
+                if (func2(data12) < 1) {
+                  const err15 = {
                     instancePath: instancePath + "/fail_on/rules/" + i4,
                     schemaPath:
                       "#/properties/fail_on/properties/rules/items/minLength",
@@ -98748,14 +98772,14 @@ function validate43(
                     message: "must NOT have fewer than 1 characters",
                   };
                   if (vErrors === null) {
-                    vErrors = [err14];
+                    vErrors = [err15];
                   } else {
-                    vErrors.push(err14);
+                    vErrors.push(err15);
                   }
                   errors++;
                 }
               } else {
-                const err15 = {
+                const err16 = {
                   instancePath: instancePath + "/fail_on/rules/" + i4,
                   schemaPath:
                     "#/properties/fail_on/properties/rules/items/type",
@@ -98764,37 +98788,20 @@ function validate43(
                   message: "must be string",
                 };
                 if (vErrors === null) {
-                  vErrors = [err15];
+                  vErrors = [err16];
                 } else {
-                  vErrors.push(err15);
+                  vErrors.push(err16);
                 }
                 errors++;
               }
             }
           } else {
-            const err16 = {
+            const err17 = {
               instancePath: instancePath + "/fail_on/rules",
               schemaPath: "#/properties/fail_on/properties/rules/type",
               keyword: "type",
               params: { type: "array" },
               message: "must be array",
-            };
-            if (vErrors === null) {
-              vErrors = [err16];
-            } else {
-              vErrors.push(err16);
-            }
-            errors++;
-          }
-        }
-        if (data4.incomplete !== undefined) {
-          if (typeof data4.incomplete !== "boolean") {
-            const err17 = {
-              instancePath: instancePath + "/fail_on/incomplete",
-              schemaPath: "#/properties/fail_on/properties/incomplete/type",
-              keyword: "type",
-              params: { type: "boolean" },
-              message: "must be boolean",
             };
             if (vErrors === null) {
               vErrors = [err17];
@@ -98804,20 +98811,37 @@ function validate43(
             errors++;
           }
         }
-        if (data4.required_checks !== undefined) {
-          let data13 = data4.required_checks;
-          if (Array.isArray(data13)) {
-            const len3 = data13.length;
+        if (data5.incomplete !== undefined) {
+          if (typeof data5.incomplete !== "boolean") {
+            const err18 = {
+              instancePath: instancePath + "/fail_on/incomplete",
+              schemaPath: "#/properties/fail_on/properties/incomplete/type",
+              keyword: "type",
+              params: { type: "boolean" },
+              message: "must be boolean",
+            };
+            if (vErrors === null) {
+              vErrors = [err18];
+            } else {
+              vErrors.push(err18);
+            }
+            errors++;
+          }
+        }
+        if (data5.required_checks !== undefined) {
+          let data14 = data5.required_checks;
+          if (Array.isArray(data14)) {
+            const len3 = data14.length;
             for (let i5 = 0; i5 < len3; i5++) {
-              let data14 = data13[i5];
+              let data15 = data14[i5];
               if (!(
-                data14 === "typecheck" ||
-                data14 === "lint" ||
-                data14 === "secrets" ||
-                data14 === "coverage" ||
-                data14 === "dependencies"
+                data15 === "typecheck" ||
+                data15 === "lint" ||
+                data15 === "secrets" ||
+                data15 === "coverage" ||
+                data15 === "dependencies"
               )) {
-                const err18 = {
+                const err19 = {
                   instancePath: instancePath + "/fail_on/required_checks/" + i5,
                   schemaPath:
                     "#/properties/fail_on/properties/required_checks/items/enum",
@@ -98830,20 +98854,20 @@ function validate43(
                   message: "must be equal to one of the allowed values",
                 };
                 if (vErrors === null) {
-                  vErrors = [err18];
+                  vErrors = [err19];
                 } else {
-                  vErrors.push(err18);
+                  vErrors.push(err19);
                 }
                 errors++;
               }
             }
-            let i6 = data13.length;
+            let i6 = data14.length;
             let j2;
             if (i6 > 1) {
               outer2: for (; i6--;) {
                 for (j2 = i6; j2--;) {
-                  if (func0(data13[i6], data13[j2])) {
-                    const err19 = {
+                  if (func0(data14[i6], data14[j2])) {
+                    const err20 = {
                       instancePath: instancePath + "/fail_on/required_checks",
                       schemaPath:
                         "#/properties/fail_on/properties/required_checks/uniqueItems",
@@ -98857,9 +98881,9 @@ function validate43(
                         " are identical)",
                     };
                     if (vErrors === null) {
-                      vErrors = [err19];
+                      vErrors = [err20];
                     } else {
-                      vErrors.push(err19);
+                      vErrors.push(err20);
                     }
                     errors++;
                     break outer2;
@@ -98868,7 +98892,7 @@ function validate43(
               }
             }
           } else {
-            const err20 = {
+            const err21 = {
               instancePath: instancePath + "/fail_on/required_checks",
               schemaPath:
                 "#/properties/fail_on/properties/required_checks/type",
@@ -98877,15 +98901,15 @@ function validate43(
               message: "must be array",
             };
             if (vErrors === null) {
-              vErrors = [err20];
+              vErrors = [err21];
             } else {
-              vErrors.push(err20);
+              vErrors.push(err21);
             }
             errors++;
           }
         }
       } else {
-        const err21 = {
+        const err22 = {
           instancePath: instancePath + "/fail_on",
           schemaPath: "#/properties/fail_on/type",
           keyword: "type",
@@ -98893,15 +98917,15 @@ function validate43(
           message: "must be object",
         };
         if (vErrors === null) {
-          vErrors = [err21];
+          vErrors = [err22];
         } else {
-          vErrors.push(err21);
+          vErrors.push(err22);
         }
         errors++;
       }
     }
   } else {
-    const err22 = {
+    const err23 = {
       instancePath,
       schemaPath: "#/type",
       keyword: "type",
@@ -98909,9 +98933,9 @@ function validate43(
       message: "must be object",
     };
     if (vErrors === null) {
-      vErrors = [err22];
+      vErrors = [err23];
     } else {
-      vErrors.push(err22);
+      vErrors.push(err23);
     }
     errors++;
   }

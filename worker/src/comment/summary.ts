@@ -344,15 +344,18 @@ export interface SummaryInput {
   urls: Map<string, string>;
   /** Earlier findings this round marked fixed. */
   fixed?: number;
+  /** What the review is still doing, when this is not its last summary. */
+  pending?: string;
 }
 
 export function summaryBody(input: SummaryInput): string {
   const { report, failOn } = input;
   const { toFix } = verdict(report, failOn);
   const lines = [
-    `## ${GLYPH.rio} rio · ${toFix.length ? `${toFix.length} to fix before merge` : "Nothing to fix"}`,
+    `## ${GLYPH.rio} rio · ${toFix.length ? `${toFix.length} to fix before merge` : "Nothing to fix"}${input.pending ? " so far" : ""}`,
     provenance(report),
     "",
+    ...(input.pending ? ["> [!IMPORTANT]", `> ${input.pending}`, ""] : []),
     ...alert(report, failOn),
     "",
     ...scoreboard(report, failOn, input.fixed ?? 0),
