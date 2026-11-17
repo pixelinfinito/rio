@@ -185,10 +185,10 @@ export interface WorkflowParams {
 }
 /**
  * Hypotheses verified at once, each with its own voters, while tokens allow.
- * Three at a time took a review with 31 hypotheses 17 minutes to verify,
- * more than every other step together.
+ * Six at a time, in batches that waited for their slowest, took reviews with
+ * 18 to 29 hypotheses 19 to 20 minutes to verify.
  */
-const VERIFIED_TOGETHER = 6;
+const VERIFIED_TOGETHER = 12;
 /** Characters of diff an agent's first message holds, over all changed files. */
 export const CHANGE_PROMPT_CHARS = 60_000;
 /** Model turns of the security agent's conversation. */
@@ -2439,7 +2439,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             not_reverified: reverify.skipped,
           };
         }
-        // Hypotheses are verified a few at a time, each with its own voters,
+        // Hypotheses are verified several at a time, each with its own voters,
         // conversations and steps; `verified` keeps the order they were raised in.
         const outcomes: Verified[] = [];
         let done = 0;
@@ -2527,24 +2527,33 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           );
         };
         try {
-          for (let from = 0; from < candidates.length;) {
-            // Every voter's call reserves its whole conversation, up to the
-            // size where one is compacted, until the call returns: only as
-            // many hypotheses start together as the review's tokens cover.
+          // A hypothesis starts as soon as another ends, so none waits for
+          // the slowest of a batch. Every voter's call reserves its whole
+          // conversation, up to the size where one is compacted, until the
+          // call returns: only as many run together as the review's tokens
+          // cover, counting each running one as if it held its reservation.
+          const running = new Set<Promise<void>>();
+          const faults: unknown[] = [];
+          for (let from = 0; from < candidates.length && !faults.length;) {
             const room = Math.floor(
               (await ledger.remaining()) /
                 (submission.profile.verify.voters * HISTORY_BYTES),
             );
-            const together = Math.max(1, Math.min(VERIFIED_TOGETHER, room));
-            const batch = await Promise.allSettled(
-              candidates
-                .slice(from, from + together)
-                .map((h, i) => verifyOne(h, from + i)),
-            );
-            const failed = batch.find((r) => r.status === "rejected");
-            if (failed) throw failed.reason;
-            from += together;
+            if (
+              running.size &&
+              (running.size >= VERIFIED_TOGETHER || room <= running.size)
+            ) {
+              await Promise.race(running);
+              continue;
+            }
+            const run: Promise<void> = verifyOne(candidates[from], from)
+              .catch((error) => void faults.push(error))
+              .finally(() => running.delete(run));
+            running.add(run);
+            from++;
           }
+          await Promise.all(running);
+          if (faults.length) throw faults[0];
         } finally {
           // A sparse list where a verification did not end: `filter` skips the gaps.
           verified.push(...outcomes.filter(() => true));
