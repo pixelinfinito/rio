@@ -20,6 +20,7 @@ import {
   trailerAgent,
 } from "../src/pulls";
 import { finishJob } from "../src/jobs";
+import { PREPARE_MS, prepareMs } from "../src/prepare-budget";
 import { Store } from "../src/storage";
 import { memberHeader } from "../src/archive";
 import { allMigrations, submission } from "./fixtures";
@@ -1076,9 +1077,95 @@ describe("CLI pull request requests", () => {
     ).toEqual({ announced_check: null });
     // Nothing was prepared for it.
     expect(
-      await runtime.DB.prepare("SELECT COUNT(*) AS n FROM jobs WHERE review_id=?")
+      await runtime.DB.prepare(
+        "SELECT COUNT(*) AS n FROM jobs WHERE review_id=?",
+      )
         .bind(id)
         .first(),
     ).toEqual({ n: 0 });
+  });
+});
+
+describe("preparation time from the profile", () => {
+  let github: GitHubDouble;
+  beforeEach(async () => {
+    github = new GitHubDouble().install();
+    await install(75, ["acme/big"]);
+  });
+  afterEach(() => github.restore());
+  /** The preparation time a webhook review of `acme/big#number` gets. */
+  async function preparation(
+    number: number,
+    files: Record<string, string>,
+  ): Promise<number> {
+    const pr = github.pull("acme/big", number);
+    for (const [path, text] of Object.entries(files))
+      github.contents.set(`acme/big@${pr.base.sha}:${path}`, text);
+    // The review's own head never sets its policy.
+    github.contents.set(
+      `acme/big@${pr.head.sha}:.rio/profiles/default.yaml`,
+      "budget: {prepare: 59m}\n",
+    );
+    const { env: e } = capture();
+    await handleReviewRequest(e, {
+      ...request("acme/big", number),
+      installation_id: 75,
+    });
+    const [row] = await pullRows("acme/big", number);
+    const review = await runtime.DB.prepare(
+      "SELECT created_at,deadline FROM reviews WHERE id=?",
+    )
+      .bind(row.review_id)
+      .first<{ created_at: number; deadline: number }>();
+    return review!.deadline - review!.created_at;
+  }
+
+  it("reads budget.prepare of the default profile at the merge base", async () => {
+    expect(
+      await preparation(1, {
+        ".rio/profiles/default.yaml":
+          "version: 1\nname: big\nextends: rio/base\nbudget:\n  prepare: 40m\n",
+      }),
+    ).toBe(40 * 60000);
+  });
+
+  it("follows extends inside .rio until a profile sets it", async () => {
+    expect(
+      await preparation(2, {
+        ".rio/profiles/default.yaml":
+          "version: 1\nname: big\nextends: team\nbudget: {fast: {wall_time: 20m}}\n",
+        ".rio/profiles/team.yaml":
+          "version: 1\nname: team\nextends: ./shared/base.yaml\n",
+        ".rio/profiles/shared/base.yaml":
+          "version: 1\nname: shared\nextends: rio/base\nbudget: {prepare: 1500s}\n",
+      }),
+    ).toBe(25 * 60000);
+  });
+
+  it("keeps the default without a profile, for an invalid value and for a cycle", async () => {
+    expect(await preparation(3, {})).toBe(PREPARE_MS);
+    expect(
+      await preparation(4, {
+        ".rio/profiles/default.yaml":
+          "version: 1\nname: big\nbudget: {prepare: 90m}\n",
+      }),
+    ).toBe(PREPARE_MS);
+    expect(
+      await preparation(5, {
+        ".rio/profiles/default.yaml": "version: 1\nname: a\nextends: b\n",
+        ".rio/profiles/b.yaml": "version: 1\nname: b\nextends: default\n",
+      }),
+    ).toBe(PREPARE_MS);
+    expect(
+      await preparation(6, { ".rio/profiles/default.yaml": "budget: [\n" }),
+    ).toBe(PREPARE_MS);
+  });
+
+  it("accepts 1 to 60 minutes in seconds or minutes", () => {
+    expect(prepareMs("1m")).toBe(60000);
+    expect(prepareMs("60m")).toBe(3600000);
+    expect(prepareMs("90s")).toBe(90000);
+    for (const value of ["59s", "61m", "1h", "0m", "30", 30, null])
+      expect(prepareMs(value)).toBeNull();
   });
 });

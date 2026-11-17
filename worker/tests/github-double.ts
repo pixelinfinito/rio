@@ -95,6 +95,7 @@ const PERMISSION_OF: [RegExp, string, string][] = [
   ],
   [/^GET \/repos\/[^/]+\/[^/]+\/compare\//, "contents", "read"],
   [/^GET \/repos\/[^/]+\/[^/]+\/tarball\//, "contents", "read"],
+  [/^GET \/repos\/[^/]+\/[^/]+\/contents\//, "contents", "read"],
   [
     /^GET \/repos\/[^/]+\/[^/]+\/issues\/\d+\/comments$/,
     "pull_requests",
@@ -152,6 +153,8 @@ export class GitHubDouble {
   reactions: { comment: number; content: string }[] = [];
   roles = new Map<string, string>();
   tarballs = new Map<string, Uint8Array>();
+  /** Repository files by `owner/repo@commit:path`, served by the contents API. */
+  contents = new Map<string, string>();
   hookSecret: string | null = null;
   // A path pattern answered with an error status (anchor rejections, outages).
   failures: {
@@ -371,6 +374,22 @@ export class GitHubDouble {
       );
     if ((r = m(/^\/repos\/([^/]+\/[^/]+)\/pulls\/(\d+)\/files$/)))
       return this.json(this.page(this.files.get(`${r[1]}#${r[2]}`) ?? [], url));
+    if ((r = m(/^\/repos\/([^/]+\/[^/]+)\/contents\/(.+)$/))) {
+      const path = r[2].split("/").map(decodeURIComponent).join("/");
+      const text = this.contents.get(
+        `${r[1]}@${url.searchParams.get("ref")}:${path}`,
+      );
+      return text === undefined
+        ? this.error(404, "Not Found")
+        : this.json({
+            type: "file",
+            path,
+            encoding: "base64",
+            content: btoa(
+              String.fromCharCode(...new TextEncoder().encode(text)),
+            ),
+          });
+    }
     if ((r = m(/^\/repos\/([^/]+\/[^/]+)\/tarball\/([0-9a-f]{40})$/))) {
       const bytes = this.tarballs.get(r[2]);
       return bytes

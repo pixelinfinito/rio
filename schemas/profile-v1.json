@@ -18,6 +18,11 @@
     "budget": {
       "type": "object",
       "properties": {
+        "prepare": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*(s|m)$",
+          "description": "Time a pull request review may spend being prepared (download, snapshot and graph) before it starts; 1 to 60 minutes, default 15m."
+        },
         "fast": {
           "type": "object",
           "properties": {

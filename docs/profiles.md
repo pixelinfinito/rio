@@ -12,6 +12,7 @@ Profiles describe a review. Machine settings such as the cache path and parallel
 | `name` | `string` | yes |
 | `extends` | `string` | no |
 | `budget` | `object` | no |
+| `budget.prepare` | `string` | no |
 | `budget.fast` | `object` | no |
 | `budget.fast.wall_time` | `string` | no |
 | `budget.fast.tokens` | `integer` | no |

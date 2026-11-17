@@ -258,7 +258,7 @@ export interface Profile {
   name: string;
   models: Record<string, string>;
   steps: Step[];
-  budget: { fast: Budget; deep?: Budget };
+  budget: { fast: Budget; deep?: Budget; prepare?: string };
   verify: {
     voters: number;
     quorum: number;

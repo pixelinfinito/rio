@@ -139,7 +139,7 @@ overrides. `--since-last` reviews the branch as a lineage held by the endpoint.
 `rio review --pr <n>` asks the endpoint to prepare and review pull request `n` of the
 repository's GitHub `origin` (the endpoint needs the GitHub App, see
 [GitHub App](github-app.md)); nothing is built from the local checkout, and
-`--publish` is the consent a `publish: ask` profile requires.
+`--publish` is the consent a `publish: ask` profile requires; the repository's profile at the merge base may give preparation more than its default 15 minutes with `budget.prepare`.
 
 Models belong in the review profile, for example:
 
