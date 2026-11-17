@@ -1219,6 +1219,14 @@ export class Tools {
           ["base", "head"].includes(args.version),
         'run needs "command": an argv array of strings such as ["npm","test"], and "version": "base" or "head"',
       );
+      // The sandbox holds one tree without history, and a job costs its
+      // transfer whatever the command: a git command that needs a repository
+      // is answered here, not after the tree reached a container.
+      invariant(
+        !/(^|\/)git$/.test(args.command[0]) ||
+          args.command.includes("--no-index"),
+        'run has no git repository: the sandbox holds the files of one version, without history. The "change diff" data block is the diff; read_file takes "version": "base" or "head"; ["git","diff","--no-index",a,b] compares two files of the tree',
+      );
       return this.execute(args.command, args.version);
     }
     throw new Error(

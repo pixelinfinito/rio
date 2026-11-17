@@ -17,7 +17,7 @@ import { createPrepareJob, stopRunners, withdrawIdle } from "./jobs";
 import { ingestTarballs } from "./tarball";
 import { Store } from "./storage";
 import { announceReview, knownPolicy, settleAnnouncement } from "./announce";
-import { PREPARE_MS, preparationTime } from "./prepare-budget";
+import { PREPARE_MS, preparation } from "./prepare-budget";
 
 // Pull request reviews (git-host-integration): the review-request consumer,
 // fork detection and metadata, eligibility, and the hand-off from hosted
@@ -379,16 +379,13 @@ export async function handleReviewRequest(
     if (!claimed) return;
     try {
       // The repository's profile at the merge base may give preparation more
-      // time than the default the review was created with; counted from the request.
-      const preparation = await preparationTime(
-        token,
-        message.repository,
-        mergeBase,
-      );
+      // time than the default the review was created with (counted from the
+      // request), and may keep paths out of the snapshot.
+      const prepared = await preparation(token, message.repository, mergeBase);
       await env.DB.prepare(
         "UPDATE reviews SET deadline=created_at+? WHERE id=? AND status='preparing' AND submission_key=''",
       )
-        .bind(preparation, review)
+        .bind(prepared.time, review)
         .run();
       await env.DB.prepare(
         "UPDATE pull_requests SET base_sha=?,head_sha=?,fork=?,author_login=?,author_type=?,agent_json=?,state='preparing' WHERE review_id=? AND state IN ('requested','preparing') AND NOT EXISTS (SELECT 1 FROM jobs WHERE jobs.review_id=pull_requests.review_id)",
@@ -468,7 +465,13 @@ export async function handleReviewRequest(
       if (env.RUNNER_BACKEND === "sandbox") {
         // The Sandbox has no network: the Worker fetches both trees with this
         // token and the container prepares from the stored snapshot.
-        const snapshot = await ingestTarballs(env, message.tenant, token, spec);
+        const snapshot = await ingestTarballs(
+          env,
+          message.tenant,
+          token,
+          spec,
+          prepared.omit,
+        );
         await createPrepareJob(env, review, {
           snapshot_id: snapshot,
           prepare: spec,

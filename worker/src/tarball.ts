@@ -1,3 +1,4 @@
+import picomatch from "picomatch";
 import { blake3 } from "@noble/hashes/blake3.js";
 import { bytesToHex } from "@noble/hashes/utils.js";
 import type { Env, PrepareSpec, Version } from "./types";
@@ -212,15 +213,37 @@ class Packer {
   }
 }
 
-/** Downloads base and head and seals them as one snapshot; returns its id. */
+/**
+ * Whether a path matches one of `rio/prepare`'s `omit` globs, as the CLI
+ * matches them: `*` stays within one directory, `**` crosses them, and a
+ * leading dot is an ordinary character. A glob that does not compile omits
+ * nothing: the runner reports the invalid profile.
+ */
+export function omitter(globs: string[]): (path: string) => boolean {
+  if (!globs.length) return () => false;
+  try {
+    const match = picomatch(globs, { dot: true, nonegate: true, noextglob: true });
+    return (path) => match(path);
+  } catch {
+    return () => false;
+  }
+}
+
+/**
+ * Downloads base and head and seals them as one snapshot; returns its id.
+ * Paths matching `omit` never enter it: they are neither hashed nor stored,
+ * and no later job transfers them.
+ */
 export async function ingestTarballs(
   env: Env,
   tenant: string,
   token: InstallationToken,
   spec: Pick<PrepareSpec, "repository" | "base_sha" | "head_sha">,
+  omit: string[] = [],
 ): Promise<string> {
   const packer = new Packer(env, tenant);
   const lines: Line[] = [];
+  const omitted = omitter(omit);
   for (const [version, sha] of [
     ["base", spec.base_sha],
     ["head", spec.head_sha],
@@ -233,6 +256,7 @@ export async function ingestTarballs(
     for await (const entry of tarEntries(
       response.body.pipeThrough(new DecompressionStream("gzip")),
     )) {
+      if (omitted(entry.path)) continue;
       invariant(!paths.has(entry.path), "duplicate tarball path");
       paths.add(entry.path);
       invariant(paths.size <= LIMITS.paths, "snapshot exceeds the path limit");
