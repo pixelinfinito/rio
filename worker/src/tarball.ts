@@ -184,6 +184,31 @@ class Packer {
     this.pending.push({ hash, content });
     this.bytes += content.length;
   }
+  /** Counts a content that storage already holds; false when it no longer does. */
+  async stored(entries: { hash: string; size: number }[]): Promise<boolean> {
+    const fresh = new Map<string, number>();
+    for (const e of entries)
+      if (!this.seen.has(e.hash)) fresh.set(e.hash, e.size);
+    const hashes = [...fresh.keys()];
+    for (let i = 0; i < hashes.length; i += 10000)
+      if (
+        (
+          await missing(this.env, this.tenant, {
+            hashes: hashes.slice(i, i + 10000),
+          })
+        ).length
+      )
+        return false;
+    for (const [hash, size] of fresh) {
+      this.seen.add(hash);
+      this.distinct += size;
+    }
+    invariant(
+      this.distinct <= LIMITS.distinct,
+      "snapshot exceeds the distinct content limit",
+    );
+    return true;
+  }
   async flush() {
     if (!this.pending.length) return;
     const absent = new Set(
@@ -210,6 +235,76 @@ class Packer {
       offset += e.content.length;
     }
     await storePack(this.env, this.tenant, body);
+  }
+}
+
+/** Base trees kept per repository: the merge bases of its open pull requests. */
+const KEPT_TREES = 12;
+type Listed = Omit<Line, "version">;
+/**
+ * Where the listing of a commit's tree is kept. A pull request is pushed to
+ * many times over one merge base, and pull requests opened the same day
+ * share theirs: hashing a tree of a GiB takes the Worker minutes, and the
+ * listing of a commit under the same `omit` never changes.
+ */
+async function treeKeys(
+  tenant: string,
+  repository: string,
+  sha: string,
+  omit: string[],
+) {
+  const digest = (text: string) =>
+    bytesToHex(blake3(new TextEncoder().encode(text))).slice(0, 32);
+  const prefix = `trees/${tenant}/${digest(repository.toLowerCase())}/`;
+  return {
+    prefix,
+    key: prefix + digest(JSON.stringify([1, sha, [...omit].sort()])),
+  };
+}
+/** A commit's kept listing, when every content it names is still stored. */
+async function keptTree(
+  env: Env,
+  key: string,
+  packer: Packer,
+): Promise<Listed[] | null> {
+  try {
+    const object = await env.ARTIFACTS.get(key);
+    if (!object) return null;
+    const text = await new Response(
+      object.body.pipeThrough(new DecompressionStream("gzip")),
+    ).text();
+    const lines: Listed[] = text
+      .split("\n")
+      .filter((l) => l)
+      .map((l) => JSON.parse(l));
+    invariant(lines.length <= LIMITS.paths, "snapshot exceeds the path limit");
+    return (await packer.stored(lines)) ? lines : null;
+  } catch (error) {
+    if (error instanceof Error && /limit$/.test(error.message)) throw error;
+    // An unreadable listing is no listing: the tree is fetched again.
+    return null;
+  }
+}
+/** Keeps a commit's listing and drops the repository's oldest beyond `KEPT_TREES`. */
+async function keepTree(
+  env: Env,
+  keys: { prefix: string; key: string },
+  lines: Listed[],
+) {
+  try {
+    const text = lines.map((l) => JSON.stringify(l)).join("\n");
+    const body = await new Response(
+      new Blob([text]).stream().pipeThrough(new CompressionStream("gzip")),
+    ).arrayBuffer();
+    await env.ARTIFACTS.put(keys.key, body);
+    const listed = await env.ARTIFACTS.list({ prefix: keys.prefix });
+    const old = listed.objects
+      .sort((a, b) => b.uploaded.getTime() - a.uploaded.getTime())
+      .slice(KEPT_TREES)
+      .map((o) => o.key);
+    if (old.length) await env.ARTIFACTS.delete(old);
+  } catch {
+    // Keeping a listing only saves time later.
   }
 }
 
@@ -248,6 +343,17 @@ export async function ingestTarballs(
     ["base", spec.base_sha],
     ["head", spec.head_sha],
   ] as const) {
+    // Only the merge base is kept: a head is reviewed once.
+    const keys =
+      version === "base"
+        ? await treeKeys(tenant, spec.repository, sha, omit)
+        : null;
+    const kept = keys && (await keptTree(env, keys.key, packer));
+    if (kept) {
+      for (const line of kept) lines.push({ version, ...line });
+      continue;
+    }
+    const listed: Listed[] = [];
     const response = await token.download(
       `/repos/${spec.repository}/tarball/${sha}`,
     );
@@ -262,13 +368,18 @@ export async function ingestTarballs(
       invariant(paths.size <= LIMITS.paths, "snapshot exceeds the path limit");
       const hash = bytesToHex(blake3(entry.content));
       await packer.add(hash, entry.content);
-      lines.push({
-        version,
+      listed.push({
         path: entry.path,
         hash,
         mode: entry.mode,
         size: entry.content.length,
       });
+    }
+    for (const line of listed) lines.push({ version, ...line });
+    if (keys) {
+      // A listing names stored contents only.
+      await packer.flush();
+      await keepTree(env, keys, listed);
     }
   }
   await packer.flush();
