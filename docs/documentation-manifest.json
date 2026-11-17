@@ -240,7 +240,7 @@
         "en": "2a15500593c965e7035e7846235036c5b32c390656a033d2a93d1add0c2c5721",
         "pt-BR": "188dd103ee0a84270acbf4abf9e5f09fde37adeda63c0dfe8ece3cee15a8c6ee"
       },
-      "source_review": "743a7df7933a41d7692a9aeb924949a8e0650e29d2b7361b8d0ce38d4b2d3bf2"
+      "source_review": "17c2eb1afd5f2e3e3aacde01d78c51cbc581e356c27e1dd0160c57192988ba07"
     },
     {
       "id": "configuration",
@@ -315,7 +315,7 @@
         "en": "3e49b904970fd31b6b0dd2fba9c5857747404707e47102e265c0aa24fade066f",
         "pt-BR": "fd964662c575e51bbb4618f32f366bba639cf409254e26feef7d54e22f171282"
       },
-      "source_review": "ebdac03bd8c0f9c01561a5ebf91f838c1a9e23ea339cf3d71a83d0fea59adf50"
+      "source_review": "91b71e5cae111089034e832b00002e8290c72c965397ddcfe0e1e1db2a99b5c5"
     },
     {
       "id": "providers",
@@ -351,7 +351,7 @@
         "en": "dfab6efccba23d93af929b6bd18fc7e5b2b7036468d0e074bb2ff3d61c0ca5a1",
         "pt-BR": "4125885c301ff931c20d045bb88f8273fc530010fe04607fadf024538305cc32"
       },
-      "source_review": "eb738275912c8ba3ee4e7a64fe6222afa05de9d47c22ea2ab1262f1e80257d73"
+      "source_review": "7d10f11d817f094327ef73b843cc9872f594c00daeb1f943b01bd73f9b18048f"
     },
     {
       "id": "budgets",
@@ -384,10 +384,10 @@
       "screenshots": [],
       "kind": "guide",
       "translation_review": {
-        "en": "4e487626e9cb27b70faf5b4a2025cd7679e770665d8c34485c1ba806da6ab522",
-        "pt-BR": "5fbd7982e538be4e94e8d958b223d585d6ca7672547b3e7e79a87734f19a28cc"
+        "en": "3b16bfda63d84bd1bbca69202ddece31203ab7b588449efa89c5ee7f42e312b0",
+        "pt-BR": "05bd06724ff7475ec942b7783f7925aef305c5cbd501f896d7d1422d8abd1fe5"
       },
-      "source_review": "4f19ada84757864486c79624265d112badb085081717ddbe2b3d34b718889327"
+      "source_review": "146777270eb1462e89a1679daaa37232043fcabfaef339ca1986a95e97f6fb23"
     },
     {
       "id": "github",
@@ -422,10 +422,10 @@
       ],
       "kind": "guide",
       "translation_review": {
-        "en": "ccd606afdbbd00faa61cf5b81067de433670ba90d949d669c747efb3ae091127",
-        "pt-BR": "0089db12a6d34261405616e5b82a212def58c77ffc5b7b9699c6ce9e70847341"
+        "en": "1ff430450b72518080c180fac9588c11f109e8cee9930492c4a5c872d909e402",
+        "pt-BR": "300fc67e98c1a11d3dbd8705209210b2c4e084664e8850889c50e822f9579d51"
       },
-      "source_review": "ee7a5b5589edd9416d52c4c39a1de1e3d26d9d197585d72f830b6210dffc89fc"
+      "source_review": "ff7cb4b268f7fe40896247c10c2fd151f2023034a15d43cd6b0e1682a718c2d9"
     },
     {
       "id": "feedback",
@@ -543,7 +543,7 @@
         "en": "ee3a6c7ad159cfaeeed9dc6a79fd191f4246ac51ded84e46493fefa4365821f2",
         "pt-BR": "9684bc184bf5f5f659e2d02f941ac88d54eff68ec12f6895220a6cabcb33477e"
       },
-      "source_review": "97bd74b7afe213ba47aa5210cbe698614c1989ed51fdaa22b81dcf5ddba44363"
+      "source_review": "7fd3b4fc38256eb8ceadf7a0369c443cc9c9bc255ec8c1b23e940c75ec930b3f"
     },
     {
       "id": "council",
@@ -580,7 +580,7 @@
         "en": "5f591f2c5603dd6b0affeb2a8200ea99e6f2617285faa54d2ad525271c690d76",
         "pt-BR": "c29323b9696991c90e50873778930d91d6384c622bf419d45a91560adf87b8f8"
       },
-      "source_review": "5af08aa67b1665cfc252d4a84b4d9cee704ace00a43b3da0f4fbbddfdf120a3b"
+      "source_review": "a6ead699bcf12960f0f426f484dd5a76eb88d80276e0aad0d3f852156ba9f476"
     },
     {
       "id": "qa",
@@ -927,10 +927,10 @@
       "screenshots": [],
       "kind": "guide",
       "translation_review": {
-        "en": "562410ec44e28ae820b4f59fd497b5f7147727320a81dbea5697316e0d64833b",
-        "pt-BR": "54478198c6dc3b4b25ebc07d98e9d7da8f157d8989b5a646d19dd352a2b4f8c1"
+        "en": "9d047975be28387a9da967fe5bd1146c3b1ed40b67544b3412b7ae0252c9e3b5",
+        "pt-BR": "5588a157d9e3e38f0a7b2de2fc14876db3cfb19ae920b7fef5787b8837e0373f"
       },
-      "source_review": "f885945c7b2d542e4c42857acdf3d51f62606ffe351acd1cac64be2139934ae1"
+      "source_review": "d708183c6af538aec2ba0882567fe415c677d81127bdf7d78d89f2c63f3424d2"
     },
     {
       "id": "start",
@@ -1084,10 +1084,10 @@
       "screenshots": [],
       "index_parent": "modules",
       "translation_review": {
-        "en": "b7de4aa94d158e568fe04ef771fbecff5c0d8b382f33a98c5a1f12e3a7d7dd1a",
-        "pt-BR": "ad75448c5b8dfdba21a27f63ad35d001c9d221ad16fb85afc4217de8a5c700db"
+        "en": "5a00e6ad2ac1055d6faaf9b472ce9394be37709faf3c44825c5f54d409662cc3",
+        "pt-BR": "62d72e9c145d10126d2b56b778e3082834bdaa7407916bd92a965a2be5d05323"
       },
-      "source_review": "370cb64e7e5d05d0fc4e7c688452c374918c96b480de612a4c3e59e976e51016"
+      "source_review": "2531cbd2f342c602fe7d144559130499ed661ceb52b5acff4d42c8ca3ef58ad4"
     },
     {
       "id": "profile-fields-2",
@@ -1116,10 +1116,10 @@
       "screenshots": [],
       "index_parent": "modules",
       "translation_review": {
-        "en": "754785d0b39fb2f17ee63b2ea69cdaafa8ce4261b441d8cbd8019be3ec21d5b1",
-        "pt-BR": "1e4a8c95ae78a68a55e5ee853da77a9738aaeee8073ca6b4bfa5bb8d6b515900"
+        "en": "04123f361c262a3d0d0c65ea0c943fa9ad7fe0f4b2c79861d7c7ade75bcd96a9",
+        "pt-BR": "d537e301466147df8355cdb9bdcad30cc1c41989489ea8b04bcec7cd20319998"
       },
-      "source_review": "370cb64e7e5d05d0fc4e7c688452c374918c96b480de612a4c3e59e976e51016"
+      "source_review": "2531cbd2f342c602fe7d144559130499ed661ceb52b5acff4d42c8ca3ef58ad4"
     },
     {
       "id": "qa-config-fields-1",

@@ -26,7 +26,7 @@ budget:
     agents_max: 3
 ```
 
-Save as a profile, run `rio profile validate PATH`, and inspect it with `rio profile show PATH`. This example changes limits; it does not add provider models. `verify_tokens` is a voter's whole two-turn allowance; `tokens` is review-wide. Nested `budget.fast.qa`/`budget.deep.qa` controls QA wall/cell/replay time, tokens and evidence bytes. The generated schema reference lists exact fields.
+Save as a profile, run `rio profile validate PATH`, and inspect it with `rio profile show PATH`. This example changes limits; it does not add provider models. `verify_tokens` is a voter's whole two-turn allowance; `tokens` is review-wide. Nested `budget.fast.qa`/`budget.deep.qa` controls QA wall/cell/replay time, tokens and evidence bytes. `budget.prepare` (1 to 60 minutes, default `15m`) is the time a hosted pull request review may spend being prepared before it starts. The generated schema reference lists exact fields.
 
 ## Expected results
 

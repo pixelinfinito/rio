@@ -20,6 +20,8 @@ A configured endpoint, GitHub App installed on the origin repository, model rout
 
 Policy is read from the PR's merge base, so the change under review cannot grant itself publication privileges. `rio/base` uses `publish: never` and no models. Open/push events trigger review; authorized maintainers can comment `/rio review` to request a new round and reset the lineage.
 
+Preparing a PR (downloading both commits, the snapshot and the graph) may take 15 minutes before the review starts. A large repository allows more in that same merge-base profile with `budget: { prepare: 30m }` (1 to 60 minutes).
+
 ## Expected results
 
 Auto publishes eligible inline findings, a summary and a neutral `rio/review` check. Ask posts the check and waits for explicit publication authorization. The `never` policy posts no comments or checks. Fork publication also requires maintainer escalation. Later rounds update existing identity-marked comments and resolve fixed/dismissed threads.

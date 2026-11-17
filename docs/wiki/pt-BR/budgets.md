@@ -26,7 +26,7 @@ budget:
     agents_max: 3
 ```
 
-Salve como perfil, execute `rio profile validate CAMINHO` e inspecione com `rio profile show CAMINHO`. O exemplo muda limites; não adiciona modelos. `verify_tokens` cobre os dois turnos de cada votante; `tokens` é o limite de toda a revisão. `budget.fast.qa`/`budget.deep.qa` controla tempo total/por célula/reexecução, tokens e bytes de evidências. A referência gerada lista os campos exatos.
+Salve como perfil, execute `rio profile validate CAMINHO` e inspecione com `rio profile show CAMINHO`. O exemplo muda limites; não adiciona modelos. `verify_tokens` cobre os dois turnos de cada votante; `tokens` é o limite de toda a revisão. `budget.fast.qa`/`budget.deep.qa` controla tempo total/por célula/reexecução, tokens e bytes de evidências. `budget.prepare` (de 1 a 60 minutos, padrão `15m`) é o tempo que a revisão hospedada de um pull request pode levar sendo preparada antes de começar. A referência gerada lista os campos exatos.
 
 ## Resultados esperados
 

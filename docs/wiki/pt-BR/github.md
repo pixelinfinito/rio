@@ -20,6 +20,8 @@ Endpoint configurado, GitHub App instalado no repositório do origin, rotas de m
 
 A política vem da base comum do PR: a alteração revisada não pode conceder a si mesma permissão de publicação. `rio/base` usa `publish: never` e não define modelos. Eventos de abertura/push disparam revisão; mantenedores autorizados podem comentar `/rio review` para solicitar revisão e reiniciar a linhagem.
 
+A preparação do PR (download dos dois commits, snapshot e grafo) pode levar 15 minutos antes de a revisão começar. Um repositório grande permite mais nesse mesmo perfil da base comum com `budget: { prepare: 30m }` (de 1 a 60 minutos).
+
 ## Resultados esperados
 
 Auto publica achados elegíveis nas linhas, resumo e uma verificação neutra `rio/review`. Ask publica a verificação e aguarda autorização explícita. Never não publica. Forks também exigem ação de mantenedor. Rodadas seguintes atualizam comentários identificados e resolvem discussões de achados corrigidos/dispensados.
