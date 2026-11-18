@@ -140,7 +140,9 @@ def execute(stream):
             assert job['kind'] == 'run'
             cwd = root / job['version']
         # Only a fixed environment reaches repository code; provider and API secrets stay outside.
-        env = {'PATH': '/usr/local/cargo/bin:/usr/local/bin:/usr/bin:/bin', 'HOME': directory, 'TMPDIR': directory, 'CI': 'true', 'RIO_CONTAINER': '1', 'CARGO_NET_OFFLINE': 'true', 'PIP_NO_INDEX': '1', 'npm_config_offline': 'true'}
+        # RUSTUP_HOME names the image's toolchains: without it rustup looks under HOME, finds
+        # none, and reports a project's pinned toolchain as not installed.
+        env = {'PATH': '/usr/local/cargo/bin:/usr/local/bin:/usr/bin:/bin', 'HOME': directory, 'TMPDIR': directory, 'CI': 'true', 'RIO_CONTAINER': '1', 'RUSTUP_HOME': '/usr/local/rustup', 'CARGO_NET_OFFLINE': 'true', 'PIP_NO_INDEX': '1', 'npm_config_offline': 'true'}
         try:
             process = subprocess.Popen(command, cwd=cwd, env=env, stdin=subprocess.PIPE if job['kind'] != 'run' else subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE, start_new_session=True)
         except OSError:
