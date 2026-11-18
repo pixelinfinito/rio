@@ -1644,3 +1644,120 @@ it("names the provider's error code for a refused request and nothing else of th
     /^provider failed \(400\)$/,
   );
 });
+it("marks a provider failure after a reply that may have been billed, and keeps that call's reservation", async () => {
+  vi.useFakeTimers();
+  try {
+    const env = {
+      AI_GATEWAY_URL: "https://gateway.ai.cloudflare.com/v1/acct/rio/",
+      AI_GATEWAY_TOKEN: "gateway-token",
+      AI_GATEWAY_PROVIDERS: JSON.stringify({ "node-openai": { protocol: "openai" } }),
+    } as Env;
+    // The first reply has usage but no content; the retry is refused with a 503.
+    let replies = 0;
+    const gateway = new ProviderGateway(env, async () =>
+      replies++ === 0
+        ? Response.json({ choices: [{ message: {} }], usage: { prompt_tokens: 9, completion_tokens: 9 } })
+        : new Response(null, { status: 503 }),
+    );
+    const failed = gateway
+      .complete({ ...request, model: "openai/custom-node-openai/gpt-6-sol" })
+      .catch((error) => error);
+    await vi.advanceTimersByTimeAsync(5000);
+    const error = await failed;
+    expect(error.message).toBe("provider failed (503)");
+    expect(error.charged).toBe(true);
+    // converse keeps such a call's reservation, and still retries it.
+    const settled: number[] = [];
+    let calls = 0;
+    const result = converse({
+      gateway: {
+        complete: async () => {
+          if (calls++ === 0) throw error;
+          return { content: '{"result":["done"]}', input_tokens: 80, output_tokens: 50, cost_usd: null };
+        },
+      },
+      ledger: {
+        remaining: async () => 1000000,
+        reserve: async () => "id",
+        settle: async (_, usage) => {
+          settled.push(usage.input_tokens + usage.output_tokens);
+        },
+      },
+      actor: "security",
+      phase: "generation",
+      model: "openrouter/openai/gpt-6.1-sol",
+      allowance: { remaining: 1000000 },
+      messages: [{ role: "user" as const, content: "audit" }],
+      dispatch: async () => ({ content: "source" }),
+      retryCall: true,
+    });
+    await expect(result).resolves.toEqual(["done"]);
+    expect(settled).toEqual([130]);
+  } finally {
+    vi.useRealTimers();
+  }
+});
+it("reserves no tokens for a call the review's deadline has already passed", async () => {
+  const reserved: number[] = [];
+  await expect(
+    converse({
+      gateway: { complete: async () => { throw new Error("not sent"); } },
+      ledger: {
+        remaining: async () => 1000000,
+        remainingMs: async () => 0,
+        reserve: async (_, __, tokens) => {
+          reserved.push(tokens);
+          return "id";
+        },
+        settle: async () => {},
+      },
+      actor: "security",
+      phase: "generation",
+      model: "openrouter/openai/gpt-6.1-sol",
+      allowance: { remaining: 1000000 },
+      messages: [{ role: "user" as const, content: "audit" }],
+      dispatch: async () => ({ content: "source" }),
+    }),
+  ).rejects.toThrow("review wall budget exhausted");
+  expect(reserved).toEqual([]);
+});
+it("sends a deliberate one-time request after two corrections, and counts only answered tool turns", async () => {
+  const replies = [
+    '{"tools":[{"name":"read_file","args":{"path":"missing.ts"}}]}',
+    '{"tools":[{"name":"read_file","args":{"path":"a.ts"}}]}',
+    "not json",
+    "still not json",
+    '{"result":["first"]}',
+    '{"result":["final"]}',
+  ];
+  const seen: number[] = [];
+  let turn = 0;
+  const result = await converse({
+    gateway: {
+      complete: async () => ({ content: replies[turn++], input_tokens: 80, output_tokens: 50, cost_usd: null }),
+    },
+    ledger: { remaining: async () => 1000000, reserve: async () => "id", settle: async () => {} },
+    actor: "security",
+    phase: "generation",
+    model: "openrouter/openai/gpt-6.1-sol",
+    allowance: { remaining: 1000000 },
+    messages: [{ role: "user" as const, content: "audit" }],
+    // The first read fails: that turn read nothing.
+    dispatch: async (_, args) => {
+      if (args.path === "missing.ts") throw new Error("no such file");
+      return { content: "source" };
+    },
+    maxTurns: 10,
+    validateResult: (value, state) => {
+      seen.push(state.toolTurns);
+      if (value[0] === "first") {
+        const challenge = new Refused("challenged", "Host: look again.");
+        challenge.once = true;
+        throw challenge;
+      }
+      return value;
+    },
+  });
+  expect(result).toEqual(["final"]);
+  expect(seen).toEqual([1, 1]);
+});

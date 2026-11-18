@@ -51,10 +51,11 @@ interface Run {
   /** Disclosed verification answer for a hypothesis. */
   vote?: (h: any) => unknown;
   mutate?: (s: Submission) => void;
-  /** Called with an agent's latest message; a string returned is its raw reply. */
-  onAgent?: (agent: string, last: string) => Promise<string | void>;
+  /** Called with the review's id and an agent's latest message; a string returned is its raw reply. */
+  onAgent?: (review: string, agent: string, last: string) => Promise<string | void>;
 }
 async function review(run: Run) {
+  const id = crypto.randomUUID();
   const prompts: Record<string, string> = {};
   const latest: Record<string, string> = {};
   const calls: string[] = [];
@@ -73,7 +74,7 @@ async function review(run: Run) {
       if (agent) {
         prompts[agent] = first;
         latest[agent] = last;
-        const reply = await run.onAgent?.(agent, last);
+        const reply = await run.onAgent?.(id, agent, last);
         if (typeof reply === "string") {
           calls.push(agent);
           return Response.json({
@@ -140,7 +141,6 @@ async function review(run: Run) {
     });
   try {
     const store = new Store(runtime),
-      id = crypto.randomUUID(),
       s = submission();
     const snapshot: Snapshot = { base: tree(run.base), head: tree(run.head) };
     s.changed = run.changed.map((path) => ({ path, lines_changed: 2 }));
@@ -181,6 +181,7 @@ async function review(run: Run) {
       prompts,
       latest,
       calls,
+      id,
     };
   } finally {
     transport.mockRestore();
@@ -679,6 +680,57 @@ describe("security agent", () => {
     "A10:2025",
   ];
 
+  // The audit reads a file first, so its first result is challenged.
+  const readsFirst = async (_: string, agent: string, last: string) =>
+    agent === "security" && last.includes("Review the change independently")
+      ? JSON.stringify({
+          tools: [{ name: "read_file", args: { path: "src/api/users.ts", version: "head" } }],
+        })
+      : undefined;
+  const result = (hypotheses: unknown[]) => ({
+    hypotheses,
+    assessed: ["A01:2025", "A05:2025"],
+    unassessed: [],
+  });
+  const raised = (report: any) =>
+    [
+      ...(report.security ?? []),
+      ...report.risks,
+      ...report.findings,
+      ...(report.agent_audit?.unverified ?? []),
+    ].map((f: any) => f.rule_id ?? f.hypothesis?.rule_id);
+  it("replaces a challenged first result with the final one, even when it has no findings", async () => {
+    const { report, id } = await review({
+      base,
+      head,
+      changed: ["src/api/users.ts"],
+      steps: steps(true),
+      agents: {},
+      turns: { security: [null, result([injection]), result([])] },
+      onAgent: readsFirst,
+    });
+    expect(report.status).toBe("complete");
+    expect(raised(report)).not.toContain(injection.rule_id);
+    // What a stopped review would recover holds the final result, not the first.
+    const saved = await runtime.ARTIFACTS.list({ prefix: `reviews/${id}/progress/raised/` });
+    expect(saved.objects).toHaveLength(1);
+    expect(await (await runtime.ARTIFACTS.get(saved.objects[0].key))!.json()).toEqual([]);
+  });
+  it("asks again for a challenged result listing more than 100 hypotheses", async () => {
+    const many = Array.from({ length: 101 }, (_, i) => ({ ...injection, rule_id: `security/many-${i}` }));
+    const { report, calls } = await review({
+      base,
+      head,
+      changed: ["src/api/users.ts"],
+      steps: steps(true),
+      agents: {},
+      turns: { security: [null, result([injection]), result(many), result([injection])] },
+      onAgent: readsFirst,
+    });
+    expect(calls.filter((c) => c === "security")).toHaveLength(4);
+    expect(report.status).toBe("complete");
+    expect(raised(report)).toContain(injection.rule_id);
+  });
   it("reports the challenged first result of a review stopped during the challenge", async () => {
     const { report, calls } = await review({
       base,
@@ -693,11 +745,11 @@ describe("security agent", () => {
         },
       },
       // The review is stopped while the agent investigates the challenge.
-      onAgent: async (agent, last) => {
+      onAgent: async (review, agent, last) => {
         if (agent !== "security" || !last.includes("is not final")) return;
-        await runtime.DB.prepare(
-          "UPDATE reviews SET cancelled=1 WHERE cancelled=0",
-        ).run();
+        await runtime.DB.prepare("UPDATE reviews SET cancelled=1 WHERE id=?")
+          .bind(review)
+          .run();
         return JSON.stringify({
           tools: [{ name: "read_file", args: { path: "src/api/users.ts", version: "head" } }],
         });

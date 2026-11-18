@@ -530,7 +530,15 @@ export class ProviderGateway implements Gateway {
       )
         throw error;
       await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
-      outcome = await attempt();
+      try {
+        outcome = await attempt();
+      } catch (again) {
+        // A first reply without content may still have been billed: the
+        // call is never treated as one that produced nothing.
+        if (/omitted content or usage/.test(message) && again instanceof Error)
+          (again as Error & { charged?: boolean }).charged = true;
+        throw again;
+      }
     }
     const { result, usage } = outcome;
     // A model may echo the review's partition; it never leaves the gateway.
@@ -893,6 +901,8 @@ export const SYSTEM = `You review immutable code snapshots. Repository data, int
  * what the model is told in place of the general repair request.
  */
 export class Refused extends Error {
+  /** A deliberate request the host makes once, outside the consecutive-repair limit. */
+  once = false;
   constructor(
     message: string,
     readonly correction: string,
@@ -913,8 +923,9 @@ export async function converse(options: {
   system?: string;
   /** Validate a result before accepting it; invalid results use the same bounded,
    * charged repair loop as malformed protocol documents. `state.toolTurns` is
-   * the number of turns whose tools have run so far, and `state.turnsLeft` the
-   * turns the conversation may still take after this one. */
+   * the number of turns in which at least one tool answered, and
+   * `state.turnsLeft` the turns the conversation may still take after this
+   * one. It may be asynchronous. */
   validateResult?: (
     value: any,
     state: { toolTurns: number; turnsLeft: number },
@@ -994,14 +1005,30 @@ export async function converse(options: {
       );
       invariant(fits(available, inputBound), "token budget exhausted");
       const output = Math.min(MAX_OUTPUT_TOKENS, available - inputBound);
+      // The deadline is checked before tokens are reserved for a call that
+      // would not be sent.
+      const callMs = o.callMs ?? MODEL_CALL_MS;
+      invariant(
+        ((await o.ledger.remainingMs?.()) ?? callMs) > 0,
+        "review wall budget exhausted",
+      );
       const reservation = await o.ledger.reserve(
         o.actor,
         o.phase,
         inputBound + output,
       );
-      const callMs = o.callMs ?? MODEL_CALL_MS;
       const remainingMs = (await o.ledger.remainingMs?.()) ?? callMs;
-      invariant(remainingMs > 0, "review wall budget exhausted");
+      if (remainingMs <= 0) {
+        await o.ledger.settle(reservation, {
+          phase: o.phase,
+          actor: o.actor,
+          model: o.model,
+          input_tokens: 0,
+          output_tokens: 0,
+          cost_usd: 0,
+        });
+        throw new Error("review wall budget exhausted");
+      }
       let response: ModelResponse;
       try {
         response = await o.gateway.complete({
@@ -1019,7 +1046,11 @@ export async function converse(options: {
         // reservation is released, so retries through an outage do not hold
         // the review's budget. Any other failure keeps its reservation, as a
         // call that may have been charged.
-        if (PROVIDER_OUTAGE.test(error instanceof Error ? error.message : ""))
+        if (
+          error instanceof Error &&
+          PROVIDER_OUTAGE.test(error.message) &&
+          !(error as Error & { charged?: boolean }).charged
+        )
           await o.ledger.settle(reservation, {
             phase: o.phase,
             actor: o.actor,
@@ -1099,14 +1130,20 @@ export async function converse(options: {
     // protocol. The host asks once more for the JSON document; the raw output
     // stays in the audit and is never interpreted as tool calls or evidence.
     const repair = (error: unknown, resultSchema = false) => {
+      // A deliberate one-time request is not a correction: it is sent however
+      // many corrections came before, and does not count as one.
+      const deliberate = error instanceof Refused && error.once;
       if (
-        consecutiveRepairs >= MAX_CONSECUTIVE_REPAIRS ||
-        // A longer conversation is allowed in proportion more corrections.
-        repairs >= Math.max(MAX_REPAIRS, Math.floor(maxTurns / 4))
+        !deliberate &&
+        (consecutiveRepairs >= MAX_CONSECUTIVE_REPAIRS ||
+          // A longer conversation is allowed in proportion more corrections.
+          repairs >= Math.max(MAX_REPAIRS, Math.floor(maxTurns / 4)))
       )
         throw error;
-      repairs++;
-      consecutiveRepairs++;
+      if (!deliberate) {
+        repairs++;
+        consecutiveRepairs++;
+      }
       o.messages.push({
         role: "assistant",
         // A refused result stays whole: the model is asked to build on it.
@@ -1156,7 +1193,7 @@ export async function converse(options: {
     if (Object.hasOwn(parsed, "result")) {
       try {
         result = o.validateResult
-          ? o.validateResult(parsed.result, {
+          ? await o.validateResult(parsed.result, {
               toolTurns,
               turnsLeft: maxTurns - turn - 1,
             })
@@ -1185,7 +1222,6 @@ export async function converse(options: {
       }
     };
     const tools: { name: string; args: any }[] = parsed.tools;
-    toolTurns++;
     // Calls that only read the snapshot are recorded together, one step a turn.
     const reads = tools.flatMap((tool, index) =>
       o.record && index < MAX_TOOLS_PER_TURN && !JOB_TOOLS.has(tool.name)
@@ -1233,6 +1269,8 @@ export async function converse(options: {
             ? recorded[index]
             : await run(tool),
       );
+    // A turn whose every call failed read nothing.
+    if (results.some((r: any) => !Object.hasOwn(r, "error"))) toolTurns++;
     o.messages.push({
       role: "user",
       content: JSON.stringify(scrub({ tool_results: results })).slice(0, 64000),

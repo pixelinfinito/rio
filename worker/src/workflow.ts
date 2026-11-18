@@ -803,6 +803,9 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       // A job the backend could not run at all (container lost, sandbox failed)
       // is dispatched once more under its own job id; the command's own failures
       // are never retried. The first attempt keeps its historical id and step names.
+      // The failed attempt a retry replaces: if the retry cannot be
+      // dispatched, the caller gets this result, as without a retry.
+      let previous: ExecutionResult | undefined;
       for (let attempt = 1; ; attempt++) {
         const job = hash(
           attempt === 1 ? `${id}-${name}` : `${id}-${name}-${attempt}`,
@@ -814,20 +817,35 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           : undefined;
         if (cap !== undefined && cap <= 0)
           throw new Error("no wall time left for the job");
-        const wall = await step.do(`dispatch-${job}`, async () =>
-          createJob(
-            this.env,
-            id,
-            job,
-            kind,
-            command,
-            version,
-            submission.snapshot_id,
-            attempt,
-            kind === "run" ? undefined : { profile: submission.profile },
-            cap,
-          ),
-        );
+        let wall: number;
+        try {
+          wall = await step.do(`dispatch-${job}`, async () =>
+            createJob(
+              this.env,
+              id,
+              job,
+              kind,
+              command,
+              version,
+              submission.snapshot_id,
+              attempt,
+              kind === "run" ? undefined : { profile: submission.profile },
+              cap,
+            ),
+          );
+        } catch (error) {
+          if (!previous) throw error;
+          // A retry that could not be queued leaves no job to run later.
+          await step.do(`withdraw-${job}`, async () => {
+            await this.env.DB.prepare(
+              "UPDATE jobs SET status='failed' WHERE id=? AND attempt=? AND status IN ('pending','leased')",
+            )
+              .bind(job, attempt)
+              .run();
+            return true;
+          });
+          return previous;
+        }
         // The unique attempt is part of the event type and result path.
         const remaining = await step.do(`remaining-${job}`, async () => {
           const ms = spare ? await spare() : await store.remainingMs(id);
@@ -900,6 +918,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               : `${name}: runner attempt ${attempt} failed (${redact(result.stderr).slice(0, 120)}); retried`,
           );
           executions[job] = result;
+          previous = result;
           continue;
         }
         executions[job] = result;
@@ -2099,6 +2118,14 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             // A security agent's first result, kept while it is challenged: a
             // conversation that fails afterwards still reports it.
             let firstResult: any;
+            const raisedBy = `${s.id}-${label}`;
+            const screen = (raised: unknown) =>
+              screenHypotheses(
+                agent,
+                validateHypothesesLenient(agent, clampAgentOutput(raised))
+                  .accepted,
+                { catalogItems: new Set(applicable.map((i) => i.id)) },
+              );
             try {
               output = await converse({
                 gateway,
@@ -2130,8 +2157,14 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                       history: SECURITY_HISTORY,
                       callMs: SECURITY_CALL_MS,
                       retryCall: true,
-                      validateResult: (value: any, state) => {
+                      validateResult: async (value: any, state) => {
                         invariant(securityResult(value), SECURITY_RESULT);
+                        // The list's limit is checked here, so a result over
+                        // it is asked for again instead of ending the agent.
+                        invariant(
+                          value.hypotheses.length <= 100,
+                          "security result lists more than 100 hypotheses",
+                        );
                         // Some models answer the first turn with every item
                         // unassessed, as a placeholder for work not begun.
                         if (!state.toolTurns && value.unassessed.length)
@@ -2147,10 +2180,17 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                           state.turnsLeft >= CHALLENGE_TURNS
                         ) {
                           firstResult = value;
-                          throw new Refused(
+                          // Recorded before the challenge, so a review stopped
+                          // meanwhile reports it; the final result replaces it.
+                          const kept = screen(value.hypotheses).accepted;
+                          for (const h of kept) h.source = { agent };
+                          await progress.raised(raisedBy, kept);
+                          const challenged = new Refused(
                             "security result challenged",
                             challenge(state.turnsLeft),
                           );
+                          challenged.once = true;
+                          throw challenged;
                         }
                         return value;
                       },
@@ -2164,24 +2204,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               });
             } catch (error) {
               const message = error instanceof Error ? error.message : "";
-              if (/cancel/.test(message)) {
-                // A review stopped while its first security result was being
-                // challenged keeps that result for the stopped review's
-                // report, as it would have without the challenge.
-                if (firstResult && securityResult(firstResult)) {
-                  const kept = screenHypotheses(
-                    agent,
-                    validateHypothesesLenient(
-                      agent,
-                      clampAgentOutput(firstResult.hypotheses),
-                    ).accepted,
-                    { catalogItems: new Set(applicable.map((i) => i.id)) },
-                  ).accepted;
-                  for (const h of kept) h.source = { agent };
-                  await progress.raised(`${s.id}-${label}`, kept);
-                }
-                throw error;
-              }
+              if (/cancel/.test(message)) throw error;
               const budget = /budget exhausted|turn limit exhausted/.test(
                 message,
               );
@@ -2275,7 +2298,8 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                 review.hypotheses.push(h);
             }
             review.generated = true;
-            await progress.raised(`${s.id}-${label}`, screened.accepted);
+            // A recorded first result is replaced, even by an empty list.
+            await progress.raised(raisedBy, screened.accepted, !!firstResult);
             await finished(screened.accepted.length);
             // Only a run that completed within budget populates the cache. The
             // entries are written a chunk per step, each a few packs, so no step

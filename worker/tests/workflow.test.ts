@@ -495,6 +495,78 @@ it("answers a search the request budget no longer covers with a refusal, and rep
   }
 }, 60000);
 
+it("keeps a timed-out job's result when its retry cannot be queued", async () => {
+  const store = new Store(runtime),
+    id = crypto.randomUUID(),
+    s = submission();
+  s.profile.steps = [
+    { id: "checks", uses: "rio/checks@0.1.0", needs: [], with: {} },
+    { id: "report", uses: "rio/report@0.1.0", needs: ["checks"], with: {} },
+  ];
+  const stored = await storeSnapshot(runtime, snapshot),
+    key = await store.put(`reviews/${id}/submission.json`, {
+      ...s,
+      snapshot_id: stored.id,
+    });
+  await runtime.DB.prepare(
+    "INSERT INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES(?,?,?,'queued',?,?,?)",
+  )
+    .bind(id, "owner", key, Date.now(), 100000, Date.now() + 60000)
+    .run();
+  const retry = hash(`${id}-checks-2`).slice(0, 32);
+  // The queue refuses the retry's message, every time it is sent.
+  const send = runtime.JOBS.send.bind(runtime.JOBS);
+  const queue = vi
+    .spyOn(runtime.JOBS, "send")
+    .mockImplementation(async (message: any, options?: any) => {
+      if (message.job_id === retry) throw new Error("queue unavailable");
+      return send(message, options);
+    });
+  try {
+    await using instance = await introspectWorkflowInstance(runtime.REVIEWS, id);
+    await instance.modify(async (m) => {
+      await m.disableRetryDelays();
+    });
+    await runtime.REVIEWS.create({
+      id,
+      params: { review_id: id, snapshot_key: stored.key },
+    });
+    const job = hash(`${id}-checks`).slice(0, 32);
+    await instance.waitForStepResult({ name: `dispatch-${job}` });
+    await finishJob(runtime, id, job, 1, {
+      outcome: "exited",
+      job_id: job,
+      attempt: 1,
+      version: "head",
+      exit_code: 124,
+      stdout: "",
+      stderr: "archive transfer deadline exceeded",
+      timed_out: true,
+      truncated: false,
+      phase: "transfer",
+      timing: { transfer_ms: 220000 },
+    });
+    await instance.waitForStatus("complete");
+    const report = await store.get<any>(
+      (
+        await runtime.DB.prepare("SELECT report_key FROM reviews WHERE id=?")
+          .bind(id)
+          .first<any>()
+      ).report_key,
+    );
+    // The review goes on without the checks, as it did before retries.
+    expect(report.footer.notes).toContain(
+      "checks: runner analysis failed (timed out during transfer (transfer 220 s)); deterministic checks did not run",
+    );
+    // No queued-but-unsent retry is left to run later.
+    const left = await runtime.DB.prepare("SELECT status FROM jobs WHERE id=?")
+      .bind(retry)
+      .first<any>();
+    expect(left?.status ?? "failed").toBe("failed");
+  } finally {
+    queue.mockRestore();
+  }
+}, 60000);
 it("dispatches a job again when its first attempt timed out during the snapshot transfer", async () => {
   const store = new Store(runtime),
     id = crypto.randomUUID(),
