@@ -495,6 +495,72 @@ it("answers a search the request budget no longer covers with a refusal, and rep
   }
 }, 60000);
 
+it("dispatches a job again when its first attempt timed out during the snapshot transfer", async () => {
+  const store = new Store(runtime),
+    id = crypto.randomUUID(),
+    s = submission();
+  s.profile.steps = [
+    { id: "checks", uses: "rio/checks@0.1.0", needs: [], with: {} },
+    { id: "report", uses: "rio/report@0.1.0", needs: ["checks"], with: {} },
+  ];
+  const stored = await storeSnapshot(runtime, snapshot),
+    key = await store.put(`reviews/${id}/submission.json`, {
+      ...s,
+      snapshot_id: stored.id,
+    });
+  await runtime.DB.prepare(
+    "INSERT INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES(?,?,?,'queued',?,?,?)",
+  )
+    .bind(id, "owner", key, Date.now(), 100000, Date.now() + 60000)
+    .run();
+  await using instance = await introspectWorkflowInstance(runtime.REVIEWS, id);
+  await runtime.REVIEWS.create({
+    id,
+    params: { review_id: id, snapshot_key: stored.key },
+  });
+  const job = hash(`${id}-checks`).slice(0, 32);
+  await instance.waitForStepResult({ name: `dispatch-${job}` });
+  await finishJob(runtime, id, job, 1, {
+    outcome: "exited",
+    job_id: job,
+    attempt: 1,
+    version: "head",
+    exit_code: 124,
+    stdout: "",
+    stderr: "archive transfer deadline exceeded",
+    timed_out: true,
+    truncated: false,
+    phase: "transfer",
+    timing: { transfer_ms: 220000 },
+  });
+  const retry = hash(`${id}-checks-2`).slice(0, 32);
+  await instance.waitForStepResult({ name: `dispatch-${retry}` });
+  await finishJob(runtime, id, retry, 2, {
+    job_id: retry,
+    attempt: 2,
+    version: "head",
+    exit_code: 0,
+    stdout: "",
+    stderr: "",
+    timed_out: false,
+    truncated: false,
+    artifact: { report: s.report, graphs: s.graphs },
+  });
+  await instance.waitForStatus("complete");
+  const report = await store.get<any>(
+    (
+      await runtime.DB.prepare("SELECT report_key FROM reviews WHERE id=?")
+        .bind(id)
+        .first<any>()
+    ).report_key,
+  );
+  expect(report.status).toBe("complete");
+  expect(
+    report.footer.notes.filter((n: string) => n.startsWith("checks: runner")),
+  ).toEqual([
+    "checks: runner attempt 1 timed out during transfer (transfer 220 s); retried",
+  ]);
+});
 it("resumes an isolated runner job using an attempt-specific event", async () => {
   const store = new Store(runtime),
     id = crypto.randomUUID(),
@@ -684,13 +750,23 @@ it("reports the phase and the time of an analysis job that hit its deadline", as
     .bind(Date.now() + 600000, w.job)
     .run();
   const { artifact: _, ...result } = w.result;
-  await finishJob(runtime, w.id, w.job, 1, {
+  const transfer = {
     ...result,
     exit_code: 124,
     stderr: "runner wall deadline exceeded during transfer",
     timed_out: true,
-    phase: "transfer",
+    phase: "transfer" as const,
     timing: { transfer_ms: 240000, archive_bytes: 5 << 26, storage_ms: 41000 },
+  };
+  await finishJob(runtime, w.id, w.job, 1, transfer);
+  // A transfer timeout is the platform's: the job is dispatched once more,
+  // and only a second one fails the analysis.
+  const retry = hash(`${w.id}-checks-2`).slice(0, 32);
+  await instance.waitForStepResult({ name: `dispatch-${retry}` });
+  await finishJob(runtime, w.id, retry, 2, {
+    ...transfer,
+    job_id: retry,
+    attempt: 2,
   });
   await instance.waitForStatus("complete");
   const ended = await w.row();
@@ -698,6 +774,9 @@ it("reports the phase and the time of an analysis job that hit its deadline", as
   // The review goes on without the checks, and says which part ran out.
   expect(ended.status).toBe("complete");
   expect(report.status).toBe("incomplete");
+  expect(report.footer.notes).toContain(
+    "checks: runner attempt 1 timed out during transfer (transfer 240 s); retried",
+  );
   expect(report.footer.notes).toContain(
     "checks: runner analysis failed (timed out during transfer (transfer 240 s)); deterministic checks did not run",
   );

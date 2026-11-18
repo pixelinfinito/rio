@@ -887,9 +887,17 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             result.version === version,
           "wrong runner completion",
         );
-        if (result.outcome === "runner_failed" && attempt < RUNNER_ATTEMPTS) {
+        // A job that timed out moving the snapshot into its container never
+        // ran its command: like a lost container, the platform failed it.
+        const transfer = result.timed_out && result.phase === "transfer";
+        if (
+          (result.outcome === "runner_failed" || transfer) &&
+          attempt < RUNNER_ATTEMPTS
+        ) {
           report.footer.notes.push(
-            `${name}: runner attempt ${attempt} failed (${redact(result.stderr).slice(0, 120)}); retried`,
+            transfer
+              ? `${name}: runner attempt ${attempt} timed out${spent(result)}; retried`
+              : `${name}: runner attempt ${attempt} failed (${redact(result.stderr).slice(0, 120)}); retried`,
           );
           executions[job] = result;
           continue;
