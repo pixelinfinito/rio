@@ -1537,8 +1537,13 @@ it("sends a turn once more when its call timed out or was refused, and only when
 it("sends a turn up to three more times, after growing pauses, while the provider fails it with a 5xx", async () => {
   vi.useFakeTimers();
   try {
-    const run = (failures: number, error = "provider failed (503)") => {
+    const run = (
+      failures: number,
+      error = "provider failed (503)",
+      cancelled = async () => false,
+    ) => {
       const ids: string[] = [];
+      const settled: number[] = [];
       let calls = 0;
       const result = converse({
         gateway: {
@@ -1555,7 +1560,9 @@ it("sends a turn up to three more times, after growing pauses, while the provide
         ledger: {
           remaining: async () => 1000000,
           reserve: async () => "id",
-          settle: async () => {},
+          settle: async (_, usage) => {
+            settled.push(usage.input_tokens + usage.output_tokens);
+          },
         },
         actor: "security",
         phase: "generation",
@@ -1567,10 +1574,11 @@ it("sends a turn up to three more times, after growing pauses, while the provide
           ids.push(id);
           return action();
         },
+        cancelled,
         retryCall: true,
       });
       result.catch(() => {});
-      return { result, ids };
+      return { result, ids, settled };
     };
     const all = RETRY_PAUSES_MS.reduce((a, b) => a + b, 0);
     const twice = run(2);
@@ -1587,6 +1595,8 @@ it("sends a turn up to three more times, after growing pauses, while the provide
       "security-generation-0-fourth",
       "security-generation-0-fifth",
     ]);
+    // Each failed attempt's reservation is released; the answer is charged.
+    expect(four.settled).toEqual([0, 0, 0, 0, 130]);
     const always = run(9);
     await vi.advanceTimersByTimeAsync(all);
     await expect(always.result).rejects.toThrow("provider failed (503)");
@@ -1596,6 +1606,16 @@ it("sends a turn up to three more times, after growing pauses, while the provide
     await vi.advanceTimersByTimeAsync(all);
     await expect(refused.result).rejects.toThrow("provider failed (400)");
     expect(refused.ids).toHaveLength(2);
+    // A refused request may have been charged: it keeps its reservation.
+    expect(refused.settled).toEqual([]);
+    // A review cancelled during a pause sends nothing more.
+    let stopped = false;
+    const cancelled = run(9, "provider failed (503)", async () => stopped);
+    await vi.advanceTimersByTimeAsync(1);
+    stopped = true;
+    await vi.advanceTimersByTimeAsync(all);
+    await expect(cancelled.result).rejects.toThrow("cancelled");
+    expect(cancelled.ids).toHaveLength(2);
   } finally {
     vi.useRealTimers();
   }

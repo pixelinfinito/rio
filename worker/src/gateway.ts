@@ -865,6 +865,8 @@ function nativeArgs(values: Record<string, string>): unknown {
  */
 export const RETRY_PAUSES_MS = [20000, 60000, 120000];
 const RETRY_NAMES = ["third", "fourth", "fifth"];
+/** A call the provider failed without producing anything. */
+const PROVIDER_OUTAGE = /provider failed \(5\d\d/;
 const MAX_CONSECUTIVE_REPAIRS = 2;
 /** Tool calls run per model turn; later calls in a batch are answered with the limit. */
 const MAX_TOOLS_PER_TURN = 8;
@@ -1000,16 +1002,34 @@ export async function converse(options: {
       const callMs = o.callMs ?? MODEL_CALL_MS;
       const remainingMs = (await o.ledger.remainingMs?.()) ?? callMs;
       invariant(remainingMs > 0, "review wall budget exhausted");
-      const response: ModelResponse = await o.gateway.complete({
-        model: o.model,
-        messages: o.messages,
-        system,
-        max_tokens: output,
-        stop: NATIVE_CALL_STOPS,
-        signal: AbortSignal.timeout(Math.min(callMs, remainingMs)),
-        ...(o.cache ? { cache: { ...o.cache, tail: true } } : {}),
-        ...(o.redact?.length ? { redact: o.redact } : {}),
-      });
+      let response: ModelResponse;
+      try {
+        response = await o.gateway.complete({
+          model: o.model,
+          messages: o.messages,
+          system,
+          max_tokens: output,
+          stop: NATIVE_CALL_STOPS,
+          signal: AbortSignal.timeout(Math.min(callMs, remainingMs)),
+          ...(o.cache ? { cache: { ...o.cache, tail: true } } : {}),
+          ...(o.redact?.length ? { redact: o.redact } : {}),
+        });
+      } catch (error) {
+        // A call the provider failed with a 5xx produced nothing: its
+        // reservation is released, so retries through an outage do not hold
+        // the review's budget. Any other failure keeps its reservation, as a
+        // call that may have been charged.
+        if (PROVIDER_OUTAGE.test(error instanceof Error ? error.message : ""))
+          await o.ledger.settle(reservation, {
+            phase: o.phase,
+            actor: o.actor,
+            model: o.model,
+            input_tokens: 0,
+            output_tokens: 0,
+            cost_usd: 0,
+          });
+        throw error;
+      }
       // The model-call record carries layer hashes and sizes, never the text.
       response.layers = layerHashes(system, o.messages);
       if (checkpoint) response.compaction = checkpoint;
@@ -1042,7 +1062,7 @@ export async function converse(options: {
             // A provider that is briefly unavailable answers both attempts
             // with a 5xx: one more is sent after a pause.
             if (
-              !/provider failed \(5\d\d/.test(
+              !PROVIDER_OUTAGE.test(
                 again instanceof Error ? again.message : "",
               )
             )
@@ -1050,6 +1070,8 @@ export async function converse(options: {
             let failed: unknown = again;
             for (const [index, pause] of RETRY_PAUSES_MS.entries()) {
               await new Promise((done) => setTimeout(done, pause));
+              // A review cancelled or past its deadline during the pause sends nothing more.
+              if (await o.cancelled?.()) throw new Error("cancelled");
               try {
                 return await send(
                   `${o.actor}-${o.phase}-${turn}-${RETRY_NAMES[index]}`,
@@ -1057,7 +1079,7 @@ export async function converse(options: {
               } catch (error) {
                 failed = error;
                 if (
-                  !/provider failed \(5\d\d/.test(
+                  !PROVIDER_OUTAGE.test(
                     error instanceof Error ? error.message : "",
                   )
                 )

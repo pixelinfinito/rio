@@ -51,6 +51,8 @@ interface Run {
   /** Disclosed verification answer for a hypothesis. */
   vote?: (h: any) => unknown;
   mutate?: (s: Submission) => void;
+  /** Called with an agent's latest message; a string returned is its raw reply. */
+  onAgent?: (agent: string, last: string) => Promise<string | void>;
 }
 async function review(run: Run) {
   const prompts: Record<string, string> = {};
@@ -71,6 +73,14 @@ async function review(run: Run) {
       if (agent) {
         prompts[agent] = first;
         latest[agent] = last;
+        const reply = await run.onAgent?.(agent, last);
+        if (typeof reply === "string") {
+          calls.push(agent);
+          return Response.json({
+            choices: [{ message: { content: reply } }],
+            usage: { prompt_tokens: 80, completion_tokens: 50 },
+          });
+        }
         const turns = run.turns?.[agent],
           turn = calls.filter((c) => c === agent).length;
         // A security agent that leaves items unassessed has read code first:
@@ -669,6 +679,37 @@ describe("security agent", () => {
     "A10:2025",
   ];
 
+  it("reports the challenged first result of a review stopped during the challenge", async () => {
+    const { report, calls } = await review({
+      base,
+      head,
+      changed: ["src/api/users.ts"],
+      steps: steps(true),
+      agents: {
+        security: {
+          hypotheses: [injection],
+          assessed: ["A01:2025", "A05:2025"],
+          unassessed: [{ item: "A06:2025", reason: "tools_unavailable" }],
+        },
+      },
+      // The review is stopped while the agent investigates the challenge.
+      onAgent: async (agent, last) => {
+        if (agent !== "security" || !last.includes("is not final")) return;
+        await runtime.DB.prepare(
+          "UPDATE reviews SET cancelled=1 WHERE cancelled=0",
+        ).run();
+        return JSON.stringify({
+          tools: [{ name: "read_file", args: { path: "src/api/users.ts", version: "head" } }],
+        });
+      },
+    });
+    expect(report.status).toBe("partial");
+    expect(calls).not.toContain("verify");
+    // Unverified, but reported: the stop did not discard what the audit found.
+    expect(
+      report.agent_audit.unverified.map((h: any) => h.rule_id ?? h.hypothesis?.rule_id),
+    ).toContain(injection.rule_id);
+  });
   it.each(["explicit", "triage"])(
     "runs when enabled by %s, verifies catalog hypotheses and reports catalog coverage",
     async (selection) => {

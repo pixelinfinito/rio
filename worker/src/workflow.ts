@@ -2164,7 +2164,24 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               });
             } catch (error) {
               const message = error instanceof Error ? error.message : "";
-              if (/cancel/.test(message)) throw error;
+              if (/cancel/.test(message)) {
+                // A review stopped while its first security result was being
+                // challenged keeps that result for the stopped review's
+                // report, as it would have without the challenge.
+                if (firstResult && securityResult(firstResult)) {
+                  const kept = screenHypotheses(
+                    agent,
+                    validateHypothesesLenient(
+                      agent,
+                      clampAgentOutput(firstResult.hypotheses),
+                    ).accepted,
+                    { catalogItems: new Set(applicable.map((i) => i.id)) },
+                  ).accepted;
+                  for (const h of kept) h.source = { agent };
+                  await progress.raised(`${s.id}-${label}`, kept);
+                }
+                throw error;
+              }
               const budget = /budget exhausted|turn limit exhausted/.test(
                 message,
               );
