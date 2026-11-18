@@ -73,6 +73,32 @@ async function review(run: Run) {
         latest[agent] = last;
         const turns = run.turns?.[agent],
           turn = calls.filter((c) => c === agent).length;
+        // A security agent that leaves items unassessed has read code first:
+        // the host refuses such a result on a first turn.
+        const fixed: any = run.models?.[agent]?.[body.model] ?? run.agents[agent];
+        if (
+          agent === "security" &&
+          !turns &&
+          fixed?.unassessed?.length &&
+          users.length === 1
+        )
+          return Response.json({
+            choices: [
+              {
+                message: {
+                  content: JSON.stringify({
+                    tools: [
+                      {
+                        name: "read_file",
+                        args: { path: run.changed[0], version: "head" },
+                      },
+                    ],
+                  }),
+                },
+              },
+            ],
+            usage: { prompt_tokens: 80, completion_tokens: 50 },
+          });
         calls.push(agent);
         result = turns
           ? turns[Math.min(turn, turns.length - 1)]
@@ -819,11 +845,7 @@ describe("security agent", () => {
       turns: {
         security: [
           { hypotheses: [], assessed: applicable },
-          {
-            hypotheses: [],
-            assessed: applicable.filter((i) => i !== "A01:2025"),
-            unassessed: [{ item: "A01:2025", reason: "budget" }],
-          },
+          { hypotheses: [], assessed: applicable, unassessed: [] },
         ],
       },
     });
@@ -837,10 +859,8 @@ describe("security agent", () => {
       report.footer.notes.filter((n: string) => n.includes("agent failed")),
     ).toEqual([]);
     // Coverage is the corrected result's, not the refused one's.
-    expect(report.security_coverage.assessed).toHaveLength(6);
-    expect(report.security_coverage.unassessed).toEqual([
-      { item: "A01:2025", title: "Broken Access Control", reason: "budget" },
-    ]);
+    expect(report.security_coverage.assessed).toHaveLength(7);
+    expect(report.security_coverage.unassessed).toEqual([]);
   }, 60000);
 
   it("treats a security result without its assessment lists as a failed agent, never as nothing found", async () => {
@@ -883,6 +903,34 @@ describe("security agent", () => {
     ).toBe(true);
   }, 60000);
 
+  it("refuses a first-turn result that leaves items unassessed, and says the tools are there", async () => {
+    const { report, calls, latest } = await review({
+      base,
+      head,
+      changed: ["src/api/users.ts"],
+      steps: steps(true),
+      agents: {},
+      turns: {
+        security: [
+          {
+            hypotheses: [],
+            assessed: [],
+            unassessed: applicable.map((item) => ({
+              item,
+              reason: "tools_unavailable",
+            })),
+          },
+        ],
+      },
+    });
+    // Asked again within the repair limit, then the agent fails in the open.
+    expect(calls.filter((c) => c === "security").length).toBe(3);
+    expect(latest.security).toContain("you have not read any code yet");
+    expect(report.status).toBe("partial");
+    expect(report.footer.notes.join(" ")).toContain(
+      "security agent failed: security result leaves items unassessed without reading any code",
+    );
+  });
   it("lists assessed and unassessed items when no hypothesis is produced", async () => {
     const { report } = await review({
       base,
@@ -1224,4 +1272,24 @@ describe("default budgets", () => {
     },
     60000,
   );
+});
+describe("a review agent that keeps reading", () => {
+  it("is told how many turns it has left, and its failure leaves a partial report", async () => {
+    const files = { "src/a.ts": "export const a = 1;\n" };
+    const { report, latest } = await review({
+      base: files,
+      head: { "src/a.ts": "export const a = 2;\n" },
+      changed: ["src/a.ts"],
+      steps: agentSteps([{ correctness: { model: "default" } }]),
+      agents: {},
+      raw: {
+        correctness: JSON.stringify({
+          tools: [{ name: "read_file", args: { path: "src/a.ts", version: "head" } }],
+        }),
+      },
+    });
+    expect(latest.correctness).toContain("Host: this is your last turn.");
+    expect(report.status).toBe("partial");
+    expect(report.footer.notes.join("\n")).toContain("turn limit exhausted");
+  });
 });

@@ -594,6 +594,52 @@ describe("quorum", () => {
       ledger.usage.filter((u) => u.phase.startsWith("verify")),
     ).toHaveLength(6);
   });
+  it("asks a voter again for a blind result outside the schema instead of failing its vote", async () => {
+    const told: string[] = [];
+    const gateway: Gateway = {
+      async complete(request) {
+        const last = String(request.messages.at(-1)!.content);
+        const disclosed = request.messages.some((m) =>
+          m.content.includes("Verify this hypothesis."),
+        );
+        if (last.startsWith("Host: your result was not accepted")) told.push(last);
+        // The first blind answer adds a field the location schema does not name.
+        const blind =
+          request.messages.length === 1
+            ? [{ ...hypothesis, location: { ...hypothesis.location, path_note: null } }]
+            : [hypothesis];
+        return {
+          content: JSON.stringify({
+            result: disclosed ? { evidence_level: "plausible", evidence: [] } : blind,
+          }),
+          input_tokens: 20,
+          output_tokens: 10,
+          cost_usd: 0.0001,
+        };
+      },
+    };
+    const saved: Vote[] = [];
+    await verifyHypothesis({
+      profile,
+      hypothesis,
+      intent: "",
+      guidance: [],
+      snapshot,
+      context: { snapshot, head: graphs.head, executions: {}, guidance: [] },
+      gateway,
+      ledger: new MemoryLedger(),
+      tools: () => new Tools(snapshot, graphs, undefined),
+      verifyTokens: 10000,
+      save: async (v) => {
+        saved.push(structuredClone(v));
+      },
+    });
+    expect(told).toHaveLength(3);
+    expect(told[0]).toContain("/location must NOT have additional properties");
+    const final = new Map(saved.map((v) => [v.voter, v]));
+    expect([...final.values()].map((v) => v.status)).toEqual(["completed", "completed", "completed"]);
+    expect([...final.values()].map((v) => v.blind_match)).toEqual(["same", "same", "same"]);
+  });
   it("gives a risk hypothesis the profile's risk voters and every other the full quorum", async () => {
     const complete: Gateway["complete"] = async (request) => ({
       content: JSON.stringify({

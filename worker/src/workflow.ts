@@ -31,6 +31,7 @@ import { Progress } from "./progress";
 import {
   HISTORY_BYTES,
   ProviderGateway,
+  Refused,
   converse,
   settledUsage,
 } from "./gateway";
@@ -204,6 +205,14 @@ export const SECURITY_CALL_MS = 240000;
  * message: a trace across files needs what it read some turns ago.
  */
 export const SECURITY_HISTORY = { max: 384 * 1024, low: 256 * 1024 };
+/**
+ * Bytes of tool results a review agent keeps readable after its first
+ * message. Counted from the whole conversation instead, a large change's
+ * first message left room for two tool results, and a model that explores
+ * lost each file soon after reading it and read it again until its turns ran
+ * out.
+ */
+export const AGENT_HISTORY = { max: 256 * 1024, low: 160 * 1024 };
 /** Changed files read for an agent's prompt; the files after them are named. */
 export const CHANGE_PROMPT_FILES = 200;
 // A diff cut shorter than this says too little: the file is named instead.
@@ -473,6 +482,18 @@ export function securityCoverage(
 }
 const SECURITY_RESULT =
   "security result must be an object with hypotheses, assessed and unassessed";
+/** What a security agent is told when it leaves items unassessed before it has run a tool. */
+export const UNREAD_RESULT =
+  'Your result was discarded: it leaves items unassessed and you have not read any code yet. The tools read_file, search and graph_query are available in this conversation, and nothing else is needed to assess an item. Reply with {"tools":[{"name":"read_file","args":{"path":"...","version":"head"}}]}, with up to eight calls, to read the changed code, and give the result only after you have investigated.';
+/** Turns a security agent must have left for its first result to be challenged. */
+export const CHALLENGE_TURNS = 8;
+/**
+ * What a security agent is told once, when its first result comes with turns
+ * to spare: an audit that stops early has usually dropped what it could not
+ * demonstrate and left places unread.
+ */
+export const challenge = (left: number) =>
+  `Host: your result is recorded and is not final. You have ${left} turns left. Before the final result, do three things with the tools. First, write in \`notes\` every suspicion you dropped and why; restore each one you dropped only because you could not demonstrate it, as a \`warning\` with \`limitations\`, and leave out the ones that need an attacker the repository does not show. Second, name the entry points, parsers, permission decisions, secrets, files and commands of the change that you have not read in the code, and the inputs you have not followed to their source, and investigate them now. Third, look for each finding's flaw at the other places of the change that share its helper or call shape, and add those places to its \`locations\`. Then reply with the complete result again: every hypothesis you already reported that still stands, and the new ones. A new hypothesis needs what the first ones needed: an attacker the repository shows, the boundary they cross and the path in this code; general hardening advice is not one.`;
 /** Whether a security agent's result carries its hypotheses and both assessment lists. */
 const securityResult = (value: any): boolean =>
   !!value &&
@@ -2067,6 +2088,9 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                 }),
               );
             let output: any;
+            // A security agent's first result, kept while it is challenged: a
+            // conversation that fails afterwards still reports it.
+            let firstResult: any;
             try {
               output = await converse({
                 gateway,
@@ -2098,14 +2122,37 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                       history: SECURITY_HISTORY,
                       callMs: SECURITY_CALL_MS,
                       retryCall: true,
-                      validateResult: (value: any) => {
+                      validateResult: (value: any, state) => {
                         invariant(securityResult(value), SECURITY_RESULT);
+                        // Some models answer the first turn with every item
+                        // unassessed, as a placeholder for work not begun.
+                        if (!state.toolTurns && value.unassessed.length)
+                          throw new Refused(
+                            "security result leaves items unassessed without reading any code",
+                            UNREAD_RESULT,
+                          );
+                        // The first result of an audit that read code and has
+                        // turns to spare is kept and challenged once.
+                        if (
+                          !firstResult &&
+                          state.toolTurns &&
+                          state.turnsLeft >= CHALLENGE_TURNS
+                        ) {
+                          firstResult = value;
+                          throw new Refused(
+                            "security result challenged",
+                            challenge(state.turnsLeft),
+                          );
+                        }
                         return value;
                       },
                       resultShape:
                         'The result is {"hypotheses":[...],"assessed":[...],"unassessed":[...]}: all three lists are required, and a list with no entries is [].',
                     }
-                  : {}),
+                  : // A review agent is told how many turns it has left,
+                    // keeps what it read some turns ago, and does not lose its
+                    // part to one call the provider cut off or refused.
+                    { turnNotice: true, history: AGENT_HISTORY, retryCall: true }),
               });
             } catch (error) {
               const message = error instanceof Error ? error.message : "";
@@ -2113,7 +2160,8 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               const budget = /budget exhausted|turn limit exhausted/.test(
                 message,
               );
-              if (agent === "security") {
+              if (firstResult) output = firstResult;
+              else if (agent === "security") {
                 // An exhausted budget or a failed conversation leaves the items
                 // unassessed, never passed.
                 output = {
@@ -2128,9 +2176,10 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               // The request budget is the platform's, not the profile's: its
               // end is told as a failure for the security agent too.
               if (
-                agent !== "security" ||
-                !budget ||
-                message.includes(REQUESTS_EXHAUSTED)
+                !firstResult &&
+                (agent !== "security" ||
+                  !budget ||
+                  message.includes(REQUESTS_EXHAUSTED))
               ) {
                 // One agent's failure ends only that agent; the others' work and
                 // the deterministic results stay in a partial report.

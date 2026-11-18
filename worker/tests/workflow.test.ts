@@ -475,7 +475,8 @@ it("answers a search the request budget no longer covers with a refusal, and rep
       .map((b) => b.messages.at(-1).content as string)
       .filter((content) => content.includes("tool_results"));
     expect(answered).toHaveLength(1);
-    const results = JSON.parse(answered[0]).tool_results;
+    // The host's turn notice follows the results on a line of its own.
+    const results = JSON.parse(answered[0].split("\nHost: ")[0]).tool_results;
     expect(results[0]).toEqual({ name: "search", error: SEARCH_REFUSED });
     expect(results[1].result).toContain("1: function a()");
     expect([row.status, report.status]).toEqual(["complete", "incomplete"]);
