@@ -475,7 +475,8 @@ it("answers a search the request budget no longer covers with a refusal, and rep
       .map((b) => b.messages.at(-1).content as string)
       .filter((content) => content.includes("tool_results"));
     expect(answered).toHaveLength(1);
-    const results = JSON.parse(answered[0]).tool_results;
+    // The host's turn notice follows the results on a line of its own.
+    const results = JSON.parse(answered[0].split("\nHost: ")[0]).tool_results;
     expect(results[0]).toEqual({ name: "search", error: SEARCH_REFUSED });
     expect(results[1].result).toContain("1: function a()");
     expect([row.status, report.status]).toEqual(["complete", "incomplete"]);
@@ -494,6 +495,144 @@ it("answers a search the request budget no longer covers with a refusal, and rep
   }
 }, 60000);
 
+it("keeps a timed-out job's result when its retry cannot be queued", async () => {
+  const store = new Store(runtime),
+    id = crypto.randomUUID(),
+    s = submission();
+  s.profile.steps = [
+    { id: "checks", uses: "rio/checks@0.1.0", needs: [], with: {} },
+    { id: "report", uses: "rio/report@0.1.0", needs: ["checks"], with: {} },
+  ];
+  const stored = await storeSnapshot(runtime, snapshot),
+    key = await store.put(`reviews/${id}/submission.json`, {
+      ...s,
+      snapshot_id: stored.id,
+    });
+  await runtime.DB.prepare(
+    "INSERT INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES(?,?,?,'queued',?,?,?)",
+  )
+    .bind(id, "owner", key, Date.now(), 100000, Date.now() + 60000)
+    .run();
+  const retry = hash(`${id}-checks-2`).slice(0, 32);
+  // The queue refuses the retry's message, every time it is sent.
+  const send = runtime.JOBS.send.bind(runtime.JOBS);
+  const queue = vi
+    .spyOn(runtime.JOBS, "send")
+    .mockImplementation(async (message: any, options?: any) => {
+      if (message.job_id === retry) throw new Error("queue unavailable");
+      return send(message, options);
+    });
+  try {
+    await using instance = await introspectWorkflowInstance(runtime.REVIEWS, id);
+    await instance.modify(async (m) => {
+      await m.disableRetryDelays();
+    });
+    await runtime.REVIEWS.create({
+      id,
+      params: { review_id: id, snapshot_key: stored.key },
+    });
+    const job = hash(`${id}-checks`).slice(0, 32);
+    await instance.waitForStepResult({ name: `dispatch-${job}` });
+    await finishJob(runtime, id, job, 1, {
+      outcome: "exited",
+      job_id: job,
+      attempt: 1,
+      version: "head",
+      exit_code: 124,
+      stdout: "",
+      stderr: "archive transfer deadline exceeded",
+      timed_out: true,
+      truncated: false,
+      phase: "transfer",
+      timing: { transfer_ms: 220000 },
+    });
+    await instance.waitForStatus("complete");
+    const report = await store.get<any>(
+      (
+        await runtime.DB.prepare("SELECT report_key FROM reviews WHERE id=?")
+          .bind(id)
+          .first<any>()
+      ).report_key,
+    );
+    // The review goes on without the checks, as it did before retries.
+    expect(report.footer.notes).toContain(
+      "checks: runner analysis failed (timed out during transfer (transfer 220 s)); deterministic checks did not run",
+    );
+    // No queued-but-unsent retry is left to run later.
+    const left = await runtime.DB.prepare("SELECT status FROM jobs WHERE id=?")
+      .bind(retry)
+      .first<any>();
+    expect(left?.status ?? "failed").toBe("failed");
+  } finally {
+    queue.mockRestore();
+  }
+}, 60000);
+it("dispatches a job again when its first attempt timed out during the snapshot transfer", async () => {
+  const store = new Store(runtime),
+    id = crypto.randomUUID(),
+    s = submission();
+  s.profile.steps = [
+    { id: "checks", uses: "rio/checks@0.1.0", needs: [], with: {} },
+    { id: "report", uses: "rio/report@0.1.0", needs: ["checks"], with: {} },
+  ];
+  const stored = await storeSnapshot(runtime, snapshot),
+    key = await store.put(`reviews/${id}/submission.json`, {
+      ...s,
+      snapshot_id: stored.id,
+    });
+  await runtime.DB.prepare(
+    "INSERT INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES(?,?,?,'queued',?,?,?)",
+  )
+    .bind(id, "owner", key, Date.now(), 100000, Date.now() + 60000)
+    .run();
+  await using instance = await introspectWorkflowInstance(runtime.REVIEWS, id);
+  await runtime.REVIEWS.create({
+    id,
+    params: { review_id: id, snapshot_key: stored.key },
+  });
+  const job = hash(`${id}-checks`).slice(0, 32);
+  await instance.waitForStepResult({ name: `dispatch-${job}` });
+  await finishJob(runtime, id, job, 1, {
+    outcome: "exited",
+    job_id: job,
+    attempt: 1,
+    version: "head",
+    exit_code: 124,
+    stdout: "",
+    stderr: "archive transfer deadline exceeded",
+    timed_out: true,
+    truncated: false,
+    phase: "transfer",
+    timing: { transfer_ms: 220000 },
+  });
+  const retry = hash(`${id}-checks-2`).slice(0, 32);
+  await instance.waitForStepResult({ name: `dispatch-${retry}` });
+  await finishJob(runtime, id, retry, 2, {
+    job_id: retry,
+    attempt: 2,
+    version: "head",
+    exit_code: 0,
+    stdout: "",
+    stderr: "",
+    timed_out: false,
+    truncated: false,
+    artifact: { report: s.report, graphs: s.graphs },
+  });
+  await instance.waitForStatus("complete");
+  const report = await store.get<any>(
+    (
+      await runtime.DB.prepare("SELECT report_key FROM reviews WHERE id=?")
+        .bind(id)
+        .first<any>()
+    ).report_key,
+  );
+  expect(report.status).toBe("complete");
+  expect(
+    report.footer.notes.filter((n: string) => n.startsWith("checks: runner")),
+  ).toEqual([
+    "checks: runner attempt 1 timed out during transfer (transfer 220 s); retried",
+  ]);
+});
 it("resumes an isolated runner job using an attempt-specific event", async () => {
   const store = new Store(runtime),
     id = crypto.randomUUID(),
@@ -683,13 +822,23 @@ it("reports the phase and the time of an analysis job that hit its deadline", as
     .bind(Date.now() + 600000, w.job)
     .run();
   const { artifact: _, ...result } = w.result;
-  await finishJob(runtime, w.id, w.job, 1, {
+  const transfer = {
     ...result,
     exit_code: 124,
     stderr: "runner wall deadline exceeded during transfer",
     timed_out: true,
-    phase: "transfer",
+    phase: "transfer" as const,
     timing: { transfer_ms: 240000, archive_bytes: 5 << 26, storage_ms: 41000 },
+  };
+  await finishJob(runtime, w.id, w.job, 1, transfer);
+  // A transfer timeout is the platform's: the job is dispatched once more,
+  // and only a second one fails the analysis.
+  const retry = hash(`${w.id}-checks-2`).slice(0, 32);
+  await instance.waitForStepResult({ name: `dispatch-${retry}` });
+  await finishJob(runtime, w.id, retry, 2, {
+    ...transfer,
+    job_id: retry,
+    attempt: 2,
   });
   await instance.waitForStatus("complete");
   const ended = await w.row();
@@ -697,6 +846,9 @@ it("reports the phase and the time of an analysis job that hit its deadline", as
   // The review goes on without the checks, and says which part ran out.
   expect(ended.status).toBe("complete");
   expect(report.status).toBe("incomplete");
+  expect(report.footer.notes).toContain(
+    "checks: runner attempt 1 timed out during transfer (transfer 240 s); retried",
+  );
   expect(report.footer.notes).toContain(
     "checks: runner analysis failed (timed out during transfer (transfer 240 s)); deterministic checks did not run",
   );

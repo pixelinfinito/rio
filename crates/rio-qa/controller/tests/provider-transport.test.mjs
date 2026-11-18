@@ -140,3 +140,15 @@ for (const [classes, path, hinted] of [[['openai'], '/v1/a/g/openai/chat/complet
     assert.match(reply, /"cached_tokens":16/);
     const exited = once(child, 'close'); child.stdin.end('stop\n'); await exited;
   });
+
+test('an effort-qualified route sends its reasoning effort on the OpenAI protocol only', async () => {
+  for (const [protocol, effort, expected] of [['openai', 'high', 'high'], ['openai', undefined, undefined], ['anthropic', 'high', undefined]]) {
+    let sent;
+    const forward = providerTransport({ url: 'https://gateway.example/v1/chat', headers: {}, model: 'provider/model', protocol, effort,
+      fetch: async (_, init) => { sent = JSON.parse(init.body); return Response.json(protocol === 'openai'
+        ? { choices: [{ message: { content: 'done' } }], usage: { prompt_tokens: 1, completion_tokens: 1 } }
+        : { content: [{ type: 'text', text: 'done' }], usage: { input_tokens: 1, output_tokens: 1 } }); } });
+    await forward({ path: '/v1/responses', body: { ...body, tools: [], input: [{ role: 'user', content: 'Inspect checkout' }] } });
+    assert.equal(sent.reasoning_effort, expected, `${protocol} ${effort}`);
+  }
+});

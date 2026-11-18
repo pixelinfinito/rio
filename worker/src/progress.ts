@@ -20,9 +20,10 @@ export class Progress {
   private prefix(kind: "raised" | "settled") {
     return `reviews/${this.review}/progress/${kind}/`;
   }
-  /** One list per source (step and agent); a replay rewrites the same list. */
-  async raised(source: string, hypotheses: Hypothesis[]) {
-    if (hypotheses.length)
+  /** One list per source (step and agent); a replay rewrites the same list.
+   * `replace` writes an empty list too, over one recorded earlier. */
+  async raised(source: string, hypotheses: Hypothesis[], replace = false) {
+    if (hypotheses.length || replace)
       await this.store.put(
         `${this.prefix("raised")}${source}.json`,
         hypotheses,

@@ -51,8 +51,11 @@ interface Run {
   /** Disclosed verification answer for a hypothesis. */
   vote?: (h: any) => unknown;
   mutate?: (s: Submission) => void;
+  /** Called with the review's id and an agent's latest message; a string returned is its raw reply. */
+  onAgent?: (review: string, agent: string, last: string) => Promise<string | void>;
 }
 async function review(run: Run) {
+  const id = crypto.randomUUID();
   const prompts: Record<string, string> = {};
   const latest: Record<string, string> = {};
   const calls: string[] = [];
@@ -71,8 +74,42 @@ async function review(run: Run) {
       if (agent) {
         prompts[agent] = first;
         latest[agent] = last;
+        const reply = await run.onAgent?.(id, agent, last);
+        if (typeof reply === "string") {
+          calls.push(agent);
+          return Response.json({
+            choices: [{ message: { content: reply } }],
+            usage: { prompt_tokens: 80, completion_tokens: 50 },
+          });
+        }
         const turns = run.turns?.[agent],
           turn = calls.filter((c) => c === agent).length;
+        // A security agent that leaves items unassessed has read code first:
+        // the host refuses such a result on a first turn.
+        const fixed: any = run.models?.[agent]?.[body.model] ?? run.agents[agent];
+        if (
+          agent === "security" &&
+          !turns &&
+          fixed?.unassessed?.length &&
+          users.length === 1
+        )
+          return Response.json({
+            choices: [
+              {
+                message: {
+                  content: JSON.stringify({
+                    tools: [
+                      {
+                        name: "read_file",
+                        args: { path: run.changed[0], version: "head" },
+                      },
+                    ],
+                  }),
+                },
+              },
+            ],
+            usage: { prompt_tokens: 80, completion_tokens: 50 },
+          });
         calls.push(agent);
         result = turns
           ? turns[Math.min(turn, turns.length - 1)]
@@ -104,7 +141,6 @@ async function review(run: Run) {
     });
   try {
     const store = new Store(runtime),
-      id = crypto.randomUUID(),
       s = submission();
     const snapshot: Snapshot = { base: tree(run.base), head: tree(run.head) };
     s.changed = run.changed.map((path) => ({ path, lines_changed: 2 }));
@@ -145,6 +181,7 @@ async function review(run: Run) {
       prompts,
       latest,
       calls,
+      id,
     };
   } finally {
     transport.mockRestore();
@@ -643,6 +680,88 @@ describe("security agent", () => {
     "A10:2025",
   ];
 
+  // The audit reads a file first, so its first result is challenged.
+  const readsFirst = async (_: string, agent: string, last: string) =>
+    agent === "security" && last.includes("Review the change independently")
+      ? JSON.stringify({
+          tools: [{ name: "read_file", args: { path: "src/api/users.ts", version: "head" } }],
+        })
+      : undefined;
+  const result = (hypotheses: unknown[]) => ({
+    hypotheses,
+    assessed: ["A01:2025", "A05:2025"],
+    unassessed: [],
+  });
+  const raised = (report: any) =>
+    [
+      ...(report.security ?? []),
+      ...report.risks,
+      ...report.findings,
+      ...(report.agent_audit?.unverified ?? []),
+    ].map((f: any) => f.rule_id ?? f.hypothesis?.rule_id);
+  it("replaces a challenged first result with the final one, even when it has no findings", async () => {
+    const { report, id } = await review({
+      base,
+      head,
+      changed: ["src/api/users.ts"],
+      steps: steps(true),
+      agents: {},
+      turns: { security: [null, result([injection]), result([])] },
+      onAgent: readsFirst,
+    });
+    expect(report.status).toBe("complete");
+    expect(raised(report)).not.toContain(injection.rule_id);
+    // What a stopped review would recover holds the final result, not the first.
+    const saved = await runtime.ARTIFACTS.list({ prefix: `reviews/${id}/progress/raised/` });
+    expect(saved.objects).toHaveLength(1);
+    expect(await (await runtime.ARTIFACTS.get(saved.objects[0].key))!.json()).toEqual([]);
+  });
+  it("asks again for a challenged result listing more than 100 hypotheses", async () => {
+    const many = Array.from({ length: 101 }, (_, i) => ({ ...injection, rule_id: `security/many-${i}` }));
+    const { report, calls } = await review({
+      base,
+      head,
+      changed: ["src/api/users.ts"],
+      steps: steps(true),
+      agents: {},
+      turns: { security: [null, result([injection]), result(many), result([injection])] },
+      onAgent: readsFirst,
+    });
+    expect(calls.filter((c) => c === "security")).toHaveLength(4);
+    expect(report.status).toBe("complete");
+    expect(raised(report)).toContain(injection.rule_id);
+  });
+  it("reports the challenged first result of a review stopped during the challenge", async () => {
+    const { report, calls } = await review({
+      base,
+      head,
+      changed: ["src/api/users.ts"],
+      steps: steps(true),
+      agents: {
+        security: {
+          hypotheses: [injection],
+          assessed: ["A01:2025", "A05:2025"],
+          unassessed: [{ item: "A06:2025", reason: "tools_unavailable" }],
+        },
+      },
+      // The review is stopped while the agent investigates the challenge.
+      onAgent: async (review, agent, last) => {
+        if (agent !== "security" || !last.includes("is not final")) return;
+        await runtime.DB.prepare("UPDATE reviews SET cancelled=1 WHERE id=?")
+          .bind(review)
+          .run();
+        return JSON.stringify({
+          tools: [{ name: "read_file", args: { path: "src/api/users.ts", version: "head" } }],
+        });
+      },
+    });
+    expect(report.status).toBe("partial");
+    expect(calls).not.toContain("verify");
+    // Unverified, but reported: the stop did not discard what the audit found.
+    expect(
+      report.agent_audit.unverified.map((h: any) => h.rule_id ?? h.hypothesis?.rule_id),
+    ).toContain(injection.rule_id);
+  });
   it.each(["explicit", "triage"])(
     "runs when enabled by %s, verifies catalog hypotheses and reports catalog coverage",
     async (selection) => {
@@ -819,11 +938,7 @@ describe("security agent", () => {
       turns: {
         security: [
           { hypotheses: [], assessed: applicable },
-          {
-            hypotheses: [],
-            assessed: applicable.filter((i) => i !== "A01:2025"),
-            unassessed: [{ item: "A01:2025", reason: "budget" }],
-          },
+          { hypotheses: [], assessed: applicable, unassessed: [] },
         ],
       },
     });
@@ -837,10 +952,8 @@ describe("security agent", () => {
       report.footer.notes.filter((n: string) => n.includes("agent failed")),
     ).toEqual([]);
     // Coverage is the corrected result's, not the refused one's.
-    expect(report.security_coverage.assessed).toHaveLength(6);
-    expect(report.security_coverage.unassessed).toEqual([
-      { item: "A01:2025", title: "Broken Access Control", reason: "budget" },
-    ]);
+    expect(report.security_coverage.assessed).toHaveLength(7);
+    expect(report.security_coverage.unassessed).toEqual([]);
   }, 60000);
 
   it("treats a security result without its assessment lists as a failed agent, never as nothing found", async () => {
@@ -883,6 +996,34 @@ describe("security agent", () => {
     ).toBe(true);
   }, 60000);
 
+  it("refuses a first-turn result that leaves items unassessed, and says the tools are there", async () => {
+    const { report, calls, latest } = await review({
+      base,
+      head,
+      changed: ["src/api/users.ts"],
+      steps: steps(true),
+      agents: {},
+      turns: {
+        security: [
+          {
+            hypotheses: [],
+            assessed: [],
+            unassessed: applicable.map((item) => ({
+              item,
+              reason: "tools_unavailable",
+            })),
+          },
+        ],
+      },
+    });
+    // Asked again within the repair limit, then the agent fails in the open.
+    expect(calls.filter((c) => c === "security").length).toBe(3);
+    expect(latest.security).toContain("you have not read any code yet");
+    expect(report.status).toBe("partial");
+    expect(report.footer.notes.join(" ")).toContain(
+      "security agent failed: security result leaves items unassessed without reading any code",
+    );
+  });
   it("lists assessed and unassessed items when no hypothesis is produced", async () => {
     const { report } = await review({
       base,
@@ -1224,4 +1365,24 @@ describe("default budgets", () => {
     },
     60000,
   );
+});
+describe("a review agent that keeps reading", () => {
+  it("is told how many turns it has left, and its failure leaves a partial report", async () => {
+    const files = { "src/a.ts": "export const a = 1;\n" };
+    const { report, latest } = await review({
+      base: files,
+      head: { "src/a.ts": "export const a = 2;\n" },
+      changed: ["src/a.ts"],
+      steps: agentSteps([{ correctness: { model: "default" } }]),
+      agents: {},
+      raw: {
+        correctness: JSON.stringify({
+          tools: [{ name: "read_file", args: { path: "src/a.ts", version: "head" } }],
+        }),
+      },
+    });
+    expect(latest.correctness).toContain("Host: this is your last turn.");
+    expect(report.status).toBe("partial");
+    expect(report.footer.notes.join("\n")).toContain("turn limit exhausted");
+  });
 });

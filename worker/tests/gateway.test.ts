@@ -1,6 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 import {
   ProviderGateway,
+  Refused,
+  RETRY_PAUSES_MS,
   converse,
   joinUrl,
   reachableAliases,
@@ -30,7 +32,7 @@ it("accepts a single provider JSON fence without treating narrative tool claims 
     "malformed",
   );
 });
-it("executes identical duplicated provider tool JSON once and rejects differing documents", async () => {
+it("executes identical duplicated provider tool JSON once and rejects a result before it", async () => {
   const tool = JSON.stringify({
     tools: [
       { name: "read_file", args: { version: "head", path: 'a\"}\\.ts' } },
@@ -39,7 +41,6 @@ it("executes identical duplicated provider tool JSON once and rejects differing 
   expect(parseModelOutput(`${tool} \n\n${tool}`)).toEqual(JSON.parse(tool));
   for (const invalid of [
     `{"result":[]} ${tool}`,
-    `${tool} ${tool.replace("a", "b")}`,
     `${tool} ${tool} trailing words that are no stray characters at all`,
     `${tool} ${tool.slice(0, -1)}`,
   ])
@@ -1385,12 +1386,92 @@ it("runs a tools request that the same reply follows with a premature result", (
   const result = '{"result":{"hypotheses":[],"assessed":[],"unassessed":[]}}';
   expect(parseModelOutput(tools + result)).toEqual(JSON.parse(tools));
   expect(parseModelOutput(`${tools}\n${result}\n`)).toEqual(JSON.parse(tools));
-  // A result first, two different tools requests, or text between them: refused.
-  for (const invalid of [
-    result + tools,
-    `${tools}{"tools":[{"name":"search","args":{"pattern":"x"}}]}`,
-  ])
-    expect(() => parseModelOutput(invalid)).toThrow("malformed");
+  // A result first is refused.
+  expect(() => parseModelOutput(result + tools)).toThrow("malformed");
+});
+it("runs the first of several tools requests written in one reply", () => {
+  const tools = '{"tools":[{"name":"read_file","args":{"path":"a.ts"}}],"notes":"n"}';
+  const later = '{"tools":[{"name":"search","args":{"pattern":"x"}}],"notes":"m"}';
+  const result = '{"result":{"hypotheses":[],"assessed":[],"unassessed":[]}}';
+  // The later requests were written without the results of the first.
+  for (const reply of [tools + later, `${tools}\n${later}\n${later}`, tools + later + result])
+    expect(parseModelOutput(reply)).toEqual(JSON.parse(tools));
+  expect(() => parseModelOutput(result + tools + later)).toThrow("malformed");
+});
+it("tells the model why a result was refused, and says how many tool turns ran", async () => {
+  const ledger: Ledger = {
+    remaining: async () => 1000000,
+    reserve: async () => "id",
+    settle: async () => {},
+  };
+  const replies = [
+    '{"result":{"unassessed":["V1.1"]}}',
+    '{"tools":[{"name":"read_file","args":{"path":"a.ts"}}]}',
+    '{"result":{"unassessed":["V1.1"]}}',
+  ];
+  const messages = [{ role: "user" as const, content: "audit" }];
+  const seen: number[] = [];
+  const result = await converse({
+    gateway: {
+      complete: async () => ({
+        content: replies.shift()!,
+        input_tokens: 80,
+        output_tokens: 50,
+        cost_usd: null,
+      }),
+    },
+    ledger,
+    actor: "security",
+    phase: "generation",
+    model: "openrouter/openai/gpt-6.1-sol",
+    allowance: { remaining: 1000000 },
+    messages,
+    dispatch: async () => ({ content: "source" }),
+    validateResult: (value, state) => {
+      seen.push(state.toolTurns);
+      if (!state.toolTurns) throw new Refused("unread", "Read the code first.");
+      return value;
+    },
+  });
+  expect(result).toEqual({ unassessed: ["V1.1"] });
+  expect(seen).toEqual([0, 1]);
+  // The refusal's own words reach the model, not the general repair request.
+  expect(messages[2]).toEqual({ role: "user", content: "Read the code first." });
+});
+it("sends the reasoning effort a model identifier asks for", async () => {
+  const env = {
+    AI_GATEWAY_URL: "https://gateway.ai.cloudflare.com/v1/acct/rio/",
+    AI_GATEWAY_TOKEN: "gateway-token",
+    AI_GATEWAY_PROVIDERS: JSON.stringify({
+      "node-openai": { protocol: "openai" },
+      "node-anthropic": { protocol: "anthropic" },
+    }),
+  } as Env;
+  const both = route(env, "openai/custom-node-openai/gpt-6-sol@daybreak-blue@effort-high");
+  expect([both.model, both.cyber, both.effort]).toEqual([
+    "custom-node-openai/gpt-6-sol",
+    "daybreak_blue",
+    "high",
+  ]);
+  expect(route(env, "custom-node-openai/gpt-6-sol").effort).toBeUndefined();
+  expect(() =>
+    route(env, "custom-node-anthropic/claude-opus-5-5@effort-high"),
+  ).toThrow("OpenAI-protocol");
+  const sent: any[] = [];
+  const transport = async (_url: unknown, init: RequestInit) => {
+    sent.push(JSON.parse(String(init.body)));
+    return Response.json({
+      choices: [{ message: { content: '{"result":[]}' } }],
+      usage: { prompt_tokens: 10, completion_tokens: 5 },
+    });
+  };
+  const provider = new ProviderGateway(env, transport as typeof fetch);
+  await provider.complete({ ...request, model: "custom-node-openai/gpt-6-sol@effort-xhigh" });
+  await provider.complete({ ...request, model: "custom-node-openai/gpt-6-sol" });
+  expect(sent.map((body) => [body.model, body.reasoning_effort])).toEqual([
+    ["gpt-6-sol", "xhigh"],
+    ["gpt-6-sol", undefined],
+  ]);
 });
 it("runs a repeated tools request once, with a premature result or stray characters after it", () => {
   const tools = '{"tools":[{"name":"read_file","args":{"path":"a.ts"}}],"notes":"n"}';
@@ -1453,6 +1534,92 @@ it("sends a turn once more when its call timed out or was refused, and only when
     run("The operation was aborted due to timeout", false).result,
   ).rejects.toThrow("timeout");
 });
+it("sends a turn up to three more times, after growing pauses, while the provider fails it with a 5xx", async () => {
+  vi.useFakeTimers();
+  try {
+    const run = (
+      failures: number,
+      error = "provider failed (503)",
+      cancelled = async () => false,
+    ) => {
+      const ids: string[] = [];
+      const settled: number[] = [];
+      let calls = 0;
+      const result = converse({
+        gateway: {
+          complete: async () => {
+            if (calls++ < failures) throw new Error(error);
+            return {
+              content: '{"result":["done"]}',
+              input_tokens: 80,
+              output_tokens: 50,
+              cost_usd: null,
+            };
+          },
+        },
+        ledger: {
+          remaining: async () => 1000000,
+          reserve: async () => "id",
+          settle: async (_, usage) => {
+            settled.push(usage.input_tokens + usage.output_tokens);
+          },
+        },
+        actor: "security",
+        phase: "generation",
+        model: "openrouter/openai/gpt-6.1-sol",
+        allowance: { remaining: 1000000 },
+        messages: [{ role: "user" as const, content: "audit" }],
+        dispatch: async () => ({ content: "source" }),
+        call: async (id, action) => {
+          ids.push(id);
+          return action();
+        },
+        cancelled,
+        retryCall: true,
+      });
+      result.catch(() => {});
+      return { result, ids, settled };
+    };
+    const all = RETRY_PAUSES_MS.reduce((a, b) => a + b, 0);
+    const twice = run(2);
+    await vi.advanceTimersByTimeAsync(RETRY_PAUSES_MS[0]);
+    await expect(twice.result).resolves.toEqual(["done"]);
+    expect(twice.ids.at(-1)).toBe("security-generation-0-third");
+    const four = run(4);
+    await vi.advanceTimersByTimeAsync(all);
+    await expect(four.result).resolves.toEqual(["done"]);
+    expect(four.ids).toEqual([
+      "security-generation-0",
+      "security-generation-0-again",
+      "security-generation-0-third",
+      "security-generation-0-fourth",
+      "security-generation-0-fifth",
+    ]);
+    // Each failed attempt's reservation is released; the answer is charged.
+    expect(four.settled).toEqual([0, 0, 0, 0, 130]);
+    const always = run(9);
+    await vi.advanceTimersByTimeAsync(all);
+    await expect(always.result).rejects.toThrow("provider failed (503)");
+    expect(always.ids).toHaveLength(5);
+    // A failure that is not the provider's ends the retries.
+    const refused = run(9, "provider failed (400)");
+    await vi.advanceTimersByTimeAsync(all);
+    await expect(refused.result).rejects.toThrow("provider failed (400)");
+    expect(refused.ids).toHaveLength(2);
+    // A refused request may have been charged: it keeps its reservation.
+    expect(refused.settled).toEqual([]);
+    // A review cancelled during a pause sends nothing more.
+    let stopped = false;
+    const cancelled = run(9, "provider failed (503)", async () => stopped);
+    await vi.advanceTimersByTimeAsync(1);
+    stopped = true;
+    await vi.advanceTimersByTimeAsync(all);
+    await expect(cancelled.result).rejects.toThrow("cancelled");
+    expect(cancelled.ids).toHaveLength(2);
+  } finally {
+    vi.useRealTimers();
+  }
+});
 it("names the provider's error code for a refused request and nothing else of the body", async () => {
   const env = {
     AI_GATEWAY_URL: "https://gateway.ai.cloudflare.com/v1/acct/rio/",
@@ -1476,4 +1643,121 @@ it("names the provider's error code for a refused request and nothing else of th
   await expect(failing({ error: { message: "only prose" } })).rejects.toThrow(
     /^provider failed \(400\)$/,
   );
+});
+it("marks a provider failure after a reply that may have been billed, and keeps that call's reservation", async () => {
+  vi.useFakeTimers();
+  try {
+    const env = {
+      AI_GATEWAY_URL: "https://gateway.ai.cloudflare.com/v1/acct/rio/",
+      AI_GATEWAY_TOKEN: "gateway-token",
+      AI_GATEWAY_PROVIDERS: JSON.stringify({ "node-openai": { protocol: "openai" } }),
+    } as Env;
+    // The first reply has usage but no content; the retry is refused with a 503.
+    let replies = 0;
+    const gateway = new ProviderGateway(env, async () =>
+      replies++ === 0
+        ? Response.json({ choices: [{ message: {} }], usage: { prompt_tokens: 9, completion_tokens: 9 } })
+        : new Response(null, { status: 503 }),
+    );
+    const failed = gateway
+      .complete({ ...request, model: "openai/custom-node-openai/gpt-6-sol" })
+      .catch((error) => error);
+    await vi.advanceTimersByTimeAsync(5000);
+    const error = await failed;
+    expect(error.message).toBe("provider failed (503)");
+    expect(error.charged).toBe(true);
+    // converse keeps such a call's reservation, and still retries it.
+    const settled: number[] = [];
+    let calls = 0;
+    const result = converse({
+      gateway: {
+        complete: async () => {
+          if (calls++ === 0) throw error;
+          return { content: '{"result":["done"]}', input_tokens: 80, output_tokens: 50, cost_usd: null };
+        },
+      },
+      ledger: {
+        remaining: async () => 1000000,
+        reserve: async () => "id",
+        settle: async (_, usage) => {
+          settled.push(usage.input_tokens + usage.output_tokens);
+        },
+      },
+      actor: "security",
+      phase: "generation",
+      model: "openrouter/openai/gpt-6.1-sol",
+      allowance: { remaining: 1000000 },
+      messages: [{ role: "user" as const, content: "audit" }],
+      dispatch: async () => ({ content: "source" }),
+      retryCall: true,
+    });
+    await expect(result).resolves.toEqual(["done"]);
+    expect(settled).toEqual([130]);
+  } finally {
+    vi.useRealTimers();
+  }
+});
+it("reserves no tokens for a call the review's deadline has already passed", async () => {
+  const reserved: number[] = [];
+  await expect(
+    converse({
+      gateway: { complete: async () => { throw new Error("not sent"); } },
+      ledger: {
+        remaining: async () => 1000000,
+        remainingMs: async () => 0,
+        reserve: async (_, __, tokens) => {
+          reserved.push(tokens);
+          return "id";
+        },
+        settle: async () => {},
+      },
+      actor: "security",
+      phase: "generation",
+      model: "openrouter/openai/gpt-6.1-sol",
+      allowance: { remaining: 1000000 },
+      messages: [{ role: "user" as const, content: "audit" }],
+      dispatch: async () => ({ content: "source" }),
+    }),
+  ).rejects.toThrow("review wall budget exhausted");
+  expect(reserved).toEqual([]);
+});
+it("sends a deliberate one-time request after two corrections, and counts only answered tool turns", async () => {
+  const replies = [
+    '{"tools":[{"name":"read_file","args":{"path":"missing.ts"}}]}',
+    '{"tools":[{"name":"read_file","args":{"path":"a.ts"}}]}',
+    "not json",
+    "still not json",
+    '{"result":["first"]}',
+    '{"result":["final"]}',
+  ];
+  const seen: number[] = [];
+  let turn = 0;
+  const result = await converse({
+    gateway: {
+      complete: async () => ({ content: replies[turn++], input_tokens: 80, output_tokens: 50, cost_usd: null }),
+    },
+    ledger: { remaining: async () => 1000000, reserve: async () => "id", settle: async () => {} },
+    actor: "security",
+    phase: "generation",
+    model: "openrouter/openai/gpt-6.1-sol",
+    allowance: { remaining: 1000000 },
+    messages: [{ role: "user" as const, content: "audit" }],
+    // The first read fails: that turn read nothing.
+    dispatch: async (_, args) => {
+      if (args.path === "missing.ts") throw new Error("no such file");
+      return { content: "source" };
+    },
+    maxTurns: 10,
+    validateResult: (value, state) => {
+      seen.push(state.toolTurns);
+      if (value[0] === "first") {
+        const challenge = new Refused("challenged", "Host: look again.");
+        challenge.once = true;
+        throw challenge;
+      }
+      return value;
+    },
+  });
+  expect(result).toEqual(["final"]);
+  expect(seen).toEqual([1, 1]);
 });

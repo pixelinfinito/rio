@@ -216,15 +216,17 @@ export function cacheHints(payload, protocol, cache) {
 
 /** `url` is the complete operator-selected endpoint. No request field can
  * override destination, provider model, headers or transport permissions.
- * `convention` is the route's usage convention; `cache` the route's prompt-cache
+ * `convention` is the route's usage convention; `effort` its reasoning effort; `cache` the route's prompt-cache
  * capability and Rio's key (harness cache fields are never forwarded); `usage`
  * receives each reply's normalized usage and the provider-reported cost, if any. */
-export function providerTransport({ url, headers, model, protocol = 'openai', convention = 'unverified', cache, usage: observe, fetch: request = globalThis.fetch }) {
+export function providerTransport({ url, headers, model, protocol = 'openai', convention = 'unverified', cache, effort, usage: observe, fetch: request = globalThis.fetch }) {
   const parsed = new URL(url);
   if (!['openai', 'anthropic'].includes(protocol) || (parsed.protocol !== 'https:' && !(parsed.protocol === 'http:' && ['127.0.0.1', '[::1]'].includes(parsed.hostname))) || parsed.username || parsed.password || parsed.hash || parsed.search) throw new Error('Invalid QA provider route');
   return async ({ path, body, signal }) => {
     if (path !== '/v1/responses') throw new Error('QA provider adapter requires Responses');
     const { chat, names } = responseRequest(body); chat.model = model;
+    // The route's effort (an `@effort-` identifier) reaches OpenAI-protocol routes as Gateway calls send it.
+    if (effort && protocol === 'openai') chat.reasoning_effort = effort;
     const response = await request(parsed, { method: 'POST', headers: { ...headers, 'content-type': 'application/json' },
       // Workers rejects redirect:"error". Manual mode also prevents forwarding
       // credentials, and the non-2xx guard below refuses every redirect.

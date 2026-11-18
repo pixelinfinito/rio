@@ -14,6 +14,7 @@ import { readerOf, type SnapshotReader } from "./snapshot";
 import { DEFAULT_VERIFY_TOKENS } from "./budget";
 import type { Ledger } from "./gateway";
 import {
+  Refused,
   VOTE_SCHEMA,
   converse,
   fits,
@@ -213,7 +214,24 @@ export async function verifyHypothesis(
             ...(o.prompt?.cache ? { cache: o.prompt.cache } : {}),
             ...(o.prompt?.partition ? { redact: [o.prompt.partition] } : {}),
           };
-          const blind = await converse({ ...options, phase: "verify-blind" });
+          const blind = await converse({
+            ...options,
+            phase: "verify-blind",
+            // A restated hypothesis outside the schema, such as one with a
+            // field it does not name, is sent back with the reason instead
+            // of failing the vote.
+            validateResult: (value) => {
+              try {
+                return validateHypotheses(value);
+              } catch (error) {
+                const reason = error instanceof Error ? error.message : "";
+                throw new Refused(
+                  reason,
+                  `Host: your result was not accepted: ${reason.slice(0, 300)}. Reply with {"result":[...]} again, each hypothesis following the item schema exactly, with no fields it does not name.`,
+                );
+              }
+            },
+          });
           vote.blind = validateHypotheses(blind);
           vote.blind_match = blindMatch(vote.blind, o.hypothesis);
           // Persist before disclosing the hypothesis; the audit distinguishes an unfinished second turn.
