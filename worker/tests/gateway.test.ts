@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import {
   ProviderGateway,
   Refused,
-  RETRY_PAUSE_MS,
+  RETRY_PAUSES_MS,
   converse,
   joinUrl,
   reachableAliases,
@@ -1534,47 +1534,68 @@ it("sends a turn once more when its call timed out or was refused, and only when
     run("The operation was aborted due to timeout", false).result,
   ).rejects.toThrow("timeout");
 });
-it("sends a turn a third time, after a pause, when the provider failed it twice", async () => {
+it("sends a turn up to three more times, after growing pauses, while the provider fails it with a 5xx", async () => {
   vi.useFakeTimers();
   try {
-    const ids: string[] = [];
-    let calls = 0;
-    const result = converse({
-      gateway: {
-        complete: async () => {
-          if (calls++ < 2) throw new Error("provider failed (503)");
-          return {
-            content: '{"result":["done"]}',
-            input_tokens: 80,
-            output_tokens: 50,
-            cost_usd: null,
-          };
+    const run = (failures: number, error = "provider failed (503)") => {
+      const ids: string[] = [];
+      let calls = 0;
+      const result = converse({
+        gateway: {
+          complete: async () => {
+            if (calls++ < failures) throw new Error(error);
+            return {
+              content: '{"result":["done"]}',
+              input_tokens: 80,
+              output_tokens: 50,
+              cost_usd: null,
+            };
+          },
         },
-      },
-      ledger: {
-        remaining: async () => 1000000,
-        reserve: async () => "id",
-        settle: async () => {},
-      },
-      actor: "security",
-      phase: "generation",
-      model: "openrouter/openai/gpt-6.1-sol",
-      allowance: { remaining: 1000000 },
-      messages: [{ role: "user" as const, content: "audit" }],
-      dispatch: async () => ({ content: "source" }),
-      call: async (id, action) => {
-        ids.push(id);
-        return action();
-      },
-      retryCall: true,
-    });
-    await vi.advanceTimersByTimeAsync(RETRY_PAUSE_MS);
-    await expect(result).resolves.toEqual(["done"]);
-    expect(ids).toEqual([
+        ledger: {
+          remaining: async () => 1000000,
+          reserve: async () => "id",
+          settle: async () => {},
+        },
+        actor: "security",
+        phase: "generation",
+        model: "openrouter/openai/gpt-6.1-sol",
+        allowance: { remaining: 1000000 },
+        messages: [{ role: "user" as const, content: "audit" }],
+        dispatch: async () => ({ content: "source" }),
+        call: async (id, action) => {
+          ids.push(id);
+          return action();
+        },
+        retryCall: true,
+      });
+      result.catch(() => {});
+      return { result, ids };
+    };
+    const all = RETRY_PAUSES_MS.reduce((a, b) => a + b, 0);
+    const twice = run(2);
+    await vi.advanceTimersByTimeAsync(RETRY_PAUSES_MS[0]);
+    await expect(twice.result).resolves.toEqual(["done"]);
+    expect(twice.ids.at(-1)).toBe("security-generation-0-third");
+    const four = run(4);
+    await vi.advanceTimersByTimeAsync(all);
+    await expect(four.result).resolves.toEqual(["done"]);
+    expect(four.ids).toEqual([
       "security-generation-0",
       "security-generation-0-again",
       "security-generation-0-third",
+      "security-generation-0-fourth",
+      "security-generation-0-fifth",
     ]);
+    const always = run(9);
+    await vi.advanceTimersByTimeAsync(all);
+    await expect(always.result).rejects.toThrow("provider failed (503)");
+    expect(always.ids).toHaveLength(5);
+    // A failure that is not the provider's ends the retries.
+    const refused = run(9, "provider failed (400)");
+    await vi.advanceTimersByTimeAsync(all);
+    await expect(refused.result).rejects.toThrow("provider failed (400)");
+    expect(refused.ids).toHaveLength(2);
   } finally {
     vi.useRealTimers();
   }

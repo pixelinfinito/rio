@@ -858,8 +858,13 @@ function nativeArgs(values: Record<string, string>): unknown {
  * corrects itself when asked may relapse later in a long conversation, so the
  * limit is on consecutive failures, with a cap on the whole conversation.
  */
-/** Pause before the last attempt of a turn the provider failed twice. */
-export const RETRY_PAUSE_MS = 20000;
+/**
+ * Pauses before the further attempts of a turn the provider failed twice with
+ * a 5xx. A provider's outages lasted up to a minute: all of a review's calls
+ * failed within 45 s, and the same calls passed minutes later.
+ */
+export const RETRY_PAUSES_MS = [20000, 60000, 120000];
+const RETRY_NAMES = ["third", "fourth", "fifth"];
 const MAX_CONSECUTIVE_REPAIRS = 2;
 /** Tool calls run per model turn; later calls in a batch are answered with the limit. */
 const MAX_TOOLS_PER_TURN = 8;
@@ -1042,8 +1047,24 @@ export async function converse(options: {
               )
             )
               throw again;
-            await new Promise((done) => setTimeout(done, RETRY_PAUSE_MS));
-            return send(`${o.actor}-${o.phase}-${turn}-third`);
+            let failed: unknown = again;
+            for (const [index, pause] of RETRY_PAUSES_MS.entries()) {
+              await new Promise((done) => setTimeout(done, pause));
+              try {
+                return await send(
+                  `${o.actor}-${o.phase}-${turn}-${RETRY_NAMES[index]}`,
+                );
+              } catch (error) {
+                failed = error;
+                if (
+                  !/provider failed \(5\d\d/.test(
+                    error instanceof Error ? error.message : "",
+                  )
+                )
+                  break;
+              }
+            }
+            throw failed;
           },
         );
       },
