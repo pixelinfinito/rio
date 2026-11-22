@@ -53,6 +53,10 @@ interface Run {
   mutate?: (s: Submission) => void;
   /** Called with the review's id and an agent's latest message; a string returned is its raw reply. */
   onAgent?: (review: string, agent: string, last: string) => Promise<string | void>;
+  // Step mocks, set before the workflow starts.
+  modify?: Parameters<
+    Awaited<ReturnType<typeof introspectWorkflowInstance>>["modify"]
+  >[0];
 }
 async function review(run: Run) {
   const id = crypto.randomUUID();
@@ -166,6 +170,7 @@ async function review(run: Run) {
       runtime.REVIEWS,
       id,
     );
+    if (run.modify) await instance.modify(run.modify);
     await runtime.REVIEWS.create({
       id,
       params: { review_id: id, snapshot_key: stored.key },
@@ -1385,4 +1390,78 @@ describe("a review agent that keeps reading", () => {
     expect(report.status).toBe("partial");
     expect(report.footer.notes.join("\n")).toContain("turn limit exhausted");
   });
+});
+
+describe("a step that holds the change and ends at a platform limit", () => {
+  const base = {
+    "src/a.ts": "export function a() {\n  return 1;\n}\n",
+  };
+  const head = {
+    "src/a.ts": "export function a(n: number) {\n  return n;\n}\n",
+  };
+  // As production reported it; it repeats on every attempt there, and here
+  // it repeats on two: one more than the step's retry.
+  const limit = (name: string) => async (m: any) => {
+    await m.disableRetryDelays();
+    await m.mockStepError(
+      { name },
+      new Error("Worker exceeded memory limit."),
+      2,
+    );
+  };
+  it("is retried once, then the agents run without the contract inventory and the report says so", async () => {
+    const { report, calls } = await review({
+      base,
+      head,
+      changed: ["src/a.ts"],
+      steps: agentSteps(),
+      agents: {},
+      modify: limit("analysis-agents"),
+    });
+    expect(calls).toContain("correctness");
+    expect(report.footer.notes.join("\n")).toMatch(
+      /The contract inventory could not be built \(.*Worker exceeded memory limit\.\); the agents ran with what the changed paths alone say\./,
+    );
+    expect(report.status).toBe("incomplete");
+  }, 60000);
+  it("is retried once, then the security step goes on from the changed paths", async () => {
+    const { report } = await review({
+      base,
+      head,
+      changed: ["src/a.ts"],
+      steps: [
+        ...agentSteps(),
+        {
+          id: "security",
+          uses: "rio/security@0.2.0",
+          needs: ["triage"],
+          with: { enabled: true },
+        },
+      ],
+      agents: { security: { hypotheses: [], assessed: [], unassessed: [] } },
+      modify: limit("analysis-security"),
+    });
+    expect(report.footer.notes.join("\n")).toMatch(
+      /The security analysis could not be built \(.*Worker exceeded memory limit\.\)/,
+    );
+    expect(report.status).toBe("incomplete");
+  }, 60000);
+  it("is retried once, then the change is reviewed in one conversation", async () => {
+    const { report, prompts } = await review({
+      base,
+      head,
+      changed: ["src/a.ts"],
+      steps: agentSteps().map((s) =>
+        // The agent result cache would answer from the tests above.
+        s.id === "agents" ? { ...s, with: { parts: 4, cache: false } } : s,
+      ),
+      agents: {},
+      modify: limit("parts-agents-correctness"),
+    });
+    expect(prompts.correctness).toBeDefined();
+    expect(prompts.correctness).not.toContain("reviewed in");
+    expect(report.footer.notes.join("\n")).toMatch(
+      /The change could not be divided into parts for the correctness agent \(.*Worker exceeded memory limit\.\); it reviewed the change in one conversation\./,
+    );
+  }, 60000);
 });

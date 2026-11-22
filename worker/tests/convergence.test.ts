@@ -1248,6 +1248,16 @@ describe("end-to-end lineage", () => {
       location: { line_start: 3 },
     });
     expect(byId(r2.report).has(idOf(hb))).toBe(false);
+    // The change since round 1 was read once, in a step that stored it: a
+    // replay of the review reads this list, not both versions of its files.
+    expect(
+      await new Store(runtime).get(
+        `reviews/${r2.id}/lineage-incremental.json`,
+      ),
+    ).toEqual([
+      { path: "src/a.ts", lines_changed: 2 },
+      { path: "src/b.ts", lines_changed: 2 },
+    ]);
     expect(r2.report.agent_audit.lineage_updates).toEqual([
       {
         id: idOf(hb),

@@ -251,12 +251,15 @@ export function incrementalChanges(before: Tree, after: Tree): ChangedFile[] {
     if (a?.content === b?.content && a?.mode === b?.mode) continue;
     const old = a?.content.split("\n") ?? [],
       now = b?.content.split("\n") ?? [];
-    const kept = new Set(old);
+    // Sets: a search of the other version's lines for each line costs the
+    // product of the two lengths, on a generated file of tens of thousands.
+    const kept = new Set(old),
+      present = new Set(now);
     changed.push({
       path,
       lines_changed:
         now.filter((l) => !kept.has(l)).length +
-        old.filter((l) => !now.includes(l)).length,
+        old.filter((l) => !present.has(l)).length,
     });
   }
   return changed;
