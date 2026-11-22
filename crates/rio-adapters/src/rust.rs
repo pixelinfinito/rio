@@ -319,6 +319,55 @@ pub fn rust_lint_tools(tree: &Tree, root: &str) -> Vec<&'static str> {
     result
 }
 
+/// The part of a tree `cargo metadata --no-deps` reads: manifests, lockfiles,
+/// toolchain and cargo configuration with their content, every symbolic link
+/// and submodule, and empty stand-ins for Rust sources and READMEs, whose
+/// existence alone drives target and readme inference. Also returns every
+/// directory of the full tree, since a workspace member glob that matches a
+/// directory without a manifest is an error.
+pub fn rust_metadata_tree(tree: &Tree) -> (Tree, std::collections::BTreeSet<String>) {
+    let mut selected = Tree::new();
+    let mut directories = std::collections::BTreeSet::new();
+    for (path, entry) in tree {
+        let mut parent = path.as_str();
+        while let Some((directory, _)) = parent.rsplit_once('/') {
+            if !directories.insert(directory.to_owned()) {
+                break;
+            }
+            parent = directory;
+        }
+        let (directory, name) = path.rsplit_once('/').unwrap_or(("", path));
+        let configuration = matches!(
+            name,
+            "Cargo.toml" | "Cargo.lock" | "rust-toolchain" | "rust-toolchain.toml"
+        ) || matches!(name, "config" | "config.toml")
+            && directory.rsplit('/').next() == Some(".cargo");
+        let placeholder = name.ends_with(".rs") || name.starts_with("README");
+        if !configuration && !placeholder {
+            if matches!(entry.mode, 0o120000 | 0o160000) {
+                selected.insert(path.clone(), entry.clone());
+            }
+            continue;
+        }
+        // A link that resolves within the tree becomes the file it names: cargo
+        // reads a manifest relative to the path it was found at, not its target.
+        let written = match resolve_file(tree, path) {
+            Some(file) => rio_git::TreeEntry {
+                mode: 0o100644,
+                object_id: String::new(),
+                content: if configuration {
+                    file.content.clone()
+                } else {
+                    Vec::new()
+                },
+            },
+            None => entry.clone(),
+        };
+        selected.insert(path.clone(), written);
+    }
+    (selected, directories)
+}
+
 /// Cargo metadata is read from the selected source, under process supervision.
 /// --no-deps avoids resolution/downloads; path edges still describe consumers.
 pub async fn rust_metadata(
@@ -329,7 +378,14 @@ pub async fn rust_metadata(
     cancellation: CancellationToken,
 ) -> Result<Value> {
     let temporary = tempfile::tempdir()?;
-    SafeTreeWriter::new(temporary.path())?.write_tree(tree)?;
+    let mut writer = SafeTreeWriter::disposable(temporary.path())?;
+    // Paths the sparse tree leaves out are still validated as a full copy would.
+    rio_git::validate_case_collisions(tree.keys().map(String::as_str), writer.case_insensitive()?)?;
+    let (selected, directories) = rust_metadata_tree(tree);
+    writer.write_tree(&selected)?;
+    for directory in &directories {
+        writer.create_directory(directory)?;
+    }
     let mut command = ToolCommand::new(cargo.path.clone(), temporary.path().join(root));
     command.args = vec![
         "metadata".into(),

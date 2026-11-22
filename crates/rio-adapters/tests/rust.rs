@@ -438,6 +438,216 @@ async fn rust_metadata_uses_selected_source_and_discovers_member_dependencies() 
     );
 }
 
+/// A two-member workspace with a path dependency, every target kind cargo
+/// infers, a README, and files cargo metadata never reads.
+fn sparse_metadata_workspace() -> rio_git::Tree {
+    let mut tree = rio_git::Tree::from([
+        (
+            "Cargo.toml".into(),
+            entry("[workspace]\nmembers = ['crates/*']\nresolver = '2'\n"),
+        ),
+        (
+            "crates/app/Cargo.toml".into(),
+            entry(
+                "[package]\nname = 'app'\nversion = '0.1.0'\nedition = '2021'\n\n[dependencies]\nengine = { path = '../core' }\n",
+            ),
+        ),
+        ("crates/app/src/main.rs".into(), entry("fn main() {}\n")),
+        (
+            "crates/app/src/bin/tool/main.rs".into(),
+            entry("fn main() {}\n"),
+        ),
+        (
+            "crates/core/Cargo.toml".into(),
+            entry("[package]\nname = 'engine'\nversion = '0.1.0'\nedition = '2021'\n"),
+        ),
+        ("crates/core/src/lib.rs".into(), entry("pub fn core() {}\n")),
+        ("crates/core/build.rs".into(), entry("fn main() {}\n")),
+        ("crates/core/README.md".into(), entry("# core\n")),
+        (
+            "crates/core/examples/demo.rs".into(),
+            entry("fn main() {}\n"),
+        ),
+        (
+            "crates/core/tests/smoke.rs".into(),
+            entry("#[test]\nfn t() {}\n"),
+        ),
+        (
+            "crates/core/benches/speed.rs".into(),
+            entry("fn main() {}\n"),
+        ),
+        ("crates/core/assets/data.json".into(), entry("{}\n")),
+        ("docs/large.bin".into(), entry(&"x".repeat(4 * 1024 * 1024))),
+    ]);
+    for index in 0..500 {
+        tree.insert(
+            format!("web/page-{index}.html"),
+            entry("<p>unrelated</p>\n"),
+        );
+    }
+    tree
+}
+
+#[cfg(unix)]
+#[tokio::test]
+async fn rust_metadata_writes_only_what_cargo_metadata_reads() {
+    use std::os::unix::fs::PermissionsExt;
+    let mut tree = sparse_metadata_workspace();
+    tree.insert(
+        "crates/core/Cargo.toml".into(),
+        rio_git::TreeEntry {
+            mode: 0o120000,
+            object_id: String::new(),
+            content: b"../../shared/core.toml".to_vec(),
+        },
+    );
+    tree.insert(
+        "shared/core.toml".into(),
+        entry("[package]\nname = 'engine'\nversion = '0.1.0'\n"),
+    );
+    let temp = tempfile::tempdir().unwrap();
+    let cargo = temp.path().join("cargo");
+    // Exits 9x naming the first expectation the written tree breaks.
+    fs::write(
+        &cargo,
+        r#"#!/bin/sh
+[ -f Cargo.toml ] && [ -s crates/app/Cargo.toml ] || exit 90
+[ -f crates/core/Cargo.toml ] && [ ! -L crates/core/Cargo.toml ] || exit 91
+grep -q "name = 'engine'" crates/core/Cargo.toml || exit 92
+for source in crates/app/src/main.rs crates/app/src/bin/tool/main.rs crates/core/src/lib.rs \
+    crates/core/build.rs crates/core/README.md crates/core/examples/demo.rs \
+    crates/core/tests/smoke.rs crates/core/benches/speed.rs; do
+    [ -f "$source" ] && [ ! -s "$source" ] || exit 93
+done
+[ ! -e docs/large.bin ] && [ ! -e web/page-0.html ] || exit 94
+[ ! -e crates/core/assets/data.json ] && [ ! -e shared/core.toml ] || exit 95
+[ -d docs ] && [ -d web ] && [ -d crates/core/assets ] || exit 96
+[ "$(find . -type f | wc -l)" -eq 11 ] || exit 97
+echo '{}'
+"#,
+    )
+    .unwrap();
+    fs::set_permissions(&cargo, fs::Permissions::from_mode(0o755)).unwrap();
+    let tool = ResolvedTool {
+        name: "cargo-check".into(),
+        path: cargo,
+        version: "cargo-test".into(),
+        version_hint: None,
+        rustup_toolchain: None,
+    };
+    let metadata = rust_metadata(
+        &tree,
+        ".",
+        &tool,
+        &ProcessSupervisor::default(),
+        CancellationToken::new(),
+    )
+    .await
+    .unwrap();
+    assert_eq!(metadata, serde_json::json!({}));
+}
+
+#[tokio::test]
+async fn sparse_rust_metadata_matches_a_full_copy() {
+    let tree = sparse_metadata_workspace();
+    let full = tempfile::tempdir().unwrap();
+    SafeTreeWriter::new(full.path())
+        .unwrap()
+        .write_tree(&tree)
+        .unwrap();
+    let supervisor = ProcessSupervisor::default();
+    let cargo = rust_cargo(
+        &ToolResolver::from_environment(full.path().into()),
+        &tree,
+        ".",
+        &supervisor,
+        CancellationToken::new(),
+    )
+    .await
+    .unwrap();
+    if !require_tool(cargo.is_some(), "cargo for sparse metadata") {
+        return;
+    }
+    let cargo = cargo.unwrap();
+    let sparse = rust_metadata(&tree, ".", &cargo, &supervisor, CancellationToken::new())
+        .await
+        .unwrap();
+    let mut command = ToolCommand::new(cargo.path.clone(), full.path().into());
+    command.args = ["metadata", "--no-deps", "--format-version=1", "--offline"]
+        .map(Into::into)
+        .into();
+    configure_cargo(&mut command, &tree, ".", cargo.rustup_toolchain.as_deref()).unwrap();
+    let result = supervisor.run(command, CancellationToken::new()).await;
+    assert!(
+        matches!(result.termination, Termination::Exited { code: Some(0) }),
+        "{}",
+        String::from_utf8_lossy(&result.stderr)
+    );
+    let complete: serde_json::Value = serde_json::from_slice(&result.stdout).unwrap();
+    // Paths differ by temporary prefix; compare what does not name one.
+    let summary = |metadata: &serde_json::Value| -> Vec<String> {
+        let mut summary: Vec<String> = metadata["packages"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .flat_map(|package| {
+                let name = package["name"].as_str().unwrap().to_owned();
+                let targets = package["targets"].as_array().unwrap().iter().map({
+                    let name = name.clone();
+                    move |target| format!("{name} target {} {}", target["name"], target["kind"])
+                });
+                let dependencies = package["dependencies"].as_array().unwrap().iter().map({
+                    let name = name.clone();
+                    move |dependency| format!("{name} depends {}", dependency["name"])
+                });
+                let readme = format!("{name} readme {}", package["readme"]);
+                targets
+                    .chain(dependencies)
+                    .chain([readme])
+                    .collect::<Vec<_>>()
+            })
+            .collect();
+        summary.push(format!(
+            "members {}",
+            metadata["workspace_members"].as_array().unwrap().len()
+        ));
+        summary.sort();
+        summary
+    };
+    assert_eq!(summary(&sparse), summary(&complete));
+    assert_eq!(
+        summary(&sparse)
+            .iter()
+            .filter(|line| line.contains(" target "))
+            .count(),
+        7,
+        "{:?}",
+        summary(&sparse)
+    );
+    let mut layout = RepositoryLayout::default();
+    apply_rust_metadata(&mut layout, &sparse);
+    let mut roots: Vec<_> = layout
+        .roots
+        .iter()
+        .map(|root| (root.path.as_str(), root.workspace.as_deref()))
+        .collect();
+    roots.sort();
+    assert_eq!(
+        roots,
+        [("crates/app", Some(".")), ("crates/core", Some("."))]
+    );
+    assert!(layout.dependencies["crates/app"].contains("crates/core"));
+
+    // A member glob matching a directory without a manifest fails as it would
+    // on a full copy.
+    let mut broken = tree.clone();
+    broken.insert("crates/docs/notes.md".into(), entry("notes\n"));
+    let error = rust_metadata(&broken, ".", &cargo, &supervisor, CancellationToken::new())
+        .await
+        .unwrap_err();
+    assert!(format!("{error:#}").contains("crates/docs"), "{error:#}");
+}
+
 #[tokio::test]
 async fn real_rust_diagnostics_parse_compile_clippy_format_and_internal_errors() {
     let tree = read_tree(&fixture("rs-sample"));
