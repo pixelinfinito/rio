@@ -113,7 +113,7 @@ import {
   runnerModelEndpoint,
 } from "./council-audit";
 import memberWeights from "./member-weights.json";
-import { pullOf } from "./pulls";
+import { SUPERSEDED, pullOf, supersededReview } from "./pulls";
 import { createJob, createModelJob, stopRunners, withdrawIdle } from "./jobs";
 import { needs, transferMs } from "./archive";
 import { createQaJob } from "./qa-jobs";
@@ -164,10 +164,12 @@ import {
   type Tree,
 } from "./lineage";
 import {
+  BATCH_BYTES,
   LARGE,
   SYMLINK,
   StoredSnapshot,
   compareUtf8,
+  entriesOf,
   decodeText,
   changeTexts,
   fileOf,
@@ -213,6 +215,17 @@ export const SECURITY_HISTORY = { max: 384 * 1024, low: 256 * 1024 };
  * out.
  */
 export const AGENT_HISTORY = { max: 256 * 1024, low: 160 * 1024 };
+/**
+ * Retries of a step that holds a change's text in the isolate. An attempt that
+ * ends at a platform limit (memory, CPU) ends the same way again: under the
+ * platform's default of five retries with backoff, 18 reviews spent 15 to 18
+ * minutes on such a step before they failed. One retry covers an attempt the
+ * platform lost; the caller goes on without the step's result.
+ */
+export const ANALYSIS_STEP = {
+  retries: { limit: 1, delay: "5 seconds" as const },
+  timeout: "10 minutes" as const,
+};
 /** Changed files read for an agent's prompt; the files after them are named. */
 export const CHANGE_PROMPT_FILES = 200;
 // A diff cut shorter than this says too little: the file is named instead.
@@ -418,6 +431,72 @@ export async function differing(
   }
   return paths;
 }
+/**
+ * `incrementalChanges` of the paths between two trees, read a group of a few
+ * MiB per version at a time instead of every file of both versions at once.
+ * Both versions of 243 files (59 MiB of text) held together, on every replay
+ * of the review, ended diff-only rounds of a pull request that had merged its
+ * base. A file too large to hold is changed when its entry differs, without a
+ * count of its lines, as is one of more lines than `COUNTED_LINES`.
+ */
+export async function incrementalOf(
+  before: TreeReader,
+  after: TreeReader,
+  paths: string[],
+  group = BATCH_BYTES,
+): Promise<Submission["changed"]> {
+  const wanted = [...new Set(paths)].sort(compareUtf8);
+  const entries = {
+    before: await entriesOf(before, wanted),
+    after: await entriesOf(after, wanted),
+  };
+  const changed: Submission["changed"] = [];
+  const read = async (
+    tree: TreeReader,
+    found: Map<string, Entry>,
+    held: string[],
+  ) => {
+    const files: Tree = {};
+    const list = held.flatMap((path) => found.get(path) ?? []);
+    const bytes = await tree.many(list);
+    list.forEach((entry, i) => {
+      files[entry.path] = fileOf(entry, bytes[i] ?? new Uint8Array());
+    });
+    return files;
+  };
+  let held: string[] = [],
+    size = 0;
+  const flush = async () => {
+    if (held.length)
+      changed.push(
+        ...incrementalChanges(
+          await read(before, entries.before, held),
+          await read(after, entries.after, held),
+        ),
+      );
+    held = [];
+    size = 0;
+  };
+  for (const path of wanted) {
+    const a = entries.before.get(path),
+      b = entries.after.get(path);
+    if (!a && !b) continue;
+    const bytes = Math.max(a?.size ?? 0, b?.size ?? 0);
+    if (bytes > LARGE) {
+      if (!(a && b && a.hash && a.hash === b.hash && a.mode === b.mode))
+        changed.push({ path });
+      continue;
+    }
+    if (held.length && size + bytes > group) await flush();
+    held.push(path);
+    size += bytes;
+  }
+  await flush();
+  // In the order `incrementalChanges` gives one tree's paths.
+  return changed.sort((x, y) =>
+    x.path < y.path ? -1 : x.path > y.path ? 1 : 0,
+  );
+}
 /** Every text file of a tree once, in path order, for textual consumers. */
 async function* textFiles(tree: TreeReader): AsyncGenerator<[string, string]> {
   for await (const batch of tree.batches(
@@ -513,6 +592,9 @@ const CACHE_CHUNK = 250;
 const OPEN = "(status IN ('queued','running','cancelled') OR report_key=?)";
 /** The note of a review its workflow ended early because it was cancelled. */
 export const CANCELLED_NOTE = "Review cancelled before it finished.";
+/** The note of a review a newer head of its pull request superseded. */
+export const SUPERSEDED_NOTE =
+  "Review superseded by a newer head of the pull request before it finished; nothing more was published for this head.";
 /** Cache entries written per store step: four packs. */
 const CACHE_STORE_CHUNK = 4 * PACK_ENTRIES;
 /** The review's token or wall budget refusing a model call. */
@@ -1703,64 +1785,71 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               focus: plan.suggested_focus,
             };
         // The contract inventory and the change context are deterministic; they
-        // are computed once per step and replayed from the step result.
-        const analysis =
-          selected.length && !unchanged
-            ? await step.do(`analysis-${s.id}`, () =>
-                holding(async () => {
-                  const contents = await changedContents(
-                    reviewed.changed,
-                    reviewed.snapshot,
-                  );
-                  const entries = await inventory({
-                    changed: reviewed.changed,
-                    contents,
-                    graphs,
-                    hops: graphHops,
-                    read: (version, path) =>
-                      textOf(reviewed.snapshot[version], path),
-                    scan: (version) => textFiles(reviewed.snapshot[version]),
-                  });
-                  const manifests: [string, string][] = [];
-                  for (const path of manifestPaths(reviewed.changed))
-                    for (const version of ["head", "base"] as const) {
-                      const text = await textOf(
-                        reviewed.snapshot[version],
-                        path,
-                      );
-                      if (text !== null) {
-                        manifests.push([path, text]);
-                        break;
-                      }
-                    }
-                  const context = changeContext({
-                    changed: reviewed.changed,
-                    contents,
-                    frameworks: frameworks(manifests, reviewed.changed),
-                    node_kinds: touchedKinds(
-                      entries,
-                      reviewed.changed,
-                      contents,
-                    ),
-                    sensitive_paths: triageOptions.sensitive_paths ?? [],
-                  });
-                  const catalogName = security
-                    ? (s.with.catalog ?? "owasp-top10-2025")
-                    : null;
-                  const items = catalogName
-                    ? applicability(catalogName, context).applicable
-                    : [];
-                  return {
-                    inventory: entries,
-                    context,
-                    trace: catalogName
-                      ? traceInputs(items, reviewed.changed, contents, graphs)
-                      : null,
-                    omitted: contents.omitted,
-                  };
-                }),
-              )
+        // are computed once per step and replayed from the step result. Without
+        // the files (`pathsOnly`) they are what the changed paths alone say.
+        const analyse = async (pathsOnly: boolean) => {
+          const contents: ChangeTexts = pathsOnly
+            ? { base: {}, head: {}, omitted: { files: 0, bytes: 0 } }
+            : await changedContents(reviewed.changed, reviewed.snapshot);
+          const entries = pathsOnly
+            ? []
+            : await inventory({
+                changed: reviewed.changed,
+                contents,
+                graphs,
+                hops: graphHops,
+                read: (version, path) =>
+                  textOf(reviewed.snapshot[version], path),
+                scan: (version) => textFiles(reviewed.snapshot[version]),
+              });
+          const manifests: [string, string][] = [];
+          if (!pathsOnly)
+            for (const path of manifestPaths(reviewed.changed))
+              for (const version of ["head", "base"] as const) {
+                const text = await textOf(reviewed.snapshot[version], path);
+                if (text !== null) {
+                  manifests.push([path, text]);
+                  break;
+                }
+              }
+          const context = changeContext({
+            changed: reviewed.changed,
+            contents,
+            frameworks: frameworks(manifests, reviewed.changed),
+            node_kinds: touchedKinds(entries, reviewed.changed, contents),
+            sensitive_paths: triageOptions.sensitive_paths ?? [],
+          });
+          const catalogName = security
+            ? (s.with.catalog ?? "owasp-top10-2025")
             : null;
+          const items = catalogName
+            ? applicability(catalogName, context).applicable
+            : [];
+          return {
+            inventory: entries,
+            context,
+            trace: catalogName
+              ? traceInputs(items, reviewed.changed, contents, graphs)
+              : null,
+            omitted: contents.omitted,
+            failed: pathsOnly,
+          };
+        };
+        let analysis: Awaited<ReturnType<typeof analyse>> | null = null;
+        if (selected.length && !unchanged)
+          try {
+            analysis = await step.do(`analysis-${s.id}`, ANALYSIS_STEP, () =>
+              holding(() => analyse(false)),
+            );
+          } catch (error) {
+            // A step that ended at a platform limit ends there again: the
+            // agents run on the changed paths, and the report says so.
+            analysis = await analyse(true);
+            report.footer.notes.push(
+              `${security ? "The security analysis" : "The contract inventory"} could not be built (${redact(error instanceof Error ? error.message : String(error)).slice(0, 160)}); the agents ran with what the changed paths alone say.`,
+            );
+            if (report.status !== "partial") report.status = "incomplete";
+          }
         if (analysis)
           unread(
             security ? "the security analysis" : "the contract inventory",
@@ -1778,6 +1867,11 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           const declaration = (s.agents ?? []).find((a) =>
             Object.hasOwn(a, agent),
           );
+          if (agent === "contracts" && analysis!.failed) {
+            skippedAgents[agent] =
+              "the contract inventory could not be built";
+            continue;
+          }
           if (
             agent === "contracts" &&
             !analysis!.inventory.length &&
@@ -1838,11 +1932,17 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             CHANGE_PROMPT_CHARS,
             Math.floor(agentTokens / 8),
           );
-          const parts =
+          let parts: string[][] = [];
+          if (
             module === "rio/agents" &&
             agent === "correctness" &&
             Number(s.with.parts ?? 1) > 1
-              ? await step.do(`parts-${s.id}-${agent}`, () =>
+          )
+            try {
+              parts = await step.do(
+                `parts-${s.id}-${agent}`,
+                ANALYSIS_STEP,
+                () =>
                   holding(() =>
                     changeParts(
                       reviewed.changed,
@@ -1851,8 +1951,14 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                       Number(s.with.parts),
                     ),
                   ),
-                )
-              : [];
+              );
+            } catch (error) {
+              // The agent reviews the change in one conversation, its diff
+              // cut to one prompt.
+              report.footer.notes.push(
+                `The change could not be divided into parts for the ${agent} agent (${redact(error instanceof Error ? error.message : String(error)).slice(0, 160)}); it reviewed the change in one conversation.`,
+              );
+            }
           if (parts.length) reviewedParts = parts.length;
           if (parts.length)
             report.footer.notes.push(
@@ -2528,7 +2634,8 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             trees,
             head,
             graphs.head,
-            new Set(incremental.map((f) => f.path)),
+            // Without the previous head the round reviewed the whole change.
+            previousHead ? new Set(incremental.map((f) => f.path)) : null,
           );
           candidates = reverify.verify;
           verified.push(...reverify.carried);
@@ -2910,26 +3017,46 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           lineage.previous_head &&
           lineage.previous_head_key
         ) {
-          previousHead = await StoredSnapshot.open(
-            this.env,
-            lineage.previous_head_key,
-          );
-          // A round whose profile omits other paths than the round before
-          // differs from it by all of them: thousands of files that this
-          // pull request never touched.
-          const paths = await differing(
-            previousHead.head,
-            snapshot.head,
-            new Set(
-              submission.changed.flatMap((f) =>
-                f.old_path ? [f.path, f.old_path] : [f.path],
-              ),
-            ),
-          );
-          incremental = incrementalChanges(
-            await materialize(previousHead.head, paths),
-            await materialize(snapshot.head, paths),
-          );
+          // The change since the previous head is read once, in a step, a
+          // few MiB at a time: a replay reads its list, not both versions of
+          // its files again.
+          try {
+            const previous = await StoredSnapshot.open(
+              this.env,
+              lineage.previous_head_key,
+            );
+            const key = await step.do(
+              "lineage-incremental",
+              ANALYSIS_STEP,
+              async () => {
+                // A round whose profile omits other paths than the round
+                // before differs from it by all of them: thousands of files
+                // that this pull request never touched.
+                const paths = await differing(
+                  previous.head,
+                  snapshot.head,
+                  new Set(
+                    submission.changed.flatMap((f) =>
+                      f.old_path ? [f.path, f.old_path] : [f.path],
+                    ),
+                  ),
+                );
+                return store.put(
+                  `reviews/${id}/lineage-incremental.json`,
+                  await incrementalOf(previous.head, snapshot.head, paths),
+                );
+              },
+            );
+            incremental = await store.get<Submission["changed"]>(key);
+            previousHead = previous;
+          } catch (error) {
+            // Without it the round reviews the whole change, as a first one,
+            // and re-verifies the earlier findings in all of it.
+            incremental = submission.changed;
+            report.footer.notes.push(
+              `The change since the previously reviewed head could not be read (${redact(error instanceof Error ? error.message : String(error)).slice(0, 160)}); this round reviewed the whole change.`,
+            );
+          }
         }
       }
       plan = await planned("plan-initial", (files) =>
@@ -3051,7 +3178,11 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       );
       report.review.rio_version = this.env.RIO_VERSION;
       account();
-      if (await store.cancelled(id)) report.status = "partial";
+      if (await store.cancelled(id)) {
+        report.status = "partial";
+        if (await supersededReview(this.env, id))
+          report.footer.notes.push(SUPERSEDED_NOTE);
+      }
       if (diffOnlyAudit) report.agent_audit.diff_only = diffOnlyAudit;
       if (cacheStats)
         report.cache = {
@@ -3212,7 +3343,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         // stopped in time) keeps that end: a late result never replaces it,
         // and a cancelled review never reads complete.
         const ended = await this.env.DB.prepare(
-          `UPDATE reviews SET status=CASE WHEN cancelled=1 THEN 'partial' ELSE ? END,report_key=? WHERE id=? AND ${OPEN} RETURNING status`,
+          `UPDATE reviews SET status=CASE WHEN cancelled=1 THEN 'partial' ELSE ? END,report_key=? WHERE id=? AND ${OPEN} RETURNING status,cancelled,error`,
         )
           .bind(
             report.status === "partial" ? "partial" : "complete",
@@ -3220,14 +3351,18 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             id,
             key,
           )
-          .first<{ status: string }>();
+          .first<{ status: string; cancelled: number; error: string | null }>();
         if (!ended) return;
+        const superseded = ended.error === SUPERSEDED;
         // Cancelled after the report was written: the report says what the
         // review's status does.
         if (ended.status === "partial" && report.status !== "partial") {
           // Stored before the report held here says so: an attempt of this
           // step that follows a failed write must find it still to write.
-          const notes = [...report.footer.notes, CANCELLED_NOTE];
+          const notes = [
+            ...report.footer.notes,
+            superseded ? SUPERSEDED_NOTE : CANCELLED_NOTE,
+          ];
           await store.put(key, {
             ...report,
             status: "partial",
@@ -3238,7 +3373,17 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         }
         await stopRunners(this.env, id);
         await withdrawIdle(this.env, id);
-        if (lineage && outcome)
+        // A pull request review cancelled (or superseded) before its
+        // publication was made posted nothing, or only part of it: it does not
+        // advance lineage state, as a failed review does not, so the next
+        // round neither takes its head as the one reviewed before nor holds
+        // back its findings as posted. One cancelled after its publication
+        // records what it posted.
+        const unpublished =
+          ended.cancelled === 1 &&
+          !!report.review?.pull_request &&
+          !publication;
+        if (lineage && outcome && !unpublished)
           await this.env.DB.batch(
             persistStatements(
               this.env,
@@ -3262,8 +3407,16 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         error instanceof Error
           ? error.message.replace(/^NonRetryableError: /, "")
           : "review failed";
+      // A cancelled review says whether a newer head superseded it.
+      const superseded =
+        reason === "cancelled" &&
+        (await supersededReview(this.env, id).catch(() => false));
       report.footer.notes.push(
-        reason === "cancelled" ? CANCELLED_NOTE : reason,
+        superseded
+          ? SUPERSEDED_NOTE
+          : reason === "cancelled"
+            ? CANCELLED_NOTE
+            : reason,
       );
       // Work finished before the stop is still reported, consolidated as on the
       // complete path. A replayed run has it in storage only.
@@ -3319,11 +3472,13 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       account();
       const key = await store.put(`reviews/${id}/report.json`, report);
       await step.do("failed", async () => {
+        // A superseded review keeps that reason.
         const ended = await this.env.DB.prepare(
-          `UPDATE reviews SET status='partial',report_key=?,error=? WHERE id=? AND ${OPEN} RETURNING id`,
+          `UPDATE reviews SET status='partial',report_key=?,error=CASE WHEN error=? THEN error ELSE ? END WHERE id=? AND ${OPEN} RETURNING id`,
         )
           .bind(
             key,
+            SUPERSEDED,
             reason === "cancelled" ? "cancelled" : "runtime did not complete",
             id,
             key,

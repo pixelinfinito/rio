@@ -15,10 +15,12 @@ import {
 import { app } from "../src/index";
 import type { Env, Execution, Snapshot } from "../src/types";
 import {
+  SUPERSEDED,
   failUnscheduled,
   handleReviewRequest,
   trailerAgent,
 } from "../src/pulls";
+import { SUPERSEDED_TITLE } from "../src/announce";
 import { finishJob } from "../src/jobs";
 import { PREPARE_MS, prepareMs } from "../src/prepare-budget";
 import { Store } from "../src/storage";
@@ -1257,5 +1259,257 @@ describe("preparation time from the profile", () => {
     expect(prepareMs("90s")).toBe(90000);
     for (const value of ["59s", "61m", "1h", "0m", "30", 30, null])
       expect(prepareMs(value)).toBeNull();
+  });
+});
+
+describe("a newer head supersedes older webhook reviews", () => {
+  let github: GitHubDouble;
+  beforeEach(async () => {
+    github = new GitHubDouble().install();
+    await install(76, ["acme/push", "acme/sibling"]);
+  });
+  afterEach(() => github.restore());
+  const push = (repository: string, number: number, extra: object = {}) =>
+    ({ ...request(repository, number), installation_id: 76, ...extra }) as any;
+  /** The review of `repository#number` at `head`, as its workflow runs it. */
+  async function running(repository: string, number: number, head: string) {
+    const row = (await pullRows(repository, number)).find(
+      (r) => r.head_sha === head && r.review_status === "preparing",
+    )!;
+    await runtime.DB.batch([
+      runtime.DB.prepare(
+        "UPDATE reviews SET status='running',submission_key=? WHERE id=?",
+      ).bind(`reviews/${row.review_id}/submission.json`, row.review_id),
+      runtime.DB.prepare(
+        "UPDATE pull_requests SET state='submitted' WHERE review_id=?",
+      ).bind(row.review_id),
+      // Its preparation is done; a job the workflow still waits for.
+      runtime.DB.prepare(
+        "UPDATE jobs SET status='completed' WHERE review_id=?",
+      ).bind(row.review_id),
+      runtime.DB.prepare(
+        "INSERT INTO jobs(id,review_id,attempt,status,payload_key,created_at,kind) VALUES(?,?,1,'pending','unused',?,'checks')",
+      ).bind(crypto.randomUUID(), row.review_id, Date.now()),
+    ]);
+    return row.review_id as string;
+  }
+  const state = (review: string) =>
+    runtime.DB.prepare(
+      "SELECT r.status,r.cancelled,r.error,p.state,p.reason FROM reviews r JOIN pull_requests p ON p.review_id=r.id WHERE r.id=?",
+    )
+      .bind(review)
+      .first<any>();
+  const openJobs = async (review: string) =>
+    (await runtime.DB.prepare(
+      "SELECT COUNT(*) AS n FROM jobs WHERE review_id=? AND status IN ('pending','leased')",
+    )
+      .bind(review)
+      .first<{ n: number }>())!.n;
+
+  it("cancels a running webhook review of an older head, and no review a user asked for, of another pull request or repository", async () => {
+    const { env: e } = capture();
+    github.pull("acme/push", 5, { head: sha("push-1") });
+    await handleReviewRequest(e, push("acme/push", 5));
+    const old = await running("acme/push", 5, sha("push-1"));
+    // `rio review --pr 5` and a maintainer's `/rio review` on the same head.
+    const created = await app.request(
+      "https://rio/v1/pulls",
+      {
+        method: "POST",
+        headers: owner,
+        body: JSON.stringify({ repository: "github.com/acme/push", number: 5 }),
+      },
+      e,
+    );
+    const cliId = ((await created.json()) as any).id as string;
+    await handleReviewRequest(
+      e,
+      push("acme/push", 5, { trigger: "cli", review_id: cliId }),
+    );
+    await runtime.DB.prepare(
+      "UPDATE reviews SET status='running',submission_key='cli' WHERE id=?",
+    )
+      .bind(cliId)
+      .run();
+    await handleReviewRequest(
+      e,
+      push("acme/push", 5, { trigger: "command", comment_id: 5001 }),
+    );
+    const command = (await pullRows("acme/push", 5)).find(
+      (r) => r.trigger === "command",
+    )!.review_id;
+    await runtime.DB.prepare(
+      "UPDATE reviews SET status='running',submission_key='command' WHERE id=?",
+    )
+      .bind(command)
+      .run();
+    // Another pull request of the repository, and the same number elsewhere.
+    github.pull("acme/push", 6, { head: sha("push-6") });
+    await handleReviewRequest(e, push("acme/push", 6));
+    const otherPull = await running("acme/push", 6, sha("push-6"));
+    github.pull("acme/sibling", 5, { head: sha("sibling-5") });
+    await handleReviewRequest(e, push("acme/sibling", 5));
+    const otherRepo = await running("acme/sibling", 5, sha("sibling-5"));
+    // A second delivery of the same head cancels nothing.
+    await handleReviewRequest(e, push("acme/push", 5));
+    expect(await state(old)).toMatchObject({ status: "running", cancelled: 0 });
+    expect(await openJobs(old)).toBe(1);
+
+    github.pull("acme/push", 5, { head: sha("push-2") });
+    await handleReviewRequest(e, push("acme/push", 5));
+    // Cancelled as a cancel by request would, saying why; its idle job is
+    // withdrawn so no runner starts it.
+    expect(await state(old)).toEqual({
+      status: "cancelled",
+      cancelled: 1,
+      error: SUPERSEDED,
+      state: "submitted",
+      reason: null,
+    });
+    expect(await openJobs(old)).toBe(0);
+    for (const kept of [cliId, command, otherPull, otherRepo])
+      expect(await state(kept)).toMatchObject({
+        status: "running",
+        cancelled: 0,
+        error: null,
+      });
+    // The newer review goes on to be prepared.
+    const newer = (await pullRows("acme/push", 5)).find(
+      (r) => r.head_sha === sha("push-2"),
+    )!;
+    expect(newer).toMatchObject({ trigger: "webhook", state: "preparing" });
+    expect(await openJobs(newer.review_id)).toBe(1);
+    // Its own redelivery cancels nothing, itself included.
+    await handleReviewRequest(e, push("acme/push", 5));
+    expect(await state(newer.review_id)).toMatchObject({
+      status: "preparing",
+      cancelled: 0,
+    });
+    // A review that ended is left as it ended.
+    await runtime.DB.prepare(
+      "UPDATE reviews SET status='complete',cancelled=0 WHERE id=?",
+    )
+      .bind(otherPull)
+      .run();
+    github.pull("acme/push", 6, { head: sha("push-6b") });
+    await handleReviewRequest(e, push("acme/push", 6));
+    expect(await state(otherPull)).toMatchObject({
+      status: "complete",
+      cancelled: 0,
+    });
+  });
+
+  it("ends a review being prepared, and completes its check run as superseded", async () => {
+    const { env: e } = capture();
+    // The repository's policy is known, so a review is announced at once.
+    github.pull("acme/push", 8, { head: sha("push-8") });
+    await handleReviewRequest(e, push("acme/push", 8));
+    await runtime.DB.prepare(
+      "UPDATE pull_requests SET publish_policy='ask' WHERE repository='acme/push' AND number=8",
+    ).run();
+    github.pull("acme/push", 7, { head: sha("seven-1") });
+    await handleReviewRequest(e, push("acme/push", 7));
+    const [old] = await pullRows("acme/push", 7);
+    expect(github.checkRuns).toHaveLength(1);
+    expect(github.checkRuns[0]).toMatchObject({
+      head_sha: sha("seven-1"),
+      status: "in_progress",
+    });
+    github.pull("acme/push", 7, { head: sha("seven-2") });
+    await handleReviewRequest(e, push("acme/push", 7));
+    expect(await state(old.review_id)).toEqual({
+      status: "error",
+      cancelled: 1,
+      error: SUPERSEDED,
+      state: "failed",
+      reason: SUPERSEDED,
+    });
+    // Its prepare job never runs.
+    expect(await openJobs(old.review_id)).toBe(0);
+    const runs = github.checkRuns.map((c) => [
+      c.head_sha,
+      c.status,
+      c.conclusion,
+    ]);
+    expect(runs).toEqual([
+      [sha("seven-1"), "completed", "neutral"],
+      [sha("seven-2"), "in_progress", undefined],
+    ]);
+    expect(github.checkRuns[0].output.title).toBe(SUPERSEDED_TITLE);
+    expect(github.checkRuns[0].output.summary).toContain(
+      sha("seven-1").slice(0, 12),
+    );
+  });
+
+  it("ends itself when a newer head was requested while it read its own", async () => {
+    const { env: e } = capture();
+    github.pull("acme/push", 9, { head: sha("nine-1") });
+    // The delivery of the first push reads the pull request just before the
+    // second push; the second push's delivery is handled meanwhile.
+    const handle = github.handle.bind(github);
+    let raced = false;
+    github.handle = async (url, init) => {
+      const response = await handle(url, init);
+      if (!raced && new URL(url).pathname === "/repos/acme/push/pulls/9") {
+        raced = true;
+        // Time moves on before the second push is read.
+        await new Promise((r) => setTimeout(r, 5));
+        github.pull("acme/push", 9, { head: sha("nine-2") });
+        await handleReviewRequest(e, push("acme/push", 9));
+      }
+      return response;
+    };
+    await handleReviewRequest(e, push("acme/push", 9));
+    const rows = await pullRows("acme/push", 9);
+    const stale = rows.find(
+        (r) => r.request_key === `webhook:${sha("nine-1")}`,
+      )!,
+      fresh = rows.find((r) => r.request_key === `webhook:${sha("nine-2")}`)!;
+    expect(stale.created_at).toBeLessThan(fresh.created_at);
+    expect(await state(stale.review_id)).toMatchObject({
+      status: "error",
+      error: SUPERSEDED,
+      reason: SUPERSEDED,
+    });
+    expect(await openJobs(stale.review_id)).toBe(0);
+    expect(await state(fresh.review_id)).toMatchObject({
+      status: "preparing",
+      cancelled: 0,
+    });
+    expect(await openJobs(fresh.review_id)).toBe(1);
+  });
+
+  it("keeps the review of the pushed head when an attempt that began later read the older one", async () => {
+    const { env: e } = capture();
+    github.pull("acme/push", 10, { head: sha("ten-1") });
+    // This attempt begins first, but its read is answered only after another
+    // attempt has read the older head and the push has happened.
+    const handle = github.handle.bind(github);
+    let raced = false;
+    github.handle = async (url, init) => {
+      if (!raced && new URL(url).pathname === "/repos/acme/push/pulls/10") {
+        raced = true;
+        await new Promise((r) => setTimeout(r, 5));
+        await handleReviewRequest(e, push("acme/push", 10));
+        github.pull("acme/push", 10, { head: sha("ten-2") });
+      }
+      return handle(url, init);
+    };
+    await handleReviewRequest(e, push("acme/push", 10));
+    const rows = await pullRows("acme/push", 10);
+    const older = rows.find(
+        (r) => r.request_key === `webhook:${sha("ten-1")}`,
+      )!,
+      pushed = rows.find((r) => r.request_key === `webhook:${sha("ten-2")}`)!;
+    // The older head's request was recorded later, and is still the stale one.
+    expect(pushed.created_at).toBeLessThan(older.created_at);
+    expect(await state(pushed.review_id)).toMatchObject({
+      status: "preparing",
+      cancelled: 0,
+      error: null,
+    });
+    expect(await openJobs(pushed.review_id)).toBe(1);
+    expect(await state(older.review_id)).toMatchObject({ error: SUPERSEDED });
+    expect(await openJobs(older.review_id)).toBe(0);
   });
 });

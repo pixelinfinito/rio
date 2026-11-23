@@ -184,7 +184,11 @@ An alias in `models` that the profile does not define is skipped, and so is one 
 ## Verifier quorum and presets
 
 `verify: { voters: 3, quorum: 2 }` is the default. Omitted quorum becomes one for
-one voter. `verify.model` resolves an explicit model alias, then falls back to
+one voter. The first `quorum` voters are asked first; when all of them complete
+at the same evidence level and category and fewer than `quorum` voters remain,
+the rest are not asked, because their votes could change neither. The finding
+still records `voters` seats, with `agreeing` counting the votes cast and
+`none` as the blind match of a voter that was not asked. `verify.model` resolves an explicit model alias, then falls back to
 `verifier` if present, otherwise `default`. Single-voter independence compares
 actual provider/model values, so another alias for the default cannot bypass it.
 `verify.risk_voters` sets how many of the voters examine a hypothesis its agent

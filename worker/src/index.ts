@@ -11,7 +11,6 @@ import {
   configureQaRun,
   heartbeatQaRun,
   qaControl,
-  revokeQaRun,
 } from "./qa-jobs";
 import type { Env, Execution, JobMessage, QueueMessage } from "./types";
 import { authenticate, equal, jobToken, sign, verifyJobToken } from "./auth";
@@ -49,9 +48,7 @@ import {
   PREPARE_WALL_MS,
   failJob,
   finishJob,
-  stopRunners,
   withdraw,
-  withdrawIdle,
 } from "./jobs";
 import { parseWall } from "./budget";
 import { checkProfileModels } from "./gateway";
@@ -64,7 +61,7 @@ import { dismissRecommendation } from "./qa-recommendation-history";
 import { APP_TENANT, handleGitHubWebhook, installationFor } from "./webhooks";
 import {
   handleReviewRequest,
-  cancelPreparing,
+  cancelReview,
   failPrepare,
   failUnscheduled,
   prepareCredential,
@@ -540,49 +537,7 @@ app.post("/v1/reviews/:id/cancel", async (c) => {
     c.req.param("id"),
     "reviews:write",
   );
-  // A review still being prepared has no workflow to end it: it ends here,
-  // and its prepare job with it.
-  if (await cancelPreparing(c.env, row.id))
-    return c.json({ id: row.id, status: "cancelled" });
-  // The workflow sees the flag between steps and ends the review as partial
-  // with what it had; the sweep stops one that has not within the grace.
-  // The jobs open at that moment are read with it: one that completes later
-  // finds the review cancelled, one that completed earlier ends its own wait
-  // (`finishJob`).
-  const [stopped, open] = (await c.env.DB.batch([
-    c.env.DB.prepare(
-      "UPDATE reviews SET cancelled=1,status='cancelled',cancelled_at=COALESCE(cancelled_at,?) WHERE id=? AND status NOT IN ('complete','partial','error') RETURNING id",
-    ).bind(Date.now(), row.id),
-    c.env.DB.prepare(
-      "SELECT id,attempt FROM jobs WHERE review_id=? AND status IN ('pending','leased')",
-    ).bind(row.id),
-  ])) as [D1Result<{ id: string }>, D1Result<{ id: string; attempt: number }>];
-  if (stopped.results.length) {
-    // A job no runner has taken never runs. One a runner has is stopped
-    // (Sandbox) or keeps its result for the audit, and the workflow stops
-    // waiting for it now.
-    await stopRunners(c.env, row.id);
-    await withdrawIdle(c.env, row.id);
-    if (open.results.length) {
-      // No instance, or one that ended, has no wait to end. Each job on its
-      // own: an event that fails leaves the other waits their end.
-      const instance = await c.env.REVIEWS.get(row.id).catch(() => null);
-      if (instance)
-        for (const job of open.results)
-          await instance
-            .sendEvent({
-              type: `job-${job.id}-${job.attempt}`,
-              payload: { cancelled: true },
-            })
-            .catch(() => {});
-    }
-  }
-  const qa = await c.env.DB.prepare(
-    "SELECT q.id FROM qa_runs q JOIN reviews r ON r.id=q.review_id WHERE q.review_id=? AND r.cancelled=1",
-  )
-    .bind(row.id)
-    .all<{ id: string }>();
-  for (const run of qa.results) await revokeQaRun(c.env, run.id);
+  await cancelReview(c.env, row.id);
   return c.json({ id: row.id, status: "cancelled" });
 });
 app.get("/v1/lineages", async (c) => {

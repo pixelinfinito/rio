@@ -11,6 +11,9 @@ import { validateHypotheses, validateReport } from "../src/validation";
 import { allMigrations, hypothesis, submission } from "./fixtures";
 import { manifestOf, uploadSnapshot } from "./snapshots";
 import { BOT, GitHubDouble, sha, signed } from "./github-double";
+import { SUPERSEDED } from "../src/pulls";
+import { SUPERSEDED_TITLE } from "../src/announce";
+import { SUPERSEDED_NOTE } from "../src/workflow";
 import prLineageReport from "../../tests/fixtures/sarif/pr-lineage/report.json";
 import prLineageSarif from "../../tests/fixtures/sarif/pr-lineage/expected.sarif?raw";
 
@@ -54,6 +57,11 @@ let agentSymbols: string[] = [];
 // when the security agent was still to answer.
 let early:
   { comments: string[]; check: any; summary: string | undefined } | undefined;
+// A model call the test holds until it lets it go: the first agent or
+// verifier call (`stage`) made while it is set.
+let hold:
+  | { stage: "agent" | "verifier"; reached: () => void; release: Promise<void> }
+  | undefined;
 const payHyp = (symbol: string, line: number): Hypothesis => ({
   ...hyp(symbol, line),
   location: { ...hyp(symbol, line).location, path: "src/pay.ts" },
@@ -117,6 +125,17 @@ async function gateway(
   const body = JSON.parse(String(init!.body));
   const text = body.messages.map((m: any) => m.content).join("\n");
   let result: any = [];
+  const stage = text.includes("Verify this hypothesis.")
+    ? "verifier"
+    : text.includes("Review the change independently")
+      ? "agent"
+      : null;
+  if (hold && hold.stage === stage) {
+    const held = hold;
+    hold = undefined;
+    held.reached();
+    await held.release;
+  }
   if (text.includes("Review the change independently for security.")) {
     // The security agent answers only once the review has published without it.
     for (let i = 0; i < 400 && !early; i++) {
@@ -670,4 +689,139 @@ describe("a security step the review does not wait for", () => {
     expect(summaries[0].body).not.toMatch(/still running|so far/);
     expect(report.publication).toMatchObject({ posted: 1, failed: 0 });
   });
+});
+
+describe("a newer push while a review of the older head runs", () => {
+  async function until(done: () => boolean, ms = 90_000) {
+    for (const end = Date.now() + ms; !done();) {
+      if (Date.now() > end) throw new Error("timed out waiting");
+      await new Promise((r) => setTimeout(r, 50));
+    }
+  }
+  /** Reviews a pushed head with a model call held until a newer head is pushed. */
+  async function supersededRound(number: number, stage: "agent" | "verifier") {
+    const old = sha(`old-${number}`),
+      next = sha(`new-${number}`);
+    github.pull(REPO, number, { head: old, base: sha("base") });
+    github.setFiles(REPO, number, [{ filename: "src/cart.ts", lines: [1, 2] }]);
+    agentSymbols = ["total", "tax"];
+    await deliver("pull_request", prEvent("opened", number));
+    await drain();
+    let reached = false,
+      release!: () => void;
+    hold = {
+      stage,
+      reached: () => void (reached = true),
+      release: new Promise<void>((r) => (release = r)),
+    };
+    let settled = false;
+    const first = runPrepare(BASE, HEAD1);
+    first.then(
+      () => void (settled = true),
+      () => void (settled = true),
+    );
+    // Polled: the workflow advances while the test waits on timers.
+    await until(() => reached || settled);
+    if (!reached) throw new Error(`the ${stage} call was never made`);
+    const id = (await runtime.DB.prepare(
+      "SELECT review_id FROM pull_requests WHERE repository=? AND number=? AND head_sha=?",
+    )
+      .bind(REPO, number, old)
+      .first<{ review_id: string }>())!.review_id;
+    expect(
+      await runtime.DB.prepare(
+        "SELECT status,cancelled FROM reviews WHERE id=?",
+      )
+        .bind(id)
+        .first(),
+    ).toEqual({ status: "running", cancelled: 0 });
+    // The push arrives while the model call is under way.
+    const calls = github.requests.length;
+    github.pull(REPO, number, { head: next, base: sha("base") });
+    // \`total\` is remembered as dismissed in this repository (#7).
+    agentSymbols = ["tax"];
+    await deliver("pull_request", prEvent("synchronize", number));
+    await drain();
+    expect(
+      await runtime.DB.prepare(
+        "SELECT status,cancelled,error,cancelled_at IS NOT NULL AS stamped FROM reviews WHERE id=?",
+      )
+        .bind(id)
+        .first(),
+    ).toEqual({
+      status: "cancelled",
+      cancelled: 1,
+      error: SUPERSEDED,
+      stamped: 1,
+    });
+    release();
+    await until(() => settled);
+    const { report } = await first;
+    return { id, old, next, calls, report };
+  }
+
+  for (const stage of ["agent", "verifier"] as const)
+    it(`ends the older review as superseded without publishing, and the newer one is the lineage's first round (held ${stage})`, async () => {
+      const number = stage === "agent" ? 10 : 11;
+      const { id, old, next, report } = await supersededRound(number, stage);
+      // The older review ended partial, saying why, and posted nothing.
+      expect(report.status).toBe("partial");
+      expect(report.footer.notes).toContain(SUPERSEDED_NOTE);
+      expect(report.publication).toBeUndefined();
+      expect(
+        await runtime.DB.prepare("SELECT status,error FROM reviews WHERE id=?")
+          .bind(id)
+          .first(),
+      ).toEqual({ status: "partial", error: SUPERSEDED });
+      expect(
+        github.comments.filter((c) => c.pr === `${REPO}#${number}`),
+      ).toEqual([]);
+      // Its check run is completed, neutral, as superseded; the newer head's
+      // runs and the summary banner names the newer head.
+      const oldRun = github.checkRuns.find((c) => c.head_sha === old);
+      expect(oldRun).toMatchObject({
+        status: "completed",
+        conclusion: "neutral",
+      });
+      expect(oldRun.output.title).toBe(SUPERSEDED_TITLE);
+      expect(oldRun.output.summary).toContain(old.slice(0, 12));
+      expect(github.checkRuns.find((c) => c.head_sha === next)?.status).toBe(
+        "in_progress",
+      );
+      // The summary comments of this repository share the double's list.
+      const banner = (head: string) =>
+        github.issueComments.some((c) =>
+          c.body.includes(`Rio is reviewing \`${head.slice(0, 12)}\``),
+        );
+      expect(banner(next)).toBe(true);
+      expect(banner(old)).toBe(false);
+      // The lineage did not take the superseded head as reviewed.
+      expect(
+        await runtime.DB.prepare(
+          "SELECT reviewed,posted FROM lineage_reviews WHERE review_id=?",
+        )
+          .bind(id)
+          .first(),
+      ).toEqual({ reviewed: 0, posted: 0 });
+      // The newer head is reviewed as the first round, its findings posted.
+      const newer = await runPrepare(BASE, HEAD2);
+      expect(newer.report.status).toBe("complete");
+      expect(newer.report.lineage).toMatchObject({
+        round: 1,
+        previous_head: null,
+        diff_only: false,
+        held_back: 0,
+      });
+      expect(newer.report.publication).toMatchObject({ posted: 1, failed: 0 });
+      expect(
+        github.comments.filter((c) => c.pr === `${REPO}#${number}`),
+      ).toHaveLength(1);
+      expect(github.checkRuns.find((c) => c.head_sha === next)).toMatchObject({
+        status: "completed",
+        conclusion: "neutral",
+      });
+      expect(
+        github.checkRuns.find((c) => c.head_sha === next).output.title,
+      ).not.toBe(SUPERSEDED_TITLE);
+    }, 120_000);
 });

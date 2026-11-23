@@ -168,6 +168,49 @@ export function panelOf(
       : verify.voters;
   return { voters, quorum: Math.min(verify.quorum, voters) };
 }
+/** A disclosed answer within the vote schema whose reclassification, if any, is downward. */
+function acceptAnswer(value: any, hypothesis: Hypothesis) {
+  const answer = validateAnswer(value);
+  if (answer.category && answer.category !== hypothesis.category) {
+    const downward: Record<string, number> = {
+      security: 4,
+      defect: 4,
+      risk: 3,
+      diagnostic: 2,
+      style: 1,
+    };
+    if (
+      !answer.reclassification_reason ||
+      downward[answer.category] >= downward[hypothesis.category]
+    )
+      throw new Error("invalid downward reclassification");
+  }
+  return answer;
+}
+/**
+ * Whether the votes cast so far already fix the outcome: a quorum of them, all
+ * completed, at one validated level and with one category. Aggregation needs
+ * `quorum` votes at a level to raise or refute it and `quorum` votes for a
+ * reclassification, so fewer remaining voters than that change neither: with a
+ * 2-of-3 panel, the third vote.
+ */
+export function settledBy(
+  votes: Vote[],
+  voters: number,
+  quorum: number,
+  hypothesis: Pick<Hypothesis, "category">,
+): boolean {
+  // Enough voters left to form a quorum of their own could still overturn it.
+  if (votes.length < quorum || voters - votes.length >= quorum) return false;
+  const category = (v: Vote) => v.answer?.category ?? hypothesis.category;
+  return votes.every(
+    (v) =>
+      v.status === "completed" &&
+      v.validated_level !== undefined &&
+      v.validated_level === votes[0].validated_level &&
+      category(v) === category(votes[0]),
+  );
+}
 export async function verifyHypothesis(
   o: VerifyOptions,
 ): Promise<{ verified: Verified; votes: Vote[] }> {
@@ -176,10 +219,20 @@ export async function verifyHypothesis(
     o.profile.verify.model ??
     (o.profile.models.verifier ? "verifier" : "default");
   const votes: Vote[] = [];
-  // Bounded fan-out still creates isolated conversations, tools and token allowances.
-  for (let offset = 0; offset < voters; offset += 4)
+  // The first `quorum` voters run alone. When they all complete and agree, on
+  // the level and on the category, no later vote can change either, so the
+  // remaining voters are not asked. Bounded fan-out still creates isolated
+  // conversations, tools and token allowances.
+  const wave = (offset: number) =>
+    Math.min(offset + 4, offset < quorum ? quorum : voters);
+  for (
+    let offset = 0;
+    offset < voters &&
+    !(offset >= quorum && settledBy(votes, voters, quorum, o.hypothesis));
+    offset = wave(offset)
+  )
     await Promise.all(
-      Array.from({ length: Math.min(4, voters - offset) }, async (_, index) => {
+      Array.from({ length: wave(offset) - offset }, async (_, index) => {
         const voter = offset + index,
           vote: Vote = {
             voter,
@@ -254,30 +307,28 @@ export async function verifyHypothesis(
               ]),
             );
           messages.push(disclosure(single));
-          vote.answer = validateAnswer(
+          vote.answer = acceptAnswer(
             await converse({
               ...options,
               singleSystem: single,
               phase: "verify-disclosed",
+              // A vote outside the schema, such as one with a `note` beside
+              // its evidence, or a reclassification the rules do not permit,
+              // is sent back with the reason instead of failing the vote.
+              validateResult: (value) => {
+                try {
+                  return acceptAnswer(value, o.hypothesis);
+                } catch (error) {
+                  const reason = error instanceof Error ? error.message : "";
+                  throw new Refused(
+                    reason,
+                    `Host: your result was not accepted: ${reason.slice(0, 300)}. Reply with {"result":{...}} again, following the vote schema exactly, with no fields it does not name.`,
+                  );
+                }
+              },
             }),
+            o.hypothesis,
           );
-          if (
-            vote.answer.category &&
-            vote.answer.category !== o.hypothesis.category
-          ) {
-            const downward: Record<string, number> = {
-              security: 4,
-              defect: 4,
-              risk: 3,
-              diagnostic: 2,
-              style: 1,
-            };
-            if (
-              !vote.answer.reclassification_reason ||
-              downward[vote.answer.category] >= downward[o.hypothesis.category]
-            )
-              throw new Error("invalid downward reclassification");
-          }
           vote.validated_level = evidenceLevel(
             vote.answer,
             o.hypothesis,

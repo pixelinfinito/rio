@@ -387,7 +387,7 @@
         "en": "3b16bfda63d84bd1bbca69202ddece31203ab7b588449efa89c5ee7f42e312b0",
         "pt-BR": "05bd06724ff7475ec942b7783f7925aef305c5cbd501f896d7d1422d8abd1fe5"
       },
-      "source_review": "146777270eb1462e89a1679daaa37232043fcabfaef339ca1986a95e97f6fb23"
+      "source_review": "826f5085c8dd24c4bafee35b0a04ec348a1efbc142f7cc1520fb2190059fbc17"
     },
     {
       "id": "github",
@@ -422,10 +422,10 @@
       ],
       "kind": "guide",
       "translation_review": {
-        "en": "1ff430450b72518080c180fac9588c11f109e8cee9930492c4a5c872d909e402",
-        "pt-BR": "300fc67e98c1a11d3dbd8705209210b2c4e084664e8850889c50e822f9579d51"
+        "en": "0051cbebc4ca8130c5c0e1a6446697e58b3aeedd9f33aed1cf5917b8fd84f60d",
+        "pt-BR": "34f07dd2e1659b3cd659bfe1de9cc6e1ebf84af6a79b2b89ca94bc7571894808"
       },
-      "source_review": "ff7cb4b268f7fe40896247c10c2fd151f2023034a15d43cd6b0e1682a718c2d9"
+      "source_review": "bd4a4cf6e82a2fef38fe897a2cf84277632eadfcf3835b719f69cd938776451d"
     },
     {
       "id": "feedback",
@@ -543,7 +543,7 @@
         "en": "04bba73f97c229fc10b1a6085758c917003d9e86c869f4be5d835acec9b0f685",
         "pt-BR": "80f2e5443d6a4d27eccf14ad1903553e44a15d7bc9894d67ac67c42e6fc52418"
       },
-      "source_review": "7fd3b4fc38256eb8ceadf7a0369c443cc9c9bc255ec8c1b23e940c75ec930b3f"
+      "source_review": "d3673955a344b76888976b0789e58050aec1abec1a65abec8989af6927fa3388"
     },
     {
       "id": "council",
@@ -580,7 +580,7 @@
         "en": "5f591f2c5603dd6b0affeb2a8200ea99e6f2617285faa54d2ad525271c690d76",
         "pt-BR": "c29323b9696991c90e50873778930d91d6384c622bf419d45a91560adf87b8f8"
       },
-      "source_review": "a6ead699bcf12960f0f426f484dd5a76eb88d80276e0aad0d3f852156ba9f476"
+      "source_review": "145c80c3bfbd2eef689106ef648fdccbbc9aedc1fecf4bc8fbe0b65f8104288f"
     },
     {
       "id": "qa",
@@ -930,7 +930,7 @@
         "en": "48f9cb513fcfc111fbba2212eba732238e942347479f9534dde0fa3857c9269b",
         "pt-BR": "848577e58809284dab107df051db1c8101108c5c410be1b3151c306872c08522"
       },
-      "source_review": "d708183c6af538aec2ba0882567fe415c677d81127bdf7d78d89f2c63f3424d2"
+      "source_review": "14824c07be0c8fb408725f0ceaf6a6d2c172466cb8f20b213dc45a4cbaa2d5ec"
     },
     {
       "id": "start",

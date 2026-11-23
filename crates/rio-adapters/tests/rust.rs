@@ -438,6 +438,314 @@ async fn rust_metadata_uses_selected_source_and_discovers_member_dependencies() 
     );
 }
 
+/// A two-member workspace with a path dependency, every target kind cargo
+/// infers, a README, and files cargo metadata never reads.
+fn sparse_metadata_workspace() -> rio_git::Tree {
+    let mut tree = rio_git::Tree::from([
+        (
+            "Cargo.toml".into(),
+            entry("[workspace]\nmembers = ['crates/*']\nresolver = '2'\n"),
+        ),
+        (
+            "crates/app/Cargo.toml".into(),
+            entry(
+                "[package]\nname = 'app'\nversion = '0.1.0'\nedition = '2021'\n\n[dependencies]\nengine = { path = '../core' }\n",
+            ),
+        ),
+        ("crates/app/src/main.rs".into(), entry("fn main() {}\n")),
+        (
+            "crates/app/src/bin/tool/main.rs".into(),
+            entry("fn main() {}\n"),
+        ),
+        (
+            "crates/core/Cargo.toml".into(),
+            entry("[package]\nname = 'engine'\nversion = '0.1.0'\nedition = '2021'\n"),
+        ),
+        ("crates/core/src/lib.rs".into(), entry("pub fn core() {}\n")),
+        ("crates/core/build.rs".into(), entry("fn main() {}\n")),
+        ("crates/core/README.md".into(), entry("# core\n")),
+        (
+            "crates/core/examples/demo.rs".into(),
+            entry("fn main() {}\n"),
+        ),
+        (
+            "crates/core/tests/smoke.rs".into(),
+            entry("#[test]\nfn t() {}\n"),
+        ),
+        (
+            "crates/core/benches/speed.rs".into(),
+            entry("fn main() {}\n"),
+        ),
+        ("crates/core/assets/data.json".into(), entry("{}\n")),
+        ("docs/large.bin".into(), entry(&"x".repeat(4 * 1024 * 1024))),
+    ]);
+    for index in 0..500 {
+        tree.insert(
+            format!("web/page-{index}.html"),
+            entry("<p>unrelated</p>\n"),
+        );
+    }
+    tree
+}
+
+#[cfg(unix)]
+#[tokio::test]
+async fn rust_metadata_writes_only_what_cargo_metadata_reads() {
+    use std::os::unix::fs::PermissionsExt;
+    let mut tree = sparse_metadata_workspace();
+    tree.insert(
+        "crates/core/Cargo.toml".into(),
+        rio_git::TreeEntry {
+            mode: 0o120000,
+            object_id: String::new(),
+            content: b"../../shared/core.toml".to_vec(),
+        },
+    );
+    tree.insert(
+        "shared/core.toml".into(),
+        entry("[package]\nname = 'engine'\nversion = '0.1.0'\n"),
+    );
+    let temp = tempfile::tempdir().unwrap();
+    let cargo = temp.path().join("cargo");
+    // Exits 9x naming the first expectation the written tree breaks.
+    fs::write(
+        &cargo,
+        r#"#!/bin/sh
+[ -f Cargo.toml ] && [ -s crates/app/Cargo.toml ] || exit 90
+[ -f crates/core/Cargo.toml ] && [ ! -L crates/core/Cargo.toml ] || exit 91
+grep -q "name = 'engine'" crates/core/Cargo.toml || exit 92
+for source in crates/app/src/main.rs crates/app/src/bin/tool/main.rs crates/core/src/lib.rs \
+    crates/core/build.rs crates/core/README.md crates/core/examples/demo.rs \
+    crates/core/tests/smoke.rs crates/core/benches/speed.rs; do
+    [ -f "$source" ] && [ ! -s "$source" ] || exit 93
+done
+[ ! -e docs/large.bin ] && [ ! -e web/page-0.html ] || exit 94
+[ ! -e crates/core/assets/data.json ] && [ ! -e shared/core.toml ] || exit 95
+[ -d docs ] && [ -d web ] && [ -d crates/core/assets ] || exit 96
+[ "$(find . -type f | wc -l)" -eq 11 ] || exit 97
+echo '{}'
+"#,
+    )
+    .unwrap();
+    fs::set_permissions(&cargo, fs::Permissions::from_mode(0o755)).unwrap();
+    let tool = ResolvedTool {
+        name: "cargo-check".into(),
+        path: cargo,
+        version: "cargo-test".into(),
+        version_hint: None,
+        rustup_toolchain: None,
+    };
+    let metadata = rust_metadata(
+        &tree,
+        ".",
+        &tool,
+        &ProcessSupervisor::default(),
+        CancellationToken::new(),
+    )
+    .await
+    .unwrap();
+    assert_eq!(metadata, serde_json::json!({}));
+}
+
+fn link(target: &str) -> rio_git::TreeEntry {
+    rio_git::TreeEntry {
+        mode: 0o120000,
+        object_id: String::new(),
+        content: target.as_bytes().to_vec(),
+    }
+}
+
+/// The sparse workspace with cargo configuration that includes further files,
+/// recursively, and a manifest reached through a directory link.
+fn sparse_metadata_workspace_with_includes_and_links() -> rio_git::Tree {
+    let mut tree = sparse_metadata_workspace();
+    tree.extend([
+        (
+            ".cargo/config.toml".into(),
+            entry("include = ['shared.toml', { path = 'absent.toml', optional = true }]\n"),
+        ),
+        (
+            ".cargo/shared.toml".into(),
+            entry("include = ['../tools/cargo-extra.toml']\n[build]\n"),
+        ),
+        // An include that links to the file it names.
+        (
+            "tools/cargo-extra.toml".into(),
+            link("../config/extra.toml"),
+        ),
+        ("config/extra.toml".into(), entry("[build]\n")),
+        ("tools/unrelated.toml".into(), entry("[unrelated]\n")),
+        (
+            "crates/core/Cargo.toml".into(),
+            link("../../aliases/core.toml"),
+        ),
+        ("aliases".into(), link("manifests")),
+        (
+            "manifests/core.toml".into(),
+            entry("[package]\nname = 'engine'\nversion = '0.1.0'\nedition = '2021'\n"),
+        ),
+    ]);
+    tree
+}
+
+#[test]
+fn sparse_metadata_tree_keeps_configuration_includes_and_resolves_directory_links() {
+    let tree = sparse_metadata_workspace_with_includes_and_links();
+    let (selected, _) = rust_metadata_tree(&tree);
+    for path in [".cargo/config.toml", ".cargo/shared.toml"] {
+        assert_eq!(selected[path], tree[path], "{path}");
+    }
+    assert_eq!(
+        selected["tools/cargo-extra.toml"],
+        tree["config/extra.toml"]
+    );
+    assert!(!selected.contains_key("tools/unrelated.toml"));
+    assert!(!selected.contains_key(".cargo/absent.toml"));
+    let manifest = &selected["crates/core/Cargo.toml"];
+    assert_eq!(manifest.mode, 0o100644);
+    assert_eq!(manifest.content, tree["manifests/core.toml"].content);
+    // An include that leaves the tree is not followed.
+    let mut escaping = tree.clone();
+    escaping.insert(
+        ".cargo/config.toml".into(),
+        entry("include = ['../../outside.toml']\n"),
+    );
+    let (selected, _) = rust_metadata_tree(&escaping);
+    assert!(selected.keys().all(|path| !path.contains("outside")));
+}
+
+#[tokio::test]
+async fn sparse_rust_metadata_reads_configuration_includes_and_linked_manifests() {
+    let tree = sparse_metadata_workspace_with_includes_and_links();
+    let supervisor = ProcessSupervisor::default();
+    let source = tempfile::tempdir().unwrap();
+    let cargo = rust_cargo(
+        &ToolResolver::from_environment(source.path().into()),
+        &tree,
+        ".",
+        &supervisor,
+        CancellationToken::new(),
+    )
+    .await
+    .unwrap();
+    if !require_tool(cargo.is_some(), "cargo for sparse metadata") {
+        return;
+    }
+    let metadata = rust_metadata(
+        &tree,
+        ".",
+        cargo.as_ref().unwrap(),
+        &supervisor,
+        CancellationToken::new(),
+    )
+    .await
+    .unwrap();
+    let mut layout = RepositoryLayout::default();
+    apply_rust_metadata(&mut layout, &metadata);
+    assert!(layout.dependencies["crates/app"].contains("crates/core"));
+}
+
+#[tokio::test]
+async fn sparse_rust_metadata_matches_a_full_copy() {
+    let tree = sparse_metadata_workspace();
+    let full = tempfile::tempdir().unwrap();
+    SafeTreeWriter::new(full.path())
+        .unwrap()
+        .write_tree(&tree)
+        .unwrap();
+    let supervisor = ProcessSupervisor::default();
+    let cargo = rust_cargo(
+        &ToolResolver::from_environment(full.path().into()),
+        &tree,
+        ".",
+        &supervisor,
+        CancellationToken::new(),
+    )
+    .await
+    .unwrap();
+    if !require_tool(cargo.is_some(), "cargo for sparse metadata") {
+        return;
+    }
+    let cargo = cargo.unwrap();
+    let sparse = rust_metadata(&tree, ".", &cargo, &supervisor, CancellationToken::new())
+        .await
+        .unwrap();
+    let mut command = ToolCommand::new(cargo.path.clone(), full.path().into());
+    command.args = ["metadata", "--no-deps", "--format-version=1", "--offline"]
+        .map(Into::into)
+        .into();
+    configure_cargo(&mut command, &tree, ".", cargo.rustup_toolchain.as_deref()).unwrap();
+    let result = supervisor.run(command, CancellationToken::new()).await;
+    assert!(
+        matches!(result.termination, Termination::Exited { code: Some(0) }),
+        "{}",
+        String::from_utf8_lossy(&result.stderr)
+    );
+    let complete: serde_json::Value = serde_json::from_slice(&result.stdout).unwrap();
+    // Paths differ by temporary prefix; compare what does not name one.
+    let summary = |metadata: &serde_json::Value| -> Vec<String> {
+        let mut summary: Vec<String> = metadata["packages"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .flat_map(|package| {
+                let name = package["name"].as_str().unwrap().to_owned();
+                let targets = package["targets"].as_array().unwrap().iter().map({
+                    let name = name.clone();
+                    move |target| format!("{name} target {} {}", target["name"], target["kind"])
+                });
+                let dependencies = package["dependencies"].as_array().unwrap().iter().map({
+                    let name = name.clone();
+                    move |dependency| format!("{name} depends {}", dependency["name"])
+                });
+                let readme = format!("{name} readme {}", package["readme"]);
+                targets
+                    .chain(dependencies)
+                    .chain([readme])
+                    .collect::<Vec<_>>()
+            })
+            .collect();
+        summary.push(format!(
+            "members {}",
+            metadata["workspace_members"].as_array().unwrap().len()
+        ));
+        summary.sort();
+        summary
+    };
+    assert_eq!(summary(&sparse), summary(&complete));
+    assert_eq!(
+        summary(&sparse)
+            .iter()
+            .filter(|line| line.contains(" target "))
+            .count(),
+        7,
+        "{:?}",
+        summary(&sparse)
+    );
+    let mut layout = RepositoryLayout::default();
+    apply_rust_metadata(&mut layout, &sparse);
+    let mut roots: Vec<_> = layout
+        .roots
+        .iter()
+        .map(|root| (root.path.as_str(), root.workspace.as_deref()))
+        .collect();
+    roots.sort();
+    assert_eq!(
+        roots,
+        [("crates/app", Some(".")), ("crates/core", Some("."))]
+    );
+    assert!(layout.dependencies["crates/app"].contains("crates/core"));
+
+    // A member glob matching a directory without a manifest fails as it would
+    // on a full copy.
+    let mut broken = tree.clone();
+    broken.insert("crates/docs/notes.md".into(), entry("notes\n"));
+    let error = rust_metadata(&broken, ".", &cargo, &supervisor, CancellationToken::new())
+        .await
+        .unwrap_err();
+    assert!(format!("{error:#}").contains("crates/docs"), "{error:#}");
+}
+
 #[tokio::test]
 async fn real_rust_diagnostics_parse_compile_clippy_format_and_internal_errors() {
     let tree = read_tree(&fixture("rs-sample"));
@@ -970,4 +1278,53 @@ async fn trusted_rust_root_without_a_lock_can_run_in_the_disposable_tree() {
             .runner_args
             .contains(&"--locked".into())
     );
+}
+
+#[test]
+fn sparse_metadata_tree_bounds_includes_and_keeps_those_reached_through_links() {
+    let file = |content: &str| rio_git::TreeEntry {
+        mode: 0o100644,
+        object_id: String::new(),
+        content: content.as_bytes().to_vec(),
+    };
+    let link = |target: &str| rio_git::TreeEntry {
+        mode: 0o120000,
+        object_id: String::new(),
+        content: target.as_bytes().to_vec(),
+    };
+    let mut tree = rio_git::Tree::new();
+    // A configuration that includes itself under ever longer names, a `.toml`
+    // include that has a README's name, and one beneath a directory link.
+    tree.insert(
+        ".cargo/config.toml".into(),
+        file("include = ['a/config.toml', 'b/config.toml', 'README.toml', '../aliases/shared.toml']\n"),
+    );
+    tree.insert(".cargo/a".into(), link("."));
+    tree.insert(".cargo/b".into(), link("."));
+    tree.insert(
+        ".cargo/README.toml".into(),
+        file("[alias]\nreadme = 'check'\n"),
+    );
+    tree.insert("aliases".into(), link("shared"));
+    tree.insert(
+        "shared/shared.toml".into(),
+        file("[alias]\nshared = 'check'\n"),
+    );
+    let (selected, _) = rio_adapters::rust_metadata_tree(&tree);
+    assert!(
+        selected.len() < 16,
+        "{:?}",
+        selected.keys().collect::<Vec<_>>()
+    );
+    assert_eq!(
+        selected[".cargo/README.toml"].content,
+        b"[alias]\nreadme = 'check'\n"
+    );
+    assert_eq!(selected["aliases"].mode, 0o120000);
+    assert_eq!(
+        selected["shared/shared.toml"].content,
+        b"[alias]\nshared = 'check'\n"
+    );
+    assert!(!selected.keys().any(|path| path.starts_with("aliases/")));
+    assert!(!selected.keys().any(|path| path.starts_with(".cargo/a/")));
 }

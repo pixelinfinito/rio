@@ -240,6 +240,22 @@ export function relocate(
   };
 }
 
+/**
+ * The most lines, of both versions together, whose changes a file is counted
+ * by. Counting holds each line as a string twice, in an array and a set:
+ * about 70 bytes a line beyond the text, so that both versions of an 8 MiB
+ * file of a million short lines took 152 MiB, more than the Worker isolate's
+ * 128 MiB. Past this a file is changed without a count of its lines.
+ */
+export const COUNTED_LINES = 250_000;
+function lineCount(text: string | undefined) {
+  if (text === undefined) return 0;
+  let lines = 1;
+  for (let at = text.indexOf("\n"); at >= 0; at = text.indexOf("\n", at + 1))
+    lines++;
+  return lines;
+}
+
 /** Files whose content or mode differs between two heads, for diff-only rounds. */
 export function incrementalChanges(before: Tree, after: Tree): ChangedFile[] {
   const changed: ChangedFile[] = [];
@@ -249,14 +265,21 @@ export function incrementalChanges(before: Tree, after: Tree): ChangedFile[] {
     const a = before[path],
       b = after[path];
     if (a?.content === b?.content && a?.mode === b?.mode) continue;
+    if (lineCount(a?.content) + lineCount(b?.content) > COUNTED_LINES) {
+      changed.push({ path });
+      continue;
+    }
     const old = a?.content.split("\n") ?? [],
       now = b?.content.split("\n") ?? [];
-    const kept = new Set(old);
+    // Sets: a search of the other version's lines for each line costs the
+    // product of the two lengths, on a generated file of tens of thousands.
+    const kept = new Set(old),
+      present = new Set(now);
     changed.push({
       path,
       lines_changed:
         now.filter((l) => !kept.has(l)).length +
-        old.filter((l) => !now.includes(l)).length,
+        old.filter((l) => !present.has(l)).length,
     });
   }
   return changed;
@@ -288,7 +311,9 @@ export interface Reverification {
 /**
  * Diff-only rounds re-verify only hypotheses on changed code and previously open
  * agent findings whose location moved or whose code changed. An open finding on
- * unchanged code keeps its earlier verification without voter dispatch.
+ * unchanged code keeps its earlier verification without voter dispatch. With
+ * `changedPaths` null the round reviewed the whole change, as a first one
+ * does: every new hypothesis is verified.
  */
 export function planReverification(
   hypotheses: Hypothesis[],
@@ -296,7 +321,7 @@ export function planReverification(
   trees: Map<string, Tree>,
   head: Tree,
   graph: Graph,
-  changedPaths: Set<string>,
+  changedPaths: Set<string> | null,
 ): Reverification {
   const open = new Map(
     context.prior
@@ -339,7 +364,8 @@ export function planReverification(
         h.location.line_end === p.finding.location.line_end;
       if (moved.status === "unchanged" && same) carry(p, p.finding.location);
       else plan.verify.push(h);
-    } else if (changedPaths.has(h.location.path)) plan.verify.push(h);
+    } else if (!changedPaths || changedPaths.has(h.location.path))
+      plan.verify.push(h);
     else plan.skipped.push(h.id);
   }
   for (const p of open.values()) {

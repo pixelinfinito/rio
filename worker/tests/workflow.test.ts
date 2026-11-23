@@ -14,9 +14,11 @@ import {
   changedCode,
   changeParts,
   differing,
+  incrementalOf,
   renderDiff,
 } from "../src/workflow";
-import { LARGE, MemorySnapshot } from "../src/snapshot";
+import { COUNTED_LINES, incrementalChanges } from "../src/lineage";
+import { LARGE, MemorySnapshot, materialize } from "../src/snapshot";
 import { Requests, SEARCH_REFUSED } from "../src/requests";
 import { hash, validateHypotheses, validateReport } from "../src/validation";
 import { allMigrations, hypothesis, snapshot, submission } from "./fixtures";
@@ -143,7 +145,7 @@ it.each([false, true])(
         "none",
         "none",
       ]);
-      expect(report.agent_audit.verification_usage.input_tokens).toBe(480);
+      expect(report.agent_audit.verification_usage.input_tokens).toBe(320);
       // What the review asked of storage and the models, against the limit
       // the platform sets one workflow instance.
       expect(report.agent_audit.requests).toMatchObject({
@@ -157,7 +159,7 @@ it.each([false, true])(
       // The prompt-cache audit: every phase counted; no provider reported cache
       // fields, so the totals and the ratio stay null rather than zero.
       const cache = report.agent_audit.prompt_cache;
-      expect(cache.phases["verify-blind"].calls).toBe(3);
+      expect(cache.phases["verify-blind"].calls).toBe(2);
       expect(cache.phases["verify-blind"].cache_read_input_tokens).toBeNull();
       expect(cache.phases["verify-blind"].read_ratio).toBeNull();
       expect(() => validateReport(report)).not.toThrow();
@@ -187,7 +189,7 @@ it.each([false, true])(
           expect(text, object.key).not.toContain("repository_data");
         }
       }
-      expect(requests).toHaveLength(7);
+      expect(requests).toHaveLength(5);
       // Progress for the live screen: each agent starts and finishes, then
       // verification counts the hypotheses it checked.
       const events = (
@@ -207,7 +209,7 @@ it.each([false, true])(
       )
         .bind(id)
         .all<any>();
-      expect(votes.results).toHaveLength(3);
+      expect(votes.results).toHaveLength(2);
       expect(votes.results.every((v) => v.status === "completed")).toBe(true);
       expect(report.footer.notes.some((n: string) => n.includes("board"))).toBe(
         true,
@@ -1072,6 +1074,108 @@ it("compares two rounds without the paths an omit setting added or removed", asy
   ]);
 });
 
+it("reads the change since the previous head a few files at a time, and never a file too large to hold", async () => {
+  const file = (content: string) => ({ mode: 0o100644, content });
+  const lines = (n: number, tag: string) =>
+    Array.from({ length: n }, (_, i) => `line ${i} ${i % 7 ? "" : tag}`).join(
+      "\n",
+    );
+  const before: Record<string, any> = {
+      "data/big.json": file("{}"),
+      "src/gone.ts": file("a\nb\n"),
+      "src/same.ts": file("same\n"),
+      "src/mode.sh": file("echo\n"),
+    },
+    after: Record<string, any> = {
+      "data/big.json": file("{ }"),
+      "src/new.ts": file("x\ny\nz\n"),
+      "src/same.ts": file("same\n"),
+      "src/mode.sh": { mode: 0o100755, content: "echo\n" },
+    };
+  // Forty files of about 2 KiB each, every one changed.
+  for (let i = 0; i < 40; i++) {
+    before[`src/f${String(i).padStart(2, "0")}.ts`] = file(lines(200, "old"));
+    after[`src/f${String(i).padStart(2, "0")}.ts`] = file(lines(200, "new"));
+  }
+  const memory = new MemorySnapshot({ base: before, head: after });
+  // The manifest says a file is too large to hold; it is never fetched.
+  const asked: { version: string; bytes: number; paths: string[] }[] = [];
+  const tree = (version: "base" | "head") => {
+    const inner = memory[version];
+    const sized = (entry: any) =>
+      entry && entry.path === "data/big.json"
+        ? { ...entry, size: LARGE + 1, hash: `${version}-big` }
+        : entry;
+    return {
+      ...inner,
+      stat: async (path: string) => sized(await inner.stat(path)),
+      list: async function* () {
+        for await (const entry of inner.list()) yield sized(entry);
+      },
+      read: async (): Promise<Uint8Array> => {
+        throw new Error("a whole file was read");
+      },
+      many: async (entries: any[]) => {
+        asked.push({
+          version,
+          bytes: entries.reduce((n, e) => n + e.size, 0),
+          paths: entries.map((e) => e.path),
+        });
+        return inner.many(entries);
+      },
+    };
+  };
+  const paths = [...new Set([...Object.keys(before), ...Object.keys(after)])];
+  const changed = await incrementalOf(tree("base"), tree("head"), paths, 8192);
+  // What reading every file of both versions at once found, file by file.
+  const whole = incrementalChanges(
+    await materialize(memory.base, paths.filter((p) => p !== "data/big.json")),
+    await materialize(memory.head, paths.filter((p) => p !== "data/big.json")),
+  );
+  expect(changed).toEqual(
+    [...whole, { path: "data/big.json" }].sort((a, b) =>
+      a.path < b.path ? -1 : 1,
+    ),
+  );
+  expect(changed.map((f) => f.path)).not.toContain("src/same.ts");
+  expect(changed.find((f) => f.path === "src/f00.ts")!.lines_changed).toBe(
+    58,
+  );
+  // A group at a time: no read holds more than the group's bytes, and the
+  // large file is in none.
+  expect(asked.length).toBeGreaterThan(10);
+  for (const read of asked) {
+    expect(read.bytes).toBeLessThanOrEqual(8192);
+    expect(read.paths).not.toContain("data/big.json");
+  }
+});
+
+it("counts no lines of a changed file with more than an isolate can hold as strings", async () => {
+  const file = (content: string) => ({ mode: 0o100644, content });
+  // Short lines, well under the size limit: under 1 MiB a version, but as many
+  // lines as COUNTED_LINES allows of both versions together, and more.
+  const many = (tag: string) =>
+    Array.from(
+      { length: COUNTED_LINES / 2 + 1 },
+      (_, i) => `${tag}${i}`,
+    ).join("\n");
+  const memory = new MemorySnapshot({
+    base: {
+      "data/lines.csv": file(many("a")),
+      "src/a.ts": file("a\nb\n"),
+    },
+    head: {
+      "data/lines.csv": file(many("b")),
+      "src/a.ts": file("a\nc\n"),
+    },
+  });
+  const paths = ["data/lines.csv", "src/a.ts"];
+  expect(await incrementalOf(memory.base, memory.head, paths)).toEqual([
+    { path: "data/lines.csv" },
+    { path: "src/a.ts", lines_changed: 2 },
+  ]);
+});
+
 it("names a changed file too large to hold in an agent's prompt, without reading it", async () => {
   const memory = new MemorySnapshot({
     base: { "src/a.ts": { mode: 0o100644, content: "export const a = 1;\n" } },
@@ -1321,8 +1425,9 @@ it("retains reproduced evidence when every blind pass misses, with runner artifa
       params: { review_id: id, snapshot_key: snapshotKey },
     });
     const h = validateHypotheses([hypothesis])[0];
+    // Two voters reproduce it alike, so the third is not asked.
     await Promise.all(
-      [0, 1, 2].map(async (voter) => {
+      [0, 1].map(async (voter) => {
         const job = hash(`${id}-verify-${h.id}-${voter}-0`).slice(0, 32);
         await instance.waitForStepResult({ name: `dispatch-${job}` });
         await finishJob(runtime, id, job, 1, {
@@ -1363,7 +1468,7 @@ it("retains reproduced evidence when every blind pass misses, with runner artifa
       runtime,
     );
     const audit = (await response.json()) as any;
-    expect(audit.executions).toHaveLength(3);
+    expect(audit.executions).toHaveLength(2);
     expect(audit.votes.every((v: any) => v.hypothesis_id === h.id)).toBe(true);
   } finally {
     transport.mockRestore();
@@ -1457,8 +1562,9 @@ it.each([
           m.content.includes("Verify this hypothesis."),
         );
         // The review is cancelled while the agent answers, or while the last
-        // voter on the first hypothesis does; either answer still arrives.
-        if (generated ? !settled : disclosed && ++disclosures === 3)
+        // voter asked about the first hypothesis does (two agree, so the third
+        // is not asked); either answer still arrives.
+        if (generated ? !settled : disclosed && ++disclosures === 2)
           await runtime.DB.prepare("UPDATE reviews SET cancelled=1 WHERE id=?")
             .bind(id)
             .run();
@@ -1547,7 +1653,7 @@ it.each([
       );
       if (settled) {
         expect(report.findings[0].evidence_level).toBe("static_proven");
-        expect(report.findings[0].verification.agreeing).toBe(3);
+        expect(report.findings[0].verification.agreeing).toBe(2);
       }
       expect(report.risks).toEqual([]);
       const unverified = settled ? [other] : [first, other];

@@ -319,6 +319,196 @@ pub fn rust_lint_tools(tree: &Tree, root: &str) -> Vec<&'static str> {
     result
 }
 
+/// Configuration files followed through `include`, over all of a tree.
+const INCLUDED_CONFIGURATIONS: usize = 256;
+
+/// The part of a tree `cargo metadata --no-deps` reads: manifests, lockfiles,
+/// toolchain and cargo configuration, with the in-tree files it includes, all
+/// with their content; every symbolic link and submodule; and empty stand-ins
+/// for Rust sources and READMEs, whose existence alone drives target and
+/// readme inference. Also returns every
+/// directory of the full tree, since a workspace member glob that matches a
+/// directory without a manifest is an error.
+pub fn rust_metadata_tree(tree: &Tree) -> (Tree, std::collections::BTreeSet<String>) {
+    let mut selected = Tree::new();
+    let mut directories = std::collections::BTreeSet::new();
+    for (path, entry) in tree {
+        let mut parent = path.as_str();
+        while let Some((directory, _)) = parent.rsplit_once('/') {
+            if !directories.insert(directory.to_owned()) {
+                break;
+            }
+            parent = directory;
+        }
+        let (directory, name) = path.rsplit_once('/').unwrap_or(("", path));
+        let configuration = matches!(
+            name,
+            "Cargo.toml" | "Cargo.lock" | "rust-toolchain" | "rust-toolchain.toml"
+        ) || matches!(name, "config" | "config.toml")
+            && directory.rsplit('/').next() == Some(".cargo");
+        let placeholder = name.ends_with(".rs") || name.starts_with("README");
+        if !configuration && !placeholder {
+            if matches!(entry.mode, 0o120000 | 0o160000) {
+                selected.insert(path.clone(), entry.clone());
+            }
+            continue;
+        }
+        // A link that resolves within the tree becomes the file it names: cargo
+        // reads a manifest relative to the path it was found at, not its target.
+        let written = match resolve_through_links(tree, path) {
+            Some(file) => rio_git::TreeEntry {
+                mode: 0o100644,
+                object_id: String::new(),
+                content: if configuration {
+                    file.content.clone()
+                } else {
+                    Vec::new()
+                },
+            },
+            None => entry.clone(),
+        };
+        selected.insert(path.clone(), written);
+    }
+    // Cargo fails when a required `include` of a configuration file is
+    // missing, so in-tree includes are kept, recursively, with their content.
+    let mut pending: Vec<String> = selected
+        .keys()
+        .filter(|path| {
+            let (directory, name) = path.rsplit_once('/').unwrap_or(("", path.as_str()));
+            matches!(name, "config" | "config.toml")
+                && directory.rsplit('/').next() == Some(".cargo")
+        })
+        .cloned()
+        .collect();
+    // Files kept with their content. Links can name one file by any number of
+    // paths, so the includes followed are bounded, not only deduplicated.
+    let mut kept: std::collections::BTreeSet<String> = pending.iter().cloned().collect();
+    let mut budget = INCLUDED_CONFIGURATIONS;
+    while let Some(path) = pending.pop() {
+        let Some(text) = selected
+            .get(&path)
+            .and_then(|entry| std::str::from_utf8(&entry.content).ok())
+        else {
+            continue;
+        };
+        let Ok(value) = toml::from_str::<toml::Value>(text) else {
+            continue;
+        };
+        let includes: Vec<&str> = match value.get("include") {
+            Some(toml::Value::String(include)) => vec![include.as_str()],
+            Some(toml::Value::Array(includes)) => includes
+                .iter()
+                .filter_map(|include| match include {
+                    toml::Value::String(include) => Some(include.as_str()),
+                    toml::Value::Table(table) => table.get("path")?.as_str(),
+                    _ => None,
+                })
+                .collect(),
+            _ => continue,
+        };
+        let directory = path.rsplit_once('/').map_or("", |(directory, _)| directory);
+        for include in includes {
+            let Some(included) = join_relative(directory, include) else {
+                continue;
+            };
+            // A link is replaced by the file it names, as a manifest is, and
+            // an empty stand-in by its content.
+            if kept.contains(&included) || budget == 0 {
+                continue;
+            }
+            if let Some((target, file)) = resolve_path_through_links(tree, &included) {
+                // Beneath a directory link the file is kept where it is and
+                // reached through the link, which the tree keeps as a link.
+                let beneath_link = included.match_indices('/').any(|(end, _)| {
+                    tree.get(&included[..end])
+                        .is_some_and(|entry| entry.mode == 0o120000)
+                });
+                let included = if beneath_link { target } else { included };
+                if !kept.insert(included.clone()) {
+                    continue;
+                }
+                budget -= 1;
+                selected.insert(
+                    included.clone(),
+                    rio_git::TreeEntry {
+                        mode: 0o100644,
+                        object_id: String::new(),
+                        content: file.content.clone(),
+                    },
+                );
+                pending.push(included);
+            }
+        }
+    }
+    (selected, directories)
+}
+
+/// `relative` joined to the tree directory `directory`, or None when it is
+/// absolute or leaves the tree.
+fn join_relative(directory: &str, relative: &str) -> Option<String> {
+    if relative.starts_with('/') || relative.contains('\\') {
+        return None;
+    }
+    let mut parts: Vec<&str> = directory
+        .split('/')
+        .filter(|part| !part.is_empty())
+        .collect();
+    for part in relative.split('/') {
+        match part {
+            "" | "." => {}
+            ".." => {
+                parts.pop()?;
+            }
+            part => parts.push(part),
+        }
+    }
+    (!parts.is_empty()).then(|| parts.join("/"))
+}
+
+/// The regular file `path` names within the tree, following symbolic links in
+/// any of its components, not only the last: `aliases/Cargo.toml` resolves
+/// when `aliases` links to a directory. None for submodules, absolute or
+/// escaping targets, missing files and link cycles.
+fn resolve_through_links<'a>(tree: &'a Tree, path: &str) -> Option<&'a rio_git::TreeEntry> {
+    resolve_path_through_links(tree, path).map(|(_, entry)| entry)
+}
+
+/// As `resolve_through_links`, with the tree path of the file reached.
+fn resolve_path_through_links<'a>(
+    tree: &'a Tree,
+    path: &str,
+) -> Option<(String, &'a rio_git::TreeEntry)> {
+    let mut parts: Vec<String> = path.split('/').map(str::to_owned).collect();
+    let mut hops = 0;
+    let mut index = 0;
+    while index < parts.len() {
+        let prefix = parts[..=index].join("/");
+        let last = index + 1 == parts.len();
+        match tree.get(&prefix) {
+            None if last => return None,
+            // Not an entry of its own: a directory, or nothing.
+            None => index += 1,
+            Some(entry) if entry.mode == 0o160000 => return None,
+            Some(entry) if entry.mode == 0o120000 => {
+                hops += 1;
+                if hops > 40 {
+                    return None;
+                }
+                let target = std::str::from_utf8(&entry.content).ok()?;
+                let resolved = join_relative(&parts[..index].join("/"), target)?;
+                let rest = parts.split_off(index + 1);
+                parts = resolved.split('/').map(str::to_owned).collect();
+                parts.extend(rest);
+                index = 0;
+            }
+            Some(entry) if last => return Some((prefix, entry)),
+            // A file used as a directory.
+            Some(_) => return None,
+        }
+    }
+    None
+}
+
 /// Cargo metadata is read from the selected source, under process supervision.
 /// --no-deps avoids resolution/downloads; path edges still describe consumers.
 pub async fn rust_metadata(
@@ -329,7 +519,14 @@ pub async fn rust_metadata(
     cancellation: CancellationToken,
 ) -> Result<Value> {
     let temporary = tempfile::tempdir()?;
-    SafeTreeWriter::new(temporary.path())?.write_tree(tree)?;
+    let mut writer = SafeTreeWriter::disposable(temporary.path())?;
+    // Paths the sparse tree leaves out are still validated as a full copy would.
+    rio_git::validate_case_collisions(tree.keys().map(String::as_str), writer.case_insensitive()?)?;
+    let (selected, directories) = rust_metadata_tree(tree);
+    writer.write_tree(&selected)?;
+    for directory in &directories {
+        writer.create_directory(directory)?;
+    }
     let mut command = ToolCommand::new(cargo.path.clone(), temporary.path().join(root));
     command.args = vec![
         "metadata".into(),

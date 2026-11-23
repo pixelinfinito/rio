@@ -366,7 +366,8 @@ describe("verification", () => {
       name: names[raised.findIndex((h) => u.actor.startsWith(idOf(h)))],
       blind: u.phase === "verify-blind",
     }));
-    expect(calls).toHaveLength(30);
+    // Two agreeing voters settle each hypothesis, blind then disclosed.
+    expect(calls).toHaveLength(20);
     const first = (name: string, blind: boolean) =>
         calls.findIndex((c) => c.name === name && c.blind === blind),
       last = (name: string) => calls.findLastIndex((c) => c.name === name);
@@ -730,7 +731,6 @@ describe("review lineages", () => {
     expect(votes.results.map((v) => v.hypothesis_id)).toEqual([
       idOf(h1),
       idOf(h1),
-      idOf(h1),
     ]);
     expect(r2.report.agent_audit.diff_only).toEqual({
       reverified: [idOf(h1)],
@@ -755,6 +755,126 @@ describe("review lineages", () => {
       location: { line_start: 3 },
     });
     validLineageReport(r2.report);
+  }, 120000);
+
+  it("keeps a changed path that looks like a credential in the stored change since the previous head", async () => {
+    const ref: LineageRef = {
+      repository: "github.com/acme/app",
+      kind: "pr",
+      ref: "43",
+    };
+    // A path the credential patterns match; it is no secret, and the round
+    // must read the file at it.
+    const keyed = "src/AKIAABCDEFGHIJKLMNOP.ts";
+    const base = {
+      "src/a.ts": "function a(){ return 0; }\n",
+      [keyed]: "function k(){ return 0; }\n",
+    };
+    const head1 = {
+      ...base,
+      "src/a.ts": "function a(){ throw new Error(); }\n",
+    };
+    const r1 = await review({
+      base,
+      head: head1,
+      lineage: ref,
+      agents: () => [hyp("src/a.ts", "a", 1)],
+    });
+    const head2 = { ...head1, [keyed]: "function k(){ return 1; }\n" };
+    const r2 = await review({
+      base,
+      head: head2,
+      lineage: ref,
+      agents: () => [],
+    });
+    expect(r2.report.lineage).toMatchObject({
+      diff_only: true,
+      previous_head: r1.snapshotId,
+    });
+    expect(
+      await new Store(runtime).get(`reviews/${r2.id}/lineage-incremental.json`),
+    ).toEqual([{ path: keyed, lines_changed: 2 }]);
+    const excerpts = block(r2.prompts[0], "change diff");
+    expect(excerpts).toHaveLength(1);
+    expect(excerpts[0].diff).toContain("function k(){ return 1; }");
+  }, 120000);
+
+  it("reviews and verifies the whole change when the previously reviewed head cannot be opened", async () => {
+    const ref: LineageRef = {
+      repository: "github.com/acme/app",
+      kind: "pr",
+      ref: "44",
+    };
+    const base = {
+      "src/a.ts": "function a(){ return 0; }\n",
+      "src/b.ts": "function b(){ return 0; }\n",
+      "src/c.ts": "function c(){ return 0; }\n",
+    };
+    const head1 = {
+      ...base,
+      "src/a.ts": "function a(){ throw new Error(); }\n",
+      "src/b.ts": "function b(){ return 1; }\n",
+    };
+    const h1 = hyp("src/a.ts", "a", 1);
+    const r1 = await review({
+      base,
+      head: head1,
+      lineage: ref,
+      agents: () => [h1],
+    });
+    expect(r1.report.findings.map((f: any) => f.id)).toEqual([idOf(h1)]);
+    // A later reviewed round whose snapshot is gone from the store.
+    const lineage = await runtime.DB.prepare(
+      "SELECT lineage_id,generation FROM lineage_reviews WHERE review_id=?",
+    )
+      .bind(r1.id)
+      .first<any>();
+    const missing = crypto.randomUUID();
+    await runtime.DB.batch([
+      runtime.DB.prepare(
+        "INSERT INTO snapshots(id,tenant,object_key) VALUES(?,?,?)",
+      ).bind(
+        missing,
+        "owner",
+        `snapshots/${missing}/manifests/${"0".repeat(64)}/index.json`,
+      ),
+      runtime.DB.prepare(
+        "INSERT INTO lineage_reviews(review_id,tenant,lineage_id,generation,snapshot_id,round,reviewed,posted,created_at) VALUES(?,?,?,?,?,?,1,0,?)",
+      ).bind(
+        crypto.randomUUID(),
+        "owner",
+        lineage.lineage_id,
+        lineage.generation,
+        missing,
+        2,
+        Date.now(),
+      ),
+    ]);
+    const head2 = {
+      ...head1,
+      "src/a.ts": "// moved\nfunction a(){ throw new Error(); }\n",
+    };
+    // A new hypothesis on code outside the change, as a first round raises.
+    const hc = hyp("src/c.ts", "c", 1);
+    const r2 = await review({
+      base,
+      head: head2,
+      lineage: ref,
+      agents: () => [hc],
+    });
+    expect(r2.report.lineage).toMatchObject({ round: 2, diff_only: true });
+    expect(r2.report.status).toBe("complete");
+    expect(r2.report.footer.notes.join("\n")).toMatch(
+      /The change since the previously reviewed head could not be read \(.*snapshot not found.*\); this round reviewed the whole change\./,
+    );
+    // The agents had the whole change, not the change since the lost head.
+    expect(block(r2.prompts[0], "change diff").map((e: any) => e.path)).toEqual(
+      ["src/a.ts", "src/b.ts"],
+    );
+    // The new hypothesis was verified as in a whole-change review.
+    expect(r2.report.agent_audit.diff_only.not_reverified).toEqual([]);
+    expect(r2.report.agent_audit.diff_only.reverified).toContain(idOf(hc));
+    expect(r2.report.findings.map((f: any) => f.id)).toContain(idOf(hc));
   }, 120000);
 
   it.each([false, true])(
@@ -1248,6 +1368,16 @@ describe("end-to-end lineage", () => {
       location: { line_start: 3 },
     });
     expect(byId(r2.report).has(idOf(hb))).toBe(false);
+    // The change since round 1 was read once, in a step that stored it: a
+    // replay of the review reads this list, not both versions of its files.
+    expect(
+      await new Store(runtime).get(
+        `reviews/${r2.id}/lineage-incremental.json`,
+      ),
+    ).toEqual([
+      { path: "src/a.ts", lines_changed: 2 },
+      { path: "src/b.ts", lines_changed: 2 },
+    ]);
     expect(r2.report.agent_audit.lineage_updates).toEqual([
       {
         id: idOf(hb),

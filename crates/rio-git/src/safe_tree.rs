@@ -105,6 +105,7 @@ pub fn validate_case_collisions<'a>(
 pub struct SafeTreeWriter {
     root: Dir,
     root_path: PathBuf,
+    durable: bool,
     pub notes: Vec<String>,
     #[cfg(test)]
     fail_after_bytes: Option<usize>,
@@ -127,9 +128,19 @@ impl SafeTreeWriter {
         Ok(Self {
             root,
             root_path: path.to_path_buf(),
+            durable: true,
             notes: Vec::new(),
             #[cfg(test)]
             fail_after_bytes: None,
+        })
+    }
+
+    /// A writer for a throwaway tree that no later run reuses: files and the
+    /// root directory are not synced to disk. Caches must use `new`.
+    pub fn disposable(path: &Path) -> Result<Self, TreeError> {
+        Ok(Self {
+            durable: false,
+            ..Self::new(path)?
         })
     }
 
@@ -225,6 +236,17 @@ impl SafeTreeWriter {
         Ok(())
     }
 
+    /// Create a directory and its parents without traversing a symlink. An
+    /// existing entry at the path is left in place.
+    pub fn create_directory(&self, path: &str) -> Result<(), TreeError> {
+        let (parent, name) = self.parent(path, true)?;
+        match parent.create_dir(name) {
+            Ok(()) => Ok(()),
+            Err(error) if error.kind() == io::ErrorKind::AlreadyExists => Ok(()),
+            Err(error) => Err(error.into()),
+        }
+    }
+
     pub fn write(&mut self, path: &str, entry: &TreeEntry) -> Result<(), TreeError> {
         let (parent, name) = self.parent(path, true)?;
         // Remove a leaf link rather than following it. Parent handles never follow links.
@@ -281,7 +303,10 @@ impl SafeTreeWriter {
                 return Err(io::Error::from_raw_os_error(28));
             }
             file.write_all(&entry.content)?;
-            file.sync_all()
+            if self.durable {
+                file.sync_all()?;
+            }
+            Ok(())
         })();
         drop(file);
         if let Err(error) = result {
@@ -309,9 +334,11 @@ impl SafeTreeWriter {
             self.write(path, entry)?;
         }
         #[cfg(unix)]
-        self.root
-            .open_with(".", OpenOptions::new().read(true))?
-            .sync_all()?;
+        if self.durable {
+            self.root
+                .open_with(".", OpenOptions::new().read(true))?
+                .sync_all()?;
+        }
         Ok(())
     }
 }

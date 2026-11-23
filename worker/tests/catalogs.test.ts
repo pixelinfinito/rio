@@ -187,3 +187,69 @@ describe("applicability", () => {
     );
   });
 });
+
+describe("security trace neighbours", () => {
+  const empty: ChangedContents = {
+    base: {},
+    head: {},
+    omitted: { files: 0, bytes: 0 },
+  };
+  const node = (path: string, symbol: string, line = 1) => ({
+    id: `${path}#${symbol}`,
+    path,
+    symbol_path: symbol,
+    line_start: line,
+    line_end: line,
+  });
+  it("names each changed symbol's callers and callees in edge order, without definitions", () => {
+    const graph = {
+      nodes: [
+        node("src/a.ts", "a"),
+        node("src/b.ts", "b"),
+        node("src/c.ts", "c"),
+        node("src/d.ts", "d"),
+      ],
+      edges: [
+        { from: "src/b.ts#b", to: "src/a.ts#a", kind: "calls" },
+        { from: "src/a.ts#a", to: "src/c.ts#c", kind: "calls" },
+        { from: "src/d.ts#d", to: "src/a.ts#a", kind: "defines" },
+        { from: "src/c.ts#c", to: "src/a.ts#a" },
+        { from: "src/missing.ts#x", to: "src/a.ts#a", kind: "calls" },
+      ],
+    };
+    const { neighbours } = traceInputs([], [{ path: "src/a.ts" }], empty, {
+      base: { nodes: [], edges: [] },
+      head: graph,
+    });
+    expect(neighbours).toEqual([
+      {
+        version: "head",
+        symbol: "src/a.ts:1 a",
+        callers: ["src/b.ts:1 b", "src/c.ts:1 c"],
+        callees: ["src/c.ts:1 c"],
+      },
+    ]);
+  });
+  it("reads a large graph's edges once, not once for each changed node", () => {
+    // Ten thousand changed nodes and a hundred thousand edges: a scan of
+    // every edge for each node is two billion comparisons a version.
+    const nodes = Array.from({ length: 10_000 }, (_, i) =>
+      node(`src/f${i}.ts`, `f${i}`),
+    );
+    const edges = Array.from({ length: 100_000 }, (_, i) => ({
+      from: nodes[i % nodes.length].id,
+      to: nodes[(i * 7 + 1) % nodes.length].id,
+      kind: "calls",
+    }));
+    const started = Date.now();
+    const { neighbours } = traceInputs(
+      [],
+      nodes.map((n) => ({ path: n.path })),
+      empty,
+      { base: { nodes, edges }, head: { nodes, edges } },
+    );
+    expect(Date.now() - started).toBeLessThan(2000);
+    expect(neighbours).toHaveLength(60);
+    expect(neighbours[0].callees).toHaveLength(10);
+  });
+});

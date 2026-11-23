@@ -53,6 +53,10 @@ interface Run {
   mutate?: (s: Submission) => void;
   /** Called with the review's id and an agent's latest message; a string returned is its raw reply. */
   onAgent?: (review: string, agent: string, last: string) => Promise<string | void>;
+  // Step mocks, set before the workflow starts.
+  modify?: Parameters<
+    Awaited<ReturnType<typeof introspectWorkflowInstance>>["modify"]
+  >[0];
 }
 async function review(run: Run) {
   const id = crypto.randomUUID();
@@ -166,6 +170,7 @@ async function review(run: Run) {
       runtime.REVIEWS,
       id,
     );
+    if (run.modify) await instance.modify(run.modify);
     await runtime.REVIEWS.create({
       id,
       params: { review_id: id, snapshot_key: stored.key },
@@ -590,7 +595,8 @@ describe("contract verification", () => {
         ],
       }),
     });
-    expect(calls.filter((c) => c === "verify")).toHaveLength(3);
+    // Two voters refute it alike, so the third is not asked.
+    expect(calls.filter((c) => c === "verify")).toHaveLength(2);
     expect(
       report.findings.concat(report.risks).map((f: any) => f.rule_id),
     ).not.toContain("contracts/signature/added_required");
@@ -1168,9 +1174,9 @@ describe("an agent under two models", () => {
       [id("correctness/division-by-zero")]: ["default", "second"],
       [id("correctness/missing-count")]: ["second"],
     });
-    // Three voters for the defect, each blind then disclosed, and as many
-    // for the risk: nothing is verified twice.
-    expect(calls.filter((c) => c === "verify")).toHaveLength(6);
+    // Two agreeing voters for the defect and as many for the risk, the third
+    // of each not asked: nothing is verified twice.
+    expect(calls.filter((c) => c === "verify")).toHaveLength(4);
   }, 60000);
 
   it("keeps one model's hypotheses when the other model's review fails, in a partial report that names it", async () => {
@@ -1353,6 +1359,8 @@ describe("default budgets", () => {
         },
         mutate: (s) => {
           s.profile.budget = structuredClone(budget);
+          // Every voter is asked, as when the first two disagree.
+          s.profile.verify = { ...s.profile.verify, quorum: 3 };
         },
       });
       expect(calls.filter((c) => c === "blind")).toHaveLength(3);
@@ -1385,4 +1393,98 @@ describe("a review agent that keeps reading", () => {
     expect(report.status).toBe("partial");
     expect(report.footer.notes.join("\n")).toContain("turn limit exhausted");
   });
+});
+
+describe("a step that holds the change and ends at a platform limit", () => {
+  const base = {
+    "src/a.ts": "export function a() {\n  return 1;\n}\n",
+  };
+  const head = {
+    "src/a.ts": "export function a(n: number) {\n  return n;\n}\n",
+  };
+  // As production reported it; it repeats on every attempt there, and here
+  // it repeats on two: one more than the step's retry.
+  const limit =
+    (name: string, times = 2) =>
+    async (m: any) => {
+      await m.disableRetryDelays();
+      await m.mockStepError(
+        { name },
+        new Error("Worker exceeded memory limit."),
+        times,
+      );
+    };
+  it("is retried once: an attempt the platform lost is not a failure", async () => {
+    const { report, calls } = await review({
+      base,
+      head,
+      changed: ["src/a.ts"],
+      // The tests below must not be answered from this one's agent results.
+      steps: agentSteps().map((s) =>
+        s.id === "agents" ? { ...s, with: { ...s.with, cache: false } } : s,
+      ),
+      agents: {},
+      modify: limit("analysis-agents", 1),
+    });
+    expect(calls).toContain("correctness");
+    expect(report.footer.notes.join("\n")).not.toContain(
+      "could not be built",
+    );
+    expect(report.status).toBe("complete");
+  }, 60000);
+  it("is retried once, then the agents run without the contract inventory and the report says so", async () => {
+    const { report, calls } = await review({
+      base,
+      head,
+      changed: ["src/a.ts"],
+      steps: agentSteps(),
+      agents: {},
+      modify: limit("analysis-agents"),
+    });
+    expect(calls).toContain("correctness");
+    expect(report.footer.notes.join("\n")).toMatch(
+      /The contract inventory could not be built \(.*Worker exceeded memory limit\.\); the agents ran with what the changed paths alone say\./,
+    );
+    expect(report.status).toBe("incomplete");
+  }, 60000);
+  it("is retried once, then the security step goes on from the changed paths", async () => {
+    const { report } = await review({
+      base,
+      head,
+      changed: ["src/a.ts"],
+      steps: [
+        ...agentSteps(),
+        {
+          id: "security",
+          uses: "rio/security@0.2.0",
+          needs: ["triage"],
+          with: { enabled: true },
+        },
+      ],
+      agents: { security: { hypotheses: [], assessed: [], unassessed: [] } },
+      modify: limit("analysis-security"),
+    });
+    expect(report.footer.notes.join("\n")).toMatch(
+      /The security analysis could not be built \(.*Worker exceeded memory limit\.\)/,
+    );
+    expect(report.status).toBe("incomplete");
+  }, 60000);
+  it("is retried once, then the change is reviewed in one conversation", async () => {
+    const { report, prompts } = await review({
+      base,
+      head,
+      changed: ["src/a.ts"],
+      steps: agentSteps().map((s) =>
+        // The agent result cache would answer from the tests above.
+        s.id === "agents" ? { ...s, with: { parts: 4, cache: false } } : s,
+      ),
+      agents: {},
+      modify: limit("parts-agents-correctness"),
+    });
+    expect(prompts.correctness).toBeDefined();
+    expect(prompts.correctness).not.toContain("reviewed in");
+    expect(report.footer.notes.join("\n")).toMatch(
+      /The change could not be divided into parts for the correctness agent \(.*Worker exceeded memory limit\.\); it reviewed the change in one conversation\./,
+    );
+  }, 60000);
 });
