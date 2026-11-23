@@ -3,6 +3,7 @@ import { Store } from "./storage";
 import { settleAnnouncement } from "./announce";
 import { IDLE, stopRunners, withdrawIdle } from "./jobs";
 import { redact } from "./redaction";
+import { SUPERSEDED } from "./pulls";
 
 /** Time past a review's deadline before the endpoint ends it itself. */
 export const DEADLINE_GRACE_MS = 120000;
@@ -37,6 +38,7 @@ interface ReviewRow {
   deadline: number;
   submission_key: string;
   cancelled_at?: number | null;
+  error?: string | null;
 }
 
 /**
@@ -60,7 +62,12 @@ export async function reconcile(
   const overdue = cancelled
     ? now > (row.cancelled_at ?? 0) + CANCEL_GRACE_MS
     : now > row.deadline + DEADLINE_GRACE_MS;
-  const late = cancelled ? "cancelled" : "review exceeded its wall budget";
+  // A superseded review keeps that reason.
+  const late = cancelled
+    ? row.error === SUPERSEDED
+      ? SUPERSEDED
+      : "cancelled"
+    : "review exceeded its wall budget";
   let reason: string | null = null;
   try {
     const instance = await env.REVIEWS.get(row.id);
@@ -109,7 +116,7 @@ export async function reconcile(
 
 /** The cron sweep: reviews that may need ending, a bounded batch per tick. */
 export async function sweepReviews(env: Env, now = Date.now()) {
-  const columns = "SELECT id,status,deadline,submission_key,cancelled_at";
+  const columns = "SELECT id,status,deadline,submission_key,cancelled_at,error";
   const active = await env.DB.prepare(
     `${columns} FROM reviews WHERE status IN ('queued','running') AND created_at<? ORDER BY deadline LIMIT 25`,
   )

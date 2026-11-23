@@ -1,7 +1,7 @@
 import type { Env } from "./types";
 import { PUBLISH_PERMISSIONS, appRequest, withToken } from "./github";
 import { installation, covers } from "./webhooks";
-import { pullOf, repositoryKey, type PullRow } from "./pulls";
+import { SUPERSEDED, pullOf, repositoryKey, type PullRow } from "./pulls";
 import { lineageId } from "./lineage";
 import {
   GitHubHost,
@@ -37,8 +37,15 @@ export function withProgress(body: string, head: string): string {
   const heading = /^## [^\n]*\n\n?/.exec(clean)?.[0] ?? "";
   return `${heading}${banner(head)}\n${clean.slice(heading.length)}`;
 }
-export function withoutProgress(body: string): string {
-  return body.replace(PROGRESS, "");
+/**
+ * The summary comment without its progress banner; given a head, without the
+ * banner of that head only: a review that ends leaves the banner of a newer
+ * head's review that announced itself meanwhile.
+ */
+export function withoutProgress(body: string, head?: string): string {
+  return body.replace(PROGRESS, (banner) =>
+    !head || banner.includes(`\`${head.slice(0, 12)}\``) ? "" : banner,
+  );
 }
 function placeholder(lineage: string, head: string): string {
   return [
@@ -151,6 +158,12 @@ export async function announcementPublished(env: Env, review: string) {
     .run();
 }
 
+/** The title of the check run of a review a newer head superseded. */
+export const SUPERSEDED_TITLE = "Review superseded by a newer push";
+/** What the check run of a review a newer head superseded says. */
+export function supersededSummary(head: string): string {
+  return `A newer commit was pushed to this pull request while Rio was reviewing \`${head.slice(0, 12)}\`, so Rio stopped this review and publishes nothing more for this commit. The newest commit is reviewed instead.`;
+}
 /**
  * Completes an announced check run when the review ends without publishing
  * it (failure, a policy that posts nothing, a superseded round), and removes
@@ -166,9 +179,18 @@ export async function settleAnnouncement(
     const row = await pullOf(env, review);
     if (!row?.head_sha || !row.announced_check) return;
     const check = row.announced_check;
+    // Whichever way a superseded review ends, its check run says why.
+    const ended = await env.DB.prepare("SELECT error FROM reviews WHERE id=?")
+      .bind(review)
+      .first<{ error: string | null }>();
+    if (ended?.error === SUPERSEDED) {
+      title = SUPERSEDED_TITLE;
+      summary = supersededSummary(row.head_sha);
+    }
+    const head = row.head_sha;
     await host(env, row, async (github) => {
       await github.checkRun(
-        row.head_sha!,
+        head,
         {
           title,
           summary: `${summary}\n\nRio's check run is always neutral: it never approves and never blocks a merge.`,
@@ -182,11 +204,11 @@ export async function settleAnnouncement(
         const existing = (await github.issueComments()).find(
           (c) => SUMMARY_MARKER.exec(c.body)?.[1] === lineage,
         );
-        if (existing && withoutProgress(existing.body) !== existing.body)
-          await github.editIssueComment(
-            existing.id,
-            withoutProgress(existing.body),
-          );
+        // Only this head's banner: a newer head's review may have announced
+        // itself meanwhile.
+        const body = existing && withoutProgress(existing.body, head);
+        if (existing && body !== existing.body)
+          await github.editIssueComment(existing.id, body!);
       } finally {
         await releaseLease(lease);
       }

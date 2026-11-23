@@ -113,7 +113,7 @@ import {
   runnerModelEndpoint,
 } from "./council-audit";
 import memberWeights from "./member-weights.json";
-import { pullOf } from "./pulls";
+import { SUPERSEDED, pullOf, supersededReview } from "./pulls";
 import { createJob, createModelJob, stopRunners, withdrawIdle } from "./jobs";
 import { needs, transferMs } from "./archive";
 import { createQaJob } from "./qa-jobs";
@@ -592,6 +592,9 @@ const CACHE_CHUNK = 250;
 const OPEN = "(status IN ('queued','running','cancelled') OR report_key=?)";
 /** The note of a review its workflow ended early because it was cancelled. */
 export const CANCELLED_NOTE = "Review cancelled before it finished.";
+/** The note of a review a newer head of its pull request superseded. */
+export const SUPERSEDED_NOTE =
+  "Review superseded by a newer head of the pull request before it finished; nothing more was published for this head.";
 /** Cache entries written per store step: four packs. */
 const CACHE_STORE_CHUNK = 4 * PACK_ENTRIES;
 /** The review's token or wall budget refusing a model call. */
@@ -3175,7 +3178,11 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       );
       report.review.rio_version = this.env.RIO_VERSION;
       account();
-      if (await store.cancelled(id)) report.status = "partial";
+      if (await store.cancelled(id)) {
+        report.status = "partial";
+        if (await supersededReview(this.env, id))
+          report.footer.notes.push(SUPERSEDED_NOTE);
+      }
       if (diffOnlyAudit) report.agent_audit.diff_only = diffOnlyAudit;
       if (cacheStats)
         report.cache = {
@@ -3336,7 +3343,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         // stopped in time) keeps that end: a late result never replaces it,
         // and a cancelled review never reads complete.
         const ended = await this.env.DB.prepare(
-          `UPDATE reviews SET status=CASE WHEN cancelled=1 THEN 'partial' ELSE ? END,report_key=? WHERE id=? AND ${OPEN} RETURNING status`,
+          `UPDATE reviews SET status=CASE WHEN cancelled=1 THEN 'partial' ELSE ? END,report_key=? WHERE id=? AND ${OPEN} RETURNING status,cancelled,error`,
         )
           .bind(
             report.status === "partial" ? "partial" : "complete",
@@ -3344,14 +3351,18 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             id,
             key,
           )
-          .first<{ status: string }>();
+          .first<{ status: string; cancelled: number; error: string | null }>();
         if (!ended) return;
+        const superseded = ended.error === SUPERSEDED;
         // Cancelled after the report was written: the report says what the
         // review's status does.
         if (ended.status === "partial" && report.status !== "partial") {
           // Stored before the report held here says so: an attempt of this
           // step that follows a failed write must find it still to write.
-          const notes = [...report.footer.notes, CANCELLED_NOTE];
+          const notes = [
+            ...report.footer.notes,
+            superseded ? SUPERSEDED_NOTE : CANCELLED_NOTE,
+          ];
           await store.put(key, {
             ...report,
             status: "partial",
@@ -3362,7 +3373,17 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         }
         await stopRunners(this.env, id);
         await withdrawIdle(this.env, id);
-        if (lineage && outcome)
+        // A pull request review cancelled (or superseded) before its
+        // publication was made posted nothing, or only part of it: it does not
+        // advance lineage state, as a failed review does not, so the next
+        // round neither takes its head as the one reviewed before nor holds
+        // back its findings as posted. One cancelled after its publication
+        // records what it posted.
+        const unpublished =
+          ended.cancelled === 1 &&
+          !!report.review?.pull_request &&
+          !publication;
+        if (lineage && outcome && !unpublished)
           await this.env.DB.batch(
             persistStatements(
               this.env,
@@ -3386,8 +3407,16 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         error instanceof Error
           ? error.message.replace(/^NonRetryableError: /, "")
           : "review failed";
+      // A cancelled review says whether a newer head superseded it.
+      const superseded =
+        reason === "cancelled" &&
+        (await supersededReview(this.env, id).catch(() => false));
       report.footer.notes.push(
-        reason === "cancelled" ? CANCELLED_NOTE : reason,
+        superseded
+          ? SUPERSEDED_NOTE
+          : reason === "cancelled"
+            ? CANCELLED_NOTE
+            : reason,
       );
       // Work finished before the stop is still reported, consolidated as on the
       // complete path. A replayed run has it in storage only.
@@ -3443,11 +3472,13 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       account();
       const key = await store.put(`reviews/${id}/report.json`, report);
       await step.do("failed", async () => {
+        // A superseded review keeps that reason.
         const ended = await this.env.DB.prepare(
-          `UPDATE reviews SET status='partial',report_key=?,error=? WHERE id=? AND ${OPEN} RETURNING id`,
+          `UPDATE reviews SET status='partial',report_key=?,error=CASE WHEN error=? THEN error ELSE ? END WHERE id=? AND ${OPEN} RETURNING id`,
         )
           .bind(
             key,
+            SUPERSEDED,
             reason === "cancelled" ? "cancelled" : "runtime did not complete",
             id,
             key,

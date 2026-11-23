@@ -14,6 +14,7 @@ import { installation, covers } from "./webhooks";
 import { hash, invariant } from "./validation";
 import { createReview } from "./reviews";
 import { createPrepareJob, stopRunners, withdrawIdle } from "./jobs";
+import { revokeQaRun } from "./qa-jobs";
 import { ingestTarballs } from "./tarball";
 import { Store } from "./storage";
 import { announceReview, knownPolicy, settleAnnouncement } from "./announce";
@@ -189,22 +190,42 @@ async function fail(env: Env, review: string, state: string, reason: string) {
 const CANCELLED_UNPREPARED =
   "The review was cancelled before it started. Push again or comment `/rio review` to retry.";
 /**
+ * Why a webhook review ended when a newer head of its pull request was pushed
+ * while it was still prepared or running: the review's `error`, and its pull
+ * request's `reason`. A review ended so is also cancelled (`cancelled=1`),
+ * whatever stage it had reached.
+ */
+export const SUPERSEDED = "superseded by a newer head";
+/** Whether a review ended because a newer head of its pull request superseded it. */
+export async function supersededReview(
+  env: Env,
+  review: string,
+): Promise<boolean> {
+  const row = await env.DB.prepare("SELECT error FROM reviews WHERE id=?")
+    .bind(review)
+    .first<{ error: string | null }>();
+  return row?.error === SUPERSEDED;
+}
+/**
  * Ends a review cancelled while it was being prepared, and its prepare job:
  * no workflow exists yet to end it, and the sweep ends only reviews that were
  * handed over. False when the review is not being prepared (any more), unless
  * it ended here before: a cancel repeated after one that failed half way
- * finishes what that one left.
+ * finishes what that one left. `reason` is `cancelled` for a cancel by
+ * request and {@link SUPERSEDED} for a review a newer head superseded.
  */
 export async function cancelPreparing(
   env: Env,
   review: string,
+  reason: "cancelled" | typeof SUPERSEDED = "cancelled",
 ): Promise<boolean> {
   const ended = await env.DB.prepare(
-    "UPDATE reviews SET cancelled=1,cancelled_at=COALESCE(cancelled_at,?),status='error',error='cancelled' WHERE id=? AND submission_key='' AND (status='preparing' OR (status='error' AND error='cancelled' AND cancelled=1)) RETURNING id",
+    "UPDATE reviews SET cancelled=1,cancelled_at=COALESCE(cancelled_at,?),status='error',error=CASE WHEN status='error' THEN error ELSE ? END WHERE id=? AND submission_key='' AND (status='preparing' OR (status='error' AND error IN ('cancelled',?) AND cancelled=1)) RETURNING id,error",
   )
-    .bind(Date.now(), review)
-    .first();
+    .bind(Date.now(), reason, review, SUPERSEDED)
+    .first<{ id: string; error: string }>();
   if (!ended) return false;
+  const error = ended.error;
   // Each of what follows is tried whatever became of the one before: an
   // event that cannot be written must not leave the prepare job's container
   // running.
@@ -212,9 +233,9 @@ export async function cancelPreparing(
   for (const work of [
     () =>
       env.DB.prepare(
-        "UPDATE pull_requests SET state='failed',reason='cancelled' WHERE review_id=? AND state IN ('requested','preparing')",
+        "UPDATE pull_requests SET state='failed',reason=? WHERE review_id=? AND state IN ('requested','preparing')",
       )
-        .bind(review)
+        .bind(error, review)
         .run(),
     () => stopRunners(env, review),
     () => withdrawIdle(env, review),
@@ -224,13 +245,11 @@ export async function cancelPreparing(
       )
         .bind(review)
         .first();
-      if (!told)
-        await new Store(env).event(review, "review:error", {
-          error: "cancelled",
-        });
+      if (!told) await new Store(env).event(review, "review:error", { error });
     },
   ])
     await work().catch((error) => faults.push(error));
+  // A superseded review's check run says so (`settleAnnouncement`).
   await settleAnnouncement(
     env,
     review,
@@ -238,6 +257,126 @@ export async function cancelPreparing(
     CANCELLED_UNPREPARED,
   );
   if (faults.length) throw faults[0];
+  return true;
+}
+
+/**
+ * Cancels a review at whatever stage it is (`POST /v1/reviews/:id/cancel`,
+ * and a webhook review a newer head supersedes). A review still being
+ * prepared has no workflow to end it: it ends here, and its prepare job with
+ * it. Otherwise the review is flagged: the model gateway makes no new call for
+ * it, the workflow sees the flag between steps and ends the review as partial
+ * without publishing, and the sweep stops one that has not within the grace.
+ * The jobs open at that moment are read with it: one that completes later
+ * finds the review cancelled, one that completed earlier ends its own wait
+ * (`finishJob`). A review that already ended is left as it is.
+ */
+export async function cancelReview(
+  env: Env,
+  review: string,
+  reason: "cancelled" | typeof SUPERSEDED = "cancelled",
+): Promise<void> {
+  if (await cancelPreparing(env, review, reason)) return;
+  // A review superseded keeps saying so if it is also cancelled by request.
+  const [stopped, open] = (await env.DB.batch([
+    env.DB.prepare(
+      "UPDATE reviews SET cancelled=1,status='cancelled',cancelled_at=COALESCE(cancelled_at,?),error=CASE WHEN ?=? THEN ? ELSE error END WHERE id=? AND status NOT IN ('complete','partial','error') RETURNING id",
+    ).bind(Date.now(), reason, SUPERSEDED, SUPERSEDED, review),
+    env.DB.prepare(
+      "SELECT id,attempt FROM jobs WHERE review_id=? AND status IN ('pending','leased')",
+    ).bind(review),
+  ])) as [D1Result<{ id: string }>, D1Result<{ id: string; attempt: number }>];
+  if (stopped.results.length) {
+    // A job no runner has taken never runs. One a runner has is stopped
+    // (Sandbox) or keeps its result for the audit, and the workflow stops
+    // waiting for it now.
+    await stopRunners(env, review);
+    await withdrawIdle(env, review);
+    if (open.results.length) {
+      // No instance, or one that ended, has no wait to end. Each job on its
+      // own: an event that fails leaves the other waits their end.
+      const instance = await env.REVIEWS.get(review).catch(() => null);
+      if (instance)
+        for (const job of open.results)
+          await instance
+            .sendEvent({
+              type: `job-${job.id}-${job.attempt}`,
+              payload: { cancelled: true },
+            })
+            .catch(() => {});
+    }
+  }
+  const qa = await env.DB.prepare(
+    "SELECT q.id FROM qa_runs q JOIN reviews r ON r.id=q.review_id WHERE q.review_id=? AND r.cancelled=1",
+  )
+    .bind(review)
+    .all<{ id: string }>();
+  for (const run of qa.results) await revokeQaRun(env, run.id);
+}
+
+/**
+ * A webhook review of `head` supersedes the webhook reviews of other heads of
+ * the same pull request that are still prepared or running: it is the newest
+ * head, and a review of an older one would spend its tokens and publish on a
+ * commit no one will merge. Reviews a user asked for (`cli`, `command`) are
+ * never superseded, nor do they supersede.
+ *
+ * "Older" is told by when each request read the pull request from GitHub:
+ * a row created before this attempt began reading (`observed`) is older; one
+ * created after it read a head at least as new. So two pushes close together
+ * end with the review of the later head whichever delivery is processed
+ * first: if a review of another head was requested after this attempt began
+ * reading, this review is the stale one and ends itself instead. Two requests
+ * stamped in the same millisecond cannot be ordered, and neither supersedes
+ * the other. A candidate
+ * another attempt is preparing right now (claimed, no job yet) is left to that
+ * attempt, which runs this same check once it has read its head. A review that
+ * has already ended (complete, or ended by its workflow) is left as it is: the
+ * cancel and its end are one conditional update each, so exactly one wins.
+ *
+ * Returns false when this review was itself superseded.
+ */
+export async function supersedeOlderHeads(
+  env: Env,
+  review: string,
+  pull: { tenant: string; repository: string; number: number },
+  head: string,
+  observed: number,
+): Promise<boolean> {
+  // The head a webhook review was requested for is in its request key
+  // (`webhook:<sha>`); a retry may since have recorded a newer one.
+  const others =
+    "FROM pull_requests p JOIN reviews r ON r.id=p.review_id WHERE p.tenant=? AND p.repository=? AND p.number=? AND p.trigger='webhook' AND p.review_id!=? AND COALESCE(p.head_sha,substr(p.request_key,9))!=?";
+  const newer = await env.DB.prepare(
+    `SELECT p.review_id ${others} AND r.status!='error' AND p.created_at>? LIMIT 1`,
+  )
+    .bind(pull.tenant, pull.repository, pull.number, review, head, observed)
+    .first();
+  if (newer) {
+    await cancelReview(env, review, SUPERSEDED);
+    return false;
+  }
+  const older = await env.DB.prepare(
+    `SELECT p.review_id ${others} AND r.status IN ('preparing','queued','running') AND r.cancelled=0 AND p.created_at<? AND NOT (COALESCE(p.claimed_until,0)>? AND NOT EXISTS (SELECT 1 FROM jobs j WHERE j.review_id=p.review_id))`,
+  )
+    .bind(
+      pull.tenant,
+      pull.repository,
+      pull.number,
+      review,
+      head,
+      observed,
+      Date.now(),
+    )
+    .all<{ review_id: string }>();
+  // Each on its own: one that cannot be cancelled now is left to the sweep
+  // or a later push, and does not keep this review from starting.
+  for (const old of older.results)
+    await cancelReview(env, old.review_id, SUPERSEDED).catch((error) =>
+      console.log(
+        `rio: review ${old.review_id} could not be superseded: ${(error instanceof Error ? error.message : String(error)).slice(0, 200)}`,
+      ),
+    );
   return true;
 }
 
@@ -264,6 +403,9 @@ export async function handleReviewRequest(
   );
   try {
     const base = `/repos/${message.repository}`;
+    // When this attempt began reading the pull request: a webhook review
+    // requested before it reviews an older head (`supersedeOlderHeads`).
+    const observed = Date.now();
     const pr = await token.request("GET", `${base}/pulls/${message.number}`);
     invariant(
       pr?.number === message.number,
@@ -308,7 +450,7 @@ export async function handleReviewRequest(
       );
       if (name) agent = { name, source: "commit_trailer" };
     }
-    const now = Date.now();
+    const now = observed;
     const key =
       message.trigger === "webhook"
         ? `webhook:${head}`
@@ -401,21 +543,14 @@ export async function handleReviewRequest(
         )
         .run();
       // A retry reviews the head it just read; until its job exists the record
-      // follows. Older webhook reviews of this PR that never got a job are stale.
-      if (message.trigger === "webhook") {
-        const stale = await env.DB.prepare(
-          "SELECT p.review_id FROM pull_requests p WHERE p.tenant=? AND p.repository=? AND p.number=? AND p.trigger='webhook' AND p.review_id!=? AND p.state IN ('requested','preparing') AND NOT EXISTS (SELECT 1 FROM jobs j WHERE j.review_id=p.review_id)",
-        )
-          .bind(message.tenant, message.repository, message.number, review)
-          .all<{ review_id: string }>();
-        for (const old of stale.results)
-          await fail(
-            env,
-            old.review_id,
-            "failed",
-            "superseded by a newer head",
-          );
-      }
+      // follows. Webhook reviews of this PR's older heads still prepared or
+      // running are superseded, and this one if a newer head was requested
+      // while it read its own.
+      if (
+        message.trigger === "webhook" &&
+        !(await supersedeOlderHeads(env, review, message, head, observed))
+      )
+        return;
       await new Store(env).event(review, "review:preparing", {
         repository: message.repository,
         number: message.number,
