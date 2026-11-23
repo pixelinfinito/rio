@@ -18,7 +18,7 @@ Endpoint configurado, GitHub App instalado no repositório do origin, rotas de m
 4. Versione o perfil padrão na branch base, incluindo modelos e `publish: ask`, `auto` ou `never`.
 5. Execute `rio review --pr 123` com o número real do PR. Com `ask`, examine e confirme a prévia ou forneça `--publish` deliberadamente na automação.
 
-A política vem da base comum do PR: a alteração revisada não pode conceder a si mesma permissão de publicação. `rio/base` usa `publish: never` e não define modelos. Eventos de abertura/push disparam revisão; mantenedores autorizados podem comentar `/rio review` para solicitar revisão e reiniciar a linhagem.
+A política vem da base comum do PR: a alteração revisada não pode conceder a si mesma permissão de publicação. `rio/base` usa `publish: never` e não define modelos. Eventos de abertura/push disparam revisão; um push que chega enquanto a revisão de um commit anterior ainda está em andamento cancela essa revisão, que não publica mais nada e conclui seu check run como neutro ("Review superseded by a newer push"); mantenedores autorizados podem comentar `/rio review` para solicitar revisão e reiniciar a linhagem.
 
 A preparação do PR (download dos dois commits, snapshot e grafo) pode levar 15 minutos antes de a revisão começar. Um repositório grande permite mais nesse mesmo perfil da base comum com `budget: { prepare: 30m }` (de 1 a 60 minutos).
 

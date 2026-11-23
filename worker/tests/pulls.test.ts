@@ -1478,4 +1478,38 @@ describe("a newer head supersedes older webhook reviews", () => {
     });
     expect(await openJobs(fresh.review_id)).toBe(1);
   });
+
+  it("keeps the review of the pushed head when an attempt that began later read the older one", async () => {
+    const { env: e } = capture();
+    github.pull("acme/push", 10, { head: sha("ten-1") });
+    // This attempt begins first, but its read is answered only after another
+    // attempt has read the older head and the push has happened.
+    const handle = github.handle.bind(github);
+    let raced = false;
+    github.handle = async (url, init) => {
+      if (!raced && new URL(url).pathname === "/repos/acme/push/pulls/10") {
+        raced = true;
+        await new Promise((r) => setTimeout(r, 5));
+        await handleReviewRequest(e, push("acme/push", 10));
+        github.pull("acme/push", 10, { head: sha("ten-2") });
+      }
+      return handle(url, init);
+    };
+    await handleReviewRequest(e, push("acme/push", 10));
+    const rows = await pullRows("acme/push", 10);
+    const older = rows.find(
+        (r) => r.request_key === `webhook:${sha("ten-1")}`,
+      )!,
+      pushed = rows.find((r) => r.request_key === `webhook:${sha("ten-2")}`)!;
+    // The older head's request was recorded later, and is still the stale one.
+    expect(pushed.created_at).toBeLessThan(older.created_at);
+    expect(await state(pushed.review_id)).toMatchObject({
+      status: "preparing",
+      cancelled: 0,
+      error: null,
+    });
+    expect(await openJobs(pushed.review_id)).toBe(1);
+    expect(await state(older.review_id)).toMatchObject({ error: SUPERSEDED });
+    expect(await openJobs(older.review_id)).toBe(0);
+  });
 });

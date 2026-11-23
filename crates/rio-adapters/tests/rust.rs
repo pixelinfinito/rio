@@ -1279,3 +1279,52 @@ async fn trusted_rust_root_without_a_lock_can_run_in_the_disposable_tree() {
             .contains(&"--locked".into())
     );
 }
+
+#[test]
+fn sparse_metadata_tree_bounds_includes_and_keeps_those_reached_through_links() {
+    let file = |content: &str| rio_git::TreeEntry {
+        mode: 0o100644,
+        object_id: String::new(),
+        content: content.as_bytes().to_vec(),
+    };
+    let link = |target: &str| rio_git::TreeEntry {
+        mode: 0o120000,
+        object_id: String::new(),
+        content: target.as_bytes().to_vec(),
+    };
+    let mut tree = rio_git::Tree::new();
+    // A configuration that includes itself under ever longer names, a `.toml`
+    // include that has a README's name, and one beneath a directory link.
+    tree.insert(
+        ".cargo/config.toml".into(),
+        file("include = ['a/config.toml', 'b/config.toml', 'README.toml', '../aliases/shared.toml']\n"),
+    );
+    tree.insert(".cargo/a".into(), link("."));
+    tree.insert(".cargo/b".into(), link("."));
+    tree.insert(
+        ".cargo/README.toml".into(),
+        file("[alias]\nreadme = 'check'\n"),
+    );
+    tree.insert("aliases".into(), link("shared"));
+    tree.insert(
+        "shared/shared.toml".into(),
+        file("[alias]\nshared = 'check'\n"),
+    );
+    let (selected, _) = rio_adapters::rust_metadata_tree(&tree);
+    assert!(
+        selected.len() < 16,
+        "{:?}",
+        selected.keys().collect::<Vec<_>>()
+    );
+    assert_eq!(
+        selected[".cargo/README.toml"].content,
+        b"[alias]\nreadme = 'check'\n"
+    );
+    assert_eq!(selected["aliases"].mode, 0o120000);
+    assert_eq!(
+        selected["shared/shared.toml"].content,
+        b"[alias]\nshared = 'check'\n"
+    );
+    assert!(!selected.keys().any(|path| path.starts_with("aliases/")));
+    assert!(!selected.keys().any(|path| path.starts_with(".cargo/a/")));
+}

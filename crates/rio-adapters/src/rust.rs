@@ -319,6 +319,9 @@ pub fn rust_lint_tools(tree: &Tree, root: &str) -> Vec<&'static str> {
     result
 }
 
+/// Configuration files followed through `include`, over all of a tree.
+const INCLUDED_CONFIGURATIONS: usize = 256;
+
 /// The part of a tree `cargo metadata --no-deps` reads: manifests, lockfiles,
 /// toolchain and cargo configuration, with the in-tree files it includes, all
 /// with their content; every symbolic link and submodule; and empty stand-ins
@@ -377,6 +380,10 @@ pub fn rust_metadata_tree(tree: &Tree) -> (Tree, std::collections::BTreeSet<Stri
         })
         .cloned()
         .collect();
+    // Files kept with their content. Links can name one file by any number of
+    // paths, so the includes followed are bounded, not only deduplicated.
+    let mut kept: std::collections::BTreeSet<String> = pending.iter().cloned().collect();
+    let mut budget = INCLUDED_CONFIGURATIONS;
     while let Some(path) = pending.pop() {
         let Some(text) = selected
             .get(&path)
@@ -404,14 +411,23 @@ pub fn rust_metadata_tree(tree: &Tree) -> (Tree, std::collections::BTreeSet<Stri
             let Some(included) = join_relative(directory, include) else {
                 continue;
             };
-            // A link is replaced by the file it names, as a manifest is.
-            if selected
-                .get(&included)
-                .is_some_and(|entry| entry.mode != 0o120000)
-            {
+            // A link is replaced by the file it names, as a manifest is, and
+            // an empty stand-in by its content.
+            if kept.contains(&included) || budget == 0 {
                 continue;
             }
-            if let Some(file) = resolve_through_links(tree, &included) {
+            if let Some((target, file)) = resolve_path_through_links(tree, &included) {
+                // Beneath a directory link the file is kept where it is and
+                // reached through the link, which the tree keeps as a link.
+                let beneath_link = included.match_indices('/').any(|(end, _)| {
+                    tree.get(&included[..end])
+                        .is_some_and(|entry| entry.mode == 0o120000)
+                });
+                let included = if beneath_link { target } else { included };
+                if !kept.insert(included.clone()) {
+                    continue;
+                }
+                budget -= 1;
                 selected.insert(
                     included.clone(),
                     rio_git::TreeEntry {
@@ -454,6 +470,14 @@ fn join_relative(directory: &str, relative: &str) -> Option<String> {
 /// when `aliases` links to a directory. None for submodules, absolute or
 /// escaping targets, missing files and link cycles.
 fn resolve_through_links<'a>(tree: &'a Tree, path: &str) -> Option<&'a rio_git::TreeEntry> {
+    resolve_path_through_links(tree, path).map(|(_, entry)| entry)
+}
+
+/// As `resolve_through_links`, with the tree path of the file reached.
+fn resolve_path_through_links<'a>(
+    tree: &'a Tree,
+    path: &str,
+) -> Option<(String, &'a rio_git::TreeEntry)> {
     let mut parts: Vec<String> = path.split('/').map(str::to_owned).collect();
     let mut hops = 0;
     let mut index = 0;
@@ -477,7 +501,7 @@ fn resolve_through_links<'a>(tree: &'a Tree, path: &str) -> Option<&'a rio_git::
                 parts.extend(rest);
                 index = 0;
             }
-            Some(entry) if last => return Some(entry),
+            Some(entry) if last => return Some((prefix, entry)),
             // A file used as a directory.
             Some(_) => return None,
         }

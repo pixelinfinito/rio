@@ -321,18 +321,22 @@ export async function cancelReview(
  * commit no one will merge. Reviews a user asked for (`cli`, `command`) are
  * never superseded, nor do they supersede.
  *
- * "Older" is told by when each request read the pull request from GitHub:
- * a row created before this attempt began reading (`observed`) is older; one
- * created after it read a head at least as new. So two pushes close together
- * end with the review of the later head whichever delivery is processed
- * first: if a review of another head was requested after this attempt began
- * reading, this review is the stale one and ends itself instead. Two requests
- * stamped in the same millisecond cannot be ordered, and neither supersedes
- * the other. A candidate
- * another attempt is preparing right now (claimed, no job yet) is left to that
- * attempt, which runs this same check once it has read its head. A review that
- * has already ended (complete, or ended by its workflow) is left as it is: the
- * cancel and its end are one conditional update each, so exactly one wins.
+ * Which head is the newest is asked of GitHub, never inferred from when a
+ * request was processed: two attempts that read the pull request around a
+ * push can each have started, or finished, before the other. So when another
+ * webhook review of a different head is live, or was requested after this
+ * attempt began (`observed`), the pull request is read again (`current`). If
+ * it is at this review's head, the live reviews of other heads are cancelled.
+ * If it is at another head that has a review of its own, this review is the
+ * stale one and ends itself. If it is at a head no review was requested for
+ * yet, nothing is cancelled: that head's own request settles it. A read that
+ * fails cancels nothing either.
+ *
+ * A candidate another attempt is preparing right now (claimed, no job yet) is
+ * left to that attempt, which runs this same check again once its job exists.
+ * A review that has already ended (complete, or ended by its workflow) is left
+ * as it is: the cancel and its end are one conditional update each, so exactly
+ * one wins.
  *
  * Returns false when this review was itself superseded.
  */
@@ -342,41 +346,40 @@ export async function supersedeOlderHeads(
   pull: { tenant: string; repository: string; number: number },
   head: string,
   observed: number,
+  current: () => Promise<string>,
 ): Promise<boolean> {
   // The head a webhook review was requested for is in its request key
   // (`webhook:<sha>`); a retry may since have recorded a newer one.
-  const others =
-    "FROM pull_requests p JOIN reviews r ON r.id=p.review_id WHERE p.tenant=? AND p.repository=? AND p.number=? AND p.trigger='webhook' AND p.review_id!=? AND COALESCE(p.head_sha,substr(p.request_key,9))!=?";
-  const newer = await env.DB.prepare(
-    `SELECT p.review_id ${others} AND r.status!='error' AND p.created_at>? LIMIT 1`,
-  )
-    .bind(pull.tenant, pull.repository, pull.number, review, head, observed)
-    .first();
-  if (newer) {
-    await cancelReview(env, review, SUPERSEDED);
-    return false;
-  }
-  const older = await env.DB.prepare(
-    `SELECT p.review_id ${others} AND r.status IN ('preparing','queued','running') AND r.cancelled=0 AND p.created_at<? AND NOT (COALESCE(p.claimed_until,0)>? AND NOT EXISTS (SELECT 1 FROM jobs j WHERE j.review_id=p.review_id))`,
+  const rivals = await env.DB.prepare(
+    "SELECT p.review_id,COALESCE(p.head_sha,substr(p.request_key,9)) AS head,(r.status IN ('preparing','queued','running') AND r.cancelled=0) AS live,(COALESCE(p.claimed_until,0)>? AND NOT EXISTS (SELECT 1 FROM jobs j WHERE j.review_id=p.review_id)) AS claimed FROM pull_requests p JOIN reviews r ON r.id=p.review_id WHERE p.tenant=? AND p.repository=? AND p.number=? AND p.trigger='webhook' AND p.review_id!=? AND COALESCE(p.head_sha,substr(p.request_key,9))!=? AND r.status!='error' AND ((r.status IN ('preparing','queued','running') AND r.cancelled=0) OR p.created_at>?)",
   )
     .bind(
+      Date.now(),
       pull.tenant,
       pull.repository,
       pull.number,
       review,
       head,
       observed,
-      Date.now(),
     )
-    .all<{ review_id: string }>();
+    .all<{ review_id: string; head: string; live: number; claimed: number }>();
+  if (!rivals.results.length) return true;
+  const latest = await current().catch(() => null);
+  if (!latest) return true;
+  if (latest !== head) {
+    if (!rivals.results.some((r) => r.head === latest)) return true;
+    await cancelReview(env, review, SUPERSEDED);
+    return false;
+  }
   // Each on its own: one that cannot be cancelled now is left to the sweep
   // or a later push, and does not keep this review from starting.
-  for (const old of older.results)
-    await cancelReview(env, old.review_id, SUPERSEDED).catch((error) =>
-      console.log(
-        `rio: review ${old.review_id} could not be superseded: ${(error instanceof Error ? error.message : String(error)).slice(0, 200)}`,
-      ),
-    );
+  for (const old of rivals.results)
+    if (old.live && !old.claimed)
+      await cancelReview(env, old.review_id, SUPERSEDED).catch((error) =>
+        console.log(
+          `rio: review ${old.review_id} could not be superseded: ${(error instanceof Error ? error.message : String(error)).slice(0, 200)}`,
+        ),
+      );
   return true;
 }
 
@@ -546,11 +549,23 @@ export async function handleReviewRequest(
       // follows. Webhook reviews of this PR's older heads still prepared or
       // running are superseded, and this one if a newer head was requested
       // while it read its own.
-      if (
+      const superseded = async () =>
         message.trigger === "webhook" &&
-        !(await supersedeOlderHeads(env, review, message, head, observed))
-      )
-        return;
+        !(await supersedeOlderHeads(
+          env,
+          review,
+          message,
+          head,
+          observed,
+          async () => {
+            const again = await token.request(
+              "GET",
+              `${base}/pulls/${message.number}`,
+            );
+            return String(again?.head?.sha ?? "");
+          },
+        ));
+      if (await superseded()) return;
       await new Store(env).event(review, "review:preparing", {
         repository: message.repository,
         number: message.number,
@@ -612,6 +627,9 @@ export async function handleReviewRequest(
           prepare: spec,
         });
       } else await createPrepareJob(env, review, { prepare: spec });
+      // A newer head requested while this one was prepared left it alone
+      // (claimed, no job yet): with its job in place, it checks once more.
+      await superseded();
     } finally {
       await env.DB.prepare(
         "UPDATE pull_requests SET claim=NULL,claimed_until=NULL WHERE review_id=? AND claim=?",

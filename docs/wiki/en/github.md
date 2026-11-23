@@ -18,7 +18,7 @@ A configured endpoint, GitHub App installed on the origin repository, model rout
 4. Commit the chosen default profile to the base branch, including model routes and `publish: ask`, `auto` or `never`.
 5. Run `rio review --pr 123` with an actual PR number. With `ask`, inspect the preview and confirm, or deliberately supply `--publish` for automation.
 
-Policy is read from the PR's merge base, so the change under review cannot grant itself publication privileges. `rio/base` uses `publish: never` and no models. Open/push events trigger review; authorized maintainers can comment `/rio review` to request a new round and reset the lineage.
+Policy is read from the PR's merge base, so the change under review cannot grant itself publication privileges. `rio/base` uses `publish: never` and no models. Open/push events trigger review; a push that arrives while the review of an older commit is still running cancels that review, which publishes nothing more and completes its check run as neutral ("Review superseded by a newer push"); authorized maintainers can comment `/rio review` to request a new round and reset the lineage.
 
 Preparing a PR (downloading both commits, the snapshot and the graph) may take 15 minutes before the review starts. A large repository allows more in that same merge-base profile with `budget: { prepare: 30m }` (1 to 60 minutes).
 

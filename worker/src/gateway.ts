@@ -970,13 +970,17 @@ async function paced<T>(
 ): Promise<T> {
   const limit = rateLimitOf(ledger);
   for (let strike = 0; ; strike++) {
-    const hold = limit.until - Date.now();
-    if (hold > 0)
+    // Another conversation may extend the hold while this one waits it out.
+    let waited = strike > 0;
+    for (let hold; (hold = limit.until - Date.now()) > 0; waited = true)
       await sleepFor(
         hold + Math.random() * RATE_LIMIT_PAUSES_MS[0],
         limit,
         cancelled,
       );
+    // The waits share a cancellation check up to a slice old: a review
+    // cancelled since is asked afresh before a new call is made for it.
+    if (waited && (await cancelled?.())) throw new Error("cancelled");
     try {
       const result = await attempt(strike);
       limit.since = undefined;
