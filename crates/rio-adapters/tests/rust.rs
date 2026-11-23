@@ -547,6 +547,104 @@ echo '{}'
     assert_eq!(metadata, serde_json::json!({}));
 }
 
+fn link(target: &str) -> rio_git::TreeEntry {
+    rio_git::TreeEntry {
+        mode: 0o120000,
+        object_id: String::new(),
+        content: target.as_bytes().to_vec(),
+    }
+}
+
+/// The sparse workspace with cargo configuration that includes further files,
+/// recursively, and a manifest reached through a directory link.
+fn sparse_metadata_workspace_with_includes_and_links() -> rio_git::Tree {
+    let mut tree = sparse_metadata_workspace();
+    tree.extend([
+        (
+            ".cargo/config.toml".into(),
+            entry("include = ['shared.toml', { path = 'absent.toml', optional = true }]\n"),
+        ),
+        (
+            ".cargo/shared.toml".into(),
+            entry("include = ['../tools/cargo-extra.toml']\n[build]\n"),
+        ),
+        // An include that links to the file it names.
+        (
+            "tools/cargo-extra.toml".into(),
+            link("../config/extra.toml"),
+        ),
+        ("config/extra.toml".into(), entry("[build]\n")),
+        ("tools/unrelated.toml".into(), entry("[unrelated]\n")),
+        (
+            "crates/core/Cargo.toml".into(),
+            link("../../aliases/core.toml"),
+        ),
+        ("aliases".into(), link("manifests")),
+        (
+            "manifests/core.toml".into(),
+            entry("[package]\nname = 'engine'\nversion = '0.1.0'\nedition = '2021'\n"),
+        ),
+    ]);
+    tree
+}
+
+#[test]
+fn sparse_metadata_tree_keeps_configuration_includes_and_resolves_directory_links() {
+    let tree = sparse_metadata_workspace_with_includes_and_links();
+    let (selected, _) = rust_metadata_tree(&tree);
+    for path in [".cargo/config.toml", ".cargo/shared.toml"] {
+        assert_eq!(selected[path], tree[path], "{path}");
+    }
+    assert_eq!(
+        selected["tools/cargo-extra.toml"],
+        tree["config/extra.toml"]
+    );
+    assert!(!selected.contains_key("tools/unrelated.toml"));
+    assert!(!selected.contains_key(".cargo/absent.toml"));
+    let manifest = &selected["crates/core/Cargo.toml"];
+    assert_eq!(manifest.mode, 0o100644);
+    assert_eq!(manifest.content, tree["manifests/core.toml"].content);
+    // An include that leaves the tree is not followed.
+    let mut escaping = tree.clone();
+    escaping.insert(
+        ".cargo/config.toml".into(),
+        entry("include = ['../../outside.toml']\n"),
+    );
+    let (selected, _) = rust_metadata_tree(&escaping);
+    assert!(selected.keys().all(|path| !path.contains("outside")));
+}
+
+#[tokio::test]
+async fn sparse_rust_metadata_reads_configuration_includes_and_linked_manifests() {
+    let tree = sparse_metadata_workspace_with_includes_and_links();
+    let supervisor = ProcessSupervisor::default();
+    let source = tempfile::tempdir().unwrap();
+    let cargo = rust_cargo(
+        &ToolResolver::from_environment(source.path().into()),
+        &tree,
+        ".",
+        &supervisor,
+        CancellationToken::new(),
+    )
+    .await
+    .unwrap();
+    if !require_tool(cargo.is_some(), "cargo for sparse metadata") {
+        return;
+    }
+    let metadata = rust_metadata(
+        &tree,
+        ".",
+        cargo.as_ref().unwrap(),
+        &supervisor,
+        CancellationToken::new(),
+    )
+    .await
+    .unwrap();
+    let mut layout = RepositoryLayout::default();
+    apply_rust_metadata(&mut layout, &metadata);
+    assert!(layout.dependencies["crates/app"].contains("crates/core"));
+}
+
 #[tokio::test]
 async fn sparse_rust_metadata_matches_a_full_copy() {
     let tree = sparse_metadata_workspace();

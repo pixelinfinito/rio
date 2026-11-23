@@ -1401,14 +1401,34 @@ describe("a step that holds the change and ends at a platform limit", () => {
   };
   // As production reported it; it repeats on every attempt there, and here
   // it repeats on two: one more than the step's retry.
-  const limit = (name: string) => async (m: any) => {
-    await m.disableRetryDelays();
-    await m.mockStepError(
-      { name },
-      new Error("Worker exceeded memory limit."),
-      2,
+  const limit =
+    (name: string, times = 2) =>
+    async (m: any) => {
+      await m.disableRetryDelays();
+      await m.mockStepError(
+        { name },
+        new Error("Worker exceeded memory limit."),
+        times,
+      );
+    };
+  it("is retried once: an attempt the platform lost is not a failure", async () => {
+    const { report, calls } = await review({
+      base,
+      head,
+      changed: ["src/a.ts"],
+      // The tests below must not be answered from this one's agent results.
+      steps: agentSteps().map((s) =>
+        s.id === "agents" ? { ...s, with: { ...s.with, cache: false } } : s,
+      ),
+      agents: {},
+      modify: limit("analysis-agents", 1),
+    });
+    expect(calls).toContain("correctness");
+    expect(report.footer.notes.join("\n")).not.toContain(
+      "could not be built",
     );
-  };
+    expect(report.status).toBe("complete");
+  }, 60000);
   it("is retried once, then the agents run without the contract inventory and the report says so", async () => {
     const { report, calls } = await review({
       base,

@@ -17,7 +17,7 @@ import {
   incrementalOf,
   renderDiff,
 } from "../src/workflow";
-import { incrementalChanges } from "../src/lineage";
+import { COUNTED_LINES, incrementalChanges } from "../src/lineage";
 import { LARGE, MemorySnapshot, materialize } from "../src/snapshot";
 import { Requests, SEARCH_REFUSED } from "../src/requests";
 import { hash, validateHypotheses, validateReport } from "../src/validation";
@@ -1148,6 +1148,32 @@ it("reads the change since the previous head a few files at a time, and never a 
     expect(read.bytes).toBeLessThanOrEqual(8192);
     expect(read.paths).not.toContain("data/big.json");
   }
+});
+
+it("counts no lines of a changed file with more than an isolate can hold as strings", async () => {
+  const file = (content: string) => ({ mode: 0o100644, content });
+  // Short lines, well under the size limit: under 1 MiB a version, but as many
+  // lines as COUNTED_LINES allows of both versions together, and more.
+  const many = (tag: string) =>
+    Array.from(
+      { length: COUNTED_LINES / 2 + 1 },
+      (_, i) => `${tag}${i}`,
+    ).join("\n");
+  const memory = new MemorySnapshot({
+    base: {
+      "data/lines.csv": file(many("a")),
+      "src/a.ts": file("a\nb\n"),
+    },
+    head: {
+      "data/lines.csv": file(many("b")),
+      "src/a.ts": file("a\nc\n"),
+    },
+  });
+  const paths = ["data/lines.csv", "src/a.ts"];
+  expect(await incrementalOf(memory.base, memory.head, paths)).toEqual([
+    { path: "data/lines.csv" },
+    { path: "src/a.ts", lines_changed: 2 },
+  ]);
 });
 
 it("names a changed file too large to hold in an agent's prompt, without reading it", async () => {

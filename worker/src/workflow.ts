@@ -437,7 +437,7 @@ export async function differing(
  * Both versions of 243 files (59 MiB of text) held together, on every replay
  * of the review, ended diff-only rounds of a pull request that had merged its
  * base. A file too large to hold is changed when its entry differs, without a
- * count of its lines.
+ * count of its lines, as is one of more lines than `COUNTED_LINES`.
  */
 export async function incrementalOf(
   before: TreeReader,
@@ -2631,7 +2631,8 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             trees,
             head,
             graphs.head,
-            new Set(incremental.map((f) => f.path)),
+            // Without the previous head the round reviewed the whole change.
+            previousHead ? new Set(incremental.map((f) => f.path)) : null,
           );
           candidates = reverify.verify;
           verified.push(...reverify.carried);
@@ -3013,14 +3014,14 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           lineage.previous_head &&
           lineage.previous_head_key
         ) {
-          const previous = await StoredSnapshot.open(
-            this.env,
-            lineage.previous_head_key,
-          );
           // The change since the previous head is read once, in a step, a
           // few MiB at a time: a replay reads its list, not both versions of
           // its files again.
           try {
+            const previous = await StoredSnapshot.open(
+              this.env,
+              lineage.previous_head_key,
+            );
             const key = await step.do(
               "lineage-incremental",
               ANALYSIS_STEP,

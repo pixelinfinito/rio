@@ -56,7 +56,9 @@ export class Store {
       JSON.stringify(
         key.startsWith("snapshots/") ||
           key.endsWith("/submission.json") ||
-          key.endsWith("/payload.json")
+          key.endsWith("/payload.json") ||
+          // Paths of the change, as in the submission; no content.
+          key.endsWith("/lineage-incremental.json")
           ? value
           : scrub(value),
       ),

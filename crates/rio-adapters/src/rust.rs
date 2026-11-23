@@ -320,9 +320,10 @@ pub fn rust_lint_tools(tree: &Tree, root: &str) -> Vec<&'static str> {
 }
 
 /// The part of a tree `cargo metadata --no-deps` reads: manifests, lockfiles,
-/// toolchain and cargo configuration with their content, every symbolic link
-/// and submodule, and empty stand-ins for Rust sources and READMEs, whose
-/// existence alone drives target and readme inference. Also returns every
+/// toolchain and cargo configuration, with the in-tree files it includes, all
+/// with their content; every symbolic link and submodule; and empty stand-ins
+/// for Rust sources and READMEs, whose existence alone drives target and
+/// readme inference. Also returns every
 /// directory of the full tree, since a workspace member glob that matches a
 /// directory without a manifest is an error.
 pub fn rust_metadata_tree(tree: &Tree) -> (Tree, std::collections::BTreeSet<String>) {
@@ -351,7 +352,7 @@ pub fn rust_metadata_tree(tree: &Tree) -> (Tree, std::collections::BTreeSet<Stri
         }
         // A link that resolves within the tree becomes the file it names: cargo
         // reads a manifest relative to the path it was found at, not its target.
-        let written = match resolve_file(tree, path) {
+        let written = match resolve_through_links(tree, path) {
             Some(file) => rio_git::TreeEntry {
                 mode: 0o100644,
                 object_id: String::new(),
@@ -365,7 +366,123 @@ pub fn rust_metadata_tree(tree: &Tree) -> (Tree, std::collections::BTreeSet<Stri
         };
         selected.insert(path.clone(), written);
     }
+    // Cargo fails when a required `include` of a configuration file is
+    // missing, so in-tree includes are kept, recursively, with their content.
+    let mut pending: Vec<String> = selected
+        .keys()
+        .filter(|path| {
+            let (directory, name) = path.rsplit_once('/').unwrap_or(("", path.as_str()));
+            matches!(name, "config" | "config.toml")
+                && directory.rsplit('/').next() == Some(".cargo")
+        })
+        .cloned()
+        .collect();
+    while let Some(path) = pending.pop() {
+        let Some(text) = selected
+            .get(&path)
+            .and_then(|entry| std::str::from_utf8(&entry.content).ok())
+        else {
+            continue;
+        };
+        let Ok(value) = toml::from_str::<toml::Value>(text) else {
+            continue;
+        };
+        let includes: Vec<&str> = match value.get("include") {
+            Some(toml::Value::String(include)) => vec![include.as_str()],
+            Some(toml::Value::Array(includes)) => includes
+                .iter()
+                .filter_map(|include| match include {
+                    toml::Value::String(include) => Some(include.as_str()),
+                    toml::Value::Table(table) => table.get("path")?.as_str(),
+                    _ => None,
+                })
+                .collect(),
+            _ => continue,
+        };
+        let directory = path.rsplit_once('/').map_or("", |(directory, _)| directory);
+        for include in includes {
+            let Some(included) = join_relative(directory, include) else {
+                continue;
+            };
+            // A link is replaced by the file it names, as a manifest is.
+            if selected
+                .get(&included)
+                .is_some_and(|entry| entry.mode != 0o120000)
+            {
+                continue;
+            }
+            if let Some(file) = resolve_through_links(tree, &included) {
+                selected.insert(
+                    included.clone(),
+                    rio_git::TreeEntry {
+                        mode: 0o100644,
+                        object_id: String::new(),
+                        content: file.content.clone(),
+                    },
+                );
+                pending.push(included);
+            }
+        }
+    }
     (selected, directories)
+}
+
+/// `relative` joined to the tree directory `directory`, or None when it is
+/// absolute or leaves the tree.
+fn join_relative(directory: &str, relative: &str) -> Option<String> {
+    if relative.starts_with('/') || relative.contains('\\') {
+        return None;
+    }
+    let mut parts: Vec<&str> = directory
+        .split('/')
+        .filter(|part| !part.is_empty())
+        .collect();
+    for part in relative.split('/') {
+        match part {
+            "" | "." => {}
+            ".." => {
+                parts.pop()?;
+            }
+            part => parts.push(part),
+        }
+    }
+    (!parts.is_empty()).then(|| parts.join("/"))
+}
+
+/// The regular file `path` names within the tree, following symbolic links in
+/// any of its components, not only the last: `aliases/Cargo.toml` resolves
+/// when `aliases` links to a directory. None for submodules, absolute or
+/// escaping targets, missing files and link cycles.
+fn resolve_through_links<'a>(tree: &'a Tree, path: &str) -> Option<&'a rio_git::TreeEntry> {
+    let mut parts: Vec<String> = path.split('/').map(str::to_owned).collect();
+    let mut hops = 0;
+    let mut index = 0;
+    while index < parts.len() {
+        let prefix = parts[..=index].join("/");
+        let last = index + 1 == parts.len();
+        match tree.get(&prefix) {
+            None if last => return None,
+            // Not an entry of its own: a directory, or nothing.
+            None => index += 1,
+            Some(entry) if entry.mode == 0o160000 => return None,
+            Some(entry) if entry.mode == 0o120000 => {
+                hops += 1;
+                if hops > 40 {
+                    return None;
+                }
+                let target = std::str::from_utf8(&entry.content).ok()?;
+                let resolved = join_relative(&parts[..index].join("/"), target)?;
+                let rest = parts.split_off(index + 1);
+                parts = resolved.split('/').map(str::to_owned).collect();
+                parts.extend(rest);
+                index = 0;
+            }
+            Some(entry) if last => return Some(entry),
+            // A file used as a directory.
+            Some(_) => return None,
+        }
+    }
+    None
 }
 
 /// Cargo metadata is read from the selected source, under process supervision.

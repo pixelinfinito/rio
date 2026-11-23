@@ -169,6 +169,22 @@ export function traceInputs(
         version === "base" ? (f.old_path ?? f.path) : f.path,
       ),
     );
+    // The edges are read once, not once for each changed node: that costs
+    // their count times the nodes', on a graph a profile let grow.
+    const callersOf = new Map<string, string[]>(),
+      calleesOf = new Map<string, string[]>();
+    const add = (map: Map<string, string[]>, id: string, other: string) => {
+      const labelled = label.get(other);
+      if (!labelled) return;
+      const list = map.get(id);
+      if (list) list.push(labelled);
+      else map.set(id, [labelled]);
+    };
+    for (const e of graph.edges) {
+      if (e.kind === "defines") continue;
+      add(callersOf, e.to, e.from);
+      add(calleesOf, e.from, e.to);
+    }
     for (const node of graph.nodes) {
       if (
         !changedPaths.has(node.path) ||
@@ -176,14 +192,8 @@ export function traceInputs(
         !node.symbol_path
       )
         continue;
-      const callers = graph.edges
-        .filter((e) => e.to === node.id && e.kind !== "defines")
-        .map((e) => label.get(e.from))
-        .filter((x): x is string => !!x);
-      const callees = graph.edges
-        .filter((e) => e.from === node.id && e.kind !== "defines")
-        .map((e) => label.get(e.to))
-        .filter((x): x is string => !!x);
+      const callers = callersOf.get(node.id) ?? [];
+      const callees = calleesOf.get(node.id) ?? [];
       if (callers.length || callees.length)
         neighbours.push({
           version,
