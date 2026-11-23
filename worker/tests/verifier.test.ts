@@ -640,6 +640,63 @@ describe("quorum", () => {
     expect([...final.values()].map((v) => v.status)).toEqual(["completed", "completed", "completed"]);
     expect([...final.values()].map((v) => v.blind_match)).toEqual(["same", "same", "same"]);
   });
+  it("asks a voter again for a disclosed vote outside the schema or the reclassification rules instead of failing it", async () => {
+    // Production replies: a `note` beside the evidence, a reference without
+    // `demonstrates`, and an upward reclassification.
+    const wrong = [
+      { evidence_level: "plausible", evidence: [], note: "Correction to my earlier answer" },
+      { evidence_level: "plausible", evidence: [{ kind: "code", version: "head", path: "src/a.ts" }] },
+      { evidence_level: "plausible", evidence: [], category: "security", reclassification_reason: "worse" },
+    ];
+    let disclosures = 0;
+    const corrections: string[] = [];
+    const gateway: Gateway = {
+      async complete(request) {
+        const last = String(request.messages.at(-1)!.content);
+        const disclosed = request.messages.some((m) =>
+          m.content.includes("Verify this hypothesis."),
+        );
+        const corrected = last.startsWith("Host: your result was not accepted");
+        if (corrected) corrections.push(last);
+        // Each voter's first disclosed answer is one of the wrong ones.
+        return {
+          content: JSON.stringify({
+            result: !disclosed
+              ? []
+              : corrected
+                ? { evidence_level: "plausible", evidence: [] }
+                : wrong[disclosures++],
+          }),
+          input_tokens: 20,
+          output_tokens: 10,
+          cost_usd: 0.0001,
+        };
+      },
+    };
+    const saved: Vote[] = [];
+    await verifyHypothesis({
+      profile,
+      hypothesis,
+      intent: "",
+      guidance: [],
+      snapshot,
+      context: { snapshot, head: graphs.head, executions: {}, guidance: [] },
+      gateway,
+      ledger: new MemoryLedger(),
+      tools: () => new Tools(snapshot, graphs, undefined),
+      verifyTokens: 10000,
+      save: async (v) => {
+        saved.push(structuredClone(v));
+      },
+    });
+    expect(corrections).toHaveLength(3);
+    expect(corrections.join("\n")).toContain("must NOT have additional properties");
+    expect(corrections.join("\n")).toContain("must have required property 'demonstrates'");
+    expect(corrections.join("\n")).toContain("invalid downward reclassification");
+    const final = new Map(saved.map((v) => [v.voter, v]));
+    expect([...final.values()].map((v) => v.status)).toEqual(["completed", "completed", "completed"]);
+    expect([...final.values()].every((v) => !("note" in v.answer!))).toBe(true);
+  });
   it("gives a risk hypothesis the profile's risk voters and every other the full quorum", async () => {
     const complete: Gateway["complete"] = async (request) => ({
       content: JSON.stringify({

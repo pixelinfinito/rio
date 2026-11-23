@@ -500,9 +500,10 @@ export class ProviderGateway implements Gateway {
       });
       // Never persist provider response bodies on failure: they can contain
       // credentials or raw prompts. A refused request names only its error code.
+      // A rate limit names how long the provider asked the caller to wait.
       invariant(
         response.ok,
-        `provider failed (${response.status}${response.status === 400 ? await errorCode(response) : ""})`,
+        `provider failed (${response.status}${response.status === 400 ? await errorCode(response) : ""})${response.status === 429 ? retryAfterOf(response.headers) : ""}`,
       );
       const result: any = await response.json();
       const content = anthropic
@@ -526,7 +527,9 @@ export class ProviderGateway implements Gateway {
         !/omitted content or usage|provider failed \((429|5\d\d)\)/.test(
           message,
         ) ||
-        request.signal?.aborted
+        request.signal?.aborted ||
+        // A rate limit that asks for a longer wait is paced by `converse`.
+        retryAfterMs(message) > RETRY_DELAY_MS
       )
         throw error;
       await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
@@ -587,6 +590,31 @@ async function errorCode(response: Response): Promise<string> {
   } catch {
     return "";
   }
+}
+/**
+ * The wait a rate-limited response asks for, as the suffix of the failure
+ * message (` retry after 30 s`): `retry-after-ms`, or `retry-after` in seconds
+ * or as a date. The message is what crosses a model call's step.
+ */
+function retryAfterOf(headers: Headers): string {
+  const ms = Number(headers.get("retry-after-ms"));
+  const value = headers.get("retry-after")?.trim() ?? "";
+  const after =
+    Number.isFinite(ms) && ms > 0
+      ? ms
+      : /^\d+(\.\d+)?$/.test(value)
+        ? Number(value) * 1000
+        : value
+          ? Date.parse(value) - Date.now()
+          : NaN;
+  return Number.isFinite(after) && after > 0
+    ? ` retry after ${Math.ceil(after / 1000)} s`
+    : "";
+}
+/** The wait a failure message names, in milliseconds; 0 when it names none. */
+export function retryAfterMs(message: string): number {
+  const match = /retry after (\d+) s/.exec(message);
+  return match ? Number(match[1]) * 1000 : 0;
 }
 export function parseModelOutput(content: string): any {
   try {
@@ -875,6 +903,104 @@ export const RETRY_PAUSES_MS = [20000, 60000, 120000];
 const RETRY_NAMES = ["third", "fourth", "fifth"];
 /** A call the provider failed without producing anything. */
 const PROVIDER_OUTAGE = /provider failed \(5\d\d/;
+/** A call the provider refused for its rate limit, which produced nothing either. */
+const RATE_LIMITED = /provider failed \(429\)/;
+/**
+ * Pauses before a turn the provider refused with a 429 is sent again: each at
+ * least the provider's `Retry-After`, and longer by up to the pause again at
+ * random, so a review's refused calls do not return together. A review's
+ * verify step starts some 36 calls at once; when the provider refused them,
+ * every one was sent once more 2 s later, refused again, and its vote failed:
+ * 259 votes of five reviews in twelve minutes.
+ */
+export const RATE_LIMIT_PAUSES_MS = [15000, 30000, 60000, 120000];
+/**
+ * How long a review's calls may have been refused, with no call answered in
+ * between, before a refused turn is not sent again: the longest one turn's
+ * pauses can take. Votes started after that fail at once, not after pauses of
+ * their own.
+ */
+const RATE_LIMIT_SPAN_MS = 2 * RATE_LIMIT_PAUSES_MS.reduce((a, b) => a + b, 0);
+/** Longest stretch of a pause between checks that the review is still running. */
+export const PAUSE_SLICE_MS = 10000;
+/**
+ * The rate limiting a review's conversations meet, shared through the
+ * review's ledger: while one call waits out a refusal, the review's other
+ * calls hold back too instead of meeting the limit again (`until`); `since` is
+ * when the refusals began, cleared by any answered call. One cancellation
+ * check per slice serves all of the review's waiting calls.
+ */
+interface RateLimit {
+  until: number;
+  since?: number;
+  check?: { at: number; cancelled: Promise<boolean> };
+}
+const rateLimits = new WeakMap<Ledger, RateLimit>();
+function rateLimitOf(ledger: Ledger): RateLimit {
+  let limit = rateLimits.get(ledger);
+  if (!limit) rateLimits.set(ledger, (limit = { until: 0 }));
+  return limit;
+}
+/** Waits `ms` in slices, ending with "cancelled" once the review is stopped. */
+async function sleepFor(
+  ms: number,
+  limit: RateLimit,
+  cancelled?: () => Promise<boolean>,
+) {
+  for (let left = ms; left > 0; left -= PAUSE_SLICE_MS) {
+    await new Promise((done) =>
+      setTimeout(done, Math.min(left, PAUSE_SLICE_MS)),
+    );
+    if (!cancelled) continue;
+    const now = Date.now();
+    if (!limit.check || now - limit.check.at >= PAUSE_SLICE_MS)
+      limit.check = { at: now, cancelled: cancelled() };
+    if (await limit.check.cancelled) throw new Error("cancelled");
+  }
+}
+/**
+ * Sends a turn (`attempt(strike)`, with strike 0 the first time) until the
+ * provider stops refusing it for its rate limit, pausing as
+ * `RATE_LIMIT_PAUSES_MS` says, within the review's deadline.
+ */
+async function paced<T>(
+  ledger: Ledger,
+  cancelled: (() => Promise<boolean>) | undefined,
+  attempt: (strike: number) => Promise<T>,
+): Promise<T> {
+  const limit = rateLimitOf(ledger);
+  for (let strike = 0; ; strike++) {
+    const hold = limit.until - Date.now();
+    if (hold > 0)
+      await sleepFor(
+        hold + Math.random() * RATE_LIMIT_PAUSES_MS[0],
+        limit,
+        cancelled,
+      );
+    try {
+      const result = await attempt(strike);
+      limit.since = undefined;
+      return result;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "";
+      if (!RATE_LIMITED.test(message) || strike >= RATE_LIMIT_PAUSES_MS.length)
+        throw error;
+      const now = Date.now();
+      limit.since ??= now;
+      const least = Math.max(RATE_LIMIT_PAUSES_MS[strike], retryAfterMs(message));
+      const wait = least + Math.random() * RATE_LIMIT_PAUSES_MS[strike];
+      // Refusals that outlast the pauses, or a wait past the review's
+      // deadline, end the turn now.
+      if (
+        now - limit.since >= RATE_LIMIT_SPAN_MS ||
+        ((await ledger.remainingMs?.()) ?? Infinity) <= wait
+      )
+        throw error;
+      limit.until = Math.max(limit.until, now + least);
+      await sleepFor(wait, limit, cancelled);
+    }
+  }
+}
 const MAX_CONSECUTIVE_REPAIRS = 2;
 /** Tool calls run per model turn; later calls in a batch are answered with the limit. */
 const MAX_TOOLS_PER_TURN = 8;
@@ -1048,7 +1174,8 @@ export async function converse(options: {
         // call that may have been charged.
         if (
           error instanceof Error &&
-          PROVIDER_OUTAGE.test(error.message) &&
+          (PROVIDER_OUTAGE.test(error.message) ||
+            RATE_LIMITED.test(error.message)) &&
           !(error as Error & { charged?: boolean }).charged
         )
           await o.ledger.settle(reservation, {
@@ -1077,10 +1204,10 @@ export async function converse(options: {
       return response;
     };
     const send = (id: string) => (o.call ? o.call(id, action) : action());
-    const response = await send(`${o.actor}-${o.phase}-${turn}`).catch(
-      (error) => {
-        // A long conversation is not given up for one call the provider cut
-        // off or refused: the turn is sent once more, as a call of its own.
+    // A long conversation is not given up for one call the provider cut off
+    // or refused: the turn is sent once more, as a call of its own.
+    const sendTurn = (name: string) =>
+      send(name).catch((error) => {
         if (
           !o.retryCall ||
           !/timeout|provider failed \((400|5\d\d)/.test(
@@ -1088,39 +1215,36 @@ export async function converse(options: {
           )
         )
           throw error;
-        return send(`${o.actor}-${o.phase}-${turn}-again`).catch(
-          async (again) => {
-            // A provider that is briefly unavailable answers both attempts
-            // with a 5xx: one more is sent after a pause.
-            if (
-              !PROVIDER_OUTAGE.test(
-                again instanceof Error ? again.message : "",
-              )
-            )
-              throw again;
-            let failed: unknown = again;
-            for (const [index, pause] of RETRY_PAUSES_MS.entries()) {
-              await new Promise((done) => setTimeout(done, pause));
-              // A review cancelled or past its deadline during the pause sends nothing more.
-              if (await o.cancelled?.()) throw new Error("cancelled");
-              try {
-                return await send(
-                  `${o.actor}-${o.phase}-${turn}-${RETRY_NAMES[index]}`,
-                );
-              } catch (error) {
-                failed = error;
-                if (
-                  !PROVIDER_OUTAGE.test(
-                    error instanceof Error ? error.message : "",
-                  )
+        return send(`${name}-again`).catch(async (again) => {
+          // A provider that is briefly unavailable answers both attempts
+          // with a 5xx: one more is sent after a pause.
+          if (!PROVIDER_OUTAGE.test(again instanceof Error ? again.message : ""))
+            throw again;
+          let failed: unknown = again;
+          for (const [index, pause] of RETRY_PAUSES_MS.entries()) {
+            await new Promise((done) => setTimeout(done, pause));
+            // A review cancelled or past its deadline during the pause sends nothing more.
+            if (await o.cancelled?.()) throw new Error("cancelled");
+            try {
+              return await send(`${name}-${RETRY_NAMES[index]}`);
+            } catch (error) {
+              failed = error;
+              if (
+                !PROVIDER_OUTAGE.test(
+                  error instanceof Error ? error.message : "",
                 )
-                  break;
-              }
+              )
+                break;
             }
-            throw failed;
-          },
-        );
-      },
+          }
+          throw failed;
+        });
+      });
+    // A turn the provider refused for its rate limit is sent again after a
+    // pause, as calls of their own (`-limited-1`, ...).
+    const name = `${o.actor}-${o.phase}-${turn}`;
+    const response = await paced(o.ledger, o.cancelled, (strike) =>
+      sendTurn(strike ? `${name}-limited-${strike}` : name),
     );
     checkpoint = undefined;
     const total = response.input_tokens + response.output_tokens;

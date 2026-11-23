@@ -168,6 +168,25 @@ export function panelOf(
       : verify.voters;
   return { voters, quorum: Math.min(verify.quorum, voters) };
 }
+/** A disclosed answer within the vote schema whose reclassification, if any, is downward. */
+function acceptAnswer(value: any, hypothesis: Hypothesis) {
+  const answer = validateAnswer(value);
+  if (answer.category && answer.category !== hypothesis.category) {
+    const downward: Record<string, number> = {
+      security: 4,
+      defect: 4,
+      risk: 3,
+      diagnostic: 2,
+      style: 1,
+    };
+    if (
+      !answer.reclassification_reason ||
+      downward[answer.category] >= downward[hypothesis.category]
+    )
+      throw new Error("invalid downward reclassification");
+  }
+  return answer;
+}
 export async function verifyHypothesis(
   o: VerifyOptions,
 ): Promise<{ verified: Verified; votes: Vote[] }> {
@@ -254,30 +273,28 @@ export async function verifyHypothesis(
               ]),
             );
           messages.push(disclosure(single));
-          vote.answer = validateAnswer(
+          vote.answer = acceptAnswer(
             await converse({
               ...options,
               singleSystem: single,
               phase: "verify-disclosed",
+              // A vote outside the schema, such as one with a `note` beside
+              // its evidence, or a reclassification the rules do not permit,
+              // is sent back with the reason instead of failing the vote.
+              validateResult: (value) => {
+                try {
+                  return acceptAnswer(value, o.hypothesis);
+                } catch (error) {
+                  const reason = error instanceof Error ? error.message : "";
+                  throw new Refused(
+                    reason,
+                    `Host: your result was not accepted: ${reason.slice(0, 300)}. Reply with {"result":{...}} again, following the vote schema exactly, with no fields it does not name.`,
+                  );
+                }
+              },
             }),
+            o.hypothesis,
           );
-          if (
-            vote.answer.category &&
-            vote.answer.category !== o.hypothesis.category
-          ) {
-            const downward: Record<string, number> = {
-              security: 4,
-              defect: 4,
-              risk: 3,
-              diagnostic: 2,
-              style: 1,
-            };
-            if (
-              !vote.answer.reclassification_reason ||
-              downward[vote.answer.category] >= downward[o.hypothesis.category]
-            )
-              throw new Error("invalid downward reclassification");
-          }
           vote.validated_level = evidenceLevel(
             vote.answer,
             o.hypothesis,

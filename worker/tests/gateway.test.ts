@@ -2,6 +2,8 @@ import { describe, it, expect, vi } from "vitest";
 import {
   ProviderGateway,
   Refused,
+  PAUSE_SLICE_MS,
+  RATE_LIMIT_PAUSES_MS,
   RETRY_PAUSES_MS,
   converse,
   joinUrl,
@@ -1619,6 +1621,215 @@ it("sends a turn up to three more times, after growing pauses, while the provide
   } finally {
     vi.useRealTimers();
   }
+});
+it("names the provider's Retry-After in a rate limit and waits for it instead of retrying at once", async () => {
+  vi.useFakeTimers();
+  try {
+    const env = {
+      AI_GATEWAY_URL: "https://gateway.ai.cloudflare.com/v1/acct/rio/",
+      AI_GATEWAY_TOKEN: "gateway-token",
+      AI_GATEWAY_PROVIDERS: JSON.stringify({ "node-openai": { protocol: "openai" } }),
+    } as Env;
+    const refuse = async (headers: Record<string, string>) => {
+      let sent = 0;
+      const failed = new ProviderGateway(env, async () => {
+        sent++;
+        return new Response("rate limited: secret", { status: 429, headers });
+      })
+        .complete({ ...request, model: "openai/custom-node-openai/gpt-6-sol" })
+        .catch((error) => error);
+      await vi.advanceTimersByTimeAsync(5000);
+      return { message: (await failed).message, sent };
+    };
+    // A wait longer than the gateway's own retry is left to the caller.
+    expect(await refuse({ "retry-after": "30" })).toEqual({
+      message: "provider failed (429) retry after 30 s",
+      sent: 1,
+    });
+    expect(
+      await refuse({ "retry-after": new Date(Date.now() + 90000).toUTCString() }),
+    ).toMatchObject({ message: expect.stringMatching(/^provider failed \(429\) retry after (89|90) s$/), sent: 1 });
+    expect(await refuse({ "retry-after-ms": "1500" })).toEqual({
+      message: "provider failed (429) retry after 2 s",
+      sent: 2,
+    });
+    expect(await refuse({})).toEqual({ message: "provider failed (429)", sent: 2 });
+  } finally {
+    vi.useRealTimers();
+  }
+});
+describe("a provider's rate limit", () => {
+  const answer = {
+    content: '{"result":["done"]}',
+    input_tokens: 80,
+    output_tokens: 50,
+    cost_usd: null,
+  };
+  /** One conversation of a review whose ledger the conversations share. */
+  const talk = (
+    ledger: Ledger,
+    complete: () => Promise<typeof answer>,
+    actor = "v",
+    cancelled?: () => Promise<boolean>,
+  ) => {
+    const ids: string[] = [];
+    const result = converse({
+      gateway: { complete },
+      ledger,
+      actor,
+      phase: "verify-blind",
+      model: "openai/test",
+      allowance: { remaining: 1000000 },
+      messages: [{ role: "user" as const, content: "verify" }],
+      dispatch: async () => ({ content: "source" }),
+      call: async (id, action) => {
+        ids.push(id);
+        return action();
+      },
+      cancelled,
+    });
+    result.catch(() => {});
+    return { result, ids };
+  };
+  const review = (remainingMs = 3600000) => {
+    const settled: number[] = [];
+    const ledger: Ledger = {
+      remaining: async () => 100000000,
+      remainingMs: async () => remainingMs,
+      reserve: async () => "id",
+      settle: async (_, usage) => {
+        settled.push(usage.input_tokens + usage.output_tokens);
+      },
+    };
+    return { ledger, settled };
+  };
+  it("sends a refused turn again after the provider's Retry-After, and releases each refused call's reservation", async () => {
+    vi.useFakeTimers();
+    vi.spyOn(Math, "random").mockReturnValue(0);
+    try {
+      const { ledger, settled } = review();
+      let calls = 0;
+      const one = talk(ledger, async () => {
+        if (calls++ < 2) throw new Error("provider failed (429) retry after 40 s");
+        return answer;
+      });
+      // The provider asked for 40 s, longer than the first pause.
+      await vi.advanceTimersByTimeAsync(39000);
+      expect(one.ids).toEqual(["v-verify-blind-0"]);
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(one.ids).toHaveLength(2);
+      await vi.advanceTimersByTimeAsync(40000);
+      await expect(one.result).resolves.toEqual(["done"]);
+      expect(one.ids).toEqual([
+        "v-verify-blind-0",
+        "v-verify-blind-0-limited-1",
+        "v-verify-blind-0-limited-2",
+      ]);
+      expect(settled).toEqual([0, 0, 130]);
+      // Without a Retry-After the pauses grow, each by up to itself again.
+      vi.spyOn(Math, "random").mockReturnValue(0.5);
+      const plain = review();
+      let refused = 0;
+      const two = talk(plain.ledger, async () => {
+        if (refused++ < 2) throw new Error("provider failed (429)");
+        return answer;
+      });
+      await vi.advanceTimersByTimeAsync(RATE_LIMIT_PAUSES_MS[0] * 1.5 - 1);
+      expect(two.ids).toHaveLength(1);
+      await vi.advanceTimersByTimeAsync(1);
+      expect(two.ids).toHaveLength(2);
+      await vi.advanceTimersByTimeAsync(RATE_LIMIT_PAUSES_MS[1] * 1.5);
+      await expect(two.result).resolves.toEqual(["done"]);
+    } finally {
+      vi.restoreAllMocks();
+      vi.useRealTimers();
+    }
+  });
+  it("delays a review's burst of refused calls, holding its other calls back and spreading their return", async () => {
+    vi.useFakeTimers();
+    try {
+      const { ledger } = review();
+      // The provider refuses every call for the first 50 s.
+      const start = Date.now();
+      const sentAt: number[] = [];
+      const complete = async () => {
+        sentAt.push(Date.now() - start);
+        if (Date.now() - start < 50000) throw new Error("provider failed (429)");
+        return answer;
+      };
+      const burst = Array.from({ length: 36 }, (_, n) => talk(ledger, complete, `v${n}`));
+      await vi.advanceTimersByTimeAsync(1000);
+      // A call started while the review is refused holds back before sending.
+      const late = talk(ledger, complete, "late");
+      await vi.advanceTimersByTimeAsync(RATE_LIMIT_PAUSES_MS[0] - 1001);
+      expect(late.ids).toEqual([]);
+      await vi.advanceTimersByTimeAsync(RATE_LIMIT_PAUSES_MS.reduce((a, b) => a + b, 0) * 2);
+      for (const { result } of [...burst, late])
+        await expect(result).resolves.toEqual(["done"]);
+      // Retries were spread over time, not sent together.
+      const retries = sentAt.filter((t) => t > 0);
+      expect(new Set(retries.map((t) => Math.floor(t / 1000))).size).toBeGreaterThan(10);
+      // No conversation sent more than its first call and its four retries.
+      for (const { ids } of burst) expect(ids.length).toBeLessThanOrEqual(5);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+  it("fails a refused turn once the refusals outlast its pauses, the deadline or the review", async () => {
+    vi.useFakeTimers();
+    try {
+      const refuse = async () => {
+        throw new Error("provider failed (429)");
+      };
+      const all = RATE_LIMIT_PAUSES_MS.reduce((a, b) => a + b, 0);
+      const { ledger } = review();
+      const sustained = talk(ledger, refuse);
+      await vi.advanceTimersByTimeAsync(all * 2);
+      await expect(sustained.result).rejects.toThrow("provider failed (429)");
+      expect(sustained.ids).toHaveLength(1 + RATE_LIMIT_PAUSES_MS.length);
+      // A turn of the same review, refused long after the refusals began,
+      // is not paced again: the review's other votes fail at once.
+      const after = talk(ledger, refuse, "after");
+      await vi.advanceTimersByTimeAsync(all * 2);
+      await expect(after.result).rejects.toThrow("provider failed (429)");
+      expect(after.ids).toHaveLength(1);
+      // A call the provider answers in between starts the pacing afresh.
+      const fresh = review();
+      let calls = 0;
+      const recovered = talk(fresh.ledger, async () => {
+        if (calls++ % 2 === 0) throw new Error("provider failed (429)");
+        return answer;
+      });
+      await vi.advanceTimersByTimeAsync(all * 2);
+      await expect(recovered.result).resolves.toEqual(["done"]);
+      // A pause past the review's deadline is not taken.
+      const closing = talk(review(10000).ledger, refuse);
+      await vi.advanceTimersByTimeAsync(1);
+      await expect(closing.result).rejects.toThrow("provider failed (429)");
+      expect(closing.ids).toHaveLength(1);
+      // A review cancelled during a pause stops within a slice of it.
+      let stopped = false;
+      let checks = 0;
+      const shared = review().ledger;
+      const cancelled = async () => {
+        checks++;
+        return stopped;
+      };
+      const pausing = [talk(shared, refuse, "a", cancelled), talk(shared, refuse, "b", cancelled)];
+      await vi.advanceTimersByTimeAsync(1);
+      stopped = true;
+      const before = checks;
+      await vi.advanceTimersByTimeAsync(PAUSE_SLICE_MS);
+      for (const { result, ids } of pausing) {
+        await expect(result).rejects.toThrow("cancelled");
+        expect(ids).toHaveLength(1);
+      }
+      // The waiting conversations of a review share one check per slice.
+      expect(checks - before).toBe(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });
 it("names the provider's error code for a refused request and nothing else of the body", async () => {
   const env = {
