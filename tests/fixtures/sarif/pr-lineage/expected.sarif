@@ -62,7 +62,7 @@
             "status": "open",
             "verification": {
               "voters": 3,
-              "agreeing": 3,
+              "agreeing": 2,
               "blind_match": [
                 "none",
                 "none",
@@ -106,7 +106,7 @@
             "status": "open",
             "verification": {
               "voters": 3,
-              "agreeing": 3,
+              "agreeing": 2,
               "blind_match": [
                 "none",
                 "none",

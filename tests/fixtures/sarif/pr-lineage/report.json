@@ -52,7 +52,7 @@
       "evidence_level": "static_proven",
       "verification": {
         "voters": 3,
-        "agreeing": 3,
+        "agreeing": 2,
         "blind_match": [
           "none",
           "none",
@@ -98,7 +98,7 @@
       "evidence_level": "static_proven",
       "verification": {
         "voters": 3,
-        "agreeing": 3,
+        "agreeing": 2,
         "blind_match": [
           "none",
           "none",
@@ -183,26 +183,26 @@
           "read_ratio": null
         },
         "verify-blind": {
-          "calls": 6,
+          "calls": 4,
           "calls_reporting_cache": 0,
           "unverified_calls": 0,
-          "input_tokens": 480,
+          "input_tokens": 320,
           "cache_read_input_tokens": null,
           "cache_write_input_tokens": null,
-          "output_tokens": 300,
+          "output_tokens": 200,
           "cost_usd_by_source": {
             "unknown": null
           },
           "read_ratio": null
         },
         "verify-disclosed": {
-          "calls": 6,
+          "calls": 4,
           "calls_reporting_cache": 0,
           "unverified_calls": 0,
-          "input_tokens": 480,
+          "input_tokens": 320,
           "cache_read_input_tokens": null,
           "cache_write_input_tokens": null,
-          "output_tokens": 300,
+          "output_tokens": 200,
           "cost_usd_by_source": {
             "unknown": null
           },
@@ -211,8 +211,8 @@
       }
     },
     "verification_usage": {
-      "input_tokens": 960,
-      "output_tokens": 600,
+      "input_tokens": 640,
+      "output_tokens": 400,
       "cost_usd": null
     },
     "already_posted": [],

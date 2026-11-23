@@ -578,21 +578,23 @@ describe("quorum", () => {
       },
     });
     expect(result.verified.evidence_level).toBe("static_proven");
-    expect(result.verified.verification.blind_match).toEqual([
-      "none",
-      "none",
-      "none",
-    ]);
-    expect(captured).toHaveLength(6);
+    // Two voters agree, so the third is not asked; the record keeps three seats.
+    expect(result.verified.verification).toMatchObject({
+      voters: 3,
+      agreeing: 2,
+      blind_match: ["none", "none", "none"],
+      split: false,
+    });
+    expect(captured).toHaveLength(4);
     for (const c of captured.filter((c) => c.messages.length === 1)) {
       expect(c.messages[0].content).not.toContain(hypothesis.message);
       expect(c.messages[0].content).not.toContain('"trigger"');
       expect(c.messages[0].content).not.toContain(hypothesis.impact);
     }
-    expect(saved.filter((v) => v.status === "completed")).toHaveLength(3);
+    expect(saved.filter((v) => v.status === "completed")).toHaveLength(2);
     expect(
       ledger.usage.filter((u) => u.phase.startsWith("verify")),
-    ).toHaveLength(6);
+    ).toHaveLength(4);
   });
   it("asks a voter again for a blind result outside the schema instead of failing its vote", async () => {
     const told: string[] = [];
@@ -634,11 +636,11 @@ describe("quorum", () => {
         saved.push(structuredClone(v));
       },
     });
-    expect(told).toHaveLength(3);
+    expect(told).toHaveLength(2);
     expect(told[0]).toContain("/location must NOT have additional properties");
     const final = new Map(saved.map((v) => [v.voter, v]));
-    expect([...final.values()].map((v) => v.status)).toEqual(["completed", "completed", "completed"]);
-    expect([...final.values()].map((v) => v.blind_match)).toEqual(["same", "same", "same"]);
+    expect([...final.values()].map((v) => v.status)).toEqual(["completed", "completed"]);
+    expect([...final.values()].map((v) => v.blind_match)).toEqual(["same", "same"]);
   });
   it("asks a voter again for a disclosed vote outside the schema or the reclassification rules instead of failing it", async () => {
     // Production replies: a `note` beside the evidence, a reference without
@@ -675,7 +677,7 @@ describe("quorum", () => {
     };
     const saved: Vote[] = [];
     await verifyHypothesis({
-      profile,
+      profile: { ...profile, verify: { ...profile.verify, quorum: 3 } },
       hypothesis,
       intent: "",
       guidance: [],
@@ -696,6 +698,94 @@ describe("quorum", () => {
     const final = new Map(saved.map((v) => [v.voter, v]));
     expect([...final.values()].map((v) => v.status)).toEqual(["completed", "completed", "completed"]);
     expect([...final.values()].every((v) => !("note" in v.answer!))).toBe(true);
+  });
+  it("asks the remaining voter only when the first quorum does not settle the outcome", async () => {
+    // Each scenario scripts the disclosed answers in the order voters reach
+    // that turn; the first two run together, so their order is not relied on.
+    const run = async (answers: (Record<string, unknown> | "fail")[]) => {
+      let asked = 0,
+        next = 0;
+      const result = await verifyHypothesis({
+        profile,
+        hypothesis,
+        intent: "",
+        guidance: [],
+        snapshot,
+        context: { snapshot, head: graphs.head, executions: {}, guidance: [] },
+        gateway: {
+          async complete(request) {
+            const disclosed = request.messages.some((m) =>
+              m.content.includes("Verify this hypothesis."),
+            );
+            if (!disclosed) asked++;
+            const answer = disclosed ? answers[next++] : [];
+            if (answer === "fail") throw new Error("provider refused");
+            return {
+              content: JSON.stringify({ result: answer }),
+              input_tokens: 20,
+              output_tokens: 10,
+              cost_usd: 0.0001,
+            };
+          },
+        },
+        ledger: new MemoryLedger(),
+        tools: () => new Tools(snapshot, graphs, undefined),
+        verifyTokens: 10000,
+        save: async () => {},
+      });
+      return {
+        asked,
+        level: result.verified.evidence_level,
+        category: result.verified.category,
+        ...result.verified.verification,
+      };
+    };
+    const plausible = { evidence_level: "plausible", evidence: [] };
+    const proven = {
+      evidence_level: "static_proven",
+      evidence: [
+        {
+          kind: "code",
+          version: "head",
+          path: "src/a.ts",
+          node_ids: ["h"],
+          demonstrates: "regression",
+        },
+      ],
+    };
+    const risk = {
+      ...plausible,
+      category: "risk",
+      reclassification_reason: "not shown to fail",
+    };
+    // Agreement: the third voter could change neither the level nor the category.
+    expect(await run([plausible, plausible, proven])).toMatchObject({
+      asked: 2,
+      level: "plausible",
+      agreeing: 2,
+      voters: 3,
+    });
+    // Different levels: the third voter decides which one a quorum supports.
+    expect(await run([plausible, proven, proven])).toMatchObject({
+      asked: 3,
+      level: "static_proven",
+      agreeing: 2,
+    });
+    // One reclassification: the third voter decides whether a quorum makes it.
+    expect(await run([plausible, risk, risk])).toMatchObject({
+      asked: 3,
+      category: "risk",
+    });
+    expect(await run([risk, risk, plausible])).toMatchObject({
+      asked: 2,
+      category: "risk",
+    });
+    // A vote that did not complete leaves the quorum to the third voter.
+    expect(await run(["fail", plausible, plausible])).toMatchObject({
+      asked: 3,
+      level: "plausible",
+      agreeing: 2,
+    });
   });
   it("gives a risk hypothesis the profile's risk voters and every other the full quorum", async () => {
     const complete: Gateway["complete"] = async (request) => ({
@@ -755,13 +845,20 @@ describe("quorum", () => {
     });
     for (const category of ["defect", "security"] as const)
       expect(await verify({ risk_voters: 1 }, category)).toMatchObject({
-        calls: 6,
-        votes: [0, 1, 2],
+        calls: 4,
+        votes: [0, 1],
         voters: 3,
-        agreeing: 3,
+        agreeing: 2,
+        blind_match: ["none", "none", "none"],
       });
     // Without the setting a risk keeps the profile's voters.
-    expect(await verify({}, "risk")).toMatchObject({ calls: 6, voters: 3 });
+    expect(await verify({}, "risk")).toMatchObject({ calls: 4, voters: 3 });
+    // A quorum of every voter asks every voter.
+    expect(await verify({ quorum: 3 }, "defect")).toMatchObject({
+      calls: 6,
+      votes: [0, 1, 2],
+      agreeing: 3,
+    });
     expect(
       panelOf({ voters: 2, quorum: 2, risk_voters: 5 }, hypothesis),
     ).toEqual({ voters: 2, quorum: 2 });
@@ -895,7 +992,7 @@ describe("quorum", () => {
       verifyTokens: 10000,
       save: async () => {},
     });
-    expect(result.verified.verification.agreeing).toBe(3);
+    expect(result.verified.verification.agreeing).toBe(2);
     const consolidated = consolidate([result.verified], p);
     expect(consolidated.security).toHaveLength(1);
     expect(consolidated.defects).toHaveLength(0);

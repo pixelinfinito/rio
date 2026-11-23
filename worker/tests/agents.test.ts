@@ -595,7 +595,8 @@ describe("contract verification", () => {
         ],
       }),
     });
-    expect(calls.filter((c) => c === "verify")).toHaveLength(3);
+    // Two voters refute it alike, so the third is not asked.
+    expect(calls.filter((c) => c === "verify")).toHaveLength(2);
     expect(
       report.findings.concat(report.risks).map((f: any) => f.rule_id),
     ).not.toContain("contracts/signature/added_required");
@@ -1173,9 +1174,9 @@ describe("an agent under two models", () => {
       [id("correctness/division-by-zero")]: ["default", "second"],
       [id("correctness/missing-count")]: ["second"],
     });
-    // Three voters for the defect, each blind then disclosed, and as many
-    // for the risk: nothing is verified twice.
-    expect(calls.filter((c) => c === "verify")).toHaveLength(6);
+    // Two agreeing voters for the defect and as many for the risk, the third
+    // of each not asked: nothing is verified twice.
+    expect(calls.filter((c) => c === "verify")).toHaveLength(4);
   }, 60000);
 
   it("keeps one model's hypotheses when the other model's review fails, in a partial report that names it", async () => {
@@ -1358,6 +1359,8 @@ describe("default budgets", () => {
         },
         mutate: (s) => {
           s.profile.budget = structuredClone(budget);
+          // Every voter is asked, as when the first two disagree.
+          s.profile.verify = { ...s.profile.verify, quorum: 3 };
         },
       });
       expect(calls.filter((c) => c === "blind")).toHaveLength(3);

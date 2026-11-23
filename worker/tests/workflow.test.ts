@@ -145,7 +145,7 @@ it.each([false, true])(
         "none",
         "none",
       ]);
-      expect(report.agent_audit.verification_usage.input_tokens).toBe(480);
+      expect(report.agent_audit.verification_usage.input_tokens).toBe(320);
       // What the review asked of storage and the models, against the limit
       // the platform sets one workflow instance.
       expect(report.agent_audit.requests).toMatchObject({
@@ -159,7 +159,7 @@ it.each([false, true])(
       // The prompt-cache audit: every phase counted; no provider reported cache
       // fields, so the totals and the ratio stay null rather than zero.
       const cache = report.agent_audit.prompt_cache;
-      expect(cache.phases["verify-blind"].calls).toBe(3);
+      expect(cache.phases["verify-blind"].calls).toBe(2);
       expect(cache.phases["verify-blind"].cache_read_input_tokens).toBeNull();
       expect(cache.phases["verify-blind"].read_ratio).toBeNull();
       expect(() => validateReport(report)).not.toThrow();
@@ -189,7 +189,7 @@ it.each([false, true])(
           expect(text, object.key).not.toContain("repository_data");
         }
       }
-      expect(requests).toHaveLength(7);
+      expect(requests).toHaveLength(5);
       // Progress for the live screen: each agent starts and finishes, then
       // verification counts the hypotheses it checked.
       const events = (
@@ -209,7 +209,7 @@ it.each([false, true])(
       )
         .bind(id)
         .all<any>();
-      expect(votes.results).toHaveLength(3);
+      expect(votes.results).toHaveLength(2);
       expect(votes.results.every((v) => v.status === "completed")).toBe(true);
       expect(report.footer.notes.some((n: string) => n.includes("board"))).toBe(
         true,
@@ -1425,8 +1425,9 @@ it("retains reproduced evidence when every blind pass misses, with runner artifa
       params: { review_id: id, snapshot_key: snapshotKey },
     });
     const h = validateHypotheses([hypothesis])[0];
+    // Two voters reproduce it alike, so the third is not asked.
     await Promise.all(
-      [0, 1, 2].map(async (voter) => {
+      [0, 1].map(async (voter) => {
         const job = hash(`${id}-verify-${h.id}-${voter}-0`).slice(0, 32);
         await instance.waitForStepResult({ name: `dispatch-${job}` });
         await finishJob(runtime, id, job, 1, {
@@ -1467,7 +1468,7 @@ it("retains reproduced evidence when every blind pass misses, with runner artifa
       runtime,
     );
     const audit = (await response.json()) as any;
-    expect(audit.executions).toHaveLength(3);
+    expect(audit.executions).toHaveLength(2);
     expect(audit.votes.every((v: any) => v.hypothesis_id === h.id)).toBe(true);
   } finally {
     transport.mockRestore();
@@ -1561,8 +1562,9 @@ it.each([
           m.content.includes("Verify this hypothesis."),
         );
         // The review is cancelled while the agent answers, or while the last
-        // voter on the first hypothesis does; either answer still arrives.
-        if (generated ? !settled : disclosed && ++disclosures === 3)
+        // voter asked about the first hypothesis does (two agree, so the third
+        // is not asked); either answer still arrives.
+        if (generated ? !settled : disclosed && ++disclosures === 2)
           await runtime.DB.prepare("UPDATE reviews SET cancelled=1 WHERE id=?")
             .bind(id)
             .run();
@@ -1651,7 +1653,7 @@ it.each([
       );
       if (settled) {
         expect(report.findings[0].evidence_level).toBe("static_proven");
-        expect(report.findings[0].verification.agreeing).toBe(3);
+        expect(report.findings[0].verification.agreeing).toBe(2);
       }
       expect(report.risks).toEqual([]);
       const unverified = settled ? [other] : [first, other];

@@ -13,13 +13,13 @@ Findings
   e5a5af34 correctness/throw [new; error; static_proven] FAIL
     src/cart.ts:1 (total) [new]
     The call to total now throws
-    Verification: 3/3 voters; blind: [None, None, None]; split: false
+    Verification: 2/3 voters; blind: [None, None, None]; split: false
     Lineage: round 1; status open; first posted in b46fb851d56ab91aa42d98fc7efafb215208a42049173b56f5290af44b375ca6
     Trigger: total()
   bcbf2a73 correctness/throw [new; error; static_proven] FAIL
     src/cart.ts:2 (tax) [new]
     The call to tax now throws
-    Verification: 3/3 voters; blind: [None, None, None]; split: false
+    Verification: 2/3 voters; blind: [None, None, None]; split: false
     Lineage: round 1; status open; first posted in b46fb851d56ab91aa42d98fc7efafb215208a42049173b56f5290af44b375ca6
     Trigger: tax()
 
@@ -27,6 +27,6 @@ Footer
 Round 1 of cap 3 — pr lineage 7, generation 1
 Held back as already posted: 0
 Hypothesis board coordination is deferred; agents and verifier voters run independently.
-Verifier usage: 960 input tokens, 600 output tokens; cost USD null
+Verifier usage: 640 input tokens, 400 output tokens; cost USD null
 Publication (auto): 2 posted, 0 edited, 0 resolved, 0 unanchored (in the summary), 0 failed
 Total: 0 ms

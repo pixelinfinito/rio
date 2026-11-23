@@ -366,7 +366,8 @@ describe("verification", () => {
       name: names[raised.findIndex((h) => u.actor.startsWith(idOf(h)))],
       blind: u.phase === "verify-blind",
     }));
-    expect(calls).toHaveLength(30);
+    // Two agreeing voters settle each hypothesis, blind then disclosed.
+    expect(calls).toHaveLength(20);
     const first = (name: string, blind: boolean) =>
         calls.findIndex((c) => c.name === name && c.blind === blind),
       last = (name: string) => calls.findLastIndex((c) => c.name === name);
@@ -728,7 +729,6 @@ describe("review lineages", () => {
       .bind(r2.id)
       .all<any>();
     expect(votes.results.map((v) => v.hypothesis_id)).toEqual([
-      idOf(h1),
       idOf(h1),
       idOf(h1),
     ]);
