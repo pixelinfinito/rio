@@ -11,6 +11,7 @@ import { finishJob } from "../src/jobs";
 import { CANCEL_GRACE_MS, reconcile, sweepReviews } from "../src/reconcile";
 import {
   CANCELLED_NOTE,
+  WALL_BUDGET_NOTE,
   changedCode,
   changeParts,
   differing,
@@ -167,17 +168,18 @@ it.each([false, true])(
       // value per provider, and its secret appears in no stored artifact.
       const partitioned = requests.map((r) =>
         /<review_partition id="([0-9a-f]{32})"\/>/.exec(
-          JSON.stringify(r.messages.map((m: any) => m.content)).replaceAll('\\"', '"'),
+          JSON.stringify(r.messages.map((m: any) => m.content)).replaceAll(
+            '\\"',
+            '"',
+          ),
         ),
       );
       expect(partitioned.every(Boolean)).toBe(true);
-      const tenantSecret = (
-        await runtime.DB.prepare(
-          "SELECT secret FROM prompt_partitions WHERE tenant=(SELECT tenant FROM reviews WHERE id=?)",
-        )
-          .bind(id)
-          .first<{ secret: string }>()
-      )!.secret;
+      const tenantSecret = (await runtime.DB.prepare(
+        "SELECT secret FROM prompt_partitions WHERE tenant=(SELECT tenant FROM reviews WHERE id=?)",
+      )
+        .bind(id)
+        .first<{ secret: string }>())!.secret;
       const stored = await runtime.ARTIFACTS.list({ prefix: `reviews/${id}/` });
       expect(stored.objects.length).toBeGreaterThan(0);
       for (const object of stored.objects) {
@@ -525,7 +527,10 @@ it("keeps a timed-out job's result when its retry cannot be queued", async () =>
       return send(message, options);
     });
   try {
-    await using instance = await introspectWorkflowInstance(runtime.REVIEWS, id);
+    await using instance = await introspectWorkflowInstance(
+      runtime.REVIEWS,
+      id,
+    );
     await instance.modify(async (m) => {
       await m.disableRetryDelays();
     });
@@ -787,7 +792,11 @@ it("ends a cancelled review's wait for a runner job at once, and a late result r
     .run();
   const cancelled = await app.request(
     `https://rio/v1/reviews/${w.id}/cancel`,
-    { method: "POST", headers: { ...headers, "rio-protocol": "1" }, body: "{}" },
+    {
+      method: "POST",
+      headers: { ...headers, "rio-protocol": "1" },
+      body: "{}",
+    },
     runtime,
   );
   expect(cancelled.status).toBe(200);
@@ -795,7 +804,11 @@ it("ends a cancelled review's wait for a runner job at once, and a late result r
   // the review is partial with its report.
   await instance.waitForStatus("complete");
   const ended = await w.row();
-  expect(ended).toMatchObject({ status: "partial", cancelled: 1, job: "leased" });
+  expect(ended).toMatchObject({
+    status: "partial",
+    cancelled: 1,
+    job: "leased",
+  });
   const report = await w.store.get<any>(ended.report_key);
   expect(report.status).toBe("partial");
   expect(report.footer.notes).toContain(CANCELLED_NOTE);
@@ -854,7 +867,9 @@ it("reports the phase and the time of an analysis job that hit its deadline", as
   expect(report.footer.notes).toContain(
     "checks: runner analysis failed (timed out during transfer (transfer 240 s)); deterministic checks did not run",
   );
-  expect(report.incomplete.every((c: any) => c.reason === "timeout")).toBe(true);
+  expect(report.incomplete.every((c: any) => c.reason === "timeout")).toBe(
+    true,
+  );
   expect(report.incomplete.length).toBeGreaterThan(0);
 }, 60000);
 
@@ -942,8 +957,9 @@ it("gives a cancellation that arrives after the report was written the same end 
   s.profile.steps = [
     { id: "agents", uses: "rio/agents@0.1.0", needs: [], with: {} },
   ];
-  const transport = vi.spyOn(globalThis, "fetch").mockImplementation(
-    async () => {
+  const transport = vi
+    .spyOn(globalThis, "fetch")
+    .mockImplementation(async () => {
       const content = JSON.stringify({ result: [] });
       return Response.json({
         content: [{ type: "text", text: content }],
@@ -955,8 +971,7 @@ it("gives a cancellation that arrives after the report was written the same end 
           completion_tokens: 50,
         },
       });
-    },
-  );
+    });
   // The request to cancel lands just after the report is stored, complete.
   // The store then fails the write that says so once: the step's next
   // attempt must still find the report to write.
@@ -1129,8 +1144,14 @@ it("reads the change since the previous head a few files at a time, and never a 
   const changed = await incrementalOf(tree("base"), tree("head"), paths, 8192);
   // What reading every file of both versions at once found, file by file.
   const whole = incrementalChanges(
-    await materialize(memory.base, paths.filter((p) => p !== "data/big.json")),
-    await materialize(memory.head, paths.filter((p) => p !== "data/big.json")),
+    await materialize(
+      memory.base,
+      paths.filter((p) => p !== "data/big.json"),
+    ),
+    await materialize(
+      memory.head,
+      paths.filter((p) => p !== "data/big.json"),
+    ),
   );
   expect(changed).toEqual(
     [...whole, { path: "data/big.json" }].sort((a, b) =>
@@ -1138,9 +1159,7 @@ it("reads the change since the previous head a few files at a time, and never a 
     ),
   );
   expect(changed.map((f) => f.path)).not.toContain("src/same.ts");
-  expect(changed.find((f) => f.path === "src/f00.ts")!.lines_changed).toBe(
-    58,
-  );
+  expect(changed.find((f) => f.path === "src/f00.ts")!.lines_changed).toBe(58);
   // A group at a time: no read holds more than the group's bytes, and the
   // large file is in none.
   expect(asked.length).toBeGreaterThan(10);
@@ -1155,10 +1174,9 @@ it("counts no lines of a changed file with more than an isolate can hold as stri
   // Short lines, well under the size limit: under 1 MiB a version, but as many
   // lines as COUNTED_LINES allows of both versions together, and more.
   const many = (tag: string) =>
-    Array.from(
-      { length: COUNTED_LINES / 2 + 1 },
-      (_, i) => `${tag}${i}`,
-    ).join("\n");
+    Array.from({ length: COUNTED_LINES / 2 + 1 }, (_, i) => `${tag}${i}`).join(
+      "\n",
+    );
   const memory = new MemorySnapshot({
     base: {
       "data/lines.csv": file(many("a")),
@@ -1297,7 +1315,9 @@ it("shares the prompt's diff budget: short diffs whole, long ones cut alike, the
   expect(first.endsWith("\n")).toBe(false);
   expect(first.split("\n").at(-1)).toMatch(/^ *\d+ \+first \d+$/);
   expect(Math.abs(first.length - second.length)).toBeLessThan(20);
-  expect(files.reduce((n, f) => n + f.diff.length, 0)).toBeLessThanOrEqual(3000);
+  expect(files.reduce((n, f) => n + f.diff.length, 0)).toBeLessThanOrEqual(
+    3000,
+  );
   // A share too short to say anything names the file instead, and leaves its
   // share to the files after it.
   const tight = await changedCode(changed, snapshot, 700);
@@ -1749,11 +1769,13 @@ it("reports stored progress when a run is replayed after its review stopped", as
   });
   await instance.waitForStatus("complete");
   const row = await runtime.DB.prepare(
-    "SELECT status,report_key FROM reviews WHERE id=?",
+    "SELECT status,cancelled,error,report_key FROM reviews WHERE id=?",
   )
     .bind(id)
     .first<any>();
   expect(row.status).toBe("partial");
+  expect(row.cancelled).toBe(0);
+  expect(row.error).toBe("review exceeded its wall budget");
   const report = await store.get<any>(row.report_key);
   expect(report.status).toBe("partial");
   expect(() => validateReport(report)).not.toThrow();
@@ -1765,7 +1787,7 @@ it("reports stored progress when a run is replayed after its review stopped", as
   ]);
   expect(report.agent_audit.incomplete_votes).toBe(2);
   expect(report.footer.notes).toEqual([
-    CANCELLED_NOTE,
+    WALL_BUDGET_NOTE,
     "The review stopped before it finished: 2 of 3 raised hypotheses had completed verification and are consolidated here; 1 had not and are listed in agent_audit.unverified, not as findings.",
     "2 verifier votes did not complete; inspect the vote audit. Missing votes do not reduce quorum.",
   ]);

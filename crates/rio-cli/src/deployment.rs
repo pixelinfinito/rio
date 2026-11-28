@@ -1895,7 +1895,7 @@ impl Deployer {
             "queue already has a consumer belonging to another Worker"
         );
         let body =
-            json!({"type":"worker","script_name":name,"settings":{"batch_size":1,"max_retries":2}});
+            json!({"type":"worker","script_name":name,"settings":{"batch_size":1,"max_retries":8}});
         let reused = consumer.is_some();
         if let Some(consumer) = consumer {
             cf.request(

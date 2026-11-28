@@ -81,13 +81,19 @@ export class Store {
       .bind(id, event, JSON.stringify(scrub(data)), Date.now())
       .run();
   }
-  async cancelled(id: string): Promise<boolean> {
+  /** Why a review should stop, if it should: explicit cancellation vs wall-budget deadline. */
+  async stopReason(id: string): Promise<"cancelled" | "deadline" | null> {
     const row = await this.env.DB.prepare(
       "SELECT cancelled,deadline FROM reviews WHERE id=?",
     )
       .bind(id)
       .first<any>();
-    return !row || !!row.cancelled || Date.now() > row.deadline;
+    if (!row || row.cancelled) return "cancelled";
+    if (Date.now() > row.deadline) return "deadline";
+    return null;
+  }
+  async cancelled(id: string): Promise<boolean> {
+    return (await this.stopReason(id)) !== null;
   }
   async remainingMs(id: string): Promise<number> {
     const row = await this.env.DB.prepare(

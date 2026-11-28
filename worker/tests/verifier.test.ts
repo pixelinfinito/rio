@@ -606,15 +606,23 @@ describe("quorum", () => {
         const disclosed = request.messages.some((m) =>
           m.content.includes("Verify this hypothesis."),
         );
-        if (last.startsWith("Host: your result was not accepted")) told.push(last);
+        if (last.startsWith("Host: your result was not accepted"))
+          told.push(last);
         // The first blind answer adds a field the location schema does not name.
         const blind =
           request.messages.length === 1
-            ? [{ ...hypothesis, location: { ...hypothesis.location, path_note: null } }]
+            ? [
+                {
+                  ...hypothesis,
+                  location: { ...hypothesis.location, path_note: null },
+                },
+              ]
             : [hypothesis];
         return {
           content: JSON.stringify({
-            result: disclosed ? { evidence_level: "plausible", evidence: [] } : blind,
+            result: disclosed
+              ? { evidence_level: "plausible", evidence: [] }
+              : blind,
           }),
           input_tokens: 20,
           output_tokens: 10,
@@ -641,16 +649,34 @@ describe("quorum", () => {
     expect(told).toHaveLength(2);
     expect(told[0]).toContain("/location must NOT have additional properties");
     const final = new Map(saved.map((v) => [v.voter, v]));
-    expect([...final.values()].map((v) => v.status)).toEqual(["completed", "completed"]);
-    expect([...final.values()].map((v) => v.blind_match)).toEqual(["same", "same"]);
+    expect([...final.values()].map((v) => v.status)).toEqual([
+      "completed",
+      "completed",
+    ]);
+    expect([...final.values()].map((v) => v.blind_match)).toEqual([
+      "same",
+      "same",
+    ]);
   });
   it("asks a voter again for a disclosed vote outside the schema or the reclassification rules instead of failing it", async () => {
     // Production replies: a `note` beside the evidence, a reference without
     // `demonstrates`, and an upward reclassification.
     const wrong = [
-      { evidence_level: "plausible", evidence: [], note: "Correction to my earlier answer" },
-      { evidence_level: "plausible", evidence: [{ kind: "code", version: "head", path: "src/a.ts" }] },
-      { evidence_level: "plausible", evidence: [], category: "security", reclassification_reason: "worse" },
+      {
+        evidence_level: "plausible",
+        evidence: [],
+        note: "Correction to my earlier answer",
+      },
+      {
+        evidence_level: "plausible",
+        evidence: [{ kind: "code", version: "head", path: "src/a.ts" }],
+      },
+      {
+        evidence_level: "plausible",
+        evidence: [],
+        category: "security",
+        reclassification_reason: "worse",
+      },
     ];
     let disclosures = 0;
     const corrections: string[] = [];
@@ -694,11 +720,21 @@ describe("quorum", () => {
       },
     });
     expect(corrections).toHaveLength(3);
-    expect(corrections.join("\n")).toContain("must NOT have additional properties");
-    expect(corrections.join("\n")).toContain("must have required property 'demonstrates'");
-    expect(corrections.join("\n")).toContain("invalid downward reclassification");
+    expect(corrections.join("\n")).toContain(
+      "must NOT have additional properties",
+    );
+    expect(corrections.join("\n")).toContain(
+      "must have required property 'demonstrates'",
+    );
+    expect(corrections.join("\n")).toContain(
+      "invalid downward reclassification",
+    );
     const final = new Map(saved.map((v) => [v.voter, v]));
-    expect([...final.values()].map((v) => v.status)).toEqual(["completed", "completed", "completed"]);
+    expect([...final.values()].map((v) => v.status)).toEqual([
+      "completed",
+      "completed",
+      "completed",
+    ]);
     expect([...final.values()].every((v) => !("note" in v.answer!))).toBe(true);
   });
   it("asks the remaining voter only when the first quorum does not settle the outcome", async () => {
@@ -1504,6 +1540,206 @@ describe("tiered blind_mode, VerifierBreaker, and file_citation", () => {
       ),
     ).toBe(true);
     expect(rate.activeModel()!.model).toBe("anthropic/backup");
+
+    // HTTP 402 (credits exhausted) trips immediately on both primary and fallback.
+    const payPrimary = new VerifierBreaker(
+      "openai/primary",
+      "openrouter/backup",
+    );
+    expect(
+      payPrimary.recordFailure("openai/primary", "provider failed (402)"),
+    ).toBe(true);
+    expect(payPrimary.activeModel()).toEqual({
+      model: "openrouter/backup",
+      usingFallback: true,
+    });
+    expect(
+      payPrimary.recordFailure("openrouter/backup", "provider failed (402)"),
+    ).toBe(false);
+    expect(payPrimary.activeModel()).toBeNull();
+    expect(payPrimary.abortedReason).toContain("provider failed (402)");
+
+    // Concurrent in-flight primary failure after primary already tripped still signals retry on fallback.
+    expect(
+      breaker.recordFailure("openai/primary", "provider failed (503)"),
+    ).toBe(true);
+  });
+
+  it("proceeds to disclosed verdict when blind_mode defects_only hits BLIND_TURNS", async () => {
+    const seenRoles: string[][] = [];
+    const saved: Vote[] = [];
+    const result = await verifyHypothesis({
+      profile: {
+        ...profile,
+        verify: { voters: 2, quorum: 2, blind_mode: "defects_only" },
+      },
+      hypothesis: { ...hypothesis, category: "defect" },
+      intent: "",
+      guidance: [],
+      snapshot,
+      context: { snapshot, head: graphs.head, executions: {}, guidance: [] },
+      gateway: {
+        async complete(req) {
+          const isDisclosed = req.messages.some((m) =>
+            String(m.content).includes("Verify this hypothesis."),
+          );
+          if (isDisclosed) {
+            seenRoles.push(req.messages.map((m) => m.role));
+            return voterResponse({
+              evidence_level: "static_proven",
+              evidence: [
+                {
+                  kind: "code",
+                  version: "head",
+                  path: "src/a.ts",
+                  node_ids: ["h"],
+                  demonstrates: "regression",
+                },
+              ],
+            });
+          }
+          // Every blind turn issues a read_file call so it exhausts BLIND_TURNS.
+          return {
+            content: JSON.stringify({
+              tools: [
+                {
+                  name: "read_file",
+                  args: { path: "src/a.ts", version: "head" },
+                },
+              ],
+            }),
+            input_tokens: 50,
+            output_tokens: 20,
+            cost_usd: 0.001,
+          };
+        },
+      },
+      ledger: new MemoryLedger(),
+      tools: () => new Tools(snapshot, graphs, undefined),
+      verifyTokens: 50000,
+      save: async (v) => {
+        saved.push(structuredClone(v));
+      },
+    });
+    expect(result.votes.every((v) => v.status === "completed")).toBe(true);
+    expect(result.verified.evidence_level).toBe("static_proven");
+    expect(result.verified.verification.agreeing).toBe(2);
+    expect(seenRoles).toHaveLength(2);
+    for (const roles of seenRoles) {
+      // Strictly alternating user/assistant messages, ending on the disclosed user prompt.
+      expect(roles.at(-1)).toBe("user");
+      for (let i = 1; i < roles.length; i++) {
+        expect(roles[i]).not.toBe(roles[i - 1]);
+      }
+    }
+  });
+
+  it("retries primary transient failures on fallback and short-circuits on fallback 402", async () => {
+    // 1) Primary 503 fails over per-voter even before 3 failures, and for concurrent in-flight voters after trip.
+    const breaker = new VerifierBreaker(
+      profile.models.default,
+      "openrouter/backup",
+    );
+    const modelsCalled: string[] = [];
+    const res = await verifyHypothesis({
+      profile: {
+        ...profile,
+        verify: { voters: 2, quorum: 2, blind_mode: "off" },
+      },
+      hypothesis,
+      intent: "",
+      guidance: [],
+      snapshot,
+      context: { snapshot, head: graphs.head, executions: {}, guidance: [] },
+      breaker,
+      gateway: {
+        async complete(req) {
+          modelsCalled.push(req.model);
+          if (req.model === profile.models.default)
+            throw new Error("provider failed (503)");
+          return voterResponse({ evidence_level: "plausible", evidence: [] });
+        },
+      },
+      ledger: new MemoryLedger(),
+      tools: () => new Tools(snapshot, graphs, undefined),
+      verifyTokens: 20000,
+      save: async () => {},
+    });
+    expect(res.votes.map((v) => v.status)).toEqual(["completed", "completed"]);
+    expect(modelsCalled.filter((m) => m === "openrouter/backup")).toHaveLength(
+      2,
+    );
+
+    // 2) Fallback returning 402 trips circuit immediately so subsequent voters make 0 calls.
+    const brokenBreaker = new VerifierBreaker(
+      profile.models.default,
+      "openrouter/broke",
+    );
+    brokenBreaker.recordFailure(
+      profile.models.default,
+      "provider failed (503)",
+    );
+    brokenBreaker.recordFailure(
+      profile.models.default,
+      "provider failed (503)",
+    );
+    brokenBreaker.recordFailure(
+      profile.models.default,
+      "provider failed (503)",
+    );
+    let fallbackCalls = 0;
+    const wave1 = await verifyHypothesis({
+      profile: {
+        ...profile,
+        verify: { voters: 1, quorum: 1, blind_mode: "off" },
+      },
+      hypothesis,
+      intent: "",
+      guidance: [],
+      snapshot,
+      context: { snapshot, head: graphs.head, executions: {}, guidance: [] },
+      breaker: brokenBreaker,
+      gateway: {
+        async complete() {
+          fallbackCalls++;
+          throw new Error("provider failed (402)");
+        },
+      },
+      ledger: new MemoryLedger(),
+      tools: () => new Tools(snapshot, graphs, undefined),
+      verifyTokens: 20000,
+      save: async () => {},
+    });
+    expect(fallbackCalls).toBe(1);
+    expect(wave1.votes[0].status).toBe("failed");
+    expect(brokenBreaker.activeModel()).toBeNull();
+    expect(brokenBreaker.abortedReason).toContain("provider failed (402)");
+
+    const wave2 = await verifyHypothesis({
+      profile: {
+        ...profile,
+        verify: { voters: 2, quorum: 2, blind_mode: "off" },
+      },
+      hypothesis,
+      intent: "",
+      guidance: [],
+      snapshot,
+      context: { snapshot, head: graphs.head, executions: {}, guidance: [] },
+      breaker: brokenBreaker,
+      gateway: {
+        async complete() {
+          fallbackCalls++;
+          throw new Error("should not be called");
+        },
+      },
+      ledger: new MemoryLedger(),
+      tools: () => new Tools(snapshot, graphs, undefined),
+      verifyTokens: 20000,
+      save: async () => {},
+    });
+    expect(fallbackCalls).toBe(1);
+    expect(wave2.votes.every((v) => v.status === "failed")).toBe(true);
+    expect(wave2.votes[0].error).toContain("circuit_open");
   });
 
   it("validates non-AST file_citation in quorum only when file has 0 graph nodes and excerpt matches", async () => {

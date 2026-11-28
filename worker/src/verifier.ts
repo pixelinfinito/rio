@@ -1,10 +1,5 @@
 import type { EvidenceContext } from "./quorum";
-import {
-  aggregate,
-  blindMatch,
-  citationKey,
-  evidenceLevel,
-} from "./quorum";
+import { aggregate, blindMatch, citationKey, evidenceLevel } from "./quorum";
 import type {
   Gateway,
   Guidance,
@@ -44,7 +39,7 @@ export function classifyVerifierFailure(
   remainingMs = Infinity,
 ): FailureKind | null {
   if (
-    /provider failed \((400\s+(?:model_not_found|unknown_model|invalid_model|permission_error)|401|403|404)\b/i.test(
+    /provider failed \((400\s+(?:model_not_found|unknown_model|invalid_model|permission_error)|401|402|403|404)\b/i.test(
       message,
     ) ||
     /model_not_found|unknown model|no default model/i.test(message)
@@ -100,6 +95,12 @@ export class VerifierBreaker {
     return this._fallbackEvent;
   }
 
+  canFallback(): boolean {
+    return (
+      !!this.fallback && this.fallback !== this.primary && !this.fallbackTripped
+    );
+  }
+
   recordSuccess(model: string) {
     this.consecutive.set(model, 0);
   }
@@ -107,6 +108,11 @@ export class VerifierBreaker {
   recordFailure(model: string, error: string, remainingMs = Infinity): boolean {
     const kind = classifyVerifierFailure(error, remainingMs);
     if (!kind) return false;
+    // Concurrent in-flight primary voters that fail after another voter already
+    // tripped primary should still retry on the active fallback.
+    if (model === this.primary && this.primaryTripped) {
+      return this.canFallback();
+    }
     const count =
       kind === "permanent" || kind === "prolonged_outage"
         ? 3
@@ -116,14 +122,10 @@ export class VerifierBreaker {
     const cleanReason = error.replace(/\s+/g, " ").trim().slice(0, 120);
     if (model === this.primary && !this.primaryTripped) {
       this.primaryTripped = true;
-      if (
-        this.fallback &&
-        this.fallback !== this.primary &&
-        !this.fallbackTripped
-      ) {
+      if (this.canFallback()) {
         this._fallbackEvent = {
           from: this.primary,
-          to: this.fallback,
+          to: this.fallback!,
           reason: cleanReason || kind,
         };
         return true;
@@ -133,7 +135,9 @@ export class VerifierBreaker {
     }
     if (model === this.fallback && !this.fallbackTripped) {
       this.fallbackTripped = true;
-      this._abortReason = `circuit_open: fallback failed (${cleanReason || kind})`;
+      if (this.primaryTripped) {
+        this._abortReason = `circuit_open: fallback failed (${cleanReason || kind})`;
+      }
     }
     return false;
   }
@@ -390,15 +394,24 @@ export async function verifyHypothesis(
             blind_match: "none",
           };
         let voterAttempt = 0;
+        let retryFallback = false;
         while (true) {
           const active = o.breaker
-            ? o.breaker.activeModel()
+            ? retryFallback && o.breaker.canFallback()
+              ? { model: o.breaker.fallback!, usingFallback: true }
+              : o.breaker.activeModel()
             : { model: o.profile.models[alias], usingFallback: false };
           if (!active) {
             vote.status = "failed";
             vote.error = o.breaker?.abortedReason ?? "circuit_open";
             break;
           }
+          vote.blind = [];
+          vote.blind_match = "none";
+          delete vote.answer;
+          delete vote.validated_level;
+          delete vote.validation_note;
+          delete vote.error;
           const partition =
             active.usingFallback && o.partitionFor
               ? o.partitionFor(active.model)
@@ -446,30 +459,54 @@ export async function verifyHypothesis(
                     return tools.dispatch(name, input);
                   }
                 : options.dispatch;
-              const blind = await converse({
-                ...options,
-                dispatch: blindDispatch,
-                ...(blindLimited ? { maxTurns: BLIND_TURNS } : {}),
-                phase: "verify-blind",
-                // A restated hypothesis outside the schema, such as one with a
-                // field it does not name, is sent back with the reason instead
-                // of failing the vote.
-                validateResult: (value) => {
-                  try {
-                    return validateHypotheses(value);
-                  } catch (error) {
-                    const reason = error instanceof Error ? error.message : "";
-                    throw new Refused(
-                      reason,
-                      `Host: your result was not accepted: ${reason.slice(0, 300)}. Reply with {"result":[...]} again, each hypothesis following the item schema exactly, with no fields it does not name.`,
-                    );
+              try {
+                const blind = await converse({
+                  ...options,
+                  dispatch: blindDispatch,
+                  ...(blindLimited ? { maxTurns: BLIND_TURNS } : {}),
+                  phase: "verify-blind",
+                  // A restated hypothesis outside the schema, such as one with a
+                  // field it does not name, is sent back with the reason instead
+                  // of failing the vote.
+                  validateResult: (value) => {
+                    try {
+                      return validateHypotheses(value);
+                    } catch (error) {
+                      const reason =
+                        error instanceof Error ? error.message : "";
+                      throw new Refused(
+                        reason,
+                        `Host: your result was not accepted: ${reason.slice(0, 300)}. Reply with {"result":[...]} again, each hypothesis following the item schema exactly, with no fields it does not name.`,
+                      );
+                    }
+                  },
+                });
+                vote.blind = validateHypotheses(blind);
+                vote.blind_match = blindMatch(vote.blind, o.hypothesis);
+                // Persist before disclosing the hypothesis; the audit distinguishes an unfinished second turn.
+                await o.save(vote);
+              } catch (blindError) {
+                // Under defects_only, blind inspection is capped at BLIND_TURNS;
+                // a voter that spent those turns reading code still proceeds to
+                // the disclosed verdict instead of failing the vote as exhausted.
+                if (
+                  blindLimited &&
+                  blindError instanceof Error &&
+                  /turn limit exhausted/i.test(blindError.message)
+                ) {
+                  if (messages.at(-1)?.role === "user") {
+                    messages.push({
+                      role: "assistant",
+                      content: JSON.stringify({ result: [] }),
+                    });
                   }
-                },
-              });
-              vote.blind = validateHypotheses(blind);
-              vote.blind_match = blindMatch(vote.blind, o.hypothesis);
-              // Persist before disclosing the hypothesis; the audit distinguishes an unfinished second turn.
-              await o.save(vote);
+                  vote.blind = [];
+                  vote.blind_match = "none";
+                  await o.save(vote);
+                } else {
+                  throw blindError;
+                }
+              }
             } else {
               vote.blind = [];
               vote.blind_match = "none";
@@ -544,14 +581,26 @@ export async function verifyHypothesis(
             break;
           } catch (error) {
             const msg = error instanceof Error ? error.message : "voter failed";
-            const remainingMs = await o.ledger.remainingMs?.().catch(() => Infinity);
-            if (
-              o.breaker &&
-              voterAttempt === 0 &&
-              o.breaker.recordFailure(active.model, msg, remainingMs)
-            ) {
-              voterAttempt++;
-              continue;
+            const remainingMs = await o.ledger
+              .remainingMs?.()
+              .catch(() => Infinity);
+            if (o.breaker) {
+              const switched = o.breaker.recordFailure(
+                active.model,
+                msg,
+                remainingMs,
+              );
+              if (
+                voterAttempt === 0 &&
+                !active.usingFallback &&
+                (switched ||
+                  (classifyVerifierFailure(msg, remainingMs) !== null &&
+                    o.breaker.canFallback()))
+              ) {
+                voterAttempt++;
+                retryFallback = !switched;
+                continue;
+              }
             }
             vote.error = msg;
             vote.status = /cancel/.test(vote.error)
