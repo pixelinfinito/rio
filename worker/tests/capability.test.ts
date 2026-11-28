@@ -182,3 +182,44 @@ describe("rendering with screenshots", () => {
     expect(parts[0].text).toBe("Blind context.");
   });
 });
+
+describe("OpenAI and compat custom provider caching", () => {
+  it("supports opt-in key and parts prompt caching on openai custom and compat routes", () => {
+    const customEnv = {
+      AI_GATEWAY_URL: "https://gateway.example/v1/a/g",
+      AI_GATEWAY_TOKEN: "gw-token",
+      AI_GATEWAY_PROVIDERS: JSON.stringify({
+        "oai-key": { protocol: "openai", prompt_cache: "key" },
+        "oai-parts": { protocol: "openai", prompt_cache: "parts" },
+        "oai-plain": { protocol: "openai" },
+        claude: { protocol: "anthropic", prompt_cache: "breakpoints" },
+      }),
+    } as Env;
+    expect(cacheCapability(customEnv, "custom-oai-key/gpt-5", ALL)).toBe("key");
+    expect(cacheCapability(customEnv, "custom-oai-parts/qwen-3", ALL)).toBe("parts");
+    expect(cacheCapability(customEnv, "custom-oai-plain/gpt-5", ALL)).toBe("none");
+    expect(cacheCapability(customEnv, "compat/custom-oai-key/gpt-5", ALL)).toBe("key");
+    expect(cacheCapability(customEnv, "compat/custom-oai-parts/qwen-3", ALL)).toBe("parts");
+    expect(cacheCapability(customEnv, "openai/custom-oai-key/gpt-5", ALL)).toBe("key");
+    expect(cacheCapability(customEnv, "compat/openai/gpt-5", ALL)).toBe("key");
+    expect(cacheCapability(customEnv, "compat/openrouter/anthropic/claude-opus-4.7", ALL)).toBe("parts");
+    expect(cacheCapability(customEnv, "compat/dynamic/main", ALL)).toBe("none");
+    expect(cacheCapability(customEnv, "compat/custom-oai-plain/gpt-5", ALL)).toBe("none");
+    expect(cacheCapability(customEnv, "compat/custom-oai-key/gpt-5", ["openrouter"])).toBe("none");
+    expect(cacheCapability(customEnv, "compat/custom-oai-parts/qwen-3", ["openai"])).toBe("none");
+    expect(() =>
+      gatewayProviders({
+        AI_GATEWAY_PROVIDERS: JSON.stringify({
+          bad: { protocol: "anthropic", prompt_cache: "key" },
+        }),
+      } as Env),
+    ).toThrow(/prompt_cache/);
+    expect(() =>
+      gatewayProviders({
+        AI_GATEWAY_PROVIDERS: JSON.stringify({
+          bad: { protocol: "openai", prompt_cache: "breakpoints" },
+        }),
+      } as Env),
+    ).toThrow(/prompt_cache/);
+  });
+});

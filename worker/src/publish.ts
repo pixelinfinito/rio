@@ -61,6 +61,7 @@ export interface Publication {
   resolved: number;
   failed: number;
   unanchored: number;
+  demoted_422?: number;
   check_run_url: string | null;
   summary_comment_url: string | null;
   reason?: Unpublished;
@@ -303,8 +304,7 @@ export class GitHubHost implements Host {
         ? { status: "in_progress" }
         : {
             status: "completed",
-            conclusion:
-              name === "rio/qa" ? (output.conclusion ?? "neutral") : "neutral",
+            conclusion: output.conclusion ?? "neutral",
             completed_at: new Date().toISOString(),
           }),
       output: {
@@ -467,18 +467,28 @@ export function checkOutput(
   report: any,
   failOn: any,
   options: { askNote?: number; link: string },
-): { title: string; summary: string } {
+): CheckOutput {
   const all = lists(report);
   const matching = verdict(report, failOn).toFix.length;
   const tier = report.risk_tier?.tier ?? "unknown";
+  const failedVotes = report.agent_audit?.incomplete_votes ?? 0;
+  const unverifiedHyps = report.agent_audit?.unverified_hypotheses ?? 0;
+  const verificationFailed = failedVotes > 0 || unverifiedHyps > 0;
   const counts = `${report.findings.length} finding(s), ${report.risks.length} risk(s)${report.security?.length ? `, ${report.security.length} security` : ""}`;
   const status =
     report.status === "complete" ? "" : ` · review ${report.status}`;
-  const title = !all.length
-    ? `No findings produced · risk tier ${tier}${status}`
-    : matching
-      ? `Review failed its policy: ${matching} match fail_on · ${counts} · risk tier ${tier}${status}`
-      : `${counts}; none match fail_on · risk tier ${tier}${status}`;
+  const unverifiedCount = unverifiedHyps || failedVotes;
+  const title = verificationFailed
+    ? !all.length
+      ? `Review incomplete · verification failed (${unverifiedCount} unverified) · risk tier ${tier}`
+      : matching
+        ? `Review failed its policy: ${matching} match fail_on · ${counts} · verification incomplete (${unverifiedCount} unverified) · risk tier ${tier}`
+        : `${counts}; verification incomplete (${unverifiedCount} unverified) · risk tier ${tier}`
+    : !all.length
+      ? `No findings produced · risk tier ${tier}${status}`
+      : matching
+        ? `Review failed its policy: ${matching} match fail_on · ${counts} · risk tier ${tier}${status}`
+        : `${counts}; none match fail_on · risk tier ${tier}${status}`;
   const tables = findingTables(report, failOn, new Map());
   const summary = [
     provenance(report),
@@ -501,7 +511,13 @@ export function checkOutput(
     "",
     "Rio's check run is always neutral: it never approves and never blocks a merge.",
   ].join("\n");
-  return { title, summary };
+  return {
+    title,
+    summary,
+    ...(verificationFailed && failOn?.incomplete
+      ? { conclusion: "failure" as const }
+      : {}),
+  };
 }
 
 /** How long one publication may hold its lineage, and how long another waits. */
@@ -1048,6 +1064,9 @@ async function publishLeased(
             wrong.push(f);
             continue;
           }
+          // Plausible non-error observations belong in the summary rather than inline threads.
+          if (f.evidence_level === "plausible" && f.severity !== "error")
+            continue;
           if (anchor === undefined) {
             unanchored.push(f);
             publication.unanchored++;
@@ -1056,21 +1075,60 @@ async function publishLeased(
           // A dismissal recorded while this publication ran is honored too;
           // `/rio dismiss` edits comments only under the same lease.
           if (await answerOf(env, row.tenant, lineage, f.id)) continue;
-          const posted = await github.postReviewComment({
-            body,
-            commit: row.head_sha!,
-            path: f.location.path,
-            ...(range && range.line_end > range.line_start
-              ? { line: range.line_end, start_line: range.line_start }
-              : { line: anchor }),
-          });
+          const is422 = (err: unknown) =>
+            err instanceof GitHubError
+              ? err.status === 422
+              : typeof (err as any)?.status === "number" &&
+                (err as any).status === 422;
+          let posted: HostComment;
+          let postedBody = body;
+          if (range && range.line_end > range.line_start) {
+            try {
+              posted = await github.postReviewComment({
+                body,
+                commit: row.head_sha!,
+                path: f.location.path,
+                line: range.line_end,
+                start_line: range.line_start,
+              });
+            } catch (error) {
+              if (!is422(error)) throw error;
+              postedBody = findingBody(f, state, input.report.qa, anchor, {
+                failOn: input.fail_on,
+              });
+              posted = await github.postReviewComment({
+                body: postedBody,
+                commit: row.head_sha!,
+                path: f.location.path,
+                line: anchor,
+              });
+            }
+          } else {
+            posted = await github.postReviewComment({
+              body,
+              commit: row.head_sha!,
+              path: f.location.path,
+              line: anchor,
+            });
+          }
           publication.posted++;
           await save("finding", f.id, "posted", {
             external: posted.id,
-            body,
+            body: postedBody,
             url: posted.url,
           });
         } catch (error) {
+          if (
+            error instanceof GitHubError
+              ? error.status === 422
+              : typeof (error as any)?.status === "number" &&
+                (error as any).status === 422
+          ) {
+            unanchored.push(f);
+            publication.unanchored++;
+            publication.demoted_422 = (publication.demoted_422 ?? 0) + 1;
+            continue;
+          }
           rejected.push({ f, error: await failed(f.id, error) });
         }
       }

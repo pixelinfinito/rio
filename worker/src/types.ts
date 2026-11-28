@@ -84,11 +84,14 @@ export interface Guidance {
   lines: string[];
 }
 export interface ArtifactRef {
-  kind: "execution" | "code";
+  kind: "execution" | "code" | "file_citation";
   version: Version;
   job_id?: string;
   path?: string;
   node_ids?: string[];
+  line_start?: number;
+  line_end?: number;
+  excerpt?: string;
   demonstrates: "regression" | "protection";
 }
 export interface VoteAnswer {
@@ -263,6 +266,10 @@ export interface Profile {
     voters: number;
     quorum: number;
     model?: string;
+    // Fallback verifier alias when primary verifier trips its circuit breaker.
+    fallback_model?: string;
+    // Blind verification policy before disclosure: full, defects_only (default), or off.
+    blind_mode?: "full" | "defects_only" | "off";
     // Voters for a hypothesis its agent classed as a risk; `voters` when absent.
     risk_voters?: number;
   };
@@ -379,17 +386,22 @@ export interface ExecutionResult {
   truncated: boolean;
   version: Version;
   artifact?: any;
+  /** Whether a cached warm container served this execution without a tree transfer. */
+  cache_hit?: boolean;
+  /** Whether the warm container detected cached tree tampering and invalidated it. */
+  cache_tainted?: boolean;
   /** Where a timed-out job was: its archive on the way in, or its command. */
   phase?: "transfer" | "command";
   /**
    * Where the job's time went: the archive reaching the container (and how
-   * much of that was reading storage), the executor extracting it, the command.
+   * much of that was reading storage), the executor extracting it, setup, the command.
    */
   timing?: {
     transfer_ms?: number;
     archive_bytes?: number;
     storage_ms?: number;
     extract_ms?: number;
+    setup_ms?: number;
     command_ms?: number;
   };
 }
@@ -403,6 +415,8 @@ export type CostSource = "provider" | "estimate" | "self-hosted" | "unknown";
 export interface Usage {
   phase: string;
   actor: string;
+  // Set to "failed" when releasing a reservation from an uncharged error.
+  status?: "completed" | "failed";
   // Total input, cache reads and writes included.
   input_tokens: number;
   output_tokens: number;
@@ -490,6 +504,10 @@ export interface Env {
   GITHUB_WEBHOOK_SECRET_NEXT?: string;
   // API root override for GitHub Enterprise and recorded tests.
   GITHUB_API_URL?: string;
+  // Optional debounce (seconds, default 45) for GitHub pull_request.synchronize webhooks.
+  PR_PUSH_DEBOUNCE_SECONDS?: string;
+  // Optional fallback verifier model alias/identifier when the primary verifier trips.
+  VERIFIER_FALLBACK_MODEL?: string;
 }
 export interface JobMessage {
   type?: "job";
@@ -506,6 +524,8 @@ export interface ReviewRequestMessage {
   repository: string;
   number: number;
   trigger: Trigger;
+  // Head commit SHA observed on the webhook payload; stale debounced deliveries skip.
+  head_sha?: string;
   // Present when the review row already exists (CLI requests).
   review_id?: string;
   // `/rio review` from a maintainer: reset the lineage, escalate a fork.

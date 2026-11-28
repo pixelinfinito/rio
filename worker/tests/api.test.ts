@@ -508,10 +508,10 @@ describe("Worker API and storage", () => {
       retry: () => outcomes.push(`retry:${attempts}`),
     });
     await worker.queue(
-      { messages: [message(1), message(2)] } as any,
+      { messages: [message(1), message(2), message(3)] } as any,
       sandboxEnv,
     );
-    expect(outcomes).toEqual(["retry:1", "retry:2"]);
+    expect(outcomes).toEqual(["retry:1", "retry:2", "retry:3"]);
     expect(
       (
         await runtime.DB.prepare("SELECT status FROM jobs WHERE id=?")
@@ -519,8 +519,8 @@ describe("Worker API and storage", () => {
           .first<any>()
       ).status,
     ).toBe("leased");
-    await worker.queue({ messages: [message(3)] } as any, sandboxEnv);
-    expect(outcomes.at(-1)).toBe("ack:3");
+    await worker.queue({ messages: [message(9)] } as any, sandboxEnv);
+    expect(outcomes.at(-1)).toBe("ack:9");
     const row = await runtime.DB.prepare(
       "SELECT status,result_key FROM jobs WHERE id=?",
     )

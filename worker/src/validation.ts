@@ -290,31 +290,52 @@ export function validateSubmission(value: any): asserts value is Submission {
     !value.profile.verify.model || value.profile.models[alias],
     "unknown verifier alias",
   );
+  const fallbackAlias = value.profile.verify.fallback_model;
+  invariant(
+    !fallbackAlias || value.profile.models[fallbackAlias],
+    "unknown verifier fallback alias",
+  );
+  invariant(
+    value.profile.verify.blind_mode === undefined ||
+      ["full", "defects_only", "off"].includes(
+        value.profile.verify.blind_mode,
+      ),
+    "invalid verify blind_mode",
+  );
   invariant(
     value.profile.verify.risk_voters === undefined ||
       value.profile.verify.risk_voters <= value.profile.verify.voters,
     "invalid quorum",
   );
-  invariant(
-    (value.profile.verify.voters !== 1 &&
-      value.profile.verify.risk_voters !== 1) ||
-      value.profile.models[alias] !== value.profile.models.default,
-    "single verifier must use a different model",
-  );
-  // An agent's `models` review too: one voter is none of them.
-  invariant(
-    (value.profile.verify.voters !== 1 &&
-      value.profile.verify.risk_voters !== 1) ||
-      !value.profile.steps
-        .flatMap((step: any) => step.agents ?? [])
-        .flatMap((agent: any) => Object.values(agent))
-        .flatMap((config: any) => config?.models ?? [])
-        .some(
-          (reviewing: string) =>
-            value.profile.models[reviewing] === value.profile.models[alias],
-        ),
-    "single verifier must use a different model",
-  );
+  const checkIndependent = (verifierAlias: string, message: string) => {
+    invariant(
+      (value.profile.verify.voters !== 1 &&
+        value.profile.verify.risk_voters !== 1) ||
+        value.profile.models[verifierAlias] !== value.profile.models.default,
+      message,
+    );
+    // An agent's `models` review too: one voter is none of them.
+    invariant(
+      (value.profile.verify.voters !== 1 &&
+        value.profile.verify.risk_voters !== 1) ||
+        !value.profile.steps
+          .flatMap((step: any) => step.agents ?? [])
+          .flatMap((agent: any) => Object.values(agent))
+          .flatMap((config: any) => config?.models ?? [])
+          .some(
+            (reviewing: string) =>
+              value.profile.models[reviewing] ===
+              value.profile.models[verifierAlias],
+          ),
+      message,
+    );
+  };
+  checkIndependent(alias, "single verifier must use a different model");
+  if (fallbackAlias)
+    checkIndependent(
+      fallbackAlias,
+      "single verifier fallback must use a different model",
+    );
   for (const file of value.changed) {
     safePath(file.path);
     if (file.old_path) safePath(file.old_path);
@@ -572,7 +593,7 @@ export function validateAnswer(value: any): VoteAnswer {
   );
   for (const ref of value.evidence)
     invariant(
-      ["execution", "code"].includes(ref.kind) &&
+      ["execution", "code", "file_citation"].includes(ref.kind) &&
         ["base", "head"].includes(ref.version) &&
         ["regression", "protection"].includes(ref.demonstrates),
       "malformed evidence",

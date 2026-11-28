@@ -7,13 +7,15 @@ import {
 } from "./github";
 import { installation, covers } from "./webhooks";
 import { recordFeedback, resolvePrefix } from "./feedback";
+import { decideProposal, resolveProposalPrefix } from "./proposals";
 import { lineageId } from "./lineage";
 import { RESPONSE_REASONS } from "./validation";
 import { redact } from "./redaction";
 import { repositoryKey } from "./pulls";
 import { reflectDismissal, GitHubHost } from "./publish";
 
-// `/rio review` and `/rio dismiss <id> <reason>` (pr-publishing). The actor is
+// `/rio review`, `/rio dismiss <id> <reason>`, `/rio suppress <id> [note]`,
+// and `/rio decline-suppression <id> [note]` (pr-publishing). The actor is
 // classified through the collaborator permission API with an installation
 // token, never from the payload. Results are reactions and comment edits,
 // never new comments.
@@ -21,6 +23,11 @@ import { reflectDismissal, GitHubHost } from "./publish";
 export type Command =
   | { kind: "review" }
   | { kind: "dismiss"; id: string; reason: ResponseReason; note?: string }
+  | {
+      kind: "suppress" | "decline-suppression";
+      id: string;
+      note?: string;
+    }
   | { kind: "invalid" };
 
 /** Parses the first line of a comment body; anything else is invalid. */
@@ -40,6 +47,20 @@ export function parseCommand(body: string): Command {
         kind: "dismiss",
         id,
         reason: reason as ResponseReason,
+        ...(note ? { note } : {}),
+      };
+    }
+  }
+  if (
+    (words[1] === "suppress" || words[1] === "decline-suppression") &&
+    words.length >= 3
+  ) {
+    const id = words[2].toLowerCase();
+    if (/^(?:sp-)?[a-f0-9]{6,12}$/.test(id)) {
+      const note = words.slice(3).join(" ").slice(0, 4000);
+      return {
+        kind: words[1],
+        id,
         ...(note ? { note } : {}),
       };
     }
@@ -100,6 +121,34 @@ export async function handleCommand(
         comment_id: message.comment_id,
       });
       return { applied: true, actor };
+    }
+    if (command.kind !== "dismiss") {
+      if (actor !== "maintainer") {
+        console.log(
+          `rio: ignored /rio ${command.kind} from ${message.actor} (${actor}) on ${message.repository}#${message.number}`,
+        );
+        await react("-1");
+        return { applied: false, actor };
+      }
+      const match = await resolveProposalPrefix(
+        env,
+        message.tenant,
+        repositoryKey(message.repository),
+        command.id,
+      );
+      if (match.kind !== "found" || match.status !== "proposed") {
+        await react("-1");
+        return { applied: false, actor };
+      }
+      const updated = await decideProposal(
+        env,
+        message.tenant,
+        match.id,
+        command.kind === "suppress" ? "applied" : "declined",
+        command.note,
+      );
+      await react(updated ? "+1" : "-1");
+      return { applied: updated, actor };
     }
     if (actor === "other") {
       console.log(

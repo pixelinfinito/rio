@@ -6,6 +6,7 @@ import {
   RATE_LIMIT_PAUSES_MS,
   RETRY_PAUSES_MS,
   converse,
+  checkProfileModels,
   joinUrl,
   reachableAliases,
   route,
@@ -1608,8 +1609,8 @@ it("sends a turn up to three more times, after growing pauses, while the provide
     await vi.advanceTimersByTimeAsync(all);
     await expect(refused.result).rejects.toThrow("provider failed (400)");
     expect(refused.ids).toHaveLength(2);
-    // A refused request may have been charged: it keeps its reservation.
-    expect(refused.settled).toEqual([]);
+    // Explicit 4xx client errors never produce usage and release their reservations cleanly.
+    expect(refused.settled).toEqual([0, 0]);
     // A review cancelled during a pause sends nothing more.
     let stopped = false;
     const cancelled = run(9, "provider failed (503)", async () => stopped);
@@ -1971,4 +1972,72 @@ it("sends a deliberate one-time request after two corrections, and counts only a
   });
   expect(result).toEqual(["final"]);
   expect(seen).toEqual([1, 1]);
+});
+it("checkProfileModels fails upfront on missing aliases and skips disabled steps", () => {
+  const baseEnv = { OPENAI_API_KEY: "test-key" } as Env;
+  const p = {
+    models: { default: "openai/gpt-5" },
+    verify: { voters: 2, quorum: 2, fallback_model: "backup" },
+    steps: [
+      { id: "agents", uses: "rio/agents@0.1.0", needs: [], with: {} },
+      { id: "security", uses: "rio/security@0.2.0", needs: [], with: { enabled: false }, model: "sec" },
+      { id: "verify", uses: "rio/verify@0.1.0", needs: ["agents"], with: {} },
+    ],
+  } as any;
+  expect(() => checkProfileModels(baseEnv, p)).toThrow(/backup/);
+  p.models.backup = "openai/gpt-5-mini";
+  // Disabled security step alias `sec` is ignored when enabled: false.
+  expect(() => checkProfileModels(baseEnv, p)).not.toThrow();
+});
+it("paced aborts immediately on >5m retry-after and ProviderGateway surfaces cyber_policy without retry", async () => {
+  await expect(
+    converse({
+      gateway: {
+        complete: async () => {
+          throw new Error("provider failed (429) retry after 600 s");
+        },
+      },
+      ledger: { remaining: async () => 1000000, reserve: async () => "r1", settle: async () => {} },
+      actor: "voter",
+      phase: "verify-disclosed",
+      model: "openai/gpt-5",
+      allowance: { remaining: 100000 },
+      messages: [{ role: "user", content: "hi" }],
+      dispatch: async () => ({}),
+    }),
+  ).rejects.toThrow(/rate limit|retry after/i);
+
+  let attempts = 0;
+  const gw = new ProviderGateway(
+    { OPENAI_API_KEY: "sk-test" } as Env,
+    (async () => {
+      attempts++;
+      return Response.json(
+        { error: { message: "Blocked by cyber_policy", type: "invalid_request_error" } },
+        { status: 400 },
+      );
+    }) as typeof fetch,
+  );
+  let settled = 0;
+  await expect(
+    converse({
+      gateway: gw,
+      ledger: {
+        remaining: async () => 1000000,
+        reserve: async () => "r2",
+        settle: async (_, u) => {
+          settled += (u as any).status === "failed" ? 1 : 10;
+        },
+      },
+      actor: "security",
+      phase: "generation",
+      model: "openai/gpt-5",
+      allowance: { remaining: 100000 },
+      messages: [{ role: "user", content: "audit" }],
+      dispatch: async () => ({}),
+      retryCall: true,
+    }),
+  ).rejects.toThrow("provider failed (400 cyber_policy)");
+  expect(attempts).toBe(1);
+  expect(settled).toBe(1);
 });

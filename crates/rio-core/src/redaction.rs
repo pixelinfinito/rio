@@ -100,13 +100,84 @@ fn placeholder_value(value: &str) -> bool {
             })
 }
 
+fn has_vendor_secret_prefix(value: &str) -> bool {
+    const PREFIXES: &[&str] = &[
+        "ghp_",
+        "gho_",
+        "ghs_",
+        "ghu_",
+        "github_pat_",
+        "sk-",
+        "sk_live_",
+        "AKIA",
+        "ASIA",
+        "xoxb-",
+        "xoxp-",
+        "AIza",
+        "glpat-",
+        "npm_",
+        "eyJ",
+    ];
+    PREFIXES.iter().any(|prefix| value.starts_with(prefix))
+}
+
+fn local_dev_credentials(username: &str, password: &str) -> bool {
+    if placeholder_value(username) && placeholder_value(password) {
+        return true;
+    }
+    if password.is_empty()
+        || password.len() > 24
+        || has_vendor_secret_prefix(username)
+        || has_vendor_secret_prefix(password)
+        || shannon_entropy(password) >= 3.5
+    {
+        return false;
+    }
+    let user_lower = username.to_ascii_lowercase();
+    let pass_lower = password.to_ascii_lowercase();
+    pass_lower == user_lower
+        || matches!(
+            pass_lower.as_str(),
+            "dev"
+                | "local"
+                | "test"
+                | "testing"
+                | "postgres"
+                | "mysql"
+                | "redis"
+                | "mongo"
+                | "mongodb"
+                | "admin"
+                | "root"
+                | "guest"
+                | "secret"
+                | "devpass"
+                | "devpassword"
+                | "localdev"
+                | "testpass"
+                | "testpassword"
+                | "changeme"
+        )
+        || pass_lower.starts_with(&format!("{user_lower}_"))
+}
+
 fn placeholder_connection(value: &str) -> bool {
     let Some((scheme, rest)) = value.split_once("://") else {
         return false;
     };
+    let scheme_lower = scheme.to_ascii_lowercase();
+    let base_scheme = scheme_lower.split('+').next().unwrap_or(&scheme_lower);
     if !matches!(
-        scheme.to_ascii_lowercase().as_str(),
-        "postgres" | "postgresql" | "mysql" | "mongodb" | "mongodb+srv" | "redis"
+        base_scheme,
+        "postgres"
+            | "postgresql"
+            | "mysql"
+            | "mariadb"
+            | "mongodb"
+            | "redis"
+            | "rediss"
+            | "amqp"
+            | "amqps"
     ) {
         return false;
     }
@@ -131,22 +202,33 @@ fn placeholder_connection(value: &str) -> bool {
     {
         return false;
     }
-    placeholder_value(username)
-        && placeholder_value(password)
-        && matches!(
-            host.to_ascii_lowercase().as_str(),
-            "localhost"
-                | "127.0.0.1"
-                | "[::1]"
-                | "example.com"
-                | "example.org"
-                | "example.net"
-                | "db"
-                | "postgres"
-                | "mysql"
-                | "mongodb"
-                | "redis"
-        )
+    let host_lower = host.to_ascii_lowercase();
+    let local_host = matches!(
+        host_lower.as_str(),
+        "localhost"
+            | "127.0.0.1"
+            | "[::1]"
+            | "0.0.0.0"
+            | "host.docker.internal"
+            | "example.com"
+            | "example.org"
+            | "example.net"
+            | "db"
+            | "database"
+            | "postgres"
+            | "postgresql"
+            | "mysql"
+            | "mariadb"
+            | "mongodb"
+            | "mongo"
+            | "redis"
+            | "cache"
+            | "rabbitmq"
+            | "broker"
+    ) || host_lower.ends_with(".local")
+        || host_lower.ends_with(".docker.internal")
+        || host_lower.ends_with(".test");
+    local_host && local_dev_credentials(username, password)
 }
 
 /// Whether a match is worth reporting as a finding. Redaction stays wider:

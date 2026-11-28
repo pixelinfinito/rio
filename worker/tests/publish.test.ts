@@ -420,21 +420,86 @@ describe("publisher", () => {
     expect(github.comments.filter((c) => c.user.login === BOT)).toHaveLength(2);
   });
 
-  it("records a rejected anchor as failed, lists it in the summary and retries it next round", async () => {
+  it("demotes HTTP 422 inline comments to unanchored summary and retries multi-line as single-line", async () => {
+    const s = await pull();
+    github.setFiles("acme/pub", s.number, [
+      { filename: "src/a.ts", lines: [1, 2, 3, 4, 5] },
+    ]);
+    const ok = [finding("p1", 1), finding("p2", 2)];
+    const bad = finding("bad", 5);
+    const original = github.handle.bind(github);
+    let posts = 0;
+    github.handle = async (url, init) => {
+      if (
+        init?.method === "POST" &&
+        /\/pulls\/\d+\/comments$/.test(url) &&
+        ++posts === 3
+      )
+        return Response.json({ message: "Validation Failed" }, { status: 422 });
+      return original(url, init);
+    };
+    const result = await publish(s, report([...ok, bad]));
+    expect(result).toMatchObject({
+      posted: 2,
+      failed: 0,
+      unanchored: 1,
+      demoted_422: 1,
+    });
+    expect(result!.failures).toBeUndefined();
+    expect(github.issueComments[0].body).not.toContain(
+      "### Not posted inline (retried next round)",
+    );
+    expect(github.issueComments[0].body).toContain(bad.id.slice(0, 8));
+    // Nothing written to publications with state='failed' for 422 demotion.
+    const row = await runtime.DB.prepare(
+      "SELECT state FROM publications WHERE lineage_id=? AND identity=?",
+    )
+      .bind(s.lineage, bad.id)
+      .first<any>();
+    expect(row).toBeNull();
+
+    // Multi-line 422 retries once as single-line before demoting.
+    const multi = finding("multi", 4, {
+      fix: { line_start: 2, line_end: 4, replacement: "const x = 1;" },
+    } as any);
+    let sawStartLine = false;
+    let sawSingleFallback = false;
+    github.setFiles("acme/pub", s.number, [
+      {
+        filename: "src/a.ts",
+        lines: [1, 2, 3, 4, 5],
+        patch: "@@ -1,5 +1,5 @@\n a\n+b\n+c\n+d\n e\n",
+      },
+    ]);
+    github.handle = async (url, init) => {
+      if (init?.method === "POST" && /\/pulls\/\d+\/comments$/.test(url)) {
+        const body = JSON.parse(String(init.body));
+        if (body.start_line !== undefined) {
+          sawStartLine = true;
+          return Response.json(
+            { message: "Validation Failed" },
+            { status: 422 },
+          );
+        }
+        if (body.line === 4 && body.start_line === undefined)
+          sawSingleFallback = true;
+      }
+      return original(url, init);
+    };
+    const multiRes = await publish(s, report([...ok, multi]));
+    expect(sawStartLine).toBe(true);
+    expect(sawSingleFallback).toBe(true);
+    expect(multiRes).toMatchObject({ posted: 1, failed: 0 });
+    github.handle = original;
+  });
+
+  it("records a non-422 host failure as failed, lists it in the summary and retries it next round", async () => {
     const s = await pull();
     github.setFiles("acme/pub", s.number, [
       { filename: "src/a.ts", lines: [1, 2, 3, 4, 5] },
     ]);
     const ok = [finding("p1", 1), finding("p2", 2), finding("p3", 3)];
     const bad = finding("bad", 5);
-    github.failures.push({
-      method: "POST",
-      pattern: /\/pulls\/\d+\/comments$/,
-      status: 422,
-      message: "Validation Failed",
-      times: 0,
-    });
-    // The fourth comment is rejected.
     let posts = 0;
     const original = github.handle.bind(github);
     github.handle = async (url, init) => {
@@ -443,7 +508,7 @@ describe("publisher", () => {
         /\/pulls\/\d+\/comments$/.test(url) &&
         ++posts === 4
       )
-        return Response.json({ message: "Validation Failed" }, { status: 422 });
+        return Response.json({ message: "Server Error" }, { status: 500 });
       return original(url, init);
     };
     const result = await publish(s, report([...ok, bad]));
@@ -452,7 +517,7 @@ describe("publisher", () => {
       {
         id: bad.id,
         kind: "finding",
-        error: `GitHub /repos/acme/pub/pulls/${s.number}/comments returned HTTP 422: Validation Failed`,
+        error: `GitHub /repos/acme/pub/pulls/${s.number}/comments returned HTTP 500: Server Error`,
       },
     ]);
     expect(github.issueComments[0].body).toContain(
@@ -473,6 +538,31 @@ describe("publisher", () => {
     );
     expect(retry).toMatchObject({ posted: 1, failed: 0 });
     expect(github.comments).toHaveLength(4);
+  });
+
+  it("skips inline comments for plausible non-error findings and collapses >3 in summary", async () => {
+    const s = await pull();
+    github.setFiles("acme/pub", s.number, [
+      { filename: "src/a.ts", lines: [1, 2, 3, 4, 5] },
+    ]);
+    const obs = [1, 2, 3, 4].map((line) =>
+      finding(`plaus-${line}`, line, {
+        evidence_level: "plausible",
+        severity: "warning",
+        category: "risk",
+      }),
+    );
+    const strong = finding("strong-1", 5, {
+      evidence_level: "static_proven",
+      severity: "warning",
+    });
+    const result = await publish(s, report([strong, ...obs]));
+    expect(result).toMatchObject({ posted: 1, unanchored: 0, failed: 0 });
+    expect(github.comments).toHaveLength(1);
+    const summary = github.issueComments[0].body;
+    expect(summary).toContain("Additional plausible observations (4)");
+    expect(summary).toContain(obs[0].id.slice(0, 8));
+    expect(summary).toContain("Worth a look");
   });
 
   it("never posts a dismissed finding or one dismissed as wrong elsewhere, and summarizes capped rounds", async () => {
@@ -1276,6 +1366,99 @@ describe("/rio commands", () => {
     );
     expect(github.threads.get(555)!.resolved).toBe(true);
     expect([...github.tokens.values()].every((t) => t.revoked)).toBe(true);
+  });
+
+  it("enforces maintainer-only /rio suppress and /rio decline-suppression commands and renders proposals", async () => {
+    expect(parseCommand("/rio suppress sp-0123abcd too noisy")).toEqual({
+      kind: "suppress",
+      id: "sp-0123abcd",
+      note: "too noisy",
+    });
+    expect(parseCommand("/rio decline-suppression 0123abcd keep checking")).toEqual({
+      kind: "decline-suppression",
+      id: "0123abcd",
+      note: "keep checking",
+    });
+    expect(parseCommand("/rio suppress short")).toEqual({ kind: "invalid" });
+
+    const approveId = `sp-${hash("approve-proposal").slice(0, 12)}`;
+    const declineId = `sp-${hash("decline-proposal").slice(0, 12)}`;
+    await runtime.DB.batch([
+      runtime.DB.prepare(
+        "INSERT INTO suppressions(id,tenant,repository,origin,status,entry_json,evidence_json,evidence_count,created_at) VALUES(?,'owner','github.com/acme/pub','proposed','proposed','{\"rule\":\"lint/noisy\"}','[]',3,1)",
+      ).bind(approveId),
+      runtime.DB.prepare(
+        "INSERT INTO suppressions(id,tenant,repository,origin,status,entry_json,evidence_json,evidence_count,created_at) VALUES(?,'owner','github.com/acme/pub','proposed','proposed','{\"path\":\"gen/**\"}','[]',4,2)",
+      ).bind(declineId),
+    ]);
+    const { env: e } = capture();
+    // Collaborators cannot approve or decline suppression proposals.
+    const collab = await handleCommand(
+      e,
+      message(`/rio suppress ${approveId} please`, "cole", 302),
+    );
+    expect(collab).toEqual({ applied: false, actor: "collaborator" });
+    expect(github.reactions.at(-1)!.content).toBe("-1");
+
+    // Maintainer approval and decline succeed, including bare hex prefix.
+    const approved = await handleCommand(
+      e,
+      message(`/rio suppress ${approveId} confirmed noisy`, "mia", 302),
+    );
+    expect(approved).toEqual({ applied: true, actor: "maintainer" });
+    expect(github.reactions.at(-1)!.content).toBe("+1");
+
+    const declined = await handleCommand(
+      e,
+      message(
+        `/rio decline-suppression ${declineId.slice(3, 11)} keep checking`,
+        "mia",
+        302,
+      ),
+    );
+    expect(declined).toEqual({ applied: true, actor: "maintainer" });
+    expect(github.reactions.at(-1)!.content).toBe("+1");
+
+    const rows = await runtime.DB.prepare(
+      "SELECT id,status,note FROM suppressions WHERE id IN (?,?) ORDER BY id",
+    )
+      .bind(approveId, declineId)
+      .all<any>();
+    const byId = Object.fromEntries(rows.results.map((r: any) => [r.id, r]));
+    expect(byId[approveId]).toMatchObject({
+      status: "applied",
+      note: "confirmed noisy",
+    });
+    expect(byId[declineId]).toMatchObject({
+      status: "declined",
+      note: "keep checking",
+    });
+
+    // Already-decided proposal cannot be approved again.
+    const repeat = await handleCommand(
+      e,
+      message(`/rio suppress ${approveId}`, "mia", 302),
+    );
+    expect(repeat.applied).toBe(false);
+    expect(github.reactions.at(-1)!.content).toBe("-1");
+
+    // Summary comment lists open suppression proposals with maintainer command hints.
+    const s = await pull();
+    const rpt = report([]);
+    (rpt as any).suppression_proposals = [
+      {
+        id: "sp-abcdef012345",
+        entry: { rule: "lint/noisy" },
+        evidence_count: 3,
+        since: new Date().toISOString(),
+      },
+    ];
+    await publish(s, rpt);
+    expect(github.issueComments.at(-1)!.body).toContain("Suppression proposals (1)");
+    expect(github.issueComments.at(-1)!.body).toContain("/rio suppress sp-abcdef012345");
+    expect(github.issueComments.at(-1)!.body).toContain(
+      "/rio decline-suppression sp-abcdef012345",
+    );
   });
 });
 

@@ -14,7 +14,7 @@ export const MODES = [0o100644, 0o100755, SYMLINK];
 export const LARGE = 8 * 1024 * 1024;
 // One scan batch: the contents a consumer holds at a time. The Worker isolate
 // has 128 MiB for every review it serves, so a batch is a few MiB, not the tree.
-export const BATCH_BYTES = 4 * 1024 * 1024;
+export const BATCH_BYTES = 2 * 1024 * 1024;
 export const BATCH_ENTRIES = 1024;
 // Text of a change that one step holds, both versions together.
 export const CHANGE_BYTES = 32 * 1024 * 1024;
@@ -32,10 +32,8 @@ const READS = 3;
 // A scan waits this long for another scan's batch before reading its own.
 const SCAN_WAIT_MS = 60000;
 // A sweep plans its reads over this many entries at a time and holds their
-// metadata meanwhile. In path order a tree changes pack with nearly every
-// directory, so reads planned over 1,024 entries cost a 320 MiB tree 390
-// requests; planned over 16,384 they cost 75.
-const SWEEP_ENTRIES = 16384;
+// metadata meanwhile.
+const SWEEP_ENTRIES = 8192;
 // Its first window is short: a consumer that has enough after the first paths
 // (a search for a common word) then stops after a few reads.
 const SWEEP_FIRST = 2048;
@@ -475,14 +473,14 @@ export function indexKey(tenant: string, id: string): string {
 export function locatedKey(tenant: string, id: string, chunk: number): string {
   return `snapshots/${tenant}/manifests/${id}/located/${chunk}`;
 }
+/** Isolate-global scan lock so concurrent StoredSnapshot instances hold one batch at a time. */
+let scanTurn: Promise<void> = Promise.resolve();
 /** A sealed snapshot in R2: a small page index over located manifest chunks. */
 export class StoredSnapshot implements SnapshotReader {
   readonly base: TreeReader;
   readonly head: TreeReader;
-  private pages = new Lru<Map<string, Entry>>(4 * 1024 * 1024);
-  private contents = new Lru<Uint8Array>(16 * 1024 * 1024);
-  // The scan holding a batch; see `hold`.
-  private turn: Promise<void> = Promise.resolve();
+  private pages = new Lru<Map<string, Entry>>(2 * 1024 * 1024);
+  private contents = new Lru<Uint8Array>(4 * 1024 * 1024);
   /** The budget of the environment this snapshot reads through, if it has one. */
   get requests(): Requests | undefined {
     return requestsOf(this.env);
@@ -618,14 +616,14 @@ export class StoredSnapshot implements SnapshotReader {
     }
   }
   /**
-   * One scan batch at a time per snapshot: a review's voters search the tree
+   * One scan batch at a time across the isolate: a review's voters search the tree
    * concurrently, and each holding its own batch multiplied the memory. The
    * wait is bounded, so a stalled scan delays the others instead of ending them.
    */
   private async hold(): Promise<() => void> {
-    const before = this.turn;
+    const before = scanTurn;
     let release!: () => void;
-    this.turn = new Promise<void>((resolve) => (release = resolve));
+    scanTurn = new Promise<void>((resolve) => (release = resolve));
     let timer: ReturnType<typeof setTimeout> | null = null;
     await Promise.race([
       before,

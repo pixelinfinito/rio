@@ -31,8 +31,17 @@
       },
       "follow_up": {
         "type": "boolean",
-        "default": false,
+        "default": true,
         "description": "Do not hold the review for this step: the verify step that needs it runs on what the other steps raised and a pull request review publishes that, with its check run in progress; when this step ends, what it raised is verified and the review publishes again, over the same comments, and completes"
+      },
+      "challenge": {
+        "enum": [
+          "auto",
+          "always",
+          "never"
+        ],
+        "default": "auto",
+        "description": "Whether the first security audit result is challenged once for depth: always challenges whenever turns remain; auto challenges on high-risk plans or when no hypotheses were raised; never disables the challenge pass"
       },
       "max_defects": {
         "type": "integer",

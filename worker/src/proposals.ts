@@ -1,10 +1,11 @@
-import type { Env } from "./types";
+import type { Env, Profile } from "./types";
 import { canonical, hash } from "./validation";
 
 // Suppression proposals (openspec rio-v0-3-core, suppression-proposals).
-// Computed from feedback when a review finishes; never applied by the
-// endpoint. Only `rio suppressions apply` writes the entry, into the
-// repository's profile, after a human confirms it.
+// Computed from feedback when a review finishes; never applied automatically by
+// the computation step. Maintainers confirm via `rio suppressions apply` or
+// `/rio suppress <id>`, and applied proposals are merged with the profile at
+// review time.
 
 const DAY = 24 * 60 * 60 * 1000;
 export const PROPOSAL_WINDOW = 90 * DAY;
@@ -182,4 +183,74 @@ export function publicProposal(row: Row) {
       ? { decided_at: new Date(row.decided_at).toISOString() }
       : {}),
   };
+}
+
+/** Loads applied suppression entries stored for a repository. */
+export async function appliedSuppressions(
+  env: Env,
+  tenant: string,
+  repository: string,
+): Promise<Profile["suppress"]> {
+  const rows = await env.DB.prepare(
+    "SELECT entry_json FROM suppressions WHERE tenant=? AND repository=? AND status='applied' ORDER BY decided_at,id",
+  )
+    .bind(tenant, repository)
+    .all<{ entry_json: string }>();
+  const entries: Profile["suppress"] = [];
+  for (const row of rows.results) {
+    try {
+      const parsed = JSON.parse(row.entry_json) as Entry;
+      if ("rule" in parsed && typeof parsed.rule === "string")
+        entries.push({ rule: parsed.rule });
+      else if ("path" in parsed && typeof parsed.path === "string")
+        entries.push({ path: parsed.path });
+    } catch {
+      // Skip malformed rows instead of failing the review.
+    }
+  }
+  return entries;
+}
+
+/** Resolves a suppression proposal ID or prefix (`sp-<hex>` or `<hex>`) within a repository. */
+export async function resolveProposalPrefix(
+  env: Env,
+  tenant: string,
+  repository: string,
+  rawId: string,
+): Promise<
+  | { kind: "found"; id: string; status: Row["status"] }
+  | { kind: "ambiguous" | "missing" }
+> {
+  const normalized = rawId.toLowerCase();
+  const id = normalized.startsWith("sp-") ? normalized : `sp-${normalized}`;
+  const prefix = id.replace(/[\\%_]/g, "\\$&");
+  const rows = await env.DB.prepare(
+    "SELECT id,status FROM suppressions WHERE tenant=? AND repository=? AND id LIKE ? ESCAPE '\\' LIMIT 2",
+  )
+    .bind(tenant, repository, `${prefix}%`)
+    .all<{ id: string; status: Row["status"] }>();
+  if (!rows.results.length) return { kind: "missing" };
+  if (rows.results.length > 1) return { kind: "ambiguous" };
+  return {
+    kind: "found",
+    id: rows.results[0].id,
+    status: rows.results[0].status,
+  };
+}
+
+/** Transitions a `proposed` suppression to `applied` or `declined`. Returns true when updated. */
+export async function decideProposal(
+  env: Env,
+  tenant: string,
+  id: string,
+  status: "applied" | "declined",
+  note?: string,
+  now = Date.now(),
+): Promise<boolean> {
+  const updated = await env.DB.prepare(
+    "UPDATE suppressions SET status=?,note=?,decided_at=? WHERE id=? AND tenant=? AND status='proposed' RETURNING id",
+  )
+    .bind(status, note ?? null, now, id, tenant)
+    .first<{ id: string }>();
+  return !!updated;
 }

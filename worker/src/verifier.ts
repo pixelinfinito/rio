@@ -1,5 +1,10 @@
 import type { EvidenceContext } from "./quorum";
-import { aggregate, blindMatch, evidenceLevel } from "./quorum";
+import {
+  aggregate,
+  blindMatch,
+  citationKey,
+  evidenceLevel,
+} from "./quorum";
 import type {
   Gateway,
   Guidance,
@@ -18,10 +23,11 @@ import {
   VOTE_SCHEMA,
   converse,
   fits,
+  retryAfterMs,
   systemPrompt,
   tokenBound,
 } from "./gateway";
-import { blindPrompt, join } from "./prompt";
+import { blindPrompt, join, parts, partitionElement } from "./prompt";
 import {
   dataBlock,
   filteredLines,
@@ -31,6 +37,108 @@ import {
 } from "./tools";
 import { validateAnswer, validateHypotheses } from "./validation";
 import type { Verified } from "./consolidate";
+export type FailureKind = "permanent" | "prolonged_outage" | "transient";
+
+export function classifyVerifierFailure(
+  message: string,
+  remainingMs = Infinity,
+): FailureKind | null {
+  if (
+    /provider failed \((400\s+(?:model_not_found|unknown_model|invalid_model|permission_error)|401|403|404)\b/i.test(
+      message,
+    ) ||
+    /model_not_found|unknown model|no default model/i.test(message)
+  )
+    return "permanent";
+  if (/provider failed \(429\)/i.test(message)) {
+    const after = retryAfterMs(message);
+    if (
+      after > 300_000 ||
+      (Number.isFinite(remainingMs) && after > remainingMs)
+    )
+      return "prolonged_outage";
+    return "transient";
+  }
+  if (
+    /provider failed \(5\d\d\)/i.test(message) ||
+    /omitted content or usage|timeout/i.test(message)
+  )
+    return "transient";
+  return null;
+}
+
+/**
+ * Per-review verifier circuit breaker: trips immediately on permanent model
+ * errors or >5m rate limits, or after 3 consecutive transient failures,
+ * failing over to an optional fallback model or aborting remaining votes.
+ */
+export class VerifierBreaker {
+  private primaryTripped = false;
+  private fallbackTripped = false;
+  private consecutive = new Map<string, number>();
+  private _fallbackEvent?: { from: string; to: string; reason: string };
+  private _abortReason?: string;
+
+  constructor(
+    readonly primary: string,
+    readonly fallback?: string,
+  ) {}
+
+  activeModel(): { model: string; usingFallback: boolean } | null {
+    if (!this.primaryTripped)
+      return { model: this.primary, usingFallback: false };
+    if (this.fallback && !this.fallbackTripped)
+      return { model: this.fallback, usingFallback: true };
+    return null;
+  }
+
+  get abortedReason(): string | undefined {
+    return this._abortReason;
+  }
+
+  get fallbackUsed(): { from: string; to: string; reason: string } | undefined {
+    return this._fallbackEvent;
+  }
+
+  recordSuccess(model: string) {
+    this.consecutive.set(model, 0);
+  }
+
+  recordFailure(model: string, error: string, remainingMs = Infinity): boolean {
+    const kind = classifyVerifierFailure(error, remainingMs);
+    if (!kind) return false;
+    const count =
+      kind === "permanent" || kind === "prolonged_outage"
+        ? 3
+        : (this.consecutive.get(model) ?? 0) + 1;
+    this.consecutive.set(model, count);
+    if (count < 3) return false;
+    const cleanReason = error.replace(/\s+/g, " ").trim().slice(0, 120);
+    if (model === this.primary && !this.primaryTripped) {
+      this.primaryTripped = true;
+      if (
+        this.fallback &&
+        this.fallback !== this.primary &&
+        !this.fallbackTripped
+      ) {
+        this._fallbackEvent = {
+          from: this.primary,
+          to: this.fallback,
+          reason: cleanReason || kind,
+        };
+        return true;
+      }
+      this._abortReason = `circuit_open: ${cleanReason || kind}`;
+      return false;
+    }
+    if (model === this.fallback && !this.fallbackTripped) {
+      this.fallbackTripped = true;
+      this._abortReason = `circuit_open: fallback failed (${cleanReason || kind})`;
+    }
+    return false;
+  }
+}
+
 export interface VerifyOptions {
   profile: Profile;
   hypothesis: Hypothesis;
@@ -46,6 +154,8 @@ export interface VerifyOptions {
   call?: Parameters<typeof converse>[0]["call"];
   record?: Parameters<typeof converse>[0]["record"];
   save: (vote: Vote) => Promise<void>;
+  breaker?: VerifierBreaker;
+  partitionFor?: (model: string) => string;
   // Prompt settings (design D4, D9, D12, D14); absent means the pre-change layout.
   prompt?: {
     partition?: string;
@@ -55,19 +165,50 @@ export interface VerifyOptions {
     cache?: { classes: string[]; key?: string };
   };
 }
-/** The evidence context with the head modes of every cited path filled in. */
+/** The evidence context with head modes and verified non-AST citations filled in. */
 async function cited(
   o: VerifyOptions,
   refs: ArtifactRef[],
 ): Promise<EvidenceContext> {
   const head = { ...o.context.snapshot.head };
-  const tree = readerOf(o.snapshot).head;
-  for (const ref of refs)
+  const verifiedCitations = new Set(o.context.verifiedCitations ?? []);
+  const reader = readerOf(o.snapshot);
+  const tree = reader.head;
+  for (const ref of refs) {
     if (ref.path && !Object.hasOwn(head, ref.path)) {
       const entry = await tree.stat(ref.path);
       if (entry) head[ref.path] = { mode: entry.mode };
     }
-  return { ...o.context, snapshot: { head } };
+    if (
+      ref.kind === "file_citation" &&
+      ref.version === "head" &&
+      ref.path &&
+      head[ref.path] &&
+      head[ref.path].mode !== 0o120000 &&
+      Number.isInteger(ref.line_start) &&
+      Number.isInteger(ref.line_end) &&
+      ref.line_start! >= 1 &&
+      ref.line_end! >= ref.line_start! &&
+      ref.excerpt?.trim()
+    ) {
+      try {
+        const lines = (await readFile(reader, ref.path, "head")).split("\n");
+        if (ref.line_end! <= lines.length) {
+          const slice = lines
+            .slice(ref.line_start! - 1, ref.line_end!)
+            .join("\n")
+            .replace(/\s+/g, " ")
+            .trim();
+          const excerpt = ref.excerpt.replace(/\s+/g, " ").trim();
+          if (excerpt && slice.includes(excerpt))
+            verifiedCitations.add(citationKey(ref));
+        }
+      } catch {
+        /* Leave unverified when the head file cannot be read cleanly. */
+      }
+    }
+  }
+  return { ...o.context, snapshot: { head }, verifiedCitations };
 }
 /** Contract hypotheses are settled through graph paths in both versions. */
 export const CONTRACT_VERIFICATION =
@@ -76,6 +217,8 @@ export const CONTRACT_VERIFICATION =
 export const CONTEXT_BYTES = 24 * 1024;
 /** Lines of one symbol excerpted before the voter must read the file itself. */
 export const SYMBOL_LINES = 300;
+/** Turn cap for the blind verification phase when `blind_mode` is `"defects_only"`. */
+export const BLIND_TURNS = 4;
 /** A voter's blind message: the question, then the blind context. */
 export async function blindContext(o: VerifyOptions): Promise<string> {
   return join(blindPrompt(await blindBlocks(o)));
@@ -215,6 +358,12 @@ export async function verifyHypothesis(
   o: VerifyOptions,
 ): Promise<{ verified: Verified; votes: Vote[] }> {
   const { voters, quorum } = panelOf(o.profile.verify, o.hypothesis);
+  const blindMode = o.profile.verify.blind_mode ?? "defects_only";
+  const skipBlind =
+    blindMode === "off" ||
+    (blindMode === "defects_only" &&
+      (o.hypothesis.category === "risk" || voters === 1));
+  const blindLimited = !skipBlind && blindMode === "defects_only";
   const alias =
     o.profile.verify.model ??
     (o.profile.models.verifier ? "verifier" : "default");
@@ -240,113 +389,180 @@ export async function verifyHypothesis(
             blind: [],
             blind_match: "none",
           };
-        try {
-          const allowance = {
-            remaining: o.verifyTokens ?? DEFAULT_VERIFY_TOKENS,
-          };
-          const messages: ModelRequest["messages"] = [
-            {
-              role: "user",
-              content: blindPrompt(await blindBlocks(o), o.prompt?.partition),
-            },
-          ];
-          const tools = o.tools(voter);
-          const options = {
-            gateway: o.gateway,
-            ledger: o.ledger,
-            actor: `${o.hypothesis.id}-${voter}`,
-            model: o.profile.models[alias],
-            allowance,
-            messages,
-            dispatch: tools.dispatch.bind(tools),
-            call: o.call,
-            record: o.record,
-            cancelled: o.cancelled,
-            singleSystem: o.prompt?.single,
-            compaction: o.prompt?.compaction,
-            ...(o.prompt?.cache ? { cache: o.prompt.cache } : {}),
-            ...(o.prompt?.partition ? { redact: [o.prompt.partition] } : {}),
-          };
-          const blind = await converse({
-            ...options,
-            phase: "verify-blind",
-            // A restated hypothesis outside the schema, such as one with a
-            // field it does not name, is sent back with the reason instead
-            // of failing the vote.
-            validateResult: (value) => {
-              try {
-                return validateHypotheses(value);
-              } catch (error) {
-                const reason = error instanceof Error ? error.message : "";
-                throw new Refused(
-                  reason,
-                  `Host: your result was not accepted: ${reason.slice(0, 300)}. Reply with {"result":[...]} again, each hypothesis following the item schema exactly, with no fields it does not name.`,
-                );
-              }
-            },
-          });
-          vote.blind = validateHypotheses(blind);
-          vote.blind_match = blindMatch(vote.blind, o.hypothesis);
-          // Persist before disclosing the hypothesis; the audit distinguishes an unfinished second turn.
-          await o.save(vote);
-          const disclosure = (single: boolean) => ({
-            role: "user" as const,
-            content: `Verify this hypothesis. Assess regression on base/head, reachability, protections and contracts. Return {result:{evidence_level,evidence:[{kind:execution|code,version:base|head,job_id?,path?,node_ids?,demonstrates:regression|protection}],category?,reclassification_reason?}}. Reproduced requires a failed head runner execution of the reproduction; refutation requires a passing head reproduction or a cited protection. Static proof must cite the actual head graph path. Keep the original category by omitting category. Only downward changes are permitted: defect/security to risk/diagnostic/style, risk to diagnostic/style, diagnostic to style, with reclassification_reason required. Diagnostic is only a restatement of a diagnostic the deterministic checks reported, and style only a preference of layout or taste: a wrong message, a misspelling, unused or repeated code and a misleading name are neither, and hypotheses of either category are not reported. Never upgrade risk to defect, even if proven; category and evidence level are independent. Cite only job IDs returned by an actual host run tool. If you have not executed a reproduction, use static_proven with actual head graph node IDs or plausible; describing a command does not execute it.${o.hypothesis.rule_id.startsWith("contracts/") ? CONTRACT_VERIFICATION : ""}\n${single ? `${VOTE_SCHEMA}\n` : ""}${dataBlock("hypothesis", o.hypothesis)}`,
-          });
-          // `verifier-system` keeps the blind system prompt only while the
-          // disclosed turn, which then also carries the hypothesis schema, fits
-          // the voter's allowance; otherwise the voter falls back to the
-          // separate disclosed prompt rather than exhausting (design D4).
-          let single = !!o.prompt?.single;
-          if (single)
-            single = fits(
-              Math.min(allowance.remaining, await o.ledger.remaining()),
-              tokenBound(systemPrompt("verify-disclosed", true), [
-                ...messages,
-                disclosure(true),
-              ]),
+        let voterAttempt = 0;
+        while (true) {
+          const active = o.breaker
+            ? o.breaker.activeModel()
+            : { model: o.profile.models[alias], usingFallback: false };
+          if (!active) {
+            vote.status = "failed";
+            vote.error = o.breaker?.abortedReason ?? "circuit_open";
+            break;
+          }
+          const partition =
+            active.usingFallback && o.partitionFor
+              ? o.partitionFor(active.model)
+              : o.prompt?.partition;
+          try {
+            const allowance = {
+              remaining: o.verifyTokens ?? DEFAULT_VERIFY_TOKENS,
+            };
+            const blocks = await blindBlocks(o);
+            const tools = o.tools(voter);
+            const messages: ModelRequest["messages"] = [];
+            const options = {
+              gateway: o.gateway,
+              ledger: o.ledger,
+              actor: active.usingFallback
+                ? `${o.hypothesis.id}-${voter}-fb`
+                : `${o.hypothesis.id}-${voter}`,
+              model: active.model,
+              allowance,
+              messages,
+              dispatch: tools.dispatch.bind(tools),
+              call: o.call,
+              record: o.record,
+              cancelled: o.cancelled,
+              singleSystem: o.prompt?.single,
+              compaction: o.prompt?.compaction,
+              ...(o.prompt?.cache ? { cache: o.prompt.cache } : {}),
+              ...(partition ? { redact: [partition] } : {}),
+            };
+            const disclosure = (single: boolean) => ({
+              role: "user" as const,
+              content: `Verify this hypothesis. Assess regression on base/head, reachability, protections and contracts. Return {result:{evidence_level,evidence:[{kind:execution|code|file_citation,version:base|head,job_id?,path?,node_ids?,line_start?,line_end?,excerpt?,demonstrates:regression|protection}],category?,reclassification_reason?}}. Reproduced requires a failed head runner execution of the reproduction; refutation requires a passing head reproduction or a cited protection. Static proof must cite the actual head graph path (or for a non-AST file with no graph nodes, cite file_citation with line_start, line_end, and verbatim excerpt from head). Keep the original category by omitting category. Only downward changes are permitted: defect/security to risk/diagnostic/style, risk to diagnostic/style, diagnostic to style, with reclassification_reason required. Diagnostic is only a restatement of a diagnostic the deterministic checks reported, and style only a preference of layout or taste: a wrong message, a misspelling, unused or repeated code and a misleading name are neither, and hypotheses of either category are not reported. Never upgrade risk to defect, even if proven; category and evidence level are independent. Cite only job IDs returned by an actual host run tool. If you have not executed a reproduction, use static_proven with actual head graph node IDs (or file_citation on non-AST files) or plausible; describing a command does not execute it.${o.hypothesis.rule_id.startsWith("contracts/") ? CONTRACT_VERIFICATION : ""}\n${single ? `${VOTE_SCHEMA}\n` : ""}${dataBlock("hypothesis", o.hypothesis)}`,
+            });
+            if (!skipBlind) {
+              messages.push({
+                role: "user",
+                content: blindPrompt(blocks, partition),
+              });
+              const blindDispatch = blindLimited
+                ? async (name: string, input: any) => {
+                    if (name === "run")
+                      throw new Error(
+                        "run is disabled during blind verification; inspect code with read_file, search, list_files, file_stat, or graph_query",
+                      );
+                    return tools.dispatch(name, input);
+                  }
+                : options.dispatch;
+              const blind = await converse({
+                ...options,
+                dispatch: blindDispatch,
+                ...(blindLimited ? { maxTurns: BLIND_TURNS } : {}),
+                phase: "verify-blind",
+                // A restated hypothesis outside the schema, such as one with a
+                // field it does not name, is sent back with the reason instead
+                // of failing the vote.
+                validateResult: (value) => {
+                  try {
+                    return validateHypotheses(value);
+                  } catch (error) {
+                    const reason = error instanceof Error ? error.message : "";
+                    throw new Refused(
+                      reason,
+                      `Host: your result was not accepted: ${reason.slice(0, 300)}. Reply with {"result":[...]} again, each hypothesis following the item schema exactly, with no fields it does not name.`,
+                    );
+                  }
+                },
+              });
+              vote.blind = validateHypotheses(blind);
+              vote.blind_match = blindMatch(vote.blind, o.hypothesis);
+              // Persist before disclosing the hypothesis; the audit distinguishes an unfinished second turn.
+              await o.save(vote);
+            } else {
+              vote.blind = [];
+              vote.blind_match = "none";
+            }
+            const makeDisclosed = (
+              single: boolean,
+            ): ModelRequest["messages"][number] =>
+              skipBlind
+                ? {
+                    role: "user",
+                    content: partition
+                      ? parts(
+                          {
+                            layer: "assignment",
+                            text: `${disclosure(single).content}\n`,
+                          },
+                          {
+                            layer: "partition",
+                            text: `${partitionElement(partition)}\n`,
+                          },
+                          { layer: "context", text: blocks, cache: true },
+                        )
+                      : `${disclosure(single).content}\n\n${blocks}`,
+                  }
+                : disclosure(single);
+            // `verifier-system` keeps the blind system prompt only while the
+            // disclosed turn, which then also carries the hypothesis schema, fits
+            // the voter's allowance; otherwise the voter falls back to the
+            // separate disclosed prompt rather than exhausting (design D4).
+            let single = !!o.prompt?.single;
+            if (single)
+              single = fits(
+                Math.min(allowance.remaining, await o.ledger.remaining()),
+                tokenBound(systemPrompt("verify-disclosed", true), [
+                  ...messages,
+                  makeDisclosed(true),
+                ]),
+              );
+            messages.push(makeDisclosed(single));
+            vote.answer = acceptAnswer(
+              await converse({
+                ...options,
+                singleSystem: single,
+                phase: "verify-disclosed",
+                // A vote outside the schema, such as one with a `note` beside
+                // its evidence, or a reclassification the rules do not permit,
+                // is sent back with the reason instead of failing the vote.
+                validateResult: (value) => {
+                  try {
+                    return acceptAnswer(value, o.hypothesis);
+                  } catch (error) {
+                    const reason = error instanceof Error ? error.message : "";
+                    throw new Refused(
+                      reason,
+                      `Host: your result was not accepted: ${reason.slice(0, 300)}. Reply with {"result":{...}} again, following the vote schema exactly, with no fields it does not name.`,
+                    );
+                  }
+                },
+              }),
+              o.hypothesis,
             );
-          messages.push(disclosure(single));
-          vote.answer = acceptAnswer(
-            await converse({
-              ...options,
-              singleSystem: single,
-              phase: "verify-disclosed",
-              // A vote outside the schema, such as one with a `note` beside
-              // its evidence, or a reclassification the rules do not permit,
-              // is sent back with the reason instead of failing the vote.
-              validateResult: (value) => {
-                try {
-                  return acceptAnswer(value, o.hypothesis);
-                } catch (error) {
-                  const reason = error instanceof Error ? error.message : "";
-                  throw new Refused(
-                    reason,
-                    `Host: your result was not accepted: ${reason.slice(0, 300)}. Reply with {"result":{...}} again, following the vote schema exactly, with no fields it does not name.`,
-                  );
-                }
-              },
-            }),
-            o.hypothesis,
-          );
-          vote.validated_level = evidenceLevel(
-            vote.answer,
-            o.hypothesis,
-            await cited(o, vote.answer.evidence),
-          );
-          if (vote.validated_level !== vote.answer.evidence_level)
-            vote.validation_note =
-              "Claimed evidence level is not supported by valid selected-review artifacts.";
-          vote.status = "completed";
-        } catch (error) {
-          vote.error = error instanceof Error ? error.message : "voter failed";
-          vote.status = /cancel/.test(vote.error)
-            ? "cancelled"
-            : /budget|allowance|turn limit/.test(vote.error)
-              ? "exhausted"
-              : /malformed|invalid/.test(vote.error)
-                ? "malformed"
-                : "failed";
+            vote.validated_level = evidenceLevel(
+              vote.answer,
+              o.hypothesis,
+              await cited(o, vote.answer.evidence),
+            );
+            if (vote.validated_level !== vote.answer.evidence_level)
+              vote.validation_note =
+                "Claimed evidence level is not supported by valid selected-review artifacts.";
+            vote.status = "completed";
+            o.breaker?.recordSuccess(active.model);
+            break;
+          } catch (error) {
+            const msg = error instanceof Error ? error.message : "voter failed";
+            const remainingMs = await o.ledger.remainingMs?.().catch(() => Infinity);
+            if (
+              o.breaker &&
+              voterAttempt === 0 &&
+              o.breaker.recordFailure(active.model, msg, remainingMs)
+            ) {
+              voterAttempt++;
+              continue;
+            }
+            vote.error = msg;
+            vote.status = /cancel/.test(vote.error)
+              ? "cancelled"
+              : /budget|allowance|turn limit/.test(vote.error)
+                ? "exhausted"
+                : /malformed|invalid/.test(vote.error)
+                  ? "malformed"
+                  : "failed";
+            break;
+          }
         }
         await o.save(vote);
         votes.push(vote);
@@ -389,7 +605,9 @@ export async function verifyHypothesis(
             .map((ref) =>
               ref.kind === "execution"
                 ? `execution:${ref.version}:${ref.job_id}`
-                : `code:${ref.version}:${ref.path}:${(ref.node_ids ?? []).join(",")}`,
+                : ref.kind === "file_citation"
+                  ? `file_citation:${ref.version}:${ref.path}:${ref.line_start}-${ref.line_end}`
+                  : `code:${ref.version}:${ref.path}:${(ref.node_ids ?? []).join(",")}`,
             ),
         ),
     ),

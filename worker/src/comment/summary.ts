@@ -76,12 +76,18 @@ export function alert(report: any, failOn: any): string[] {
           ? "> No finding matches this repository's `fail_on` policy. rio's check run stays neutral."
           : "> No findings in this change. rio's check run stays neutral.",
       ];
-  if (report.status !== "complete")
-    lines.push(
-      "",
-      "> [!WARNING]",
-      `> The review is **${plain(report.status, 30)}**: some checks could not run, so earlier findings are not marked fixed. See the full report for what was skipped.`,
-    );
+  if (report.status !== "complete") {
+    const failedVotes = report.agent_audit?.incomplete_votes ?? 0;
+    const unverifiedHyps = report.agent_audit?.unverified_hypotheses ?? 0;
+    const fallback = report.agent_audit?.verifier_fallback
+      ? ` Fallback model \`${plain(String(report.agent_audit.verifier_fallback.to), 80)}\` was used after \`${plain(String(report.agent_audit.verifier_fallback.reason), 120)}\`.`
+      : "";
+    const detail =
+      failedVotes || unverifiedHyps
+        ? `verification failed (${failedVotes} verifier vote${failedVotes === 1 ? "" : "s"} failed; ${unverifiedHyps} hypothes${unverifiedHyps === 1 ? "is" : "es"} left unverified).${fallback}`
+        : "some checks could not run, so earlier findings are not marked fixed. See the full report for what was skipped.";
+    lines.push("", "> [!WARNING]", `> The review is **${plain(report.status, 30)}**: ${detail}`);
+  }
   return lines;
 }
 
@@ -131,9 +137,18 @@ export function findingTables(
   numbered = true,
 ): string[] {
   const { toFix, look } = verdict(report, failOn);
+  const summaryOnlyPlausible = (f: Finding) =>
+    f.evidence_level === "plausible" &&
+    f.severity !== "error" &&
+    !urls.has(f.id);
+  const extraPlausible = look.filter(summaryOnlyPlausible);
+  const collapsePlausible = extraPlausible.length > 3;
+  const visibleLook = collapsePlausible
+    ? look.filter((f) => !summaryOnlyPlausible(f))
+    : look;
   const lines: string[] = [];
   let n = 0;
-  const shown = toFix.length + look.length;
+  const shown = toFix.length + visibleLook.length;
   const table = (title: string, rows: Finding[]) => {
     const room = Math.max(0, MAX_FINDING_ROWS - n);
     if (!rows.length) return;
@@ -154,9 +169,27 @@ export function findingTables(
     }
   };
   table(`${GLYPH.error} To fix before merge`, toFix);
-  table(`${GLYPH.warning} Worth a look`, look);
+  table(`${GLYPH.warning} Worth a look`, visibleLook);
   if (shown > n)
     lines.push(`| | …and ${shown - n} more in the full report | | |`);
+  if (collapsePlausible)
+    lines.push(
+      "",
+      `<details><summary>${GLYPH.warning} <b>Additional plausible observations (${extraPlausible.length})</b> — summary only</summary>`,
+      "",
+      "| ID | Finding | Where | Proof |",
+      "| --- | --- | --- | --- |",
+      ...extraPlausible.slice(0, MAX_FINDING_ROWS).map(
+        (f) =>
+          `| \`${f.id.slice(0, DISPLAY_ID_LEN)}\` | ${rowTitle(f)} | ${where(f)} | ${shortProof(f)} |`,
+      ),
+      ...(extraPlausible.length > MAX_FINDING_ROWS
+        ? [
+            `| | …and ${extraPlausible.length - MAX_FINDING_ROWS} more in the full report | | |`,
+          ]
+        : []),
+      "</details>",
+    );
   return lines;
 }
 
@@ -415,6 +448,25 @@ export function summaryBody(input: SummaryInput): string {
     );
   const since = sinceLast(report, input.fixed ?? 0, input.wrong);
   if (since.length) lines.push("", ...since);
+  if (report.suppression_proposals?.length)
+    lines.push(
+      "",
+      `<details><summary><b>Suppression proposals (${report.suppression_proposals.length})</b> — maintainer commands</summary>`,
+      "",
+      "| Proposal | Scope | Evidence | Commands |",
+      "| --- | --- | --- | --- |",
+      ...report.suppression_proposals.slice(0, 20).map((p: any) => {
+        const scope =
+          p.entry && "rule" in p.entry
+            ? `rule \`${plain(String(p.entry.rule), 120)}\``
+            : p.entry && "path" in p.entry
+              ? `path \`${plain(String(p.entry.path), 150)}\``
+              : "`unknown`";
+        const id = plain(String(p.id), 32);
+        return `| \`${id}\` | ${scope} | ${Number(p.evidence_count ?? 0)} | \`/rio suppress ${id}\` · \`/rio decline-suppression ${id}\` |`;
+      }),
+      "</details>",
+    );
   lines.push(
     "",
     ...whatRan(report),

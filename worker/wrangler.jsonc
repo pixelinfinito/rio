@@ -46,7 +46,7 @@
       {
         "queue": "rio-jobs",
         "max_batch_size": 1,
-        "max_retries": 2,
+        "max_retries": 8,
       },
     ],
   },

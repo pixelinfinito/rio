@@ -133,7 +133,7 @@ export async function voter(r: (typeof ROUTES)[number], _options: ScenarioOption
   const single: Profile = {
     ...profile,
     models: { default: r.model },
-    verify: { voters: 1, quorum: 1 },
+    verify: { voters: 1, quorum: 1, blind_mode: "full" },
   };
   await verifyHypothesis({
     profile: single,

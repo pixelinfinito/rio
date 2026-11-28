@@ -93,6 +93,7 @@ type Outcome =
       status: 202;
       installation?: number;
       message?: QueueMessage;
+      debounce?: boolean;
       apply?: (env: Env) => Promise<void>;
     };
 
@@ -199,6 +200,7 @@ function classify(event: string, payload: any): Outcome {
     return {
       status: 202,
       installation: id,
+      debounce: payload.action === "synchronize",
       message: {
         type: "review-request",
         tenant: APP_TENANT,
@@ -206,6 +208,7 @@ function classify(event: string, payload: any): Outcome {
         repository,
         number: pr.number,
         trigger: "webhook",
+        ...(typeof pr.head?.sha === "string" ? { head_sha: pr.head.sha } : {}),
       },
     };
   }
@@ -302,7 +305,21 @@ export async function handleGitHubWebhook(
     return Response.json({ duplicate: true }, { status: 202 });
   try {
     await outcome.apply?.(env);
-    if (outcome.message) await env.JOBS.send(outcome.message);
+    if (outcome.message) {
+      if (outcome.debounce) {
+        const raw = env.PR_PUSH_DEBOUNCE_SECONDS;
+        const parsed = raw !== undefined ? Number(raw) : 45;
+        const delaySeconds =
+          Number.isFinite(parsed) && parsed > 0
+            ? Math.min(900, Math.floor(parsed))
+            : 0;
+        if (delaySeconds > 0)
+          await env.JOBS.send(outcome.message, { delaySeconds });
+        else await env.JOBS.send(outcome.message);
+      } else {
+        await env.JOBS.send(outcome.message);
+      }
+    }
   } catch (error) {
     // Forget the id so GitHub's redelivery of this event is acted on.
     await env.DB.prepare("DELETE FROM deliveries WHERE id=?")

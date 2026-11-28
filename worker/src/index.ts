@@ -367,7 +367,9 @@ app.post("/v1/reviews/:id/publish", async (c) => {
   const pull = await pullOf(c.env, row.id);
   if (!pull) return c.json({ error: "not a pull request review" }, 404);
   invariant(
-    row.status === "complete" || row.status === "partial",
+    row.status === "complete" ||
+      row.status === "partial" ||
+      row.status === "incomplete",
     "review is not finished",
   );
   // A dry run renders what consent would post and records no consent.
@@ -984,8 +986,11 @@ app.post("/v1/runner/:review/:job/:attempt/complete", async (c) => {
   return c.json({ accepted: true });
 });
 export { app };
-/** Deliveries per queue message: one plus `max_retries` in wrangler.jsonc. */
-const JOB_DELIVERIES = 3;
+/** Deliveries per queue message: non-job messages stay at 3; sandbox jobs match max_retries + 1 in wrangler.jsonc. */
+const NON_JOB_DELIVERIES = 3;
+const JOB_DELIVERIES = 9;
+const CONTAINER_CAPACITY_ERROR =
+  /no container instance|max_instances|container.*unavailable|overloaded|internal error/i;
 export default {
   // A request's object operations ride out a passing fault of the store.
   fetch: (request: Request, env: Env, context: ExecutionContext) =>
@@ -1016,7 +1021,7 @@ export default {
           console.log(
             `rio: ${body.type} failed: ${redact(error instanceof Error ? error.message : String(error)).slice(0, 300)}`,
           );
-          if (message.attempts < JOB_DELIVERIES) {
+          if (message.attempts < NON_JOB_DELIVERIES) {
             message.retry({ delaySeconds: 10 });
             continue;
           }
@@ -1050,7 +1055,7 @@ export default {
         const row = await env.DB.prepare(
           // Not for a review that ended, or was cancelled since the read
           // above: its jobs are withdrawn, never begun.
-          "UPDATE jobs SET status='leased',lease_until=? WHERE id=? AND attempt=? AND status IN ('pending','leased') AND NOT EXISTS (SELECT 1 FROM reviews r WHERE r.id=jobs.review_id AND (r.cancelled=1 OR r.status IN ('complete','partial','error'))) RETURNING payload_key",
+          "UPDATE jobs SET status='leased',lease_until=? WHERE id=? AND attempt=? AND status IN ('pending','leased') AND NOT EXISTS (SELECT 1 FROM reviews r WHERE r.id=jobs.review_id AND (r.cancelled=1 OR r.status IN ('complete','partial','incomplete','error'))) RETURNING payload_key",
         )
           // Held for the longest Sandbox job: transfer, command wall and teardown.
           .bind(
@@ -1064,13 +1069,19 @@ export default {
           continue;
         }
         const payload = await store.get<Execution>(row.payload_key);
+        const warm = payload.kind === "run";
         const sandbox = env.SANDBOX.get(
-          env.SANDBOX.idFromName(`${review_id}-${job_id}-${attempt}`),
+          env.SANDBOX.idFromName(
+            warm ? `warm-${review_id}` : `${review_id}-${job_id}-${attempt}`,
+          ),
         );
-        const response = await sandbox.fetch("https://sandbox/execute", {
-          method: "POST",
-          body: JSON.stringify(payload),
-        });
+        const response = await sandbox.fetch(
+          warm ? "https://sandbox/execute-warm" : "https://sandbox/execute",
+          {
+            method: "POST",
+            body: JSON.stringify(payload),
+          },
+        );
         invariant(response.ok, "sandbox execution failed");
         if (payload.kind !== "qa")
           await finishJob(
@@ -1085,19 +1096,29 @@ export default {
         // Only infrastructure errors reach here (a deadline is a result). The
         // last delivery (max_retries in wrangler.jsonc) records the failure so
         // the review fails with its reason instead of waiting for the step timeout.
+        const { review_id, job_id, attempt } = message.body as JobMessage;
+        const msg = error instanceof Error ? error.message : String(error);
+        const ended = await env.DB.prepare(
+          "SELECT cancelled,deadline FROM reviews WHERE id=?",
+        )
+          .bind(review_id)
+          .first<{ cancelled: number; deadline: number }>()
+          .catch(() => null);
+        if (ended && (ended.cancelled === 1 || Date.now() >= ended.deadline)) {
+          await withdraw(env, job_id, attempt).catch(() => {});
+          message.ack();
+          continue;
+        }
         if (message.attempts < JOB_DELIVERIES) {
-          message.retry({ delaySeconds: 10 + Math.floor(Math.random() * 20) });
+          const delaySeconds = CONTAINER_CAPACITY_ERROR.test(msg)
+            ? Math.min(120, Math.round(15 * Math.pow(1.5, message.attempts - 1))) +
+              Math.floor(Math.random() * 15)
+            : 10 + Math.floor(Math.random() * 20);
+          message.retry({ delaySeconds });
           continue;
         }
         try {
-          const { review_id, job_id, attempt } = message.body as JobMessage;
-          await failJob(
-            env,
-            review_id,
-            job_id,
-            attempt,
-            error instanceof Error ? error.message : String(error),
-          );
+          await failJob(env, review_id, job_id, attempt, msg);
         } catch {
           /* The job may already be completed or cancelled; the workflow times out as before. */
         }

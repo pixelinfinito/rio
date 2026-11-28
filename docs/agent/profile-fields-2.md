@@ -16,6 +16,8 @@ verify.quorum: integer; minimum=1
 
 ## fields-2
 verify.model: string; minLength=1
+verify.fallback_model: string; minLength=1
+verify.blind_mode: enum; enum=["full","defects_only","off"]
 verify.risk_voters: integer; minimum=1
 council: object; extra=false
 council.members: array; minItems=1; maxItems=9
@@ -23,10 +25,10 @@ council.members[].uses: string *; pattern="^rio/[a-z][a-z0-9-]*(@[0-9]+\\.[0-9]+
 council.members[].provider: string; pattern="^[a-z][a-z0-9-]*$"
 council.members[].model: string; minLength=1
 council.members[].family: string; pattern="^[a-z][a-z0-9-]*$"
-council.members[].self_hosted: boolean
-council.max_findings: integer; default=5; minimum=1
 
 ## fields-3
+council.members[].self_hosted: boolean
+council.max_findings: integer; default=5; minimum=1
 council.max_experiments: integer; default=2; minimum=0
 council.max_rounds: integer; default=2; minimum=1; maximum=2
 council.min_members: integer; default=3; minimum=1

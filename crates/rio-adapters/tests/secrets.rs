@@ -363,3 +363,31 @@ fn dummy_key_bodies_and_prose_are_redacted_but_not_reported() {
     }
     assert_eq!(reported("token = \"correct-horse-9fK2xQ7vLm3Zp8Rt\"\n"), 1);
 }
+
+#[test]
+fn local_dev_connection_urls_are_suppressed_while_prod_and_vendor_tokens_remain() {
+    for url in [
+        "postgresql+asyncpg://app:app_dev@db:5432/mydb",
+        "postgres://postgres:postgres@localhost:5432/app",
+        "redis://default:localdev@redis:6379/0",
+        "mysql://root:root@host.docker.internal:3306/test",
+    ] {
+        let change = changes("", url);
+        let findings = scan_secrets(&diff(&change, &[]).unwrap(), &change.head).unwrap();
+        assert_eq!(
+            findings.len(),
+            0,
+            "expected local dev URL suppressed: {url}"
+        );
+        assert_eq!(redact(url), url, "expected local dev URL unredacted: {url}");
+    }
+    for url in [
+        "postgres://user:ghp_1234567890abcdef1234567890abcdef@localhost/db",
+        "postgres://app:x9Km_Q2vL7nP4zR8tB@localhost:5432/app",
+        "postgres://user:password@production.internal/db",
+    ] {
+        let change = changes("", url);
+        let findings = scan_secrets(&diff(&change, &[]).unwrap(), &change.head).unwrap();
+        assert_eq!(findings.len(), 1, "expected real secret reported: {url}");
+    }
+}

@@ -240,3 +240,59 @@ print(json.dumps(out))'''
         job['network'] = True
         with self.assertRaises(AssertionError):
             self.execute(job)
+
+    def test_hydrate_and_run_cached_reuse_and_taint_detection(self):
+        with tempfile.TemporaryDirectory() as cache_dir:
+            spec = {'protocol': 1, 'snapshot_id': 'a' * 64, 'version': 'head'}
+            # Missing hydrated tree yields cache_miss cleanly.
+            miss_job = self.job(['/bin/true'])
+            miss_job.update(spec)
+            miss = executor.run_cached(
+                io.BytesIO((json.dumps(miss_job) + '\n').encode()),
+                cache_root=cache_dir,
+            )
+            self.assertFalse(miss.get('cache_hit', False))
+            self.assertEqual(miss['outcome'], 'cache_miss')
+
+            # Hydrate creates read-only tree and external `.ready` marker.
+            members = [('head/hello.txt', b'hello warm cache\n', 0o644)]
+            buf = io.BytesIO()
+            with tarfile.open(fileobj=buf, mode='w') as tar:
+                for name, data, mode in members:
+                    info = tarfile.TarInfo(name)
+                    info.size = len(data)
+                    info.mode = mode
+                    tar.addfile(info, io.BytesIO(data))
+            hyd = executor.hydrate(
+                io.BytesIO((json.dumps(spec) + '\n').encode() + buf.getvalue()),
+                cache_root=cache_dir,
+            )
+            self.assertTrue(hyd['hydrated'])
+            slot = Path(cache_dir) / ('a' * 64) / 'head'
+            self.assertTrue((slot / '.ready').is_file())
+            self.assertEqual((slot / 'tree' / 'hello.txt').stat().st_mode & 0o777, 0o444)
+
+            # Cached execution succeeds with cache_hit=True and zero transfer timing.
+            hit_job = self.job(['/bin/cat', 'hello.txt'])
+            hit_job.update(spec)
+            hit = executor.run_cached(
+                io.BytesIO((json.dumps(hit_job) + '\n').encode()),
+                cache_root=cache_dir,
+            )
+            self.assertTrue(hit['cache_hit'])
+            self.assertEqual(hit['outcome'], 'exited')
+            self.assertEqual(hit['exit_code'], 0)
+            self.assertEqual(hit['stdout'], 'hello warm cache\n')
+            self.assertFalse(hit.get('cache_tainted', False))
+            self.assertEqual(hit['timing']['transfer_ms'], 0)
+            self.assertIn('setup_ms', hit['timing'])
+
+            # Tampering with cached tree triggers cache_tainted=True and cache_miss.
+            (slot / 'tree' / 'hello.txt').chmod(0o644)
+            tainted = executor.run_cached(
+                io.BytesIO((json.dumps(hit_job) + '\n').encode()),
+                cache_root=cache_dir,
+            )
+            self.assertFalse(tainted.get('cache_hit', False))
+            self.assertTrue(tainted.get('cache_tainted'))
+            self.assertEqual(tainted['outcome'], 'cache_miss')

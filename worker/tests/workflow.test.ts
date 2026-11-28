@@ -437,7 +437,7 @@ it("leaves the votes a spent request budget did not cover incomplete, and keeps 
     // The generation call, and no voter's.
     expect(bodies.filter(generation)).toHaveLength(1);
     expect(bodies).toHaveLength(1);
-    expect([row.status, report.status]).toEqual(["complete", "incomplete"]);
+    expect([row.status, report.status]).toEqual(["incomplete", "incomplete"]);
     expect(votes).toEqual(["exhausted", "exhausted", "exhausted"]);
     expect(report.agent_audit.incomplete_votes).toBe(3);
     expect(report.findings).toEqual([]);
@@ -481,7 +481,7 @@ it("answers a search the request budget no longer covers with a refusal, and rep
     const results = JSON.parse(answered[0].split("\nHost: ")[0]).tool_results;
     expect(results[0]).toEqual({ name: "search", error: SEARCH_REFUSED });
     expect(results[1].result).toContain("1: function a()");
-    expect([row.status, report.status]).toEqual(["complete", "incomplete"]);
+    expect([row.status, report.status]).toEqual(["incomplete", "incomplete"]);
     expect(report.agent_audit.requests).toMatchObject({
       limit: 10000,
       scans: 0,
@@ -846,7 +846,7 @@ it("reports the phase and the time of an analysis job that hit its deadline", as
   const ended = await w.row();
   const report = await w.store.get<any>(ended.report_key);
   // The review goes on without the checks, and says which part ran out.
-  expect(ended.status).toBe("complete");
+  expect(ended.status).toBe("incomplete");
   expect(report.status).toBe("incomplete");
   expect(report.footer.notes).toContain(
     "checks: runner attempt 1 timed out during transfer (transfer 240 s); retried",

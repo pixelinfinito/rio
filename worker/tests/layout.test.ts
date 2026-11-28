@@ -33,7 +33,7 @@ const startsWith = (later: unknown[], earlier: unknown[]) =>
   expect(later.slice(0, earlier.length)).toEqual(earlier);
 
 describe("verifier-system", () => {
-  const single: Profile = { ...profile, verify: { voters: 1, quorum: 1 } };
+  const single: Profile = { ...profile, verify: { voters: 1, quorum: 1, blind_mode: "full" } };
   async function voter(
     on: boolean,
     save = async (_: Vote) => {},

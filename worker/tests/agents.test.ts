@@ -665,13 +665,17 @@ describe("security agent", () => {
     message: "The name query parameter reaches a concatenated SQL string.",
     trigger: "GET /users?name=' OR '1'='1",
   };
-  const steps = (enabled: boolean, rules: any[] = []) => [
+  const steps = (
+    enabled: boolean,
+    rules: any[] = [],
+    challenge?: "auto" | "always" | "never",
+  ) => [
     { id: "triage", uses: "rio/triage@0.1.0", needs: [], with: {} },
     {
       id: "security",
       uses: "rio/security@0.2.0",
       needs: ["triage"],
-      with: { enabled },
+      with: { enabled, ...(challenge ? { challenge } : {}) },
       rules,
     },
     { id: "verify", uses: "rio/verify@0.1.0", needs: ["security"], with: {} },
@@ -710,7 +714,7 @@ describe("security agent", () => {
       base,
       head,
       changed: ["src/api/users.ts"],
-      steps: steps(true),
+      steps: steps(true, [], "always"),
       agents: {},
       turns: { security: [null, result([injection]), result([])] },
       onAgent: readsFirst,
@@ -728,7 +732,7 @@ describe("security agent", () => {
       base,
       head,
       changed: ["src/api/users.ts"],
-      steps: steps(true),
+      steps: steps(true, [], "always"),
       agents: {},
       turns: { security: [null, result([injection]), result(many), result([injection])] },
       onAgent: readsFirst,
@@ -742,7 +746,7 @@ describe("security agent", () => {
       base,
       head,
       changed: ["src/api/users.ts"],
-      steps: steps(true),
+      steps: steps(true, [], "always"),
       agents: {
         security: {
           hypotheses: [injection],
@@ -767,6 +771,43 @@ describe("security agent", () => {
     expect(
       report.agent_audit.unverified.map((h: any) => h.rule_id ?? h.hypothesis?.rule_id),
     ).toContain(injection.rule_id);
+  });
+  it("gates security challenge on auto/never modes", async () => {
+    // Low-risk + non-empty hypotheses skips challenge under auto; empty hypotheses still challenges under auto; never skips challenge even when empty.
+    const autoNonEmpty = await review({
+      base,
+      head,
+      changed: ["src/api/users.ts"],
+      steps: steps(true, [], "auto"),
+      agents: {},
+      turns: { security: [null, result([injection]), result([])] },
+      onAgent: readsFirst,
+    });
+    expect(autoNonEmpty.calls.filter((c) => c === "security")).toHaveLength(2);
+    expect(raised(autoNonEmpty.report)).toContain(injection.rule_id);
+
+    const autoEmpty = await review({
+      base,
+      head,
+      changed: ["src/api/users.ts"],
+      steps: steps(true, [], "auto"),
+      agents: {},
+      turns: { security: [null, result([]), result([injection])] },
+      onAgent: readsFirst,
+    });
+    expect(autoEmpty.calls.filter((c) => c === "security")).toHaveLength(3);
+    expect(raised(autoEmpty.report)).toContain(injection.rule_id);
+
+    const neverEmpty = await review({
+      base,
+      head,
+      changed: ["src/api/users.ts"],
+      steps: steps(true, [], "never"),
+      agents: {},
+      turns: { security: [null, result([]), result([injection])] },
+      onAgent: readsFirst,
+    });
+    expect(neverEmpty.calls.filter((c) => c === "security")).toHaveLength(2);
   });
   it.each(["explicit", "triage"])(
     "runs when enabled by %s, verifies catalog hypotheses and reports catalog coverage",
@@ -1486,5 +1527,59 @@ describe("a step that holds the change and ends at a platform limit", () => {
     expect(report.footer.notes.join("\n")).toMatch(
       /The change could not be divided into parts for the correctness agent \(.*Worker exceeded memory limit\.\); it reviewed the change in one conversation\./,
     );
+  }, 60000);
+
+  it("handles 400 cyber_policy refusal gracefully on security agent and records cyber_policy_refusal", async () => {
+    const id = "sec-cyber-policy";
+    const store = new Store(runtime);
+    const transport = vi
+      .spyOn(globalThis, "fetch")
+      .mockImplementation(async (input) => {
+        if (!String(input).startsWith("https://api."))
+          throw new Error(`unexpected URL ${String(input)}`);
+        const body: any = {};
+        return Response.json(
+          { error: { message: "blocked by cyber_policy", type: "invalid_request_error" } },
+          { status: 400 },
+        );
+      });
+    try {
+      const s = submission();
+      const snapshot: Snapshot = { base: tree(base), head: tree(head) };
+      s.changed = [{ path: "src/a.ts", lines_changed: 2 }];
+      s.graphs = { base: { nodes: [], edges: [] }, head: { nodes: [], edges: [] } };
+      s.profile.steps = [
+        { id: "triage", uses: "rio/triage@0.1.0", needs: [], with: {} },
+        { id: "security", uses: "rio/security@0.2.0", needs: ["triage"], with: { enabled: true } },
+        { id: "verify", uses: "rio/verify@0.1.0", needs: ["security"], with: {} },
+      ];
+      const stored = await storeSnapshot(runtime, snapshot);
+      const key = await store.put(`reviews/${id}/submission.json`, {
+        ...s,
+        snapshot_id: stored.id,
+      });
+      await runtime.DB.prepare(
+        "INSERT INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES(?,?,?,'queued',?,?,?)",
+      )
+        .bind(id, "owner", key, Date.now(), 100000, Date.now() + 240000)
+        .run();
+      await using instance = await introspectWorkflowInstance(runtime.REVIEWS, id);
+      await runtime.REVIEWS.create({
+        id,
+        params: { review_id: id, snapshot_key: stored.key },
+      });
+      await instance.waitForStatus("complete");
+      const row = await runtime.DB.prepare("SELECT report_key FROM reviews WHERE id=?")
+        .bind(id)
+        .first<any>();
+      const report = await store.get<any>(row.report_key);
+      expect(report.status).toBe("partial");
+      expect(report.agent_audit.cyber_policy_refusal).toBe(true);
+      expect(report.footer.notes.join("\n")).toContain("cyber_policy");
+      // Fail-fast on 400 cyber_policy means only 1 provider attempt was made (no retry).
+      expect(transport).toHaveBeenCalledTimes(1);
+    } finally {
+      transport.mockRestore();
+    }
   }, 60000);
 });

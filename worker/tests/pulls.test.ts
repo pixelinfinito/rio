@@ -1512,4 +1512,15 @@ describe("a newer head supersedes older webhook reviews", () => {
     expect(await state(older.review_id)).toMatchObject({ error: SUPERSEDED });
     expect(await openJobs(older.review_id)).toBe(0);
   });
+
+  it("ignores stale review-request messages whose head_sha no longer matches the PR head", async () => {
+    await install(71, ["acme/stale"]);
+    const { env: e } = capture();
+    github.pull("acme/stale", 11, { head: sha("eleven-new") });
+    await handleReviewRequest(
+      e,
+      push("acme/stale", 11, { head_sha: sha("eleven-old") }),
+    );
+    expect(await pullRows("acme/stale", 11)).toEqual([]);
+  });
 });

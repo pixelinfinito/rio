@@ -248,7 +248,7 @@ impl Client {
                 }
             };
             match status["status"].as_str() {
-                Some("complete" | "partial") => {
+                Some("complete" | "partial" | "incomplete") => {
                     return Ok(serde_json::from_value(
                         self.polled(&format!("v1/reviews/{id}/report"), deadline, &cancellation)
                             .await?,
@@ -873,5 +873,53 @@ mod tests {
             "GET /v1/lineages?repository=github.com%2Fo%2Fr&kind=branch&ref=feature%2Fx+y HTTP/1.1"
         );
         assert_eq!(lines[2], "POST /v1/findings/8c1e/feedback HTTP/1.1");
+    }
+    #[tokio::test]
+    async fn waiting_treats_incomplete_status_as_terminal_report() {
+        use std::{
+            io::{Read, Write},
+            net::TcpListener,
+        };
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let report = include_str!("../../rio-core/tests/fixtures/incomplete.json");
+        let server = std::thread::spawn(move || {
+            let mut requests = Vec::new();
+            for body in [r#"{"status":"incomplete"}"#, report] {
+                let (mut socket, _) = listener.accept().unwrap();
+                let mut bytes = Vec::new();
+                let mut chunk = [0; 4096];
+                while !bytes.windows(4).any(|w| w == b"\r\n\r\n") {
+                    let n = socket.read(&mut chunk).unwrap();
+                    bytes.extend_from_slice(&chunk[..n]);
+                }
+                requests.push(
+                    String::from_utf8_lossy(&bytes)
+                        .lines()
+                        .next()
+                        .unwrap()
+                        .to_owned(),
+                );
+                write!(socket,"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}",body.len()).unwrap();
+            }
+            requests
+        });
+        let client = Client::new(
+            &format!("http://{address}"),
+            "long-enough-api-token-32-characters".into(),
+        )
+        .unwrap();
+        let result = client
+            .wait("r-inc", CancellationToken::new(), Duration::from_secs(60))
+            .await
+            .unwrap();
+        assert_eq!(result.status, rio_core::ReportStatus::Incomplete);
+        assert_eq!(
+            server.join().unwrap(),
+            vec![
+                "GET /v1/reviews/r-inc HTTP/1.1",
+                "GET /v1/reviews/r-inc/report HTTP/1.1",
+            ]
+        );
     }
 }
