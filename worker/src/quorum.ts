@@ -48,6 +48,31 @@ export interface EvidenceContext {
   base?: Graph;
   executions: Record<string, ExecutionResult>;
   guidance: Guidance[];
+  /** Deterministically verified non-AST `file_citation` keys populated by the verifier. */
+  verifiedCitations?: Set<string>;
+}
+export function citationKey(ref: ArtifactRef): string {
+  return `${ref.version}\0${ref.path ?? ""}\0${ref.line_start ?? ""}\0${ref.line_end ?? ""}\0${(ref.excerpt ?? "").replace(/\s+/g, " ").trim()}`;
+}
+function validFileCitation(
+  ref: ArtifactRef,
+  context: EvidenceContext,
+): boolean {
+  if (
+    ref.kind !== "file_citation" ||
+    ref.version !== "head" ||
+    !ref.path ||
+    !context.snapshot.head[ref.path] ||
+    context.snapshot.head[ref.path].mode === 0o120000 ||
+    context.head.nodes.some((n) => n.path === ref.path) ||
+    !Number.isInteger(ref.line_start) ||
+    !Number.isInteger(ref.line_end) ||
+    ref.line_start! < 1 ||
+    ref.line_end! < ref.line_start! ||
+    !ref.excerpt?.trim()
+  )
+    return false;
+  return context.verifiedCitations?.has(citationKey(ref)) === true;
 }
 function validCode(ref: ArtifactRef, context: EvidenceContext): boolean {
   if (
@@ -229,9 +254,11 @@ export function evidenceLevel(
     return protection.some((r) =>
       r.kind === "execution"
         ? validRun(r, context, true)
-        : contract
-          ? updatedConsumer(r, h, context) || onContractPath(r, h, context)
-          : validCode(r, context) || namedFile(r, context),
+        : r.kind === "file_citation"
+          ? !contract && validFileCitation(r, context)
+          : contract
+            ? updatedConsumer(r, h, context) || onContractPath(r, h, context)
+            : validCode(r, context) || namedFile(r, context),
     )
       ? "refuted"
       : "plausible";
@@ -241,13 +268,15 @@ export function evidenceLevel(
   )
     return "reproduced";
   // A contract break is proven statically only by a head graph path from a
-  // cited consumer to the changed contract.
+  // cited consumer to the changed contract. Non-AST files without graph nodes
+  // may prove statically with a deterministically verified `file_citation`.
   if (
     rank[answer.evidence_level] >= 2 &&
     proof.some((r) =>
       contract
         ? validContractPath(r, h, context)
-        : r.kind === "code" && validCode(r, context),
+        : (r.kind === "code" && validCode(r, context)) ||
+          validFileCitation(r, context),
     )
   )
     return "static_proven";

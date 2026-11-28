@@ -14,6 +14,8 @@ verify: object; extra=false
 verify.voters: integer; default=3; minimum=1
 verify.quorum: integer; minimum=1
 verify.model: string; minLength=1
+verify.fallback_model: string; minLength=1
+verify.blind_mode: enum; enum=["full","defects_only","off"]
 verify.risk_voters: integer; minimum=1
 council: object; extra=false
 council.members: array; minItems=1; maxItems=9

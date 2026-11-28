@@ -280,7 +280,7 @@ export async function cancelReview(
   // A review superseded keeps saying so if it is also cancelled by request.
   const [stopped, open] = (await env.DB.batch([
     env.DB.prepare(
-      "UPDATE reviews SET cancelled=1,status='cancelled',cancelled_at=COALESCE(cancelled_at,?),error=CASE WHEN ?=? THEN ? ELSE error END WHERE id=? AND status NOT IN ('complete','partial','error') RETURNING id",
+      "UPDATE reviews SET cancelled=1,status='cancelled',cancelled_at=COALESCE(cancelled_at,?),error=CASE WHEN ?=? THEN ? ELSE error END WHERE id=? AND status NOT IN ('complete','partial','incomplete','error') RETURNING id",
     ).bind(Date.now(), reason, SUPERSEDED, SUPERSEDED, review),
     env.DB.prepare(
       "SELECT id,attempt FROM jobs WHERE review_id=? AND status IN ('pending','leased')",
@@ -425,6 +425,12 @@ export async function handleReviewRequest(
       /^[0-9a-f]{40}$/.test(head) && /^[0-9a-f]{40}$/.test(tip),
       "invalid pull request SHAs",
     );
+    if (message.head_sha && head !== message.head_sha) {
+      console.log(
+        `rio: skipped stale review-request for ${message.repository}#${message.number} (${message.head_sha.slice(0, 7)} vs head ${head.slice(0, 7)})`,
+      );
+      return;
+    }
     // The review covers what the PR changes: head against its merge base.
     const compare = await token.request(
       "GET",

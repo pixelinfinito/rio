@@ -277,16 +277,35 @@ export const withdraw = (env: Env, job: string, attempt: number) =>
 export async function stopRunners(env: Env, review: string) {
   if (env.RUNNER_BACKEND !== "sandbox") return;
   const rows = await env.DB.prepare(
-    "SELECT id,attempt FROM jobs WHERE review_id=? AND status='leased' AND kind IN ('checks','graph','static','run','prepare') LIMIT 20",
+    "SELECT id,attempt,kind FROM jobs WHERE review_id=? AND status='leased' AND kind IN ('checks','graph','static','run','prepare') LIMIT 20",
   )
     .bind(review)
-    .all<{ id: string; attempt: number }>();
-  for (const job of rows.results)
+    .all<{ id: string; attempt: number; kind: string }>();
+  const targets = new Map<string, { id: string; attempt: number }[]>();
+  for (const job of rows.results) {
+    const target =
+      job.kind === "run"
+        ? `warm-${review}`
+        : `${review}-${job.id}-${job.attempt}`;
+    const list = targets.get(target) ?? [];
+    list.push({ id: job.id, attempt: job.attempt });
+    targets.set(target, list);
+  }
+  if (!targets.has(`warm-${review}`)) {
+    const hasWarm = await env.DB.prepare(
+      "SELECT 1 AS has_run FROM jobs WHERE review_id=? AND kind='run' LIMIT 1",
+    )
+      .bind(review)
+      .first();
+    if (hasWarm) targets.set(`warm-${review}`, []);
+  }
+  for (const [target, jobs] of targets)
     try {
       const response = await env.SANDBOX.get(
-        env.SANDBOX.idFromName(`${review}-${job.id}-${job.attempt}`),
+        env.SANDBOX.idFromName(target),
       ).fetch("https://sandbox/stop", { method: "POST" });
-      if (response.ok) await withdraw(env, job.id, job.attempt);
+      if (response.ok)
+        for (const job of jobs) await withdraw(env, job.id, job.attempt);
     } catch {
       // Best effort: the container's own deadline still ends it.
     }

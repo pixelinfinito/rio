@@ -9,8 +9,11 @@ import { Store } from "../src/storage";
 import { hash } from "../src/validation";
 import {
   DECLINE_PAUSE,
+  appliedSuppressions,
   candidates,
+  decideProposal,
   proposalId,
+  resolveProposalPrefix,
   updateProposals,
 } from "../src/proposals";
 import { allMigrations, submission } from "./fixtures";
@@ -476,4 +479,25 @@ describe("proposals in reviews", () => {
       transport.mockRestore();
     }
   }, 120000);
+
+  it("loads applied suppressions and resolves proposal prefixes cleanly", async () => {
+    const repo = "github.com/acme/supp";
+    const id = proposalId("owner", repo, { rule: "lint/noisy" });
+    await runtime.DB.prepare(
+      "INSERT INTO suppressions(id,tenant,repository,origin,status,entry_json,evidence_json,evidence_count,created_at) VALUES(?,'owner',?,'proposed','proposed',?,'[]',3,1)",
+    )
+      .bind(id, repo, JSON.stringify({ rule: "lint/noisy" }))
+      .run();
+    expect(await appliedSuppressions(runtime, "owner", repo)).toEqual([]);
+    expect(
+      await resolveProposalPrefix(runtime, "owner", repo, id.slice(3, 11)),
+    ).toEqual({ kind: "found", id, status: "proposed" });
+    expect(
+      await decideProposal(runtime, "owner", id, "applied", "approved"),
+    ).toBe(true);
+    expect(await decideProposal(runtime, "owner", id, "declined")).toBe(false);
+    expect(await appliedSuppressions(runtime, "owner", repo)).toEqual([
+      { rule: "lint/noisy" },
+    ]);
+  });
 });

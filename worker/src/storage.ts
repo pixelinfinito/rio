@@ -142,14 +142,16 @@ export class D1Ledger implements Ledger {
     return id;
   }
   async settle(id: string, usage: Usage): Promise<void> {
-    // A completed reservation is immutable. The batch updates both accounting records atomically.
+    const status = usage.status === "failed" ? "failed" : "completed";
+    // A settled reservation is immutable. The batch updates both accounting records atomically.
     await this.env.DB.batch([
       this.env.DB.prepare(
         "UPDATE reviews SET tokens_reserved=tokens_reserved-(SELECT reserved FROM usage WHERE id=?),tokens_used=tokens_used+? WHERE id=? AND EXISTS(SELECT 1 FROM usage WHERE id=? AND status='reserved')",
       ).bind(id, usage.input_tokens + usage.output_tokens, this.review, id),
       this.env.DB.prepare(
-        "UPDATE usage SET status='completed',input_tokens=?,output_tokens=?,cost_usd=?,model=?,cache_read_tokens=?,cache_write_tokens=?,usage_convention=?,cost_source=? WHERE id=? AND review_id=? AND status='reserved'",
+        "UPDATE usage SET status=?,input_tokens=?,output_tokens=?,cost_usd=?,model=?,cache_read_tokens=?,cache_write_tokens=?,usage_convention=?,cost_source=? WHERE id=? AND review_id=? AND status='reserved'",
       ).bind(
+        status,
         usage.input_tokens,
         usage.output_tokens,
         usage.cost_usd,

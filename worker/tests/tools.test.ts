@@ -487,8 +487,36 @@ describe("read_file arguments", () => {
 describe("other tools", () => {
   it("names the tools and the run arguments", async () => {
     expect(await error("grep", { pattern: "x" })).toBe(
-      'unknown tool "grep"; the tools are read_file, search, graph_query, run, board_read, board_write',
+      'unknown tool "grep"; the tools are read_file, search, list_files, file_stat, graph_query, run, board_read, board_write',
     );
+    const statTools = new Tools(snapshot, graphs, undefined);
+    const listed = await statTools.dispatch("list_files", {
+      version: "head",
+      glob: "*.ts",
+    });
+    const paths = listed.files.map((f: any) => f.path);
+    expect(paths).toContain("main.ts");
+    expect(paths).not.toContain("link.ts");
+    const stated = await statTools.dispatch("file_stat", {
+      path: "main.ts",
+      version: "head",
+      sha256: true,
+    });
+    expect(stated).toMatchObject({
+      exists: true,
+      mode: snapshot.head["main.ts"].mode,
+      size: expect.any(Number),
+      sha256: expect.stringMatching(/^[a-f0-9]{64}$/),
+    });
+    expect(
+      await statTools.dispatch("file_stat", {
+        path: "missing.ts",
+        version: "head",
+      }),
+    ).toEqual({ exists: false, path: "missing.ts", version: "head" });
+    expect(
+      await error("file_stat", { path: "link.ts", version: "head" }),
+    ).toBe("symlink access denied");
     const run = new Tools(snapshot, graphs, async () => ({}) as any);
     await expect(
       run.dispatch("run", { command: "npm test", version: "head" }),

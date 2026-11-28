@@ -697,3 +697,57 @@ fn preparation_time_is_inherited_and_bounded_to_an_hour() {
         assert_eq!(result.is_ok(), valid, "{value}: {result:?}");
     }
 }
+
+#[test]
+fn verify_blind_mode_fallback_model_and_security_follow_up_defaults() {
+    let root = tempfile::tempdir().unwrap();
+    let base = loader(root.path()).load(Some("rio/base")).unwrap();
+    let security = base
+        .profile
+        .steps
+        .iter()
+        .find(|s| s.uses.starts_with("rio/security@"))
+        .unwrap();
+    assert_eq!(security.options["follow_up"], json!(true));
+    assert_eq!(security.options["challenge"], json!("auto"));
+    assert_eq!(base.profile.verify.blind_mode, None);
+
+    write(
+        root.path(),
+        "valid-fallback.yaml",
+        "version: 1\nname: valid-fallback\nextends: rio/base\nmodels: {default: openai/m1, verifier: anthropic/v1, backup: google/v2}\nverify: {voters: 1, quorum: 1, fallback_model: backup, blind_mode: full}\n",
+    );
+    let resolved = loader(root.path())
+        .load(Some("valid-fallback.yaml"))
+        .unwrap();
+    assert_eq!(
+        resolved.profile.verify.fallback_model.as_deref(),
+        Some("backup")
+    );
+    assert_eq!(
+        resolved.profile.verify.blind_mode,
+        Some(rio_profile::BlindMode::Full)
+    );
+
+    write(
+        root.path(),
+        "bad-fallback-alias.yaml",
+        "version: 1\nname: bad-fallback-alias\nextends: rio/base\nverify: {fallback_model: missing}\n",
+    );
+    let err = loader(root.path())
+        .load(Some("bad-fallback-alias.yaml"))
+        .unwrap_err()
+        .to_string();
+    assert!(err.contains("$.verify.fallback_model"), "{err}");
+
+    write(
+        root.path(),
+        "non-independent-fallback.yaml",
+        "version: 1\nname: non-independent-fallback\nextends: rio/base\nmodels: {default: openai/m1, verifier: anthropic/v1, backup: openai/m1}\nverify: {voters: 1, quorum: 1, fallback_model: backup}\n",
+    );
+    let err = loader(root.path())
+        .load(Some("non-independent-fallback.yaml"))
+        .unwrap_err()
+        .to_string();
+    assert!(err.contains("verifier"), "{err}");
+}

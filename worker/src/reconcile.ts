@@ -3,7 +3,7 @@ import { Store } from "./storage";
 import { settleAnnouncement } from "./announce";
 import { IDLE, stopRunners, withdrawIdle } from "./jobs";
 import { redact } from "./redaction";
-import { SUPERSEDED } from "./pulls";
+import { SUPERSEDED, failPrepare } from "./pulls";
 
 /** Time past a review's deadline before the endpoint ends it itself. */
 export const DEADLINE_GRACE_MS = 120000;
@@ -129,17 +129,32 @@ export async function sweepReviews(env: Env, now = Date.now()) {
   )
     .bind(now - CANCEL_GRACE_MS)
     .all<ReviewRow>();
+  const preparing = await env.DB.prepare(
+    "SELECT id FROM reviews WHERE status='preparing' AND deadline<? ORDER BY deadline LIMIT 25",
+  )
+    .bind(now - DEADLINE_GRACE_MS)
+    .all<{ id: string }>();
   for (const row of [...active.results, ...cancelled.results])
     await reconcile(env, row, now).catch((error: unknown) =>
       console.log(
         `rio: reconcile ${row.id} failed: ${error instanceof Error ? error.name : "error"}`,
       ),
     );
+  for (const row of preparing.results) {
+    await stopRunners(env, row.id).catch(() => {});
+    await withdrawIdle(env, row.id, now).catch(() => {});
+    await failPrepare(env, row.id, "preparation exceeded its deadline").catch(
+      (error: unknown) =>
+        console.log(
+          `rio: reap preparing ${row.id} failed: ${error instanceof Error ? error.name : "error"}`,
+        ),
+    );
+  }
   // A finished review has no work left: a job still idle under one (its
   // workflow was terminated while it waited, or its runner was lost) is
   // withdrawn, so no runner starts it and a late result is ignored.
   await env.DB.prepare(
-    `UPDATE jobs SET status='failed' WHERE ${IDLE} AND review_id IN (SELECT id FROM reviews WHERE status IN ('complete','partial','error'))`,
+    `UPDATE jobs SET status='failed' WHERE ${IDLE} AND review_id IN (SELECT id FROM reviews WHERE status IN ('complete','partial','incomplete','error'))`,
   )
     .bind(now)
     .run();

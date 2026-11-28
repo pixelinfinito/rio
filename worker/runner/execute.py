@@ -33,7 +33,10 @@ ANALYSIS_WALL_MS = 480000
 RUN_WALL_MS = 120000
 CLONE_URL = re.compile(r'^https://[A-Za-z0-9.-]+(:[0-9]{1,5})?/[A-Za-z0-9._-]+/[A-Za-z0-9._-]+?(\.git)?$')
 SHA = re.compile(r'^[0-9a-f]{40}$')
+SNAPSHOT_ID = re.compile(r'^[0-9a-f]{64}$')
 WORK = Path('/work')
+CACHE_ROOT = Path('/tmp/rio-cache')
+_REFLINK_SUPPORTED = None
 
 
 def safe_path(name):
@@ -102,6 +105,74 @@ def extract(stream, root, needs):
             write_member(root / version, path, archive.extractfile(member), member.mode)
 
 
+def run_command(job, command, cwd, analysis=False, timing=None):
+    timing = dict(timing or {})
+    limits = job['limits']
+    artifact_bytes = limits.get('artifact_bytes', 0)
+    # Only a fixed environment reaches repository code; provider and API secrets stay outside.
+    # RUSTUP_HOME names the image's toolchains: without it rustup looks under HOME, finds
+    # none, and reports a project's pinned toolchain as not installed.
+    env_root = str(cwd.parent)
+    env = {'PATH': '/usr/local/cargo/bin:/usr/local/bin:/usr/bin:/bin', 'HOME': env_root, 'TMPDIR': env_root, 'CI': 'true', 'RIO_CONTAINER': '1', 'RUSTUP_HOME': '/usr/local/rustup', 'CARGO_NET_OFFLINE': 'true', 'PIP_NO_INDEX': '1', 'npm_config_offline': 'true'}
+    try:
+        process = subprocess.Popen(command, cwd=cwd, env=env, stdin=subprocess.PIPE if analysis else subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE, start_new_session=True)
+    except OSError:
+        return dict(job_id=job['job_id'], attempt=job['attempt'], version=job['version'], exit_code=127, stdout='', stderr='command could not be started', timed_out=False, truncated=False, outcome='spawn_failed', timing=timing)
+    if analysis:
+        process.stdin.write(json.dumps(job, separators=(',', ':')).encode() + b'\n')
+        process.stdin.close()
+    selector = selectors.DefaultSelector()
+    selector.register(process.stdout, selectors.EVENT_READ, 'stdout')
+    selector.register(process.stderr, selectors.EVENT_READ, 'stderr')
+    output = {'stdout': bytearray(), 'stderr': bytearray()}
+    started = time.monotonic()
+    deadline = started + limits['wall_ms'] / 1000
+    timed_out = truncated = False
+    while selector.get_map():
+        if time.monotonic() >= deadline:
+            timed_out = True
+            try:
+                os.killpg(process.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+        for key, _ in selector.select(timeout=0.05):
+            chunk = os.read(key.fileobj.fileno(), 8192)
+            if not chunk:
+                selector.unregister(key.fileobj)
+                continue
+            if analysis and key.data == 'stdout':
+                room = artifact_bytes - len(output['stdout'])
+            else:
+                room = limits['output_bytes'] - len(output['stderr']) - (0 if analysis else len(output['stdout']))
+            output[key.data].extend(chunk[:max(0, room)])
+            if len(chunk) > room:
+                truncated = True
+                os.killpg(process.pid, signal.SIGKILL)
+        if timed_out or truncated:
+            # Kill the whole group, including descendants that hold pipes open.
+            break
+    process.wait(timeout=5)
+    try:
+        os.killpg(process.pid, signal.SIGKILL)
+    except ProcessLookupError:
+        pass
+    selector.close()
+    process.stdout.close()
+    process.stderr.close()
+    streams = {k: v.decode('utf-8', errors='replace') for k, v in output.items()}
+    if analysis:
+        # The artifact is returned once, parsed, never echoed as command output.
+        artifact = streams['stdout']
+        streams['stdout'] = ''
+    timing['command_ms'] = round((time.monotonic() - started) * 1000)
+    result = dict(outcome='exited', job_id=job['job_id'], attempt=job['attempt'], version=job['version'], exit_code=process.returncode, timed_out=timed_out, truncated=truncated, timing=timing, **streams)
+    if timed_out:
+        result['phase'] = 'command'
+    if analysis and process.returncode == 0 and not truncated:
+        result['artifact'] = json.loads(artifact)
+    return result
+
+
 def execute(stream):
     header = stream.readline(HEADER_LIMIT + 1)
     assert header.endswith(b'\n'), 'missing or oversized job header'
@@ -139,66 +210,151 @@ def execute(stream):
         else:
             assert job['kind'] == 'run'
             cwd = root / job['version']
-        # Only a fixed environment reaches repository code; provider and API secrets stay outside.
-        # RUSTUP_HOME names the image's toolchains: without it rustup looks under HOME, finds
-        # none, and reports a project's pinned toolchain as not installed.
-        env = {'PATH': '/usr/local/cargo/bin:/usr/local/bin:/usr/bin:/bin', 'HOME': directory, 'TMPDIR': directory, 'CI': 'true', 'RIO_CONTAINER': '1', 'RUSTUP_HOME': '/usr/local/rustup', 'CARGO_NET_OFFLINE': 'true', 'PIP_NO_INDEX': '1', 'npm_config_offline': 'true'}
+        return run_command(job, command, cwd, analysis=analysis, timing=timing)
+
+
+def _freeze_tree(tree_dir):
+    count = 0
+    max_ctime = 0
+    max_mtime = 0
+    for dirpath, _, filenames in os.walk(tree_dir):
+        for name in filenames:
+            path = os.path.join(dirpath, name)
+            st = os.lstat(path)
+            assert stat.S_ISREG(st.st_mode)
+            mode = 0o555 if (stat.S_IMODE(st.st_mode) & 0o100) else 0o444
+            os.chmod(path, mode)
+            after = os.lstat(path)
+            count += 1
+            if after.st_ctime_ns > max_ctime:
+                max_ctime = after.st_ctime_ns
+            if after.st_mtime_ns > max_mtime:
+                max_mtime = after.st_mtime_ns
+    return count, max_ctime, max_mtime
+
+
+def _verify_cache_clean(tree_dir, ready):
+    expected_count = ready['files']
+    max_mtime = ready['max_mtime_ns']
+    count = 0
+    try:
+        for dirpath, _, filenames in os.walk(tree_dir):
+            for name in filenames:
+                path = os.path.join(dirpath, name)
+                st = os.lstat(path)
+                if not stat.S_ISREG(st.st_mode):
+                    return False
+                # Hardlink creation/removal updates inode ctime, so verify mode, mtime, and file count.
+                if (st.st_mode & 0o222) != 0 or st.st_mtime_ns > max_mtime:
+                    return False
+                count += 1
+    except OSError:
+        return False
+    return count == expected_count
+
+
+def _hardlink_tree(src, dst):
+    os.makedirs(dst, mode=0o755, exist_ok=True)
+    with os.scandir(src) as entries:
+        for entry in entries:
+            target = os.path.join(dst, entry.name)
+            if entry.is_dir(follow_symlinks=False):
+                _hardlink_tree(entry.path, target)
+            elif entry.is_file(follow_symlinks=False):
+                os.link(entry.path, target)
+
+
+def _mirror_tree(src_tree, dst_tree):
+    global _REFLINK_SUPPORTED
+    if _REFLINK_SUPPORTED is not False:
         try:
-            process = subprocess.Popen(command, cwd=cwd, env=env, stdin=subprocess.PIPE if job['kind'] != 'run' else subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE, start_new_session=True)
+            res = subprocess.run(['/bin/cp', '-a', '--reflink=always', str(src_tree), str(dst_tree)], capture_output=True)
+            if res.returncode == 0:
+                _REFLINK_SUPPORTED = True
+                return False
         except OSError:
-            return dict(job_id=job['job_id'], attempt=job['attempt'], version=job['version'], exit_code=127, stdout='', stderr='command could not be started', timed_out=False, truncated=False, outcome='spawn_failed', timing=timing)
-        if job['kind'] != 'run':
-            process.stdin.write(header)
-            process.stdin.close()
-        selector = selectors.DefaultSelector()
-        selector.register(process.stdout, selectors.EVENT_READ, 'stdout')
-        selector.register(process.stderr, selectors.EVENT_READ, 'stderr')
-        output = {'stdout': bytearray(), 'stderr': bytearray()}
-        started = time.monotonic()
-        deadline = started + limits['wall_ms'] / 1000
-        timed_out = truncated = False
-        while selector.get_map():
-            if time.monotonic() >= deadline:
-                timed_out = True
-                try:
-                    os.killpg(process.pid, signal.SIGKILL)
-                except ProcessLookupError:
-                    pass
-            for key, _ in selector.select(timeout=0.05):
-                chunk = os.read(key.fileobj.fileno(), 8192)
-                if not chunk:
-                    selector.unregister(key.fileobj)
-                    continue
-                if analysis and key.data == 'stdout':
-                    room = artifact_bytes - len(output['stdout'])
-                else:
-                    room = limits['output_bytes'] - len(output['stderr']) - (0 if analysis else len(output['stdout']))
-                output[key.data].extend(chunk[:max(0, room)])
-                if len(chunk) > room:
-                    truncated = True
-                    os.killpg(process.pid, signal.SIGKILL)
-            if timed_out or truncated:
-                # Kill the whole group, including descendants that hold pipes open.
-                break
-        process.wait(timeout=5)
-        try:
-            os.killpg(process.pid, signal.SIGKILL)
-        except ProcessLookupError:
             pass
-        selector.close()
-        process.stdout.close()
-        process.stderr.close()
-        streams = {k: v.decode('utf-8', errors='replace') for k, v in output.items()}
-        if analysis:
-            # The artifact is returned once, parsed, never echoed as command output.
-            artifact = streams['stdout']
-            streams['stdout'] = ''
-        timing['command_ms'] = round((time.monotonic() - started) * 1000)
-        result = dict(outcome='exited', job_id=job['job_id'], attempt=job['attempt'], version=job['version'], exit_code=process.returncode, timed_out=timed_out, truncated=truncated, timing=timing, **streams)
-        if timed_out:
-            result['phase'] = 'command'
-        if analysis and process.returncode == 0 and not truncated:
-            result['artifact'] = json.loads(artifact)
+        _REFLINK_SUPPORTED = False
+        shutil.rmtree(dst_tree, ignore_errors=True)
+    _hardlink_tree(str(src_tree), str(dst_tree))
+    return True
+
+
+def hydrate(stream, cache_root=CACHE_ROOT):
+    header = stream.readline(HEADER_LIMIT + 1)
+    assert header.endswith(b'\n'), 'missing or oversized job header'
+    job = json.loads(header)
+    assert job['protocol'] == 1
+    snapshot_id = job['snapshot_id']
+    version = job['version']
+    assert isinstance(snapshot_id, str) and SNAPSHOT_ID.match(snapshot_id), 'invalid snapshot_id'
+    assert version in VERSIONS, 'invalid version'
+    needs = job.get('needs', [version])
+    assert isinstance(needs, list) and needs == [version], 'hydrate expects single needed version'
+    assert isinstance(job.get('links', {}), dict) and set(job.get('links', {})) <= set(needs)
+    parent = Path(cache_root) / snapshot_id
+    parent.mkdir(parents=True, exist_ok=True)
+    staging = parent / f'.{version}.tmp-{os.getpid()}-{time.monotonic_ns()}'
+    staging.mkdir()
+    try:
+        (staging / version).mkdir()
+        started = time.monotonic()
+        extract(stream, staging, [version])
+        extract_ms = round((time.monotonic() - started) * 1000)
+        tree_dir = staging / 'tree'
+        (staging / version).rename(tree_dir)
+        files, max_ctime_ns, max_mtime_ns = _freeze_tree(str(tree_dir))
+        (staging / '.ready').write_text(json.dumps({'files': files, 'max_ctime_ns': max_ctime_ns, 'max_mtime_ns': max_mtime_ns}))
+        target = parent / version
+        old = parent / f'.{version}.old-{os.getpid()}-{time.monotonic_ns()}' if target.exists() else None
+        if old is not None:
+            target.rename(old)
+        staging.rename(target)
+        if old is not None:
+            shutil.rmtree(old, ignore_errors=True)
+        return {'hydrated': True, 'extract_ms': extract_ms, 'files': files}
+    except Exception:
+        shutil.rmtree(staging, ignore_errors=True)
+        raise
+
+
+def run_cached(stream, cache_root=CACHE_ROOT):
+    header = stream.readline(HEADER_LIMIT + 1)
+    assert header.endswith(b'\n'), 'missing or oversized job header'
+    job = json.loads(header)
+    assert job['protocol'] == 1 and job['network'] is False and job['kind'] == 'run'
+    limits = job['limits']
+    assert 0 < limits['wall_ms'] <= RUN_WALL_MS and 0 < limits['output_bytes'] <= 1048576
+    assert not limits.get('artifact_bytes', 0), 'invalid artifact limit'
+    snapshot_id = job['snapshot_id']
+    version = job['version']
+    assert isinstance(snapshot_id, str) and SNAPSHOT_ID.match(snapshot_id), 'invalid snapshot_id'
+    assert version in VERSIONS, 'invalid version'
+    command = job['command']
+    assert isinstance(command, list) and 0 < len(command) <= 128 and all(isinstance(x, str) and len(x) <= 16000 for x in command)
+    entry_dir = Path(cache_root) / snapshot_id / version
+    ready_path = entry_dir / '.ready'
+    tree_dir = entry_dir / 'tree'
+    if not ready_path.is_file() or not tree_dir.is_dir():
+        return {'outcome': 'cache_miss', 'job_id': job['job_id'], 'attempt': job['attempt'], 'version': version}
+    try:
+        ready = json.loads(ready_path.read_text())
+    except Exception:
+        ready_path.unlink(missing_ok=True)
+        return {'outcome': 'cache_miss', 'job_id': job['job_id'], 'attempt': job['attempt'], 'version': version}
+    if not _verify_cache_clean(str(tree_dir), ready):
+        ready_path.unlink(missing_ok=True)
+        return {'outcome': 'cache_miss', 'cache_tainted': True, 'job_id': job['job_id'], 'attempt': job['attempt'], 'version': version}
+    with tempfile.TemporaryDirectory(prefix='rio-run-') as directory:
+        cwd = Path(directory) / version
+        started = time.monotonic()
+        used_hardlinks = _mirror_tree(tree_dir, cwd)
+        setup_ms = round((time.monotonic() - started) * 1000)
+        result = run_command(job, command, cwd, analysis=False, timing={'setup_ms': setup_ms, 'transfer_ms': 0, 'archive_bytes': 0, 'storage_ms': 0})
+        result['cache_hit'] = True
+        if used_hardlinks and not _verify_cache_clean(str(tree_dir), ready):
+            ready_path.unlink(missing_ok=True)
+            result['cache_tainted'] = True
         return result
 
 
@@ -277,6 +433,12 @@ if __name__ == '__main__':
             sys.exit(0)
         if mode == 'prepare':
             print(json.dumps(prepare(json.loads(sys.stdin.buffer.read(65536)))))
+            sys.exit(0)
+        if mode == 'hydrate':
+            print(json.dumps(hydrate(sys.stdin.buffer), separators=(',', ':')))
+            sys.exit(0)
+        if mode == 'run-cached':
+            print(json.dumps(run_cached(sys.stdin.buffer), separators=(',', ':')))
             sys.exit(0)
         print(json.dumps(execute(sys.stdin.buffer), separators=(',', ':')))
     except Exception as error:

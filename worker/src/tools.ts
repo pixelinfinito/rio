@@ -23,6 +23,13 @@ import {
 } from "./snapshot";
 import { SEARCH_REFUSED } from "./requests";
 export const OUTPUT_LIMIT = 24000;
+const FILE_HASH_MAX_BYTES = 4 * 1024 * 1024;
+async function sha256Hex(bytes: Uint8Array): Promise<string> {
+  const digest = new Uint8Array(
+    await crypto.subtle.digest("SHA-256", bytes as BufferSource),
+  );
+  return [...digest].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
 /** The readable entry for a path; never follows links, even intermediate ones. */
 async function readable(
   snapshot: Snapshot | SnapshotReader,
@@ -1008,6 +1015,99 @@ export class Tools {
         scoped,
       );
     }
+    if (name === "list_files") {
+      onlyArgs("list_files", args, ["version", "prefix", "glob", "limit"]);
+      const version = versionOf("list_files", args.version, "head");
+      const prefix = given(args.prefix) ? String(args.prefix) : undefined;
+      if (prefix !== undefined)
+        invariant(
+          prefix.length <= 500 && !prefix.includes("..") && !prefix.startsWith("/"),
+          'list_files "prefix" must be relative to the repository root without ".." or a leading "/"',
+        );
+      const glob = given(args.glob) ? String(args.glob) : undefined;
+      if (glob !== undefined)
+        invariant(
+          glob.length > 0 && glob.length <= 500 && !glob.includes("..") && !glob.startsWith("/"),
+          'list_files "glob" must be a relative glob such as "src/**/*.ts" or "*.md", without ".." or a leading "/"',
+        );
+      const limit = args.limit ?? 200;
+      invariant(
+        Number.isInteger(limit) && limit >= 1 && limit <= 500,
+        'list_files "limit" must be a whole number from 1 to 500',
+      );
+      const normalizedPrefix = prefix
+        ? prefix.replace(/^(?:\.\/)+/, "").replace(/\/+$/, "")
+        : "";
+      const matchGlob = glob ? scopeMatcher(glob) : undefined;
+      const files: { path: string; size: number; mode: number; content_hash: string }[] = [];
+      let truncated = false;
+      let serializedBytes = 64;
+      for await (const entry of this.snapshot[version].list()) {
+        if (entry.mode === SYMLINK) continue;
+        if (
+          normalizedPrefix &&
+          entry.path !== normalizedPrefix &&
+          !entry.path.startsWith(`${normalizedPrefix}/`)
+        )
+          continue;
+        if (matchGlob && !matchGlob(entry.path)) continue;
+        if (files.length >= limit) {
+          truncated = true;
+          break;
+        }
+        const item = {
+          path: entry.path,
+          size: entry.size,
+          mode: entry.mode,
+          content_hash: entry.hash,
+        };
+        const cost = JSON.stringify(item).length + 1;
+        if (files.length > 0 && serializedBytes + cost > OUTPUT_LIMIT) {
+          truncated = true;
+          break;
+        }
+        serializedBytes += cost;
+        files.push(item);
+      }
+      return { version, files, truncated };
+    }
+    if (name === "file_stat") {
+      onlyArgs("file_stat", args, ["path", "version", "sha256"]);
+      try {
+        safePath(args.path);
+      } catch {
+        throw new Error(
+          'file_stat needs "path": a file path relative to the repository root such as "src/main.ts", without a leading "/", "." or ".." segments or backslashes',
+        );
+      }
+      const version = versionOf("file_stat", args.version, "head");
+      invariant(
+        args.sha256 === undefined || typeof args.sha256 === "boolean",
+        'file_stat "sha256" must be true or false',
+      );
+      const tree = this.snapshot[version];
+      const parts = args.path.split("/");
+      let entry: Entry | null = null;
+      for (let i = 1; i <= parts.length; i++) {
+        entry = await tree.stat(parts.slice(0, i).join("/"));
+        invariant(entry?.mode !== SYMLINK, "symlink access denied");
+      }
+      if (!entry) return { exists: false, version, path: args.path };
+      const out: Record<string, any> = {
+        exists: true,
+        version,
+        path: entry.path,
+        size: entry.size,
+        mode: entry.mode,
+        content_hash: entry.hash,
+      };
+      if (args.sha256 === true) {
+        if (entry.size <= FILE_HASH_MAX_BYTES)
+          out.sha256 = await sha256Hex(await tree.read(entry));
+        else out.sha256_omitted = "file exceeds 4 MiB inline hash limit";
+      }
+      return out;
+    }
     if (name === "graph_query") {
       onlyArgs("graph_query", args, [
         "path",
@@ -1230,7 +1330,7 @@ export class Tools {
       return this.execute(args.command, args.version);
     }
     throw new Error(
-      `unknown tool ${JSON.stringify(String(name).slice(0, 40))}; the tools are read_file, search, graph_query, run, board_read, board_write`,
+      `unknown tool ${JSON.stringify(String(name).slice(0, 40))}; the tools are read_file, search, list_files, file_stat, graph_query, run, board_read, board_write`,
     );
   }
 }

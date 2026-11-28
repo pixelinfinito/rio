@@ -67,6 +67,8 @@ Profiles describe a review. Machine settings such as the cache path and parallel
 | `verify.voters` | `integer` | no |
 | `verify.quorum` | `integer` | no |
 | `verify.model` | `string` | no |
+| `verify.fallback_model` | `string` | no |
+| `verify.blind_mode` | `one of the schema alternatives` | no |
 | `verify.risk_voters` | `integer` | no |
 | `council` | `object` | no |
 | `council.members` | `array` | no |

@@ -16,7 +16,8 @@ The rio/security step’s with.fail_on sets evidence, categories, states and rul
 rio/security@0.2.0:
 enabled: boolean; default=false
 posture: enum; enum=["critical-only","balanced","thorough"]; default="thorough"
-follow_up: boolean; default=false
+follow_up: boolean; default=true
+challenge: enum; enum=["auto","always","never"]; default="auto"
 max_defects: integer; minimum=1
 catalog: enum; enum=["owasp-top10-2025","asvs-5.0"]; default="owasp-top10-2025"
 fail_on: object; default={"evidence":"plausible","categories":["security"],"states":["new","worsened"],"rules":[],"incomplete":true,"required_checks":[]}; extra=false

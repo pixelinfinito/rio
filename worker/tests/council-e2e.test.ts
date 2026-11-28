@@ -573,7 +573,7 @@ it("refuses a council member's call once the review's request budget is spent, a
     expect(report.footer.notes).toContain(
       "Request budget: 4 model turns were not started, because the review had used its share of the 10000 requests the platform allows one review; the agents, verifier votes and council answers they belonged to did not complete.",
     );
-    expect([row.status, report.status]).toEqual(["complete", "incomplete"]);
+    expect([row.status, report.status]).toEqual(["incomplete", "incomplete"]);
     // No call was reserved either: the refusal comes before the ledger.
     expect(
       (

@@ -413,4 +413,35 @@ describe("prompt-cache report metrics", () => {
     expect(p.read_ratio).toBeNull();
     expect(p.cache_write_input_tokens).toBeNull();
   });
+
+  it("persists usage.status = 'failed' when D1Ledger settles a failed/cancelled attempt", async () => {
+    await runtime.DB.prepare(
+      "INSERT INTO reviews(id,tenant,submission_key,status,created_at,token_limit,deadline) VALUES(?,?,?,'queued',?,?,?)",
+    )
+      .bind("failed-usage-review", "owner", "k", Date.now(), 50000, Date.now() + 60000)
+      .run();
+    const ledger = new D1Ledger(runtime as unknown as Env, "failed-usage-review");
+    const id = await ledger.reserve("a", "verify-disclosed", 10000);
+    await ledger.settle(id, {
+      phase: "verify-disclosed",
+      actor: "a",
+      model: "openai/gpt-5",
+      input_tokens: 0,
+      output_tokens: 0,
+      cost_usd: 0,
+      status: "failed",
+    });
+    const row = await runtime.DB.prepare(
+      "SELECT status,input_tokens,output_tokens FROM usage WHERE id=?",
+    )
+      .bind(id)
+      .first<any>();
+    expect(row).toEqual({ status: "failed", input_tokens: 0, output_tokens: 0 });
+    const rev = await runtime.DB.prepare(
+      "SELECT tokens_used,tokens_reserved FROM reviews WHERE id=?",
+    )
+      .bind("failed-usage-review")
+      .first<any>();
+    expect(rev).toEqual({ tokens_used: 0, tokens_reserved: 0 });
+  });
 });

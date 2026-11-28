@@ -72,6 +72,7 @@ steps:
   parallel: false
   with:
     catalog: owasp-top10-2025
+    challenge: auto
     enabled: false
     fail_on:
       categories:
@@ -83,7 +84,7 @@ steps:
       states:
       - new
       - worsened
-    follow_up: false
+    follow_up: true
     max_defects: 15
     posture: thorough
 - id: qa

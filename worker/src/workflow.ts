@@ -83,7 +83,7 @@ import {
 } from "./contracts";
 import { applicability, catalog, changeContext, traceInputs } from "./catalogs";
 import { triage, type Plan } from "./triage";
-import { verifyHypothesis } from "./verifier";
+import { VerifierBreaker, verifyHypothesis } from "./verifier";
 import {
   classId,
   consolidate,
@@ -136,7 +136,7 @@ import {
   registryStatements,
   type RegistryRecord,
 } from "./history";
-import { updateProposals } from "./proposals";
+import { appliedSuppressions, updateProposals } from "./proposals";
 import { CANCELLED_UNPUBLISHED, publishReview } from "./publish";
 import { announceReview, settleAnnouncement } from "./announce";
 import {
@@ -188,10 +188,10 @@ export interface WorkflowParams {
 }
 /**
  * Hypotheses verified at once, each with its own voters, while tokens allow.
- * Six at a time, in batches that waited for their slowest, took reviews with
- * 18 to 29 hypotheses 19 to 20 minutes to verify.
+ * Bounded to four so concurrent snapshot tool searches stay well within the
+ * 128 MiB Worker isolate limit.
  */
-const VERIFIED_TOGETHER = 12;
+const VERIFIED_TOGETHER = 4;
 /** Characters of diff an agent's first message holds, over all changed files. */
 export const CHANGE_PROMPT_CHARS = 60_000;
 /** Model turns of the security agent's conversation. */
@@ -799,6 +799,29 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         ?.with?.hops ?? 2;
     let diffOnlyAudit: Record<string, string[]> | undefined;
     let council: CouncilOutcome | undefined;
+    let effectiveProfile = submission.profile;
+    let cyberPolicyRefusal = false;
+    // Per-review verifier circuit breaker shared across verify batches.
+    const primaryVerifierAlias =
+      submission.profile.verify.model ??
+      (submission.profile.models.verifier ? "verifier" : "default");
+    const primaryVerifierModel =
+      submission.profile.models[primaryVerifierAlias] ?? "";
+    const envFallback = this.env.VERIFIER_FALLBACK_MODEL?.trim();
+    const profileFallbackAlias = submission.profile.verify.fallback_model;
+    const fallbackVerifierModel = profileFallbackAlias
+      ? submission.profile.models[profileFallbackAlias]
+      : envFallback &&
+          !(
+            submission.profile.verify.voters === 1 &&
+            submission.profile.models.default === envFallback
+          )
+        ? (submission.profile.models[envFallback] ?? envFallback)
+        : undefined;
+    const verifierBreaker = new VerifierBreaker(
+      primaryVerifierModel,
+      fallbackVerifierModel,
+    );
     // The review's prompt configuration (design D14, D15), fixed at its start.
     let promptConfig: PromptSettings = { cache: [], layout: [] };
     let partitions!: Partitions;
@@ -901,22 +924,38 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           throw new Error("no wall time left for the job");
         let wall: number;
         try {
-          wall = await step.do(`dispatch-${job}`, async () =>
-            createJob(
-              this.env,
-              id,
-              job,
-              kind,
-              command,
-              version,
-              submission.snapshot_id,
-              attempt,
-              kind === "run" ? undefined : { profile: submission.profile },
-              cap,
-            ),
+          wall = await step.do(
+            `dispatch-${job}`,
+            { retries: { limit: 2, delay: "5 seconds" } },
+            async () => {
+              if (await store.cancelled(id))
+                throw new NonRetryableError("cancelled");
+              try {
+                return await createJob(
+                  this.env,
+                  id,
+                  job,
+                  kind,
+                  command,
+                  version,
+                  submission.snapshot_id,
+                  attempt,
+                  kind === "run" ? undefined : { profile: submission.profile },
+                  cap,
+                );
+              } catch (err) {
+                if (err instanceof Error && /cancel/.test(err.message))
+                  throw new NonRetryableError("cancelled");
+                throw err;
+              }
+            },
           );
         } catch (error) {
-          if (!previous) throw error;
+          if (
+            !previous ||
+            (error instanceof Error && /cancel/.test(error.message))
+          )
+            throw error;
           // A retry that could not be queued leaves no job to run later.
           await step.do(`withdraw-${job}`, async () => {
             await this.env.DB.prepare(
@@ -1983,16 +2022,15 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               notes: [] as string[],
               partial: false,
               generated: false,
+              cyber_policy_refusal: false,
               coverage: undefined as SecurityCoverage | undefined,
             };
-            // The agent result cache: per hunk, never for fork reviews, the
+            // The agent result cache: per hunk (including per-part runs, keyed
+            // by scope.changed without part number), never for fork reviews, the
             // security step (its output is catalog coverage) or `cache: false`.
-            // A part's review is not cached: a cache entry holds everything
-            // one conversation raised on the whole change.
             const caching =
               module === "rio/agents" &&
               !submission.fork &&
-              part === undefined &&
               s.with.cache !== false;
             let keyed: Keyed[] = [],
               misses: number[] = [];
@@ -2048,8 +2086,8 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                     store.put(
                       `reviews/${id}/cache/${s.id}-${label}-hunks.json`,
                       await changeHunks(
-                        reviewed.changed,
-                        reading(reviewed.changed),
+                        scope.changed,
+                        reading(scope.changed),
                       ),
                     ),
                 );
@@ -2140,8 +2178,8 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               if (misses.length < keyed.length) {
                 const paths = new Set(misses.map((i) => keyed[i].hunk.path));
                 scope = {
-                  ...reviewed,
-                  changed: reviewed.changed.filter((f) => paths.has(f.path)),
+                  ...scope,
+                  changed: scope.changed.filter((f) => paths.has(f.path)),
                   focus: [...paths],
                 };
               }
@@ -2279,8 +2317,18 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                             UNREAD_RESULT,
                           );
                         // The first result of an audit that read code and has
-                        // turns to spare is kept and challenged once.
+                        // turns to spare is kept and challenged once, gated by `challenge`.
+                        const challengeMode =
+                          (s.with.challenge as string | undefined) ?? "auto";
+                        const shouldChallenge =
+                          challengeMode === "always"
+                            ? true
+                            : challengeMode === "never"
+                              ? false
+                              : plan.risk.tier === "high" ||
+                                value.hypotheses.length === 0;
                         if (
+                          shouldChallenge &&
                           !firstResult &&
                           state.toolTurns &&
                           state.turnsLeft >= CHALLENGE_TURNS
@@ -2314,6 +2362,8 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
               const budget = /budget exhausted|turn limit exhausted/.test(
                 message,
               );
+              const cyberPolicy = /cyber_policy/i.test(message);
+              if (cyberPolicy) review.cyber_policy_refusal = true;
               if (firstResult) output = firstResult;
               else if (agent === "security") {
                 // An exhausted budget or a failed conversation leaves the items
@@ -2339,7 +2389,9 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                 // the deterministic results stay in a partial report.
                 review.partial = true;
                 review.notes.push(
-                  `${who} failed: ${redact(message).slice(0, 200)}; its findings are missing from this review.`,
+                  cyberPolicy
+                    ? `${who} refused under provider cyber_policy; its unassessed items are recorded.`
+                    : `${who} failed: ${redact(message).slice(0, 200)}; its findings are missing from this review.`,
                 );
                 if (agent !== "security") {
                   await finished(0);
@@ -2477,6 +2529,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           );
           for (const review of reviews) {
             if (review.partial) report.status = "partial";
+            if (review.cyber_policy_refusal) cyberPolicyRefusal = true;
             report.footer.notes.push(...review.notes);
             rejected.push(...review.rejected);
           }
@@ -2689,6 +2742,8 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             verifyTokens: active.verify_tokens,
             call,
             record,
+            breaker: primaryVerifierModel ? verifierBreaker : undefined,
+            partitionFor: (m) => partitions.for(m),
             cancelled: () => store.cancelled(id),
             prompt: verifierPrompt(h.id),
             tools: (voter) =>
@@ -2882,7 +2937,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
     // listed in the audit as raised but unverified.
     const present = (target: typeof report, stopped = false) => {
       const list = verified.filter((v) => settled.has(v.hypothesis.id));
-      const findings = consolidate(list, submission.profile, {
+      const findings = consolidate(list, effectiveProfile, {
         classThreshold: submission.profile.steps.find((s) =>
           s.uses.startsWith("rio/report@"),
         )?.with?.class_threshold,
@@ -2923,6 +2978,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           ? { agents_skipped: skippedAgents }
           : {}),
         ...(rejected.length ? { rejected } : {}),
+        ...(cyberPolicyRefusal ? { cyber_policy_refusal: true } : {}),
         ...(raisedUnder.size
           ? { raised_under: Object.fromEntries(raisedUnder) }
           : {}),
@@ -3059,6 +3115,18 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           }
         }
       }
+      const suppressionRepo =
+        lineage?.repository ?? submission.repository ?? null;
+      if (suppressionRepo) {
+        const dbSuppressions = await step.do("applied-suppressions", () =>
+          appliedSuppressions(this.env, load.tenant, suppressionRepo),
+        );
+        if (dbSuppressions.length)
+          effectiveProfile = {
+            ...submission.profile,
+            suppress: [...submission.profile.suppress, ...dbSuppressions],
+          };
+      }
       plan = await planned("plan-initial", (files) =>
         triage(submission, files),
       );
@@ -3122,6 +3190,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           if (s.uses.startsWith("rio/verify@") && done.has(s.id))
             await perform({ ...s, id: `${s.id}-follow-up` });
       }
+      await step.do("release-runners", () => stopRunners(this.env, id)).catch(() => {});
       const findings = present(report);
       consolidated = true;
       report.footer.notes = report.footer.notes.filter(
@@ -3166,11 +3235,30 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       )
         .bind(id)
         .first<{ count: number }>();
-      if (failed?.count) {
-        report.agent_audit.incomplete_votes = failed.count;
-        report.status = "incomplete";
+      const skippedReverify = new Set(diffOnlyAudit?.not_reverified ?? []);
+      const unverifiedHypotheses = hypotheses.filter((h) => {
+        if (skippedReverify.has(h.id)) return false;
+        const match = verified.find((v) => v.hypothesis.id === h.id);
+        if (!settled.has(h.id) || !match) return true;
+        return (match.verification?.agreeing ?? 0) === 0;
+      }).length;
+      if (unverifiedHypotheses)
+        report.agent_audit.unverified_hypotheses = unverifiedHypotheses;
+      if (verifierBreaker.fallbackUsed) {
+        report.agent_audit.verifier_fallback = verifierBreaker.fallbackUsed;
         report.footer.notes.push(
-          `${failed.count} verifier votes did not complete; inspect the vote audit. Missing votes do not reduce quorum.`,
+          `Verifier switched to fallback model ${verifierBreaker.fallbackUsed.to} after ${verifierBreaker.fallbackUsed.reason}.`,
+        );
+      }
+      if (verifierBreaker.abortedReason)
+        report.agent_audit.verifier_circuit = verifierBreaker.abortedReason;
+      if (failed?.count || unverifiedHypotheses) {
+        if (failed?.count) report.agent_audit.incomplete_votes = failed.count;
+        if (report.status !== "partial") report.status = "incomplete";
+        report.footer.notes.push(
+          verifierBreaker.abortedReason
+            ? `Verifier circuit opened (${verifierBreaker.abortedReason}): ${unverifiedHypotheses} hypothesis(es) left unverified. Missing votes do not reduce quorum.`
+            : `${failed?.count ?? 0} verifier votes did not complete; inspect the vote audit. Missing votes do not reduce quorum.`,
         );
       }
       report.deferred = report.deferred.filter(
@@ -3191,9 +3279,9 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             ? cacheStats.hits / cacheStats.lookups
             : null,
         };
-      // The repository registry: remembered dismissals after the profile's
-      // suppressions, history on recurrences, and suppression proposals.
-      suppressQaFindings(report, submission.profile.suppress);
+      // The repository registry: remembered dismissals after the profile's and
+      // approved proposals' suppressions, history on recurrences, and proposals.
+      suppressQaFindings(report, effectiveProfile.suppress);
       const repository = lineage?.repository ?? submission.repository ?? null;
       let records: RegistryRecord[] = [];
       let hashes: Record<string, string | null> = {};
@@ -3260,6 +3348,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       }
       agentsVerified =
         !failed?.count &&
+        !unverifiedHypotheses &&
         submission.profile.steps.some(
           (s) => s.uses.startsWith("rio/verify@") && done.has(s.id),
         );
@@ -3346,7 +3435,11 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           `UPDATE reviews SET status=CASE WHEN cancelled=1 THEN 'partial' ELSE ? END,report_key=? WHERE id=? AND ${OPEN} RETURNING status,cancelled,error`,
         )
           .bind(
-            report.status === "partial" ? "partial" : "complete",
+            report.status === "partial"
+              ? "partial"
+              : report.status === "incomplete"
+                ? "incomplete"
+                : "complete",
             key,
             id,
             key,
@@ -3471,18 +3564,24 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         }
       account();
       const key = await store.put(`reviews/${id}/report.json`, report);
+      const errorReason = (() => {
+        if (reason === "cancelled") return "cancelled";
+        const clean = redact(reason).replace(/\s+/g, " ").trim();
+        if (!clean) return "runtime did not complete";
+        if (/missing model|no default model/i.test(clean))
+          return `missing_model: ${clean}`.slice(0, 240);
+        if (/budget exhausted|turn limit exhausted/i.test(clean))
+          return `budget_exceeded: ${clean}`.slice(0, 240);
+        if (/provider failed|429|5\d\d|model_not_found/i.test(clean))
+          return `provider_error: ${clean}`.slice(0, 240);
+        return clean.slice(0, 240);
+      })();
       await step.do("failed", async () => {
         // A superseded review keeps that reason.
         const ended = await this.env.DB.prepare(
           `UPDATE reviews SET status='partial',report_key=?,error=CASE WHEN error=? THEN error ELSE ? END WHERE id=? AND ${OPEN} RETURNING id`,
         )
-          .bind(
-            key,
-            SUPERSEDED,
-            reason === "cancelled" ? "cancelled" : "runtime did not complete",
-            id,
-            key,
-          )
+          .bind(key, SUPERSEDED, errorReason, id, key)
           .first();
         if (!ended) return;
         await stopRunners(this.env, id);

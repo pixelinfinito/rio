@@ -206,6 +206,14 @@ pub struct Profile {
     pub council: Option<Council>,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum BlindMode {
+    Full,
+    DefectsOnly,
+    Off,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(default)]
 pub struct Verify {
@@ -213,6 +221,10 @@ pub struct Verify {
     pub quorum: u32,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub model: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub fallback_model: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub blind_mode: Option<BlindMode>,
     /// Voters for a hypothesis its agent classed as a risk; `voters` when absent.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub risk_voters: Option<u32>,
@@ -223,6 +235,8 @@ impl Default for Verify {
             voters: 3,
             quorum: 2,
             model: None,
+            fallback_model: None,
+            blind_mode: None,
             risk_voters: None,
         }
     }
@@ -723,6 +737,11 @@ impl ProfileLoader {
         if profile.verify.model.is_some() && !profile.models.contains_key(alias) {
             add("/verify/model", "unknown model alias".into());
         }
+        if let Some(fallback) = profile.verify.fallback_model.as_deref()
+            && !profile.models.contains_key(fallback)
+        {
+            add("/verify/fallback_model", "unknown model alias".into());
+        }
         if profile
             .verify
             .risk_voters
@@ -733,7 +752,19 @@ impl ProfileLoader {
                 "risk_voters must not exceed voters".into(),
             );
         }
-        if (profile.verify.voters == 1 || profile.verify.risk_voters == Some(1))
+        let one_voter = profile.verify.voters == 1 || profile.verify.risk_voters == Some(1);
+        let matches_agent_model = |verifier: &String| {
+            profile
+                .steps
+                .iter()
+                .flat_map(|step| &step.agents)
+                .flat_map(BTreeMap::values)
+                .filter_map(|agent| agent["models"].as_array())
+                .flatten()
+                .filter_map(Value::as_str)
+                .any(|reviewing| profile.models.get(reviewing) == Some(verifier))
+        };
+        if one_voter
             && profile
                 .models
                 .get("default")
@@ -744,24 +775,39 @@ impl ProfileLoader {
                 "verifier alias must differ from the default for one voter".into(),
             );
         }
+        if one_voter
+            && profile
+                .verify
+                .fallback_model
+                .as_deref()
+                .and_then(|fb| profile.models.get(fb))
+                .is_some_and(|fb| profile.models.get("default") == Some(fb))
+        {
+            add(
+                "/verify/fallback_model",
+                "verifier fallback_model must differ from the default for one voter".into(),
+            );
+        }
         // One voter is independent only of a model it is not: an agent's `models`
         // review too.
-        if (profile.verify.voters == 1 || profile.verify.risk_voters == Some(1))
-            && profile.models.get(alias).is_some_and(|verifier| {
-                profile
-                    .steps
-                    .iter()
-                    .flat_map(|step| &step.agents)
-                    .flat_map(BTreeMap::values)
-                    .filter_map(|agent| agent["models"].as_array())
-                    .flatten()
-                    .filter_map(Value::as_str)
-                    .any(|reviewing| profile.models.get(reviewing) == Some(verifier))
-            })
-        {
+        if one_voter && profile.models.get(alias).is_some_and(matches_agent_model) {
             add(
                 "/models/verifier",
                 "verifier alias must differ from every model an agent reviews under for one voter"
+                    .into(),
+            );
+        }
+        if one_voter
+            && profile
+                .verify
+                .fallback_model
+                .as_deref()
+                .and_then(|fb| profile.models.get(fb))
+                .is_some_and(matches_agent_model)
+        {
+            add(
+                "/verify/fallback_model",
+                "verifier fallback_model must differ from every model an agent reviews under for one voter"
                     .into(),
             );
         }

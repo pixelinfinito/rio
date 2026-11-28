@@ -19,7 +19,8 @@
           "kind": {
             "enum": [
               "execution",
-              "code"
+              "code",
+              "file_citation"
             ]
           },
           "version": {
@@ -40,6 +41,19 @@
               "type": "string"
             },
             "maxItems": 100
+          },
+          "line_start": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "line_end": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "excerpt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
           },
           "demonstrates": {
             "enum": [

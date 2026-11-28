@@ -415,6 +415,19 @@
           "type": "string",
           "minLength": 1
         },
+        "fallback_model": {
+          "description": "Fallback model alias from models used if the primary verifier model is unavailable or rate-limited.",
+          "type": "string",
+          "minLength": 1
+        },
+        "blind_mode": {
+          "description": "Blind verification policy before disclosure: full, defects_only (default), or off.",
+          "enum": [
+            "full",
+            "defects_only",
+            "off"
+          ]
+        },
         "risk_voters": {
           "description": "Voters for a hypothesis its agent classed as a risk. Defaults to voters.",
           "type": "integer",

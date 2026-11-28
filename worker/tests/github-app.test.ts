@@ -643,4 +643,35 @@ describe("POST /v1/hooks/github", () => {
       fetch.mockRestore();
     }
   });
+
+  it("debounces pull_request synchronize deliveries with delaySeconds and head_sha", async () => {
+    const sent: { message: any; options?: any }[] = [];
+    const e = testEnv([], {
+      PR_PUSH_DEBOUNCE_SECONDS: "45",
+      JOBS: {
+        send: async (message: any, options?: any) => {
+          sent.push({ message, options });
+        },
+      } as any,
+    });
+    await deliver("installation", installationPayload(62), { env: e });
+    const baseSync = prPayload(62, "synchronize", { repository: "acme/api" });
+    const res = await deliver(
+      "pull_request",
+      {
+        ...baseSync,
+        pull_request: {
+          ...baseSync.pull_request,
+          head: { sha: "0123456789abcdef0123456789abcdef01234567" },
+        },
+      },
+      { env: e },
+    );
+    expect(res.status).toBe(202);
+    expect(sent).toHaveLength(1);
+    expect(sent[0].options).toEqual({ delaySeconds: 45 });
+    expect(sent[0].message.head_sha).toBe(
+      "0123456789abcdef0123456789abcdef01234567",
+    );
+  });
 });

@@ -342,10 +342,10 @@ describe("runner deadlines", () => {
     expect(calls.sort()).toEqual([
       "POST https://sandbox/stop stopping-s-checks-2",
       "POST https://sandbox/stop stopping-s-prepare-2",
-      "POST https://sandbox/stop stopping-s-run-2",
       "POST https://sandbox/stop stopping-s-static-2",
       // The job the helper adds: a leased graph job, attempt 1.
       "POST https://sandbox/stop stopping-stopping-job-1",
+      "POST https://sandbox/stop warm-stopping",
     ]);
     // A job whose container answered the stop is withdrawn, so it does not
     // read as running until its lease ends; the one that did not answer
@@ -369,5 +369,42 @@ describe("runner deadlines", () => {
     calls.length = 0;
     await stopRunners({ ...sandboxed, RUNNER_BACKEND: "self-hosted" } as Env, "stopping");
     expect(calls).toEqual([]);
+  });
+
+  it("reaps overdue status='preparing' reviews past DEADLINE_GRACE_MS", async () => {
+    const now = Date.now();
+    const calls: string[] = [];
+    await runtime.DB.prepare(
+      "DELETE FROM reviews WHERE id IN ('prep-late','prep-fresh')",
+    ).run();
+    await review("prep-late", now - DEADLINE_GRACE_MS - 1000, "preparing");
+    await review("prep-fresh", now + 60000, "preparing");
+    const sandbox = {
+      idFromName: (name: string) => name,
+      get: (name: string) => ({
+        fetch: async (url: string) => {
+          calls.push(`${url} ${name}`);
+          return Response.json({ stopped: true });
+        },
+      }),
+    };
+    await sweepReviews(
+      { ...runtime, RUNNER_BACKEND: "sandbox", SANDBOX: sandbox } as unknown as Env,
+      now,
+    );
+    const late = await runtime.DB.prepare(
+      "SELECT status,error FROM reviews WHERE id='prep-late'",
+    ).first<any>();
+    const fresh = await runtime.DB.prepare(
+      "SELECT status FROM reviews WHERE id='prep-fresh'",
+    ).first<any>();
+    const job = await runtime.DB.prepare(
+      "SELECT status FROM jobs WHERE review_id='prep-late'",
+    ).first<any>();
+    expect(late.status).toBe("error");
+    expect(late.error).toContain("preparation");
+    expect(fresh.status).toBe("preparing");
+    expect(job.status).toBe("failed");
+    expect(calls.some((c) => c.includes("prep-late"))).toBe(true);
   });
 });

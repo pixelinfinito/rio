@@ -12,8 +12,10 @@ import historicalPartial from "../../crates/rio-core/tests/fixtures/partial.json
 import historicalNoChanges from "../../crates/rio-core/tests/fixtures/no_changes.json";
 import historicalError from "../../crates/rio-core/tests/fixtures/error.json";
 import {
+  BLIND_TURNS,
   CONTEXT_BYTES,
   SYMBOL_LINES,
+  VerifierBreaker,
   blindContext,
   panelOf,
   verifyHypothesis,
@@ -826,9 +828,9 @@ describe("quorum", () => {
         ...result.verified.verification,
       };
     };
-    // One voter settles a risk; its record states one voter, not three.
+    // One voter settles a risk; its record states one voter, and default `defects_only` skips blind.
     expect(await verify({ risk_voters: 1 }, "risk")).toEqual({
-      calls: 2,
+      calls: 1,
       votes: [0],
       level: "plausible",
       voters: 1,
@@ -836,9 +838,9 @@ describe("quorum", () => {
       blind_match: ["none"],
       split: false,
     });
-    // The quorum of a risk is never more than its voters.
+    // The quorum of a risk is never more than its voters (and default `defects_only` skips blind on risks).
     expect(await verify({ risk_voters: 2, quorum: 3 }, "risk")).toMatchObject({
-      calls: 4,
+      calls: 2,
       voters: 2,
       agreeing: 2,
       split: false,
@@ -851,8 +853,8 @@ describe("quorum", () => {
         agreeing: 2,
         blind_match: ["none", "none", "none"],
       });
-    // Without the setting a risk keeps the profile's voters.
-    expect(await verify({}, "risk")).toMatchObject({ calls: 4, voters: 3 });
+    // Without the setting a risk keeps the profile's voters, skipping blind under default `defects_only`.
+    expect(await verify({}, "risk")).toMatchObject({ calls: 2, voters: 3 });
     // A quorum of every voter asks every voter.
     expect(await verify({ quorum: 3 }, "defect")).toMatchObject({
       calls: 6,
@@ -1370,5 +1372,294 @@ describe("posture, caps and risk", () => {
     });
     expect(p.require_human).toBe(true);
     expect(evaluate("lines_changed > 2 or language == rust", p, [])).toBe(true);
+  });
+});
+
+describe("tiered blind_mode, VerifierBreaker, and file_citation", () => {
+  const voterResponse = (result: unknown) => ({
+    content: JSON.stringify({ result }),
+    input_tokens: 100,
+    output_tokens: 40,
+    cost_usd: 0.001,
+  });
+
+  it("enforces full, off, and defects_only blind_mode with BLIND_TURNS and no run tool during blind", async () => {
+    const run = async (
+      blind_mode: "full" | "defects_only" | "off",
+      category: "risk" | "defect",
+      voters = 3,
+      quorum = 2,
+      runToolDuringBlind = false,
+    ) => {
+      const phases: string[] = [];
+      const ledger = new MemoryLedger();
+      let blindTurn = 0;
+      const result = await verifyHypothesis({
+        profile: { ...profile, verify: { voters, quorum, blind_mode } },
+        hypothesis: { ...hypothesis, category },
+        intent: "",
+        guidance: [],
+        snapshot,
+        context: { snapshot, head: graphs.head, executions: {}, guidance: [] },
+        gateway: {
+          async complete(req) {
+            const text =
+              typeof req.messages[0]?.content === "string"
+                ? req.messages[0].content
+                : req.messages[0].content.map((p) => p.text).join("");
+            const isDisclosed =
+              req.messages.length > 1 ||
+              text.startsWith("Verify this hypothesis.");
+            const phase = isDisclosed ? "disclosed" : "blind";
+            phases.push(phase);
+            if (!isDisclosed && runToolDuringBlind) {
+              blindTurn++;
+              if (blindTurn === 1)
+                return {
+                  content: JSON.stringify({
+                    tools: [
+                      {
+                        name: "run",
+                        args: { command: ["true"], version: "head" },
+                      },
+                    ],
+                  }),
+                  input_tokens: 50,
+                  output_tokens: 20,
+                  cost_usd: 0.001,
+                };
+              const lastMsg = req.messages.at(-1)!;
+              const lastText =
+                typeof lastMsg.content === "string"
+                  ? lastMsg.content
+                  : lastMsg.content.map((p) => p.text).join("");
+              expect(lastText).toContain(
+                "run is disabled during blind verification",
+              );
+            }
+            return voterResponse(
+              isDisclosed ? { evidence_level: "plausible", evidence: [] } : [],
+            );
+          },
+        },
+        ledger,
+        tools: () => new Tools(snapshot, graphs, undefined),
+        verifyTokens: 20000,
+        save: async () => {},
+      });
+      return { phases, result };
+    };
+
+    const fullRisk = await run("full", "risk", 1, 1);
+    expect(fullRisk.phases).toEqual(["blind", "disclosed"]);
+
+    const offDefect = await run("off", "defect", 2, 2);
+    expect(offDefect.phases).toEqual(["disclosed", "disclosed"]);
+
+    const defectsOnlyTool = await run("defects_only", "defect", 2, 2, true);
+    expect(defectsOnlyTool.phases).toContain("blind");
+    expect(defectsOnlyTool.phases).toContain("disclosed");
+    expect(BLIND_TURNS).toBe(4);
+  });
+
+  it("VerifierBreaker fails over on permanent/prolonged errors and after 3 transient errors", () => {
+    const breaker = new VerifierBreaker("openai/primary", "anthropic/backup");
+    expect(breaker.activeModel()).toEqual({
+      model: "openai/primary",
+      usingFallback: false,
+    });
+    expect(
+      breaker.recordFailure("openai/primary", "provider failed (503)"),
+    ).toBe(false);
+    expect(
+      breaker.recordFailure("openai/primary", "provider failed (503)"),
+    ).toBe(false);
+    expect(
+      breaker.recordFailure("openai/primary", "provider failed (503)"),
+    ).toBe(true);
+    expect(breaker.activeModel()).toEqual({
+      model: "anthropic/backup",
+      usingFallback: true,
+    });
+    expect(breaker.fallbackUsed).toMatchObject({
+      from: "openai/primary",
+      to: "anthropic/backup",
+    });
+
+    const single = new VerifierBreaker("openai/primary");
+    expect(
+      single.recordFailure(
+        "openai/primary",
+        "provider failed (400 model_not_found)",
+      ),
+    ).toBe(false);
+    expect(single.activeModel()).toBeNull();
+    expect(single.abortedReason).toContain("circuit_open");
+
+    const rate = new VerifierBreaker("openai/primary", "anthropic/backup");
+    expect(
+      rate.recordFailure(
+        "openai/primary",
+        "provider failed (429) retry after 600 s",
+      ),
+    ).toBe(true);
+    expect(rate.activeModel()!.model).toBe("anthropic/backup");
+  });
+
+  it("validates non-AST file_citation in quorum only when file has 0 graph nodes and excerpt matches", async () => {
+    const docPath = "docs/config.yaml";
+    const astPath = graphs.head.nodes[0]?.path ?? "src/a.ts";
+    const docSnap = {
+      ...snapshot,
+      head: {
+        ...snapshot.head,
+        [docPath]: {
+          mode: 0o100644,
+          content: "auth:\n  enabled: false\n  token_ttl: 3600\n",
+        },
+        [astPath]: snapshot.head[astPath] ?? {
+          mode: 0o100644,
+          content: "export const x = 1;\n",
+        },
+      },
+    };
+    const docHyp = {
+      ...hypothesis,
+      location: { ...hypothesis.location, path: docPath },
+    };
+    const result = await verifyHypothesis({
+      profile: {
+        ...profile,
+        verify: { voters: 2, quorum: 2, blind_mode: "off" },
+      },
+      hypothesis: docHyp,
+      intent: "",
+      guidance: [],
+      snapshot: docSnap,
+      context: {
+        snapshot: docSnap,
+        head: graphs.head,
+        executions: {},
+        guidance: [],
+      },
+      gateway: {
+        async complete() {
+          return voterResponse({
+            evidence_level: "static_proven",
+            evidence: [
+              {
+                kind: "file_citation",
+                version: "head",
+                path: docPath,
+                line_start: 2,
+                line_end: 3,
+                excerpt: "enabled: false",
+                demonstrates: "regression",
+              },
+            ],
+          });
+        },
+      },
+      ledger: new MemoryLedger(),
+      tools: () => new Tools(docSnap, graphs, undefined),
+      verifyTokens: 20000,
+      save: async () => {},
+    });
+    expect(result.verified.evidence_level).toBe("static_proven");
+    expect(result.verified.evidence).toEqual([
+      `file_citation:head:${docPath}:2-3`,
+    ]);
+
+    const mismatch = await verifyHypothesis({
+      profile: {
+        ...profile,
+        verify: { voters: 2, quorum: 2, blind_mode: "off" },
+      },
+      hypothesis: docHyp,
+      intent: "",
+      guidance: [],
+      snapshot: docSnap,
+      context: {
+        snapshot: docSnap,
+        head: graphs.head,
+        executions: {},
+        guidance: [],
+      },
+      gateway: {
+        async complete() {
+          return voterResponse({
+            evidence_level: "static_proven",
+            evidence: [
+              {
+                kind: "file_citation",
+                version: "head",
+                path: docPath,
+                line_start: 2,
+                line_end: 3,
+                excerpt: "nonexistent text",
+                demonstrates: "regression",
+              },
+            ],
+          });
+        },
+      },
+      ledger: new MemoryLedger(),
+      tools: () => new Tools(docSnap, graphs, undefined),
+      verifyTokens: 20000,
+      save: async () => {},
+    });
+    expect(mismatch.verified.evidence_level).toBe("plausible");
+
+    if (graphs.head.nodes.length) {
+      const astDocSnap = {
+        ...docSnap,
+        head: {
+          ...docSnap.head,
+          [astPath]: { mode: 0o100644, content: "const matchedLine = true;\n" },
+        },
+      };
+      const rejectedAst = await verifyHypothesis({
+        profile: {
+          ...profile,
+          verify: { voters: 2, quorum: 2, blind_mode: "off" },
+        },
+        hypothesis: {
+          ...hypothesis,
+          location: { ...hypothesis.location, path: astPath },
+        },
+        intent: "",
+        guidance: [],
+        snapshot: astDocSnap,
+        context: {
+          snapshot: astDocSnap,
+          head: graphs.head,
+          executions: {},
+          guidance: [],
+        },
+        gateway: {
+          async complete() {
+            return voterResponse({
+              evidence_level: "static_proven",
+              evidence: [
+                {
+                  kind: "file_citation",
+                  version: "head",
+                  path: astPath,
+                  line_start: 1,
+                  line_end: 1,
+                  excerpt: "matchedLine",
+                  demonstrates: "regression",
+                },
+              ],
+            });
+          },
+        },
+        ledger: new MemoryLedger(),
+        tools: () => new Tools(astDocSnap, graphs, undefined),
+        verifyTokens: 20000,
+        save: async () => {},
+      });
+      expect(rejectedAst.verified.evidence_level).toBe("plausible");
+    }
   });
 });

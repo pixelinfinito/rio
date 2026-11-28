@@ -106,6 +106,8 @@ Generated from `schemas/profile-v1.json`. `*` means required. `extra=false` reje
 | `verify.voters` | `integer; default=3; minimum=1` |
 | `verify.quorum` | `integer; minimum=1` |
 | `verify.model` | `string; minLength=1` |
+| `verify.fallback_model` | `string; minLength=1` |
+| `verify.blind_mode` | `enum; enum=["full","defects_only","off"]` |
 | `verify.risk_voters` | `integer; minimum=1` |
 | `council` | `object; extra=false` |
 | `council.members` | `array; minItems=1; maxItems=9` |
@@ -481,7 +483,8 @@ Source: `modules/steps/security/module.yaml`
 ```text
 enabled: boolean; default=false
 posture: enum; enum=["critical-only","balanced","thorough"]; default="thorough"
-follow_up: boolean; default=false
+follow_up: boolean; default=true
+challenge: enum; enum=["auto","always","never"]; default="auto"
 max_defects: integer; minimum=1
 catalog: enum; enum=["owasp-top10-2025","asvs-5.0"]; default="owasp-top10-2025"
 fail_on: object; default={"evidence":"plausible","categories":["security"],"states":["new","worsened"],"rules":[],"incomplete":true,"required_checks":[]}; extra=false
