@@ -592,6 +592,9 @@ const CACHE_CHUNK = 250;
 const OPEN = "(status IN ('queued','running','cancelled') OR report_key=?)";
 /** The note of a review its workflow ended early because it was cancelled. */
 export const CANCELLED_NOTE = "Review cancelled before it finished.";
+/** The note of a review its workflow ended early because its wall budget ran out. */
+export const WALL_BUDGET_NOTE =
+  "Review exceeded its wall budget before it finished.";
 /** The note of a review a newer head of its pull request superseded. */
 export const SUPERSEDED_NOTE =
   "Review superseded by a newer head of the pull request before it finished; nothing more was published for this head.";
@@ -1907,8 +1910,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
             Object.hasOwn(a, agent),
           );
           if (agent === "contracts" && analysis!.failed) {
-            skippedAgents[agent] =
-              "the contract inventory could not be built";
+            skippedAgents[agent] = "the contract inventory could not be built";
             continue;
           }
           if (
@@ -2085,10 +2087,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                   async () =>
                     store.put(
                       `reviews/${id}/cache/${s.id}-${label}-hunks.json`,
-                      await changeHunks(
-                        scope.changed,
-                        reading(scope.changed),
-                      ),
+                      await changeHunks(scope.changed, reading(scope.changed)),
                     ),
                 );
                 const hunks = await store.get<Hunk[]>(hunksKey);
@@ -2354,7 +2353,11 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
                   : // A review agent is told how many turns it has left,
                     // keeps what it read some turns ago, and does not lose its
                     // part to one call the provider cut off or refused.
-                    { turnNotice: true, history: AGENT_HISTORY, retryCall: true }),
+                    {
+                      turnNotice: true,
+                      history: AGENT_HISTORY,
+                      retryCall: true,
+                    }),
               });
             } catch (error) {
               const message = error instanceof Error ? error.message : "";
@@ -3190,7 +3193,9 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           if (s.uses.startsWith("rio/verify@") && done.has(s.id))
             await perform({ ...s, id: `${s.id}-follow-up` });
       }
-      await step.do("release-runners", () => stopRunners(this.env, id)).catch(() => {});
+      await step
+        .do("release-runners", () => stopRunners(this.env, id))
+        .catch(() => {});
       const findings = present(report);
       consolidated = true;
       report.footer.notes = report.footer.notes.filter(
@@ -3266,10 +3271,14 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       );
       report.review.rio_version = this.env.RIO_VERSION;
       account();
-      if (await store.cancelled(id)) {
+      const stop = await store.stopReason(id);
+      if (stop) {
         report.status = "partial";
-        if (await supersededReview(this.env, id))
+        if (stop === "deadline") {
+          report.footer.notes.push(WALL_BUDGET_NOTE);
+        } else if (await supersededReview(this.env, id)) {
           report.footer.notes.push(SUPERSEDED_NOTE);
+        }
       }
       if (diffOnlyAudit) report.agent_audit.diff_only = diffOnlyAudit;
       if (cacheStats)
@@ -3500,16 +3509,25 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
         error instanceof Error
           ? error.message.replace(/^NonRetryableError: /, "")
           : "review failed";
-      // A cancelled review says whether a newer head superseded it.
+      // A cancelled review says whether a newer head superseded it or whether
+      // the stop actually came from exceeding the wall-clock deadline.
+      const stop =
+        reason === "cancelled"
+          ? await store.stopReason(id).catch(() => "cancelled" as const)
+          : null;
+      const wallExceeded = stop === "deadline";
       const superseded =
         reason === "cancelled" &&
+        !wallExceeded &&
         (await supersededReview(this.env, id).catch(() => false));
       report.footer.notes.push(
-        superseded
-          ? SUPERSEDED_NOTE
-          : reason === "cancelled"
-            ? CANCELLED_NOTE
-            : reason,
+        wallExceeded
+          ? WALL_BUDGET_NOTE
+          : superseded
+            ? SUPERSEDED_NOTE
+            : reason === "cancelled"
+              ? CANCELLED_NOTE
+              : reason,
       );
       // Work finished before the stop is still reported, consolidated as on the
       // complete path. A replayed run has it in storage only.
@@ -3565,6 +3583,7 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
       account();
       const key = await store.put(`reviews/${id}/report.json`, report);
       const errorReason = (() => {
+        if (wallExceeded) return "review exceeded its wall budget";
         if (reason === "cancelled") return "cancelled";
         const clean = redact(reason).replace(/\s+/g, " ").trim();
         if (!clean) return "runtime did not complete";
@@ -3591,9 +3610,11 @@ export class ReviewWorkflow extends WorkflowEntrypoint<Env, WorkflowParams> {
           this.env,
           id,
           "Review did not complete",
-          reason === "cancelled"
+          reason === "cancelled" && !wallExceeded
             ? CANCELLED_UNPUBLISHED
-            : "Rio's runtime stopped before the review finished, so nothing was published for this head. Push again or comment `/rio review` to retry.",
+            : wallExceeded
+              ? "The review exceeded its wall budget before it finished, so nothing was published for this head. Push again or comment `/rio review` to retry."
+              : "Rio's runtime stopped before the review finished, so nothing was published for this head. Push again or comment `/rio review` to retry.",
         );
       });
       return { report_key: key };
